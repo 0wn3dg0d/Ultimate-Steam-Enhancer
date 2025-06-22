@@ -4,6 +4,9 @@
 </center>
 <p><strong>Ultimate Steam Enhancer</strong> — это мощный пользовательский скрипт для платформы Steam, расширяющий стандартные возможности магазина и сообщества. Он объединяет в себе функционал множества инструментов, предоставляя пользователю расширенный контроль и доступ к дополнительной информации об играх, ценах, переводах, обзорах, активности друзей и многом другом.
 </p>
+
+[![Установить с Greasy Fork](https://img.shields.io/badge/Установить_с-GreasyFork-blue.svg)](https://greasyfork.org/ru/scripts/526180-ultimate-steam-enhancer)
+
 <hr style="border: 1px solid #2a3f5a;">
 <h2 style="color: #67c1f5;">Содержание</h2>
 <ul>
