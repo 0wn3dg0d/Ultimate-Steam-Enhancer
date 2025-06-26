@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.0
+// @version      2.1.2
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -24,7 +24,12 @@
 // @connect      store.steampowered.com
 // @connect      api.steampowered.com
 // @connect      steamcommunity.com
+// @connect      community.akamai.steamstatic.com
+// @connect      community.cloudflare.steamstatic.com
+// @connect      community.fastly.steamstatic.com
+// @connect      shared.akamai.steamstatic.com
 // @connect      shared.cloudflare.steamstatic.com
+// @connect      shared.fastly.steamstatic.com
 // @connect      umadb.ro
 // @connect      api.github.com
 // @connect      howlongtobeat.com
@@ -58,14 +63,16 @@
 // @connect      ggsel.net
 // @connect      cdn.ggsel.com
 // @connect      explorer.kupikod.com
+// @connect      rushbe.ru
 // @connect      cdn.jsdelivr.net
-// @downloadURL https://update.greasyfork.org/scripts/526180/Ultimate%20Steam%20Enhancer.user.js
-// @updateURL https://update.greasyfork.org/scripts/526180/Ultimate%20Steam%20Enhancer.meta.js
+// @connect      img.shields.io
 // ==/UserScript==
 
 
 (function() {
     'use strict';
+
+    const FALLBACK_REGIONS = ['us', 'ch', 'kz', 'jp'];
 
     function makeGMRequest(options) {
         return new Promise((resolve, reject) => {
@@ -91,7 +98,6 @@
         const injectionScript = `
             <script type="text/javascript">
                 window.addEventListener('DOMContentLoaded', () => {
-                    // Устанавливаем флаг в глобальном объекте window новой страницы
                     window.USE_unlocked_page_ready = true;
                     console.log('[U.S.E. Injected Script] DOMContentLoaded сработал, страница готова.');
                 });
@@ -137,52 +143,10 @@
                 <p style="font-size: 0.7em; color: #8f98a0;">(Ultimate Steam Enhancer)</p>
             </div>`;
         const statusElement = document.getElementById('use-unblock-status');
+        const gameUrl = `https://store.steampowered.com/app/${appId}/`;
 
         try {
-            statusElement.textContent = 'Шаг 1/3: Получение анонимной сессии...';
-            const { sessionid, browserid } = await getAnonymousSession();
-            const baseCookies = `sessionid=${sessionid}; browserid=${browserid};`;
-            const countryCookie = `steamCountry=US;`;
-
-            statusElement.textContent = 'Шаг 2/3: Проверка страницы...';
-            const gamePageUrl = `https://store.steampowered.com/app/${appId}/?cc=us&l=russian`;
-            const initialPageResponse = await makeGMRequest({
-                method: "GET",
-                url: gamePageUrl,
-                headers: {
-                    'Cookie': `${baseCookies} ${countryCookie}`,
-                    'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7'
-                 },
-                anonymous: true
-            });
-
-            const responseText = initialPageResponse.responseText;
-
-            if (responseText.includes('agegate_birthday_selector')) {
-                statusElement.textContent = 'Шаг 3/3: Обход возрастного ограничения и загрузка...';
-
-                const ageBypassCookies = `birthtime=631152001; wants_mature_content=1;`;
-
-                const finalPageResponse = await makeGMRequest({
-                    method: "GET",
-                    url: gamePageUrl,
-                    headers: {
-                        'Cookie': `${baseCookies} ${countryCookie} ${ageBypassCookies}`,
-                        'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7'
-                    },
-                    anonymous: true
-                });
-
-                if (finalPageResponse.responseText.includes('agegate_birthday_selector')) {
-                     throw new Error('Не удалось обойти возрастное ограничение с помощью cookie. Возможно, Steam изменил логику.');
-                }
-
-                injectPageAndRunModules(finalPageResponse.responseText);
-            } else {
-                statusElement.textContent = 'Возрастное ограничение не найдено. Загрузка страницы...';
-                injectPageAndRunModules(responseText);
-            }
-
+            await attemptBypassWithFallbacks(gameUrl, statusElement);
         } catch (error) {
             console.error('[U.S.E.] Ошибка в процессе обхода:', error);
             if (statusElement) {
@@ -240,29 +204,184 @@
         }
     }
 
+    async function attemptBypassWithFallbacks(baseUrl, statusElement) {
+        statusElement.textContent = 'Шаг 1: Получение анонимной сессии...';
+        const { sessionid, browserid } = await getAnonymousSession();
+        const baseCookies = `sessionid=${sessionid}; browserid=${browserid};`;
+        const ageBypassCookies = `birthtime=631152001; wants_mature_content=1;`;
 
-    (function unblockerDispatcher() {
-        const storedSettings = GM_getValue('useSettings', {});
-        const isUnblockerEnabled = storedSettings.regionUnblocker !== false;
+        const userDefaultRegion = GM_getValue('use_incognito_default_region', 'US').toLowerCase();
+        const regionsToTry = [...new Set([userDefaultRegion, ...FALLBACK_REGIONS])];
 
-        if (isUnblockerEnabled && window.location.pathname.includes('/app/')) {
-            const regionLockMessage = 'Данный товар недоступен в вашем регионе';
-            const errorBox = document.getElementById('error_box');
+        let success = false;
 
-            if (errorBox && errorBox.innerText.includes(regionLockMessage)) {
-                handleComplexBypass();
+        for (let i = 0; i < regionsToTry.length; i++) {
+            const regionCode = regionsToTry[i];
+            const countryCookie = `steamCountry=${regionCode.toUpperCase()};`;
+            const gamePageUrl = new URL(baseUrl);
+            gamePageUrl.searchParams.set('cc', regionCode);
+            gamePageUrl.searchParams.set('l', 'russian');
+
+            statusElement.textContent = `Шаг ${i + 2}/${regionsToTry.length + 1}: Попытка обхода через регион [${regionCode.toUpperCase()}]...`;
+
+            try {
+                const initialPageResponse = await makeGMRequest({
+                    method: "GET",
+                    url: gamePageUrl.href,
+                    headers: {
+                        'Cookie': `${baseCookies} ${countryCookie}`,
+                        'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7'
+                    },
+                    anonymous: true
+                });
+
+                let responseText = initialPageResponse.responseText;
+
+                const isRegionBlocked = responseText.includes('Данный товар недоступен в вашем регионе') || responseText.includes('is not available in your country');
+
+                if (isRegionBlocked) {
+                    console.log(`[U.S.E.] Регион ${regionCode.toUpperCase()} заблокирован. Пробуем следующий.`);
+                    continue;
+                }
+
+                if (responseText.includes('agegate_birthday_selector')) {
+                    statusElement.textContent = `Регион [${regionCode.toUpperCase()}] успешен. Обход возрастного ограничения...`;
+
+                    const finalPageResponse = await makeGMRequest({
+                        method: "GET",
+                        url: gamePageUrl.href,
+                        headers: {
+                            'Cookie': `${baseCookies} ${countryCookie} ${ageBypassCookies}`,
+                            'Accept-Language': 'ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7'
+                        },
+                        anonymous: true
+                    });
+
+                    if (finalPageResponse.responseText.includes('agegate_birthday_selector')) {
+                        console.error(`[U.S.E.] Не удалось обойти возрастное ограничение в регионе ${regionCode.toUpperCase()}.`);
+                        continue;
+                    }
+                    responseText = finalPageResponse.responseText;
+                }
+
+                statusElement.textContent = `Успешно! Загрузка страницы из региона [${regionCode.toUpperCase()}]...`;
+                injectPageAndRunModules(responseText);
+                success = true;
                 return;
+
+            } catch (error) {
+                console.warn(`[U.S.E.] Ошибка при попытке обхода через регион ${regionCode.toUpperCase()}:`, error.message);
             }
         }
 
-        runUSEModules();
-    })();
+        if (!success) {
+            throw new Error('Не удалось обойти региональную блокировку ни через один из доступных регионов: ' + regionsToTry.join(', ').toUpperCase());
+        }
+    }
+
+    function addIncognitoButton() {
+        const isButtonEnabled = GM_getValue('use_incognito_button_enabled', false);
+        if (!isButtonEnabled) {
+            return;
+        }
+
+        if (document.getElementById('use-incognito-btn')) {
+            return;
+        }
+
+        const logoHolder = document.getElementById('logo_holder');
+        if (!logoHolder) {
+            console.error('[U.S.E.] Не удалось найти #logo_holder для добавления кнопки.');
+            return;
+        }
+
+        const incognitoBtn = document.createElement('a');
+        incognitoBtn.href = 'javascript:void(0);';
+        incognitoBtn.id = 'use-incognito-btn';
+        incognitoBtn.innerText = 'in';
+        incognitoBtn.title = 'Перезагрузить страницу в виртуальном режиме инкогнито (U.S.E.)';
+
+        GM_addStyle(`
+            #logo_holder {
+                position: relative;
+            }
+            #use-incognito-btn {
+                position: absolute;
+                top: -7px;
+                right: 100%;
+                margin-right: 10px;
+                transform: translateY(-50%);
+                padding: 4px 10px;
+                background-color: #C5C3C0;
+                color: #171D25;
+                font-weight: 500;
+                font-size: 14px;
+                border-radius: 3px;
+                text-decoration: none;
+                line-height: 1.5;
+                box-shadow: 0 0 5px rgba(0,0,0,0.5);
+                transition: all 0.2s ease-in-out;
+            }
+            #use-incognito-btn:hover {
+                background-color: #171D25;
+                color: white;
+                text-decoration: none;
+                transform: translateY(-50%) scale(1.05);
+                box-shadow: 0 0 10px rgba(0,0,0,0.7);
+            }
+        `);
+
+        logoHolder.appendChild(incognitoBtn);
+
+        incognitoBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('[U.S.E.] Активация режима инкогнито вручную...');
+            loadPageIncognito(window.location.href);
+        });
+    }
+
+    async function loadPageIncognito(url) {
+        document.body.innerHTML = `
+            <div style="font-family: 'Motiva Sans', sans-serif; color: #c7d5e0; background-color: #1b2838; text-align: center; padding: 100px 20px; height: 100vh; font-size: 1.8em; line-height: 1.5;">
+                <p>Перезагрузка страницы в режиме "Инкогнито"...</p>
+                <p id="use-incognito-status" style="font-size: 0.8em; color: #8f98a0; margin-top: 20px;"></p>
+                <p style="font-size: 0.7em; color: #8f98a0;">(Ultimate Steam Enhancer)</p>
+            </div>`;
+        const statusElement = document.getElementById('use-incognito-status');
+
+        try {
+            await attemptBypassWithFallbacks(url, statusElement);
+        } catch (error) {
+            console.error('[U.S.E.] Ошибка в процессе ручной загрузки в режиме инкогнито:', error);
+            if (statusElement) {
+                statusElement.textContent = `Произошла ошибка: ${error.message}`;
+                statusElement.style.color = '#ff6961';
+            }
+        }
+    }
+
+    (function unblockerDispatcher() {
+         const isIncognitoModeEnabled = GM_getValue('use_incognito_mode_enabled', true);
+
+         if (isIncognitoModeEnabled && window.location.pathname.includes('/app/')) {
+             const regionLockMessage = 'Данный товар недоступен в вашем регионе';
+             const errorBox = document.getElementById('error_box');
+
+             if (errorBox && errorBox.innerText.includes(regionLockMessage)) {
+                 handleComplexBypass();
+                 return;
+             }
+         }
+
+         runUSEModules();
+     })();
 
 
     function runUSEModules() {
+    GM_addStyle('.banner_open_in_steam { display: none !important; }');
+    addIncognitoButton();
     const scriptsConfig = {
         // Основные скрипты
-        regionUnblocker: true,
         gamePage: true, // Скрипт для страницы игры (индикаторы о наличии русского перевода; получение дополнительных обзоров) | https://store.steampowered.com/app/*
         hltbData: true, // Скрипт для страницы игры (HLTB; получение сведений о времени прохождения) | https://store.steampowered.com/app/*
         friendsPlaytime: true, // Скрипт для страницы игры (Время друзей & Достижения) | https://store.steampowered.com/app/*
@@ -283,16 +402,64 @@
         // Дополнительные настройки
         autoExpandHltb: false, // Автоматически раскрывать спойлер HLTB
         autoLoadReviews: false, // Автоматически загружать дополнительные обзоры
-        toggleEnglishLangInfo: false // Отображает данные об английском языке в дополнительной информации при поиске по каталогу и в активности (функция для переводчиков)
+        toggleEnglishLangInfo: false, // Отображает данные об английском языке в дополнительной информации при поиске по каталогу и в активности (функция для переводчиков)
+        salesMasterAutoSearch: false, // Автоматически запускать поиск при открытии окна "Агрегатора цен (%)"
+        salesMasterAutoInsertTitle: true // Автоматически подставлять название игры в фильтр "Агрегатора цен (%)" после сбора данных
     };
 
 
     /* --- Код для настроек U.S.E. --- */
-    const useDefaultSettings = {
-        regionUnblocker: true, gamePage: true, hltbData: true, friendsPlaytime: true, earlyaccdata: true, zogInfo: true, pageGiftHelper: true,
-        platiSales: true, salesMaster: true, catalogInfo: true, catalogHider: false, newsFilter: true,
-        Kaznachei: true, homeInfo: true, Sledilka: true, wishlistGiftHelper: true, stelicasRoulette: true, RuRegionalPriceAnalyzer: true,
-        autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false
+	const useDefaultSettings = {
+	    gamePage: true, hltbData: true, friendsPlaytime: true, earlyaccdata: true, zogInfo: true, pageGiftHelper: true,
+	    platiSales: true, salesMaster: true, catalogInfo: true, catalogHider: false, newsFilter: true,
+	    Kaznachei: true, homeInfo: true, Sledilka: true, wishlistGiftHelper: true, stelicasRoulette: true, RuRegionalPriceAnalyzer: true,
+	    autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false,
+        salesMasterAutoSearch: false, salesMasterAutoInsertTitle: true,
+        incognitoModeEnabled: true, showIncognitoButton: false, incognitoDefaultRegion: 'US'
+	};
+
+    const useIncognitoRegions = {
+        'AU': { name: 'Австралийский доллар' },
+        'BR': { name: 'Бразильский реал' },
+        'GB': { name: 'Британский фунт' },
+        'VN': { name: 'Вьетнамский донг' },
+        'HK': { name: 'Гонконгский доллар' },
+        'AE': { name: 'Дирхам ОАЭ' },
+        'US': { name: 'Доллар США' },
+        'EU': { name: 'Евро' },
+        'IL': { name: 'Израильский новый шекель' },
+        'IN': { name: 'Индийская рупия' },
+        'ID': { name: 'Индонезийская рупия' },
+        'KZ': { name: 'Казахстанский тенге' },
+        'CA': { name: 'Канадский доллар' },
+        'QA': { name: 'Катарский риал' },
+        'CN': { name: 'Китайский юань' },
+        'CO': { name: 'Колумбийское песо' },
+        'CR': { name: 'Коста-риканский колон' },
+        'KW': { name: 'Кувейтский динар' },
+        'AR': { name: 'Лат. Ам. - Доллар США' },
+        'MY': { name: 'Малазийский ринггит' },
+        'TR': { name: 'MENA - Доллар США' },
+        'MX': { name: 'Мексиканское песо' },
+        'NZ': { name: 'Новозеландский доллар' },
+        'NO': { name: 'Норвежская крона' },
+        'PE': { name: 'Перуанский соль' },
+        'PL': { name: 'Польский злотый' },
+        'RU': { name: 'Российский рубль' },
+        'SA': { name: 'Саудовский риал' },
+        'SG': { name: 'Сингапурский доллар' },
+        'AZ': { name: 'СНГ - Доллар США' },
+        'TW': { name: 'Тайваньский доллар' },
+        'TH': { name: 'Тайский бат' },
+        'UA': { name: 'Украинская гривна' },
+        'UY': { name: 'Уругвайское песо' },
+        'PH': { name: 'Филиппинское песо' },
+        'CL': { name: 'Чилийское песо' },
+        'CH': { name: 'Швейцарский франк' },
+        'PK': { name: 'Юж. Азия - Доллар США' },
+        'ZA': { name: 'Южноафриканский рэнд' },
+        'KR': { name: 'Южнокорейская вона' },
+        'JP': { name: 'Японская иена' }
     };
 
     const dependentModules = {
@@ -413,10 +580,11 @@
                     <li>Фильтрация по цене (RUR, USD, EUR, UAH), продажам, рейтингу, наличию плохих отзывов/возвратов, участию в скидках, дате добавления.</li>
                     <li>Исключение товаров по ключевым словам (панель справа).</li>
                     <li>Сохранение фильтров, сортировки, валюты и исключений.</li>
+                    <li>Возможность экспортировать и импортировать список исключений.</li>
                 </ul>
                  <p>Используются официальные API Plati.Market.</p>
                <img src="https://i.imgur.com/lyL8i5g.png" alt="Кнопка Plati" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
-                <img src="https://i.imgur.com/j1TGmY8.png" alt="Окно Plati" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                <img src="https://i.imgur.com/X5NDh6D.png" alt="Окно Plati" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
             `
         },
         zogInfo: {
@@ -443,12 +611,13 @@
                 <p><strong>Что делает:</strong> Добавляет кнопку "%" рядом с кнопкой "В желаемое" на странице игры. Нажатие открывает модальное окно с ценами на эту игру из различных цифровых магазинов.</p>
                 <p><strong>Возможности окна агрегатора:</strong></p>
                 <ul>
-                    <li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market и текущей страницы Steam.</li>
+                    <li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market, Rushbe и текущей страницы Steam.</li>
                     <li>Переключение валют: Возможность просмотра всех цен в рублях (RUB, по умолчанию) или в долларах США (USD), с автоматической конвертацией по актуальному курсу. Выбор валюты сохраняется.</li>
                     <li>Сортировка по цене, проценту скидки, сумме скидки, названию.</li>
                     <li>Фильтрация по диапазону цен, проценту и сумме скидки, наличию скидки, названию (слова через ";"), магазинам.</li>
                     <li>Исключение товаров по ключевым словам.</li>
                     <li>Сохранение состояния фильтров, сортировки и исключений.</li>
+                    <li>Возможность экспортировать и импортировать список исключений.</li>
                 </ul>
                  <p>Использует различные методы для получения цен (API, парсинг HTML).</p>
                 <img src="https://i.imgur.com/PsrocCt.png" alt="Пример Агрегатора 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
@@ -764,7 +933,10 @@
                 <p><strong>Что делает:</strong> Добавляет кнопку со значком лупы <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align: middle;"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg> на страницу списка желаемого, позволяющую определить, какие игры можно подарить друзьям в других регионах.</p>
                 <p><strong>Основные функции:</strong></p>
                 <ul>
-                    <li>Загружает игры из отображаемого списка желаемого и выводит их в виде информативных карточек с возможностью сортировки.</li>
+                    <li>Загружает игры из отображаемого списка желаемого и выводит их в виде информативных карточек.</li>
+                    <li>На карточках отображается подробная информация: цена, скидка, рейтинг, дата выхода, издатель, разработчик, серия, метки, поддержка русского языка и статус раннего доступа.</li>
+                    <li><strong>Для пользователей из РФ:</strong> на карточках также отображается информация о соответствии стоимости рекомендованной региональной цене (РРЦ) от Valve. Показывается статус (дороже, дешевле или равно РРЦ), сумма и процент отклонения.</li>
+                    <li>Предоставляет гибкую систему фильтрации по цене, скидке, рейтингу, дате выхода, поддержке русского языка, статусу раннего доступа, а также <strong>по соответствию РРЦ (для РФ)</strong>.</li>
                     <li>Активирует режим <strong>помощника подарков</strong>:
                         <ul>
                             <li>Вы выбираете регион вашего друга.</li>
@@ -777,7 +949,7 @@
                 </ul>
                  <p>Это помогает легко найти подходящие и экономически целесообразные подарки для друзей за границей.</p>
                  <p><i><small>*Примечание: Скорость загрузки данных зависит от размера списка желаемого.</small></i></p>
-                 <img src="https://i.imgur.com/WPbhyPI.png" alt="Пример WishlistGiftHelper 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
+                 <img src="https://i.imgur.com/wq9eRCW.png" alt="Пример WishlistGiftHelper 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
         },
         // --- Дополнительные ---
         autoExpandHltb: {
@@ -786,17 +958,80 @@
             title: "Автоматически раскрывать спойлер HLTB",
             details: "<p>Если включено, блок с информацией о времени прохождения (HLTB) на странице игры будет автоматически раскрываться при загрузке страницы (если основной модуль HLTB включен).</p><p>Удобно, если вы всегда хотите видеть эту информацию без лишнего щелчка.</p>"
         },
+        salesMasterAutoSearch: {
+            category: 'additional',
+            label: "Авто-сбор цен в агрегаторе цен",
+            title: "Автоматический сбор цен в агрегаторе цен (%)",
+            details: "<p>Если опция включена, при открытии модального окна <strong>Агрегатора цен (%)</strong> сбор предложений из магазинов начнется автоматически, без необходимости нажимать кнопку 'Обновить %'.</p><p>Это удобно, если вы всегда хотите сразу видеть актуальные цены при каждом открытии окна.</p>"
+        },
         autoLoadReviews: {
             category: 'additional',
             label: "Авто-загрузка доп. обзоров",
             title: "Автоматически загружать дополнительные обзоры",
             details: "<p>Если включено, блок с дополнительными обзорами (Тотальные, Безкитайские, Русские) на странице игры будет загружаться автоматически при загрузке страницы (если основной модуль 'Индикаторы/Обзоры' включен).</p><p>Экономит щелчок, если вам всегда нужна эта статистика.</p>"
         },
+        salesMasterAutoInsertTitle: {
+            category: 'additional',
+            label: "Авто-подстановка названия в агрегаторе цен",
+            title: "Автоматическая подстановка названия в агрегаторе цен (%)",
+            details: `
+                <p>Если опция включена, после завершения сбора данных (как ручного, так и автоматического) название текущей игры будет автоматически вставлено в поле фильтра по названию.</p>
+                <div style="margin-top: 15px; padding: 10px; background-color: rgba(255, 179, 0, 0.1); border: 1px solid rgba(255, 179, 0, 0.4); border-radius: 4px; font-size: 0.95em; line-height: 1.4;">
+                    <p style="margin: 0 0 5px 0; font-weight: bold; color: #FFB300;">⚠️ Важно:</p>
+                    <p style="margin: 0; color: #c6d4df;">Для более точного поиска рекомендуется сокращать подставленное название. Например, вместо "DEATH STRANDING DIRECTOR'S CUT" лучше оставить только "DEATH STRANDING". Это поможет найти предложения, где продавцы могли изменить или сократить название, например, "Death Stranding (Director's Cut)" или "Death Stranding D.C.".</p>
+                </div>
+            `
+        },
         toggleEnglishLangInfo: {
             category: 'additional',
             label: "Показ инфо об англ. языке",
             title: "Отображать данные об английском языке",
             details: "<p><strong>Функция для переводчиков и интересующихся.</strong> Если включено, в блоках дополнительной информации (в каталоге при наведении и в ленте активности при наведении) будет также отображаться информация о поддержке английского языка (интерфейс, озвучка, субтитры), аналогично русскому.</p><p>По умолчанию эта информация скрыта для экономии места.</p>"
+        },
+        incognitoModeEnabled: {
+            category: 'incognitoMode',
+            label: "Виртуальный режим «Инкогнито»",
+            title: "Главный переключатель виртуального режима «Инкогнито» (В.Р.И.)",
+            details: `
+                <p><strong>Что делает:</strong> Полностью включает или отключает основную функцию В.Р.И. — автоматический обход региональных блокировок.</p>
+                <ul>
+                    <li><strong>Включено (по умолчанию):</strong> Если скрипт обнаружит на странице игры сообщение "Данный товар недоступен в вашем регионе", он автоматически попытается загрузить страницу через выбранный регион В.Р.И.</li>
+                    <li><strong>Отключено:</strong> Автоматический обход блокировок производиться не будет. Страница с региональным ограничением останется без изменений.</li>
+                </ul>
+                <div style="margin-top: 15px; padding: 10px; background-color: rgba(255, 179, 0, 0.1); border: 1px solid rgba(255, 179, 0, 0.4); border-radius: 4px; font-size: 0.95em; line-height: 1.4;">
+                    <p style="margin: 0; color: #c6d4df;"><strong>Важно:</strong> Это главный переключатель. Его отключение деактивирует автоматический обход, даже если остальные настройки В.Р.И. (кнопка, регион) заданы. Ручной запуск через кнопку "in" по-прежнему будет работать.</p>
+                </div>
+                <img src="https://i.imgur.com/TGmRkOP.png" alt="Пример" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+            `
+         },
+        showIncognitoButton: {
+            category: 'incognitoMode',
+            label: "Кнопка режима «Инкогнито»",
+            title: "Отображение кнопки ручного включения режима «Инкогнито»",
+            details: `
+                <p><strong>Что делает:</strong> Добавляет или убирает кнопку "in" рядом с логотипом Steam.</p>
+                <p>Эта кнопка позволяет вручную перезагрузить любую страницу Steam в «виртуальном режиме инкогнито».</p>
+                <ul>
+                    <li><strong>Включено:</strong> Кнопка "in" будет видна.</li>
+                    <li><strong>Отключено:</strong> Кнопка "in" будет скрыта.</li>
+                </ul>
+                <p><em>Примечание:</em> Отключение кнопки не отключает сам режим инкогнито. Он запускается автоматически для просмотра заблокированных страниц. Эта опция контролирует только элемент для ручного запуска.</p>
+                <img src="https://i.imgur.com/FyKBRMa.png" alt="Пример кнопки Инкогнито" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+            `
+        },
+        incognitoDefaultRegion: {
+            category: 'incognitoMode',
+            label: "Регион В.Р.И.",
+            title: "Выбор региона по умолчанию для виртуального режима «Инкогнито»",
+            details: `
+                <p><strong>Что делает:</strong> Позволяет выбрать регион, от которого будут осуществляться запросы в режиме «Инкогнито».</p>
+                <p>По умолчанию используется <strong>US (США)</strong>, так как это наиболее универсальный регион.</p>
+                <p>Изменение этого параметра повлияет на:</p>
+                <ul>
+                    <li>Автоматический обход региональных блокировок.</li>
+                    <li>Ручной запуск режима инкогнито через кнопку 'in'.</li>
+                </ul>
+            `
         }
     };
 
@@ -916,95 +1151,175 @@
     }
 
     function createSettingRow(key) {
-        const settingData = settingInfo[key];
-        if (!settingData) return null;
+         const settingData = settingInfo[key];
+         if (!settingData) return null;
 
-        const row = document.createElement('div');
-        row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; min-height: 24px;';
+         const row = document.createElement('div');
+         row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; min-height: 24px;';
 
-        const labelContainer = document.createElement('label');
-        labelContainer.style.cssText = 'display: flex; align-items: center; cursor: pointer; flex-grow: 1; margin-right: 10px;';
+         const labelContainer = document.createElement('label');
+         labelContainer.style.cssText = 'display: flex; align-items: center; cursor: pointer; flex-grow: 1; margin-right: 10px;';
 
-        const checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = useCurrentSettings[key];
-        checkbox.dataset.settingKey = key;
-        checkbox.style.cssText = 'margin-right: 10px; accent-color: #67c1f5; cursor: pointer; width: 16px; height: 16px; flex-shrink: 0;';
+         const checkbox = document.createElement('input');
+         checkbox.type = 'checkbox';
+         if (key === 'showIncognitoButton') {
+             checkbox.checked = GM_getValue('use_incognito_button_enabled', false);
+         } else if (key === 'incognitoModeEnabled') {
+             checkbox.checked = GM_getValue('use_incognito_mode_enabled', true);
+         } else {
+             checkbox.checked = useCurrentSettings[key];
+         }
+         checkbox.dataset.settingKey = key;
+         checkbox.style.cssText = 'margin-right: 10px; accent-color: #67c1f5; cursor: pointer; width: 16px; height: 16px; flex-shrink: 0;';
 
-        const labelText = document.createElement('span');
-        labelText.textContent = settingData.label || key;
-        labelText.style.lineHeight = '1.3';
+         const labelText = document.createElement('span');
+         labelText.textContent = settingData.label || key;
+         labelText.style.lineHeight = '1.3';
 
-        if (key === 'gamePage') {
-            labelText.style.color = '#9E9E9E';
-            checkbox.style.accentColor = '#FFB300';
+         if (key === 'gamePage') {
+             labelText.style.color = '#9E9E9E';
+             checkbox.style.accentColor = '#FFB300';
 
-            const dependentLabelsTooltip = dependentModules.gamePage
-                .map(depKey => `'${settingInfo[depKey]?.label || depKey}'`)
-                .join(', ');
-            labelContainer.title = `Отключение этого модуля приведет к нарушению работы или полному отключению модулей: ${dependentLabelsTooltip}. Эти модули критически зависят от данного модуля.`;
-        }
+             const dependentLabelsTooltip = dependentModules.gamePage
+                 .map(depKey => `'${settingInfo[depKey]?.label || depKey}'`)
+                 .join(', ');
+             labelContainer.title = `Отключение этого модуля приведет к нарушению работы или полному отключению модулей: ${dependentLabelsTooltip}. Эти модули критически зависят от данного модуля.`;
+         }
 
-        checkbox.addEventListener('change', function() {
-            const currentSettingKey = this.dataset.settingKey;
-            const isChecked = this.checked;
+         checkbox.addEventListener('change', function() {
+             const currentSettingKey = this.dataset.settingKey;
+             const isChecked = this.checked;
 
-            if (currentSettingKey === 'gamePage' && !isChecked) {
-                const dependentFullNames = dependentModules.gamePage
-                    .map(depKey => `'${settingInfo[depKey]?.label || depKey}'`)
-                    .join(', ');
-                showConfirmationModal(
-                    'Подтверждение отключения',
-                    `Отключение этого модуля приведёт к отключению модулей: ${dependentFullNames}. Вы уверены?`,
-                    () => {
-                        useCurrentSettings[currentSettingKey] = false;
-                        scriptsConfig[currentSettingKey] = false;
+             if (currentSettingKey === 'showIncognitoButton') {
+                 GM_setValue('use_incognito_button_enabled', isChecked);
+             } else if (currentSettingKey === 'incognitoModeEnabled') {
+ 			 	GM_setValue('use_incognito_mode_enabled', isChecked);
+             } else if (currentSettingKey === 'gamePage' && !isChecked) {
+                 const dependentFullNames = dependentModules.gamePage
+                     .map(depKey => `'${settingInfo[depKey]?.label || depKey}'`)
+                     .join(', ');
+                 showConfirmationModal(
+                     'Подтверждение отключения',
+                     `Отключение этого модуля приведёт к отключению модулей: ${dependentFullNames}. Вы уверены?`,
+                     () => {
+                         useCurrentSettings[currentSettingKey] = false;
+                         scriptsConfig[currentSettingKey] = false;
 
-                        dependentModules.gamePage.forEach(depKey => {
-                            useCurrentSettings[depKey] = false;
-                            scriptsConfig[depKey] = false;
-                            const depCheckbox = document.querySelector(`input[data-setting-key="${depKey}"]`);
-                            if (depCheckbox) {
-                                depCheckbox.checked = false;
-                            }
-                        });
-                        GM_setValue('useSettings', useCurrentSettings);
-                    },
-                    () => {
-                        this.checked = true;
-                    }
-                );
-            } else {
-                useCurrentSettings[currentSettingKey] = isChecked;
-                scriptsConfig[currentSettingKey] = isChecked;
-                GM_setValue('useSettings', useCurrentSettings);
-            }
-        });
+                         dependentModules.gamePage.forEach(depKey => {
+                             useCurrentSettings[depKey] = false;
+                             scriptsConfig[depKey] = false;
+                             const depCheckbox = document.querySelector(`input[data-setting-key="${depKey}"]`);
+                             if (depCheckbox) {
+                                 depCheckbox.checked = false;
+                             }
+                         });
+                         GM_setValue('useSettings', useCurrentSettings);
+                     },
+                     () => {
+                         this.checked = true;
+                     }
+                 );
+             } else {
+                 useCurrentSettings[currentSettingKey] = isChecked;
+                 scriptsConfig[currentSettingKey] = isChecked;
+                 GM_setValue('useSettings', useCurrentSettings);
+             }
+         });
 
-        labelContainer.appendChild(checkbox);
-        labelContainer.appendChild(labelText);
-        row.appendChild(labelContainer);
+         labelContainer.appendChild(checkbox);
+         labelContainer.appendChild(labelText);
+         row.appendChild(labelContainer);
 
-        const infoButton = document.createElement('span');
-        infoButton.textContent = 'ⓘ';
-        infoButton.style.cssText = `
-            cursor: pointer; color: #67c1f5; font-size: 18px;
-            line-height: 1; font-weight: bold;
-            margin-left: 5px; padding: 0 4px; border-radius: 3px; user-select: none;
-            transition: color 0.2s, background-color 0.2s;
-            flex-shrink: 0; vertical-align: middle;
-        `;
-        infoButton.title = 'Подробнее...';
-        infoButton.onmouseover = () => { infoButton.style.backgroundColor = 'rgba(103, 193, 245, 0.2)'; };
-        infoButton.onmouseout = () => { infoButton.style.backgroundColor = 'transparent'; };
-        infoButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            showInfoModal(key);
-        });
+         const infoButton = document.createElement('span');
+         infoButton.textContent = 'ⓘ';
+         infoButton.style.cssText = `
+             cursor: pointer; color: #67c1f5; font-size: 18px;
+             line-height: 1; font-weight: bold;
+             margin-left: 5px; padding: 0 4px; border-radius: 3px; user-select: none;
+             transition: color 0.2s, background-color 0.2s;
+             flex-shrink: 0; vertical-align: middle;
+         `;
+         infoButton.title = 'Подробнее...';
+         infoButton.onmouseover = () => { infoButton.style.backgroundColor = 'rgba(103, 193, 245, 0.2)'; };
+         infoButton.onmouseout = () => { infoButton.style.backgroundColor = 'transparent'; };
+         infoButton.addEventListener('click', (e) => {
+             e.stopPropagation();
+             showInfoModal(key);
+         });
 
-        row.appendChild(infoButton);
-        return row;
-    }
+         row.appendChild(infoButton);
+         return row;
+     }
+
+	function createSettingSelectRow(key, options) {
+	    const settingData = settingInfo[key];
+	    if (!settingData) return null;
+
+	    const row = document.createElement('div');
+	    row.style.cssText = 'display: flex; align-items: center; justify-content: space-between; min-height: 24px; padding: 5px 0;';
+
+	    const labelContainer = document.createElement('label');
+	    labelContainer.style.cssText = 'display: flex; align-items: center; cursor: default; flex-grow: 1; margin-right: 10px;';
+
+	    const labelText = document.createElement('span');
+	    labelText.textContent = settingData.label || key;
+	    labelText.style.lineHeight = '1.3';
+	    labelText.style.marginRight = '10px';
+	    labelText.style.flexShrink = '0';
+	    labelContainer.appendChild(labelText);
+
+	    const select = document.createElement('select');
+	    select.dataset.settingKey = key;
+	    select.style.cssText = `
+	        flex-grow: 1;
+	        padding: 4px 6px;
+	        background-color: #2a3f5a;
+	        color: #c6d4df;
+	        border: 1px solid #567d9c;
+	        border-radius: 3px;
+	        cursor: pointer;
+	        font-size: 13px;
+	    `;
+
+	    const sortedOptions = Object.entries(options).sort(([, a], [, b]) => a.name.localeCompare(b.name));
+
+	    sortedOptions.forEach(([code, data]) => {
+	        const option = document.createElement('option');
+	        option.value = code;
+	        option.textContent = `${data.name} (${code})`;
+	        select.appendChild(option);
+	    });
+
+	    select.value = GM_getValue('use_incognito_default_region', 'US');
+
+	    select.addEventListener('change', function() {
+	        const selectedValue = this.value;
+	        useCurrentSettings[key] = selectedValue;
+	        GM_setValue('use_incognito_default_region', selectedValue);
+	    });
+
+	    labelContainer.appendChild(select);
+	    row.appendChild(labelContainer);
+
+	    const infoButton = document.createElement('span');
+	    infoButton.textContent = 'ⓘ';
+	    infoButton.style.cssText = `
+	        cursor: pointer; color: #67c1f5; font-size: 18px; line-height: 1;
+	        font-weight: bold; margin-left: 5px; padding: 0 4px; border-radius: 3px;
+	        user-select: none; transition: color 0.2s, background-color 0.2s;
+	        flex-shrink: 0; vertical-align: middle;
+	    `;
+	    infoButton.title = 'Подробнее...';
+	    infoButton.onmouseover = () => { infoButton.style.backgroundColor = 'rgba(103, 193, 245, 0.2)'; };
+	    infoButton.onmouseout = () => { infoButton.style.backgroundColor = 'transparent'; };
+	    infoButton.addEventListener('click', (e) => {
+	        e.stopPropagation();
+	        showInfoModal(key);
+	    });
+	    row.appendChild(infoButton);
+
+	    return row;
+	}
 
     function createSettingsModal() {
         const existingModal = document.getElementById('useSettingsModal');
@@ -1040,47 +1355,63 @@
 
         GM_addStyle(`
             #useSettingsModal::-webkit-scrollbar {
-            	width: 8px;
+                width: 8px;
             }
-
             #useSettingsModal::-webkit-scrollbar-track {
-            	background: var(--scrollbar-track-color);
-            	border-radius: 4px;
+                background: var(--scrollbar-track-color);
+                border-radius: 4px;
             }
-
             #useSettingsModal::-webkit-scrollbar-thumb {
-            	background-color: var(--scrollbar-thumb-color);
-            	border-radius: 4px;
-            	border: 2px solid var(--scrollbar-track-color);
+                background-color: var(--scrollbar-thumb-color);
+                border-radius: 4px;
+                border: 2px solid var(--scrollbar-track-color);
             }
-
             #useSettingsModal::-webkit-scrollbar-thumb:hover {
-            	background-color: #67c1f5;
+                background-color: #67c1f5;
             }
-
             #useCreditsFooter {
-            	position: absolute;
-            	bottom: 20px;
-            	right: 25px;
-            	font-size: 12px;
-            	color: #8091a2;
-            	text-align: right;
-            	line-height: 1.4;
-            	z-index: 1;
+                position: absolute;
+                bottom: 5px;
+                right: 0;
+                font-size: 12px;
+                color: #8091a2;
+                text-align: right;
+                line-height: 1.4;
+                z-index: 1;
+                pointer-events: none;
             }
-
             #useCreditsFooter a {
-            	color: #8f98a0;
-            	text-decoration: none;
+                color: #8f98a0;
+                text-decoration: none;
+                pointer-events: auto;
             }
-
             #useCreditsFooter a:hover {
-            	color: #67c1f5;
-            	text-decoration: underline;
+                color: #67c1f5;
+                text-decoration: underline;
+            }
+            #useCreditsFooter .author-line {
+                margin-bottom: 3px;
             }
 
-            #useCreditsFooter .author-line {
-            	margin-bottom: 3px;
+            #useOfficialPageFooter {
+                position: absolute;
+                bottom: 7px;
+                line-height: 1;
+                z-index: 1;
+            }
+            #useOfficialPageFooter a {
+                display: inline-block;
+                text-decoration: none;
+                transition: opacity 0.2s;
+            }
+            #useOfficialPageFooter a:hover {
+                opacity: 0.85;
+            }
+            #useOfficialPageFooter img {
+                display: block;
+                border: none;
+                width: 171px;
+                height: 24px;
             }
         `);
 
@@ -1095,7 +1426,8 @@
             community: { title: 'Для ленты активности', container: document.createElement('div') },
             market: { title: 'Для торговой площадки', container: document.createElement('div') },
             news_wishlist: { title: 'Для списка желаемого / Новостей', container: document.createElement('div') },
-            additional: { title: 'Дополнительные настройки', container: document.createElement('div') }
+            additional: { title: 'Дополнительные настройки', container: document.createElement('div') },
+            incognitoMode: { title: 'Виртуальный режим «Инкогнито»', container: document.createElement('div') }
         };
 
         for (const catKey in categories) {
@@ -1114,17 +1446,28 @@
         for (const key of Object.keys(settingInfo)) {
             const settingData = settingInfo[key];
             if (settingData && settingData.category && categories[settingData.category]) {
-                 if (useCurrentSettings.hasOwnProperty(key)) {
-                     const settingRow = createSettingRow(key);
-                     if (settingRow) {
+                if (useCurrentSettings.hasOwnProperty(key)) {
+                    let settingRow;
+                    if (key === 'incognitoDefaultRegion') {
+                        settingRow = createSettingSelectRow(key, useIncognitoRegions);
+                    } else {
+                        settingRow = createSettingRow(key);
+                    }
+
+                    if (settingRow) {
                         const gridContainer = categories[settingData.category].container.querySelector('div[style*="grid-template-columns"]');
                         if (gridContainer) {
                             gridContainer.appendChild(settingRow);
                         }
-                     }
-                 }
+                    }
+                }
             }
         }
+
+        const bottomActionsWrapper = document.createElement('div');
+        bottomActionsWrapper.id = 'useBottomActionsWrapper';
+        bottomActionsWrapper.style.position = 'relative';
+        bottomActionsWrapper.style.marginTop = '30px';
 
         const creditsFooter = document.createElement('div');
         creditsFooter.id = 'useCreditsFooter';
@@ -1136,7 +1479,6 @@
 
         const zogLine = document.createElement('div');
         zogLine.appendChild(document.createTextNode('и '));
-
         const zogLink = document.createElement('a');
         zogLink.href = 'https://www.zoneofgames.ru';
         zogLink.target = '_blank';
@@ -1145,22 +1487,43 @@
         zogLine.appendChild(zogLink);
         creditsFooter.appendChild(zogLine);
 
-        modal.appendChild(creditsFooter);
+        bottomActionsWrapper.appendChild(creditsFooter);
+
+        const officialPageFooter = document.createElement('div');
+        officialPageFooter.id = 'useOfficialPageFooter';
+
+        const pageLink = document.createElement('a');
+        pageLink.href = 'https://greasyfork.org/ru/scripts/526180-ultimate-steam-enhancer';
+        pageLink.target = '_blank';
+        pageLink.title = 'Страница на Greasy Fork';
+
+        const badgeImage = document.createElement('img');
+        badgeImage.src = 'https://img.shields.io/badge/Страница_на-GreasyFork-blue.svg';
+        badgeImage.alt = 'Страница на Greasy Fork';
+
+        pageLink.appendChild(badgeImage);
+        officialPageFooter.appendChild(pageLink);
+        bottomActionsWrapper.appendChild(officialPageFooter);
 
         const closeButton = document.createElement('button');
         closeButton.textContent = 'Закрыть';
         closeButton.style.cssText = `
-            display: block; margin: 30px auto 0; padding: 10px 30px;
+            display: block; margin: 0 auto;
+            padding: 10px 30px;
             background-color: #67c1f5; color: #1b2838; border: none;
             border-radius: 3px; cursor: pointer; font-size: 15px; font-weight: bold;
             transition: background-color 0.2s;
+            position: relative; z-index: 2;
         `;
         closeButton.onmouseover = () => closeButton.style.backgroundColor = '#8ad3f7';
         closeButton.onmouseout = () => closeButton.style.backgroundColor = '#67c1f5';
         closeButton.addEventListener('click', function() {
             modal.remove();
         });
-        modal.appendChild(closeButton);
+
+        bottomActionsWrapper.appendChild(closeButton);
+
+        modal.appendChild(bottomActionsWrapper);
 
         document.body.appendChild(modal);
     }
@@ -11668,229 +12031,298 @@
             const WGH_GIFT_PRICE_DIFF_THRESHOLD = 0.10;
             const WGH_IMAGE_BASE_URL = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/';
             const WGH_COUNTRY_CURRENCY_MAP = {
-                'US': {
-                    name: 'U.S. Dollar',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'EU': {
-                    name: 'Euro',
-                    code: 3,
-                    iso: 'eur'
-                },
-                'AR': {
-                    name: 'LATAM - U.S. Dollar',
-                    code: 1,
-                    iso: 'usd'
-                },
                 'AU': {
-                    name: 'Australian Dollar',
+                    name: 'Австралийский доллар',
                     code: 21,
                     iso: 'aud'
                 },
                 'BR': {
-                    name: 'Brazilian Real',
+                    name: 'Бразильский реал',
                     code: 7,
                     iso: 'brl'
                 },
                 'GB': {
-                    name: 'British Pound',
+                    name: 'Британский фунт',
                     code: 2,
                     iso: 'gbp'
                 },
-                'CA': {
-                    name: 'Canadian Dollar',
-                    code: 20,
-                    iso: 'cad'
-                },
-                'CL': {
-                    name: 'Chilean Peso',
-                    code: 25,
-                    iso: 'clp'
-                },
-                'CN': {
-                    name: 'Chinese Yuan',
-                    code: 23,
-                    iso: 'cny'
-                },
-                'AZ': {
-                    name: 'CIS - U.S. Dollar',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'CO': {
-                    name: 'Colombian Peso',
-                    code: 27,
-                    iso: 'cop'
-                },
-                'CR': {
-                    name: 'Costa Rican Colon',
-                    code: 40,
-                    iso: 'crc'
+                'VN': {
+                    name: 'Вьетнамский донг',
+                    code: 15,
+                    iso: 'vnd'
                 },
                 'HK': {
-                    name: 'Hong Kong Dollar',
+                    name: 'Гонконгский доллар',
                     code: 29,
                     iso: 'hkd'
                 },
+                'AE': {
+                    name: 'Дирхам ОАЭ',
+                    code: 32,
+                    iso: 'aed'
+                },
+                'US': {
+                    name: 'Доллар США',
+                    code: 1,
+                    iso: 'usd'
+                },
+                'EU': {
+                    name: 'Евро',
+                    code: 3,
+                    iso: 'eur'
+                },
+                'IL': {
+                    name: 'Израильский новый шекель',
+                    code: 35,
+                    iso: 'ils'
+                },
                 'IN': {
-                    name: 'Indian Rupee',
+                    name: 'Индийская рупия',
                     code: 24,
                     iso: 'inr'
                 },
                 'ID': {
-                    name: 'Indonesian Rupiah',
+                    name: 'Индонезийская рупия',
                     code: 10,
                     iso: 'idr'
                 },
-                'IL': {
-                    name: 'Israeli New Shekel',
-                    code: 35,
-                    iso: 'ils'
-                },
-                'JP': {
-                    name: 'Japanese Yen',
-                    code: 8,
-                    iso: 'jpy'
-                },
                 'KZ': {
-                    name: 'Kazakhstani Tenge',
+                    name: 'Казахстанский тенге',
                     code: 37,
                     iso: 'kzt'
                 },
+                'CA': {
+                    name: 'Канадский доллар',
+                    code: 20,
+                    iso: 'cad'
+                },
+                'QA': {
+                    name: 'Катарский риал',
+                    code: 39,
+                    iso: 'qar'
+                },
+                'CN': {
+                    name: 'Китайский юань',
+                    code: 23,
+                    iso: 'cny'
+                },
+                'CO': {
+                    name: 'Колумбийское песо',
+                    code: 27,
+                    iso: 'cop'
+                },
+                'CR': {
+                    name: 'Коста-риканский колон',
+                    code: 40,
+                    iso: 'crc'
+                },
                 'KW': {
-                    name: 'Kuwaiti Dinar',
+                    name: 'Кувейтский динар',
                     code: 38,
                     iso: 'kwd'
                 },
+                'AR': {
+                    name: 'Лат. Ам. - Доллар США',
+                    code: 1,
+                    iso: 'usd'
+                },
                 'MY': {
-                    name: 'Malaysian Ringgit',
+                    name: 'Малазийский ринггит',
                     code: 11,
                     iso: 'myr'
                 },
+                'TR': {
+                    name: 'MENA - Доллар США',
+                    code: 1,
+                    iso: 'usd'
+                },
                 'MX': {
-                    name: 'Mexican Peso',
+                    name: 'Мексиканское песо',
                     code: 19,
                     iso: 'mxn'
                 },
                 'NZ': {
-                    name: 'New Zealand Dollar',
+                    name: 'Новозеландский доллар',
                     code: 22,
                     iso: 'nzd'
                 },
                 'NO': {
-                    name: 'Norwegian Krone',
+                    name: 'Норвежская крона',
                     code: 9,
                     iso: 'nok'
                 },
                 'PE': {
-                    name: 'Peruvian Sol',
+                    name: 'Перуанский соль',
                     code: 26,
                     iso: 'pen'
                 },
-                'PH': {
-                    name: 'Philippine Peso',
-                    code: 12,
-                    iso: 'php'
-                },
                 'PL': {
-                    name: 'Polish Zloty',
+                    name: 'Польский злотый',
                     code: 6,
                     iso: 'pln'
                 },
-                'QA': {
-                    name: 'Qatari Riyal',
-                    code: 39,
-                    iso: 'qar'
-                },
                 'RU': {
-                    name: 'Russian Ruble',
+                    name: 'Российский рубль',
                     code: 5,
                     iso: 'rub'
                 },
                 'SA': {
-                    name: 'Saudi Riyal',
+                    name: 'Саудовский риал',
                     code: 31,
                     iso: 'sar'
                 },
                 'SG': {
-                    name: 'Singapore Dollar',
+                    name: 'Сингапурский доллар',
                     code: 13,
                     iso: 'sgd'
                 },
-                'ZA': {
-                    name: 'South African Rand',
-                    code: 28,
-                    iso: 'zar'
-                },
-                'PK': {
-                    name: 'South Asia - USD',
+                'AZ': {
+                    name: 'СНГ - Доллар США',
                     code: 1,
                     iso: 'usd'
                 },
-                'KR': {
-                    name: 'South Korean Won',
-                    code: 16,
-                    iso: 'krw'
-                },
-                'CH': {
-                    name: 'Swiss Franc',
-                    code: 4,
-                    iso: 'chf'
-                },
                 'TW': {
-                    name: 'Taiwan Dollar',
+                    name: 'Тайваньский доллар',
                     code: 30,
                     iso: 'twd'
                 },
                 'TH': {
-                    name: 'Thai Baht',
+                    name: 'Тайский бат',
                     code: 14,
                     iso: 'thb'
                 },
-                'TR': {
-                    name: 'MENA - U.S. Dollar',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'AE': {
-                    name: 'U.A.E. Dirham',
-                    code: 32,
-                    iso: 'aed'
-                },
                 'UA': {
-                    name: 'Ukrainian Hryvnia',
+                    name: 'Украинская гривна',
                     code: 18,
                     iso: 'uah'
                 },
                 'UY': {
-                    name: 'Uruguayan Peso',
+                    name: 'Уругвайское песо',
                     code: 41,
                     iso: 'uyu'
                 },
-                'VN': {
-                    name: 'Vietnamese Dong',
-                    code: 15,
-                    iso: 'vnd'
+                'PH': {
+                    name: 'Филиппинское песо',
+                    code: 12,
+                    iso: 'php'
+                },
+                'CL': {
+                    name: 'Чилийское песо',
+                    code: 25,
+                    iso: 'clp'
+                },
+                'CH': {
+                    name: 'Швейцарский франк',
+                    code: 4,
+                    iso: 'chf'
+                },
+                'PK': {
+                    name: 'Юж. Азия - Доллар США',
+                    code: 1,
+                    iso: 'usd'
+                },
+                'ZA': {
+                    name: 'Южноафриканский рэнд',
+                    code: 28,
+                    iso: 'zar'
+                },
+                'KR': {
+                    name: 'Южнокорейская вона',
+                    code: 16,
+                    iso: 'krw'
+                },
+                'JP': {
+                    name: 'Японская иена',
+                    code: 8,
+                    iso: 'jpy'
                 }
             };
             const WGH_CURRENCY_CODE_TO_COUNTRY = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([country, data]) => [data.code, country]));
             const WGH_CURRENCY_CODE_TO_ISO = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([_, data]) => [data.code, data.iso]));
-            const WGH_CURRENCY_ISO_TO_CODE = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([_, data]) => [data.iso, data.code]));
-            const WGH_DEFAULT_SORT = {
-                field: 'price',
-                direction: 'asc'
-            };
+            const WGH_DEFAULT_SORT = { field: 'price', direction: 'asc' };
+            const WGH_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v2_wgh';
+            const WGH_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
+            const WGH_FILTER_STORAGE_KEY = 'wgh_filters_v1';
+            const WGH_FILTER_DEBOUNCE_MS = 400;
+
+            function debounce(func, wait) {
+                let timeout;
+                return function executedFunction(...args) {
+                    const later = () => {
+                        clearTimeout(timeout);
+                        func(...args);
+                    };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            }
+
+            function wgh_getCustomReviewDescription(percent, count) {
+                if (count === 0) return 'Нет обзоров';
+                if (percent === null || typeof percent === 'undefined') return 'Нет обзоров';
+                if (percent >= 95) return 'Крайне положительные';
+                if (percent >= 80) return 'Очень положительные';
+                if (percent >= 70) return 'В основном положительные';
+                if (percent >= 40) return 'Смешанные';
+                if (percent >= 20) return 'В основном отрицательные';
+                if (percent >= 6)  return 'Очень отрицательные';
+                return 'Крайне отрицательные';
+            }
+
+            function calculateRecommendedRubPrice(pUSD) {
+                if (typeof pUSD !== 'number' || isNaN(pUSD)) return null;
+                if (pUSD < 0.99) return 42;
+                if (pUSD >= 0.99 && pUSD < 1.99) return 42;
+                if (pUSD >= 1.99 && pUSD < 2.99) return 82;
+                if (pUSD >= 2.99 && pUSD < 3.99) return 125;
+                if (pUSD >= 3.99 && pUSD < 4.99) return 165;
+                if (pUSD >= 4.99 && pUSD < 5.99) return 200;
+                if (pUSD >= 5.99 && pUSD < 6.99) return 240;
+                if (pUSD >= 6.99 && pUSD < 7.99) return 280;
+                if (pUSD >= 7.99 && pUSD < 8.99) return 320;
+                if (pUSD >= 8.99 && pUSD < 9.99) return 350;
+                if (pUSD >= 9.99 && pUSD < 10.99) return 385;
+                if (pUSD >= 10.99 && pUSD < 11.99) return 420;
+                if (pUSD >= 11.99 && pUSD < 12.99) return 460;
+                if (pUSD >= 12.99 && pUSD < 13.99) return 490;
+                if (pUSD >= 13.99 && pUSD < 14.99) return 520;
+                if (pUSD >= 14.99 && pUSD < 15.99) return 550;
+                if (pUSD >= 15.99 && pUSD < 16.99) return 590;
+                if (pUSD >= 16.99 && pUSD < 17.99) return 620;
+                if (pUSD >= 17.99 && pUSD < 18.99) return 650;
+                if (pUSD >= 18.99 && pUSD < 19.99) return 680;
+                if (pUSD >= 19.99 && pUSD < 22.99) return 710;
+                if (pUSD >= 22.99 && pUSD < 27.99) return 880;
+                if (pUSD >= 27.99 && pUSD < 32.99) return 1100;
+                if (pUSD >= 32.99 && pUSD < 37.99) return 1200;
+                if (pUSD >= 37.99 && pUSD < 43.99) return 1300;
+                if (pUSD >= 43.99 && pUSD < 47.99) return 1500;
+                if (pUSD >= 47.99 && pUSD < 52.99) return 1600;
+                if (pUSD >= 52.99 && pUSD < 57.99) return 1750;
+                if (pUSD >= 57.99 && pUSD < 63.99) return 1900;
+                if (pUSD >= 63.99 && pUSD < 67.99) return 2100;
+                if (pUSD >= 67.99 && pUSD < 74.99) return 2250;
+                if (pUSD >= 74.99 && pUSD < 79.99) return 2400;
+                if (pUSD >= 79.99 && pUSD < 84.99) return 2600;
+                if (pUSD >= 84.99 && pUSD < 89.99) return 2700;
+                if (pUSD >= 89.99 && pUSD < 99.99) return 2900;
+                if (pUSD >= 99.99 && pUSD < 109.99) return 3200;
+                if (pUSD >= 109.99 && pUSD < 119.99) return 3550;
+                if (pUSD >= 119.99 && pUSD < 129.99) return 3900;
+                if (pUSD >= 129.99 && pUSD < 139.99) return 4200;
+                if (pUSD >= 139.99 && pUSD < 149.99) return 4500;
+                if (pUSD >= 149.99 && pUSD < 199.99) return 4800;
+                if (pUSD >= 199.99) return 6500;
+                return null;
+            }
 
             let wgh_allAppIds = [];
             let wgh_gameDataStore = {};
-            let wgh_wishlistOwnerSteamID = null;
+            let wgh_currentResults = [];
             let wgh_currentUserCountryCode = 'RU';
             let wgh_currentUserCurrencyCode = 5;
             let wgh_currentUserISOCurrencyCode = 'RUB';
-            let wgh_currentSort = {
-                ...WGH_DEFAULT_SORT
-            };
+            let wgh_currentSort = { ...WGH_DEFAULT_SORT };
             let wgh_currentFriendCountryCode = null;
             let wgh_exchangeRates = null;
             let wgh_giftModeActive = false;
@@ -11898,44 +12330,106 @@
             let wgh_modal, wgh_closeBtn, wgh_analyzeBtn;
             let wgh_resultsContainer, wgh_resultsDiv, wgh_statusDiv, wgh_progressBar;
             let wgh_sortButtonsContainer;
-            let wgh_giftModeContainer, wgh_giftIconBtn, wgh_giftAccordion, wgh_friendRegionSelect, wgh_fetchFriendPricesBtn, wgh_giftProgressBar, wgh_giftableFilterCheckbox;
+            let wgh_giftModeContainer, wgh_giftIconBtn, wgh_friendRegionSelect, wgh_fetchFriendPricesBtn, wgh_giftProgressBar, wgh_giftableFilterCheckbox;
             let wgh_myRegionDisplay;
+            let wgh_filterToggleBtn, wgh_filterAccordionContainer;
+            let wgh_currentFilters = GM_getValue(WGH_FILTER_STORAGE_KEY, {});
+
+            async function wgh_loadSteamTags() {
+                const cached = GM_getValue(WGH_TAGS_CACHE_KEY, { data: null, timestamp: 0 });
+                const now = Date.now();
+                const CACHE_DURATION = 744 * 60 * 60 * 1000;
+                if (cached.data && (now - cached.timestamp) < CACHE_DURATION) return cached.data;
+                try {
+                    const response = await new Promise((resolve, reject) => GM_xmlhttpRequest({ method: "GET", url: WGH_TAGS_URL, onload: resolve, onerror: reject }));
+                    if (response.status === 200) {
+                        const data = JSON.parse(response.responseText);
+                        GM_setValue(WGH_TAGS_CACHE_KEY, { data: data, timestamp: now });
+                        return data;
+                    }
+                } catch (e) { console.error('[WGH] Ошибка загрузки тегов:', e); return cached.data || {}; }
+                return {};
+            }
 
             function wgh_addAnalyzeButton() {
                 const titleBlock = document.querySelector('div.jfAmlCmNzHQ-');
-                const existingButton = document.getElementById('wghAnalyzeButton');
-                if (!titleBlock || existingButton) return;
+                if (!titleBlock || document.getElementById('wghAnalyzeButton')) return;
                 wgh_analyzeBtn = document.createElement('button');
                 wgh_analyzeBtn.id = 'wghAnalyzeButton';
                 wgh_analyzeBtn.title = 'Помощник подарков';
                 wgh_analyzeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>`;
-                Object.assign(wgh_analyzeBtn.style, {
-                    marginLeft: '15px',
-                    background: 'rgba(103, 193, 245, 0.1)',
-                    border: '1px solid rgba(103, 193, 245, 0.3)',
-                    color: '#67c1f5',
-                    borderRadius: '3px',
-                    cursor: 'pointer',
-                    padding: '5px 8px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    verticalAlign: 'middle'
-                });
-                wgh_analyzeBtn.onmouseover = () => {
-                    wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.2)';
-                };
-                wgh_analyzeBtn.onmouseout = () => {
-                    wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.1)';
-                };
+                Object.assign(wgh_analyzeBtn.style, { marginLeft: '15px', background: 'rgba(103, 193, 245, 0.1)', border: '1px solid rgba(103, 193, 245, 0.3)', color: '#67c1f5', borderRadius: '3px', cursor: 'pointer', padding: '5px 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', verticalAlign: 'middle' });
+                wgh_analyzeBtn.onmouseover = () => { wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.2)'; };
+                wgh_analyzeBtn.onmouseout = () => { wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.1)'; };
                 wgh_analyzeBtn.onclick = wgh_showModal;
                 const h2Title = titleBlock.querySelector('h2');
-                if (h2Title) {
-                    h2Title.style.display = 'inline-block';
-                    h2Title.after(wgh_analyzeBtn);
-                } else {
-                    titleBlock.appendChild(wgh_analyzeBtn);
-                }
+                if (h2Title) { h2Title.style.display = 'inline-block'; h2Title.after(wgh_analyzeBtn); }
+                else { titleBlock.appendChild(wgh_analyzeBtn); }
+            }
+
+            function wgh_createFilterAccordion() {
+                wgh_filterAccordionContainer = document.createElement('div');
+                wgh_filterAccordionContainer.id = 'wghFilterAccordionContainer';
+                wgh_filterAccordionContainer.className = 'wghAccordionContainer';
+
+                const rrcFilterHtml = wgh_currentUserCountryCode === 'RU' ? `
+                    <div class="wghFilterGroup">
+                        <label class="wghFilterLabel">Фильтр по РРЦ</label>
+                        <div class="wghRadioGroup">
+                            <label><input type="radio" name="wghRrcFilter" value="any" checked>Все</label>
+                            <label><input type="radio" name="wghRrcFilter" value="lower">Дешевле РРЦ</label>
+                            <label><input type="radio" name="wghRrcFilter" value="equal">Равно РРЦ</label>
+                            <label><input type="radio" name="wghRrcFilter" value="higher">Дороже РРЦ</label>
+                        </div>
+                    </div>` : '';
+
+                wgh_filterAccordionContainer.innerHTML = `
+                    <div class="wghFilterGrid">
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel"><input type="checkbox" id="wghFilterDiscounted"> Только со скидками</label>
+                            <label class="wghFilterLabel"><input type="checkbox" id="wghFilterNoPrice"> Скрыть без цены</label>
+                        </div>
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Кол-во обзоров</label>
+                            <div class="wghRangeInput"><input type="number" id="wghFilterReviewCountMin" placeholder="От"><input type="number" id="wghFilterReviewCountMax" placeholder="До"></div>
+                        </div>
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Рейтинг обзоров (%)</label>
+                            <div class="wghRangeInput"><input type="number" id="wghFilterRatingMin" placeholder="От"><input type="number" id="wghFilterRatingMax" placeholder="До"></div>
+                        </div>
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Цена</label>
+                            <div class="wghRangeInput"><input type="number" id="wghFilterPriceMin" placeholder="От"><input type="number" id="wghFilterPriceMax" placeholder="До"></div>
+                        </div>
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Скидка (%)</label>
+                            <div class="wghRangeInput"><input type="number" id="wghFilterDiscountMin" placeholder="От"><input type="number" id="wghFilterDiscountMax" placeholder="До"></div>
+                        </div>
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Дата выхода</label>
+                            <div class="wghRangeInput"><input type="date" id="wghFilterDateMin"><input type="date" id="wghFilterDateMax"></div>
+                        </div>
+                         <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Русский язык</label>
+                            <div class="wghRadioGroup">
+                                <label><input type="radio" name="wghLangFilter" value="any" checked>Все</label>
+                                <label><input type="radio" name="wghLangFilter" value="text_only">Только текст</label>
+                                <label><input type="radio" name="wghLangFilter" value="voice">Озвучка</label>
+                                <label><input type="radio" name="wghLangFilter" value="none">Без перевода</label>
+                            </div>
+                        </div>
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Ранний доступ</label>
+                            <div class="wghRadioGroup">
+                                <label><input type="radio" name="wghEaFilter" value="any" checked>Все</label>
+                                <label><input type="radio" name="wghEaFilter" value="early_access">Только</label>
+                                <label><input type="radio" name="wghEaFilter" value="released">Без</label>
+                            </div>
+                        </div>
+                        ${rrcFilterHtml}
+                    </div>
+                    <button id="wghResetFilters" class="wghBtn">Сбросить фильтры</button>
+                `;
             }
 
             function wgh_createModal() {
@@ -11959,6 +12453,15 @@
                 wgh_statusDiv.id = 'wghStatus';
                 wgh_statusDiv.style.cssText = `flex-grow: 1; text-align: center; font-size: 14px; color: #aaa; min-height: 36px; display: flex; align-items: center; justify-content: center;`;
                 header.appendChild(wgh_statusDiv);
+
+                wgh_filterToggleBtn = document.createElement('button');
+                wgh_filterToggleBtn.id = 'wghFilterToggleBtn';
+                wgh_filterToggleBtn.className = 'wghBtn';
+                wgh_filterToggleBtn.title = 'Фильтры';
+                wgh_filterToggleBtn.innerHTML = '🛠️';
+                wgh_filterToggleBtn.onclick = () => { wgh_filterAccordionContainer.style.display = wgh_filterAccordionContainer.style.display === 'none' ? 'block' : 'none'; };
+                header.appendChild(wgh_filterToggleBtn);
+
                 wgh_sortButtonsContainer = document.createElement('div');
                 wgh_sortButtonsContainer.id = 'wghSortButtons';
                 wgh_sortButtonsContainer.style.cssText = `display: flex; gap: 5px; align-items: center; margin-left: auto;`;
@@ -11971,17 +12474,23 @@
                 wgh_giftIconBtn.onclick = wgh_toggleGiftMode;
                 header.appendChild(wgh_giftIconBtn);
                 container.appendChild(header);
+
                 wgh_giftModeContainer = document.createElement('div');
                 wgh_giftModeContainer.id = 'wghGiftAccordionContainer';
-                wgh_giftModeContainer.style.cssText = `display: none; padding: 10px 0; border-bottom: 1px solid #3a4f6a; margin-bottom: 10px; flex-shrink: 0;`;
+                wgh_giftModeContainer.className = 'wghAccordionContainer';
+
+                wgh_createFilterAccordion();
+
+                container.appendChild(wgh_filterAccordionContainer);
                 container.appendChild(wgh_giftModeContainer);
+
                 wgh_resultsContainer = document.createElement('div');
                 wgh_resultsContainer.id = 'wghResultsContainer';
                 wgh_resultsContainer.style.cssText = ` flex-grow: 1; overflow-y: auto; overflow-x: hidden; scrollbar-color: #4b6f9c #17202d; scrollbar-width: thin; padding-right: 5px; `;
                 wgh_resultsContainer.innerHTML = `<style> #wghResultsContainer::-webkit-scrollbar { width: 8px; } #wghResultsContainer::-webkit-scrollbar-track { background: #17202d; border-radius: 4px; } #wghResultsContainer::-webkit-scrollbar-thumb { background-color: #4b6f9c; border-radius: 4px; border: 2px solid #17202d; } #wghResultsContainer::-webkit-scrollbar-thumb:hover { background-color: #67c1f5; } </style>`;
                 wgh_resultsDiv = document.createElement('div');
                 wgh_resultsDiv.id = 'wghResults';
-                wgh_resultsDiv.style.cssText = ` display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; padding-top: 5px; `;
+                wgh_resultsDiv.style.cssText = ` display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px; padding-top: 5px; `;
                 wgh_resultsContainer.appendChild(wgh_resultsDiv);
                 container.appendChild(wgh_resultsContainer);
                 wgh_progressBar = wgh_createProgressBar('wghMainProgress');
@@ -11993,23 +12502,22 @@
                 wgh_closeBtn.innerHTML = '&times;';
                 wgh_closeBtn.onclick = wgh_hideModal;
                 wgh_closeBtn.style.cssText = ` position: absolute; top: 10px; right: 15px; font-size: 30px; color: #aaa; background: none; border: none; cursor: pointer; line-height: 1; z-index: 10002; padding: 5px; transition: color 0.2s, transform 0.2s; `;
-                wgh_closeBtn.onmouseover = () => {
-                    wgh_closeBtn.style.color = '#fff';
-                    wgh_closeBtn.style.transform = 'scale(1.1)';
-                };
-                wgh_closeBtn.onmouseout = () => {
-                    wgh_closeBtn.style.color = '#aaa';
-                    wgh_closeBtn.style.transform = 'scale(1)';
-                };
+                wgh_closeBtn.onmouseover = () => { wgh_closeBtn.style.color = '#fff'; wgh_closeBtn.style.transform = 'scale(1.1)'; };
+                wgh_closeBtn.onmouseout = () => { wgh_closeBtn.style.color = '#aaa'; wgh_closeBtn.style.transform = 'scale(1)'; };
                 wgh_modal.appendChild(wgh_closeBtn);
                 wgh_modal.appendChild(container);
                 document.body.appendChild(wgh_modal);
                 wgh_createSortButtons();
                 wgh_createGiftAccordion();
                 wgh_updateSortButtonsState();
+                wgh_setupFilterEventListeners();
 
                 function handleEsc(event) {
-                    if (event.key === 'Escape') wgh_hideModal();
+                    if (event.key === 'Escape') {
+                        const descModal = document.getElementById('wghDescriptionModal');
+                        if (descModal) { descModal.remove(); }
+                        else { wgh_hideModal(); }
+                    }
                 }
                 document.addEventListener('keydown', handleEsc);
                 wgh_modal._escHandler = handleEsc;
@@ -12021,6 +12529,7 @@
                 wgh_resultsDiv.innerHTML = '';
                 wgh_gameDataStore = {};
                 wgh_hideGiftMode(true);
+                wgh_filterAccordionContainer.style.display = 'none';
                 wgh_hideProgressBar(wgh_progressBar);
                 wgh_hideProgressBar(wgh_giftProgressBar);
                 document.body.style.overflow = 'hidden';
@@ -12047,12 +12556,204 @@
                 if (wgh_fetchFriendPricesBtn) wgh_fetchFriendPricesBtn.disabled = isLoading;
             }
 
+            const debouncedFilterApplication = debounce(() => {
+                wgh_applyFilters();
+                wgh_updateFilterPlaceholders();
+            }, WGH_FILTER_DEBOUNCE_MS);
+
+            function wgh_setupFilterEventListeners() {
+                const inputs = ['wghFilterReviewCountMin', 'wghFilterReviewCountMax', 'wghFilterRatingMin', 'wghFilterRatingMax', 'wghFilterPriceMin', 'wghFilterPriceMax', 'wghFilterDiscountMin', 'wghFilterDiscountMax', 'wghFilterDateMin', 'wghFilterDateMax'];
+                inputs.forEach(id => document.getElementById(id)?.addEventListener('input', debouncedFilterApplication));
+
+                const checkboxes = ['wghFilterDiscounted', 'wghFilterNoPrice'];
+                checkboxes.forEach(id => document.getElementById(id)?.addEventListener('change', debouncedFilterApplication));
+
+                document.querySelectorAll('input[name="wghLangFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
+                document.querySelectorAll('input[name="wghEaFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
+
+                document.getElementById('wghResetFilters')?.addEventListener('click', () => {
+                    document.querySelectorAll('#wghFilterAccordionContainer input').forEach(input => {
+                        if (input.type === 'checkbox') input.checked = false;
+                        if (input.type === 'number' || input.type === 'date') input.value = '';
+                        if (input.type === 'radio' && input.value === 'any') input.checked = true;
+                    });
+                    debouncedFilterApplication();
+                });
+                document.querySelectorAll('input[name="wghRrcFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
+            }
+
+            function wgh_applyFilters() {
+                 if (!wgh_resultsDiv) return;
+
+                 const getVal = (id) => document.getElementById(id)?.value || null;
+                 const getNum = (id) => { const v = getVal(id); return v ? parseFloat(v) : null; };
+                 const getChecked = (id) => document.getElementById(id)?.checked || false;
+                 const getRadio = (name) => document.querySelector(`input[name="${name}"]:checked`)?.value || 'any';
+
+                 const filters = {
+                     onlyDiscount: getChecked('wghFilterDiscounted'),
+                     hideNoPrice: getChecked('wghFilterNoPrice'),
+                     reviewCountMin: getNum('wghFilterReviewCountMin'),
+                     reviewCountMax: getNum('wghFilterReviewCountMax'),
+                     ratingMin: getNum('wghFilterRatingMin'),
+                     ratingMax: getNum('wghFilterRatingMax'),
+                     priceMin: getNum('wghFilterPriceMin'),
+                     priceMax: getNum('wghFilterPriceMax'),
+                     discountMin: getNum('wghFilterDiscountMin'),
+                     discountMax: getNum('wghFilterDiscountMax'),
+                     dateMin: getVal('wghFilterDateMin') ? new Date(getVal('wghFilterDateMin')).getTime() : null,
+                     dateMax: getVal('wghFilterDateMax') ? new Date(getVal('wghFilterDateMax')).getTime() : null,
+                     lang: getRadio('wghLangFilter'),
+                     ea: getRadio('wghEaFilter'),
+                     rrc: getRadio('wghRrcFilter')
+                 };
+
+                 GM_setValue(WGH_FILTER_STORAGE_KEY, filters);
+
+                 const cards = document.querySelectorAll('.wghGameCard');
+                 const visibleGamesData = [];
+
+                 cards.forEach(card => {
+                     const appid = card.dataset.appid;
+                     const gameData = wgh_gameDataStore[appid]?.myData;
+                     if (!gameData) {
+                         card.style.display = 'none';
+                         return;
+                     }
+
+                     let isVisible = true;
+
+                     if (filters.onlyDiscount && (!gameData.priceData || gameData.priceData.discountPercent <= 0)) isVisible = false;
+                     if (isVisible && filters.hideNoPrice && (!gameData.priceData || gameData.priceData.finalCents === null)) isVisible = false;
+                     if (isVisible && filters.reviewCountMin !== null && gameData.reviewCount < filters.reviewCountMin) isVisible = false;
+                     if (isVisible && filters.reviewCountMax !== null && gameData.reviewCount > filters.reviewCountMax) isVisible = false;
+                     if (isVisible && filters.ratingMin !== null && gameData.reviewPercent < filters.ratingMin) isVisible = false;
+                     if (isVisible && filters.ratingMax !== null && gameData.reviewPercent > filters.ratingMax) isVisible = false;
+
+                     if (isVisible && gameData.priceData) {
+                         const price = gameData.priceData.finalCents / 100;
+                         if (filters.priceMin !== null && price < filters.priceMin) isVisible = false;
+                         if (isVisible && filters.priceMax !== null && price > filters.priceMax) isVisible = false;
+                     }
+
+                     if (isVisible && gameData.priceData) {
+                          const discount = gameData.priceData.discountPercent || 0;
+                         if (filters.discountMin !== null && discount < filters.discountMin) isVisible = false;
+                         if (isVisible && filters.discountMax !== null && discount > filters.discountMax) isVisible = false;
+                     }
+
+                     if (isVisible && gameData.releaseDateTimestamp) {
+                         const itemDate = gameData.releaseDateTimestamp * 1000;
+                         if (filters.dateMin && itemDate < filters.dateMin) isVisible = false;
+                         if (isVisible && filters.dateMax && itemDate > filters.dateMax) isVisible = false;
+                     }
+
+                     if (isVisible && filters.lang !== 'any') {
+                        const langSupport = gameData.language_support_russian || {};
+                        const hasVoice = langSupport.full_audio;
+                        const hasText = langSupport.supported || langSupport.subtitles;
+                        if (filters.lang === 'text_only' && (!hasText || hasVoice)) isVisible = false;
+                        if (filters.lang === 'voice' && !hasVoice) isVisible = false;
+                        if (filters.lang === 'none' && (hasText || hasVoice)) isVisible = false;
+                     }
+
+                     if (isVisible && filters.ea !== 'any') {
+                         if (filters.ea === 'early_access' && !gameData.is_early_access) isVisible = false;
+                         if (filters.ea === 'released' && gameData.is_early_access) isVisible = false;
+                     }
+
+                     if (isVisible && filters.rrc !== 'any') {
+                         const rrcStatus = gameData.rrcInfo?.status;
+                         if (!rrcStatus || rrcStatus !== filters.rrc) {
+                             isVisible = false;
+                         }
+                     }
+
+                     if (isVisible && wgh_showGiftableOnly) {
+                        const isGiftableByPrice = card.dataset.giftablePrice === 'true';
+                        const canGiftByApi = card.dataset.canGiftApi === 'true';
+                        if (!isGiftableByPrice || !canGiftByApi) {
+                            isVisible = false;
+                        }
+                     }
+
+                     card.style.display = isVisible ? 'flex' : 'none';
+                     if(isVisible) {
+                        visibleGamesData.push(gameData);
+                     }
+                 });
+
+                 wgh_updateFilterPlaceholders(visibleGamesData);
+            }
+
+            function wgh_updateFilterPlaceholders() {
+                const filteredGames = Object.values(wgh_gameDataStore).filter(game => {
+                    const card = document.querySelector(`.wghGameCard[data-appid="${game.myData.appid}"]`);
+                    return card && card.style.display !== 'none';
+                }).map(game => game.myData);
+
+                if (filteredGames.length === 0) {
+                     ['wghFilterReviewCountMin', 'wghFilterReviewCountMax', 'wghFilterRatingMin', 'wghFilterRatingMax', 'wghFilterPriceMin', 'wghFilterPriceMax', 'wghFilterDiscountMin', 'wghFilterDiscountMax'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el) el.placeholder = 'N/A';
+                     });
+                     return;
+                }
+
+                const stats = {
+                    minReviews: Infinity, maxReviews: 0, minRating: 101, maxRating: 0,
+                    minPrice: Infinity, maxPrice: 0, minDiscount: 101, maxDiscount: 0
+                };
+
+                filteredGames.forEach(item => {
+                    if (item.reviewCount > 0) {
+                        stats.minReviews = Math.min(stats.minReviews, item.reviewCount);
+                    }
+                    stats.maxReviews = Math.max(stats.maxReviews, item.reviewCount);
+
+                    if (item.reviewCount > 0) {
+                        stats.minRating = Math.min(stats.minRating, item.reviewPercent);
+                        stats.maxRating = Math.max(stats.maxRating, item.reviewPercent);
+                    }
+                    if (item.priceData && item.priceData.finalCents !== null) {
+                        const price = item.priceData.finalCents / 100;
+                        stats.minPrice = Math.min(stats.minPrice, price);
+                        stats.maxPrice = Math.max(stats.maxPrice, price);
+                    }
+                    if (item.priceData && item.priceData.discountPercent > 0) {
+                        stats.minDiscount = Math.min(stats.minDiscount, item.priceData.discountPercent);
+                        stats.maxDiscount = Math.max(stats.maxDiscount, item.priceData.discountPercent);
+                    }
+                });
+
+                const setPlaceholder = (id, prefix, value, fallback = 'N/A') => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        if (value !== Infinity && value !== -Infinity && value !== 101) {
+                             el.placeholder = `${prefix} ${Math.round(value)}`;
+                        } else {
+                             el.placeholder = fallback;
+                        }
+                    }
+                };
+
+                setPlaceholder('wghFilterReviewCountMin', 'От', stats.minReviews);
+                setPlaceholder('wghFilterReviewCountMax', 'До', stats.maxReviews);
+                setPlaceholder('wghFilterRatingMin', 'От', stats.minRating === 101 ? 0 : stats.minRating);
+                setPlaceholder('wghFilterRatingMax', 'До', stats.maxRating);
+                setPlaceholder('wghFilterPriceMin', 'От', stats.minPrice);
+                setPlaceholder('wghFilterPriceMax', 'До', stats.maxPrice);
+                setPlaceholder('wghFilterDiscountMin', 'От', stats.minDiscount === 101 ? 0 : stats.minDiscount);
+                setPlaceholder('wghFilterDiscountMax', 'До', stats.maxDiscount);
+            }
+
             async function wgh_collectData() {
                 wgh_updateStatus('Извлечение AppID...', true);
                 wgh_resultsDiv.innerHTML = '';
                 wgh_gameDataStore = {};
                 wgh_hideGiftMode(true);
                 wgh_showProgressBar(wgh_progressBar, 0);
+
                 try {
                     wgh_allAppIds = await wgh_extractAppIdsFromPage();
                     if (!wgh_allAppIds || wgh_allAppIds.length === 0) {
@@ -12060,23 +12761,40 @@
                         wgh_hideProgressBar(wgh_progressBar);
                         return;
                     }
-                    wgh_updateStatus(`Найдено ${wgh_allAppIds.length} игр. Запрос данных... (0/${Math.ceil(wgh_allAppIds.length / WGH_BATCH_SIZE)})`, true);
-                    const totalBatches = Math.ceil(wgh_allAppIds.length / WGH_BATCH_SIZE);
-                    let processedBatches = 0;
-                    for (let i = 0; i < wgh_allAppIds.length; i += WGH_BATCH_SIZE) {
+                    const totalGames = wgh_allAppIds.length;
+                    const totalBatches = Math.ceil(totalGames / WGH_BATCH_SIZE);
+                    wgh_updateStatus(`Найдено ${totalGames} игр. Запрос данных для вашего региона... (0/${totalBatches})`, true);
+
+                    for (let i = 0; i < totalGames; i += WGH_BATCH_SIZE) {
                         const batch = wgh_allAppIds.slice(i, i + WGH_BATCH_SIZE);
                         const batchData = await wgh_fetchBatchGameData(batch, wgh_currentUserCountryCode);
                         wgh_processBatchData(batchData, 'myData');
-                        processedBatches++;
-                        const progress = (processedBatches / totalBatches) * 100;
+                        const progress = ((i + batch.length) / totalGames) * (wgh_currentUserCountryCode === 'RU' ? 50 : 100);
                         wgh_updateProgressBar(wgh_progressBar, progress);
-                        wgh_updateStatus(`Запрос данных... (${processedBatches}/${totalBatches})`, true);
+                        wgh_updateStatus(`Запрос данных для вашего региона... (${Math.ceil((i + batch.length)/WGH_BATCH_SIZE)}/${totalBatches})`, true);
                         await new Promise(res => setTimeout(res, 200));
                     }
+
+                    if (wgh_currentUserCountryCode === 'RU') {
+                        wgh_updateStatus(`Запрос данных из US для анализа РРЦ... (0/${totalBatches})`, true);
+                        for (let i = 0; i < totalGames; i += WGH_BATCH_SIZE) {
+                            const batch = wgh_allAppIds.slice(i, i + WGH_BATCH_SIZE);
+                            const usBatchData = await wgh_fetchBatchGameData(batch, 'US');
+                            wgh_processBatchData(usBatchData, 'usData');
+                            const progress = 50 + (((i + batch.length) / totalGames) * 50);
+                            wgh_updateProgressBar(wgh_progressBar, progress);
+                            wgh_updateStatus(`Запрос данных из US... (${Math.ceil((i + batch.length)/WGH_BATCH_SIZE)}/${totalBatches})`, true);
+                            await new Promise(res => setTimeout(res, 200));
+                        }
+                        wgh_processRrcData();
+                    }
+
                     wgh_updateStatus(`Данные для ${Object.keys(wgh_gameDataStore).length} игр получены.`);
                     wgh_applySort(wgh_currentSort.field, wgh_currentSort.direction);
-                    wgh_renderResults();
+                    await wgh_renderResults();
                     wgh_hideProgressBar(wgh_progressBar);
+                    wgh_updateFilterPlaceholders();
+
                 } catch (error) {
                     wgh_updateStatus(`Ошибка при сборе данных: ${error.message}`);
                     console.error('[WGH] Ошибка сбора данных:', error);
@@ -12084,18 +12802,49 @@
                 }
             }
 
+            function wgh_processRrcData() {
+                if (wgh_currentUserCountryCode !== 'RU') return;
+
+                for (const appid in wgh_gameDataStore) {
+                    const game = wgh_gameDataStore[appid];
+                    if (game.myData && game.usData && game.myData.priceData && game.usData.priceData) {
+                        const usPriceCents = game.usData.priceData.originalCents ?? game.usData.priceData.finalCents;
+                        const ruPriceCents = game.myData.priceData.originalCents ?? game.myData.priceData.finalCents;
+
+                        if (usPriceCents !== null && ruPriceCents !== null) {
+                            const pUSD = usPriceCents / 100;
+                            const actualRubPrice = ruPriceCents / 100;
+                            const recommendedRubPrice = calculateRecommendedRubPrice(pUSD);
+
+                            if (recommendedRubPrice !== null) {
+                                const diff = actualRubPrice - recommendedRubPrice;
+                                const diffPercent = recommendedRubPrice !== 0 ? (diff / recommendedRubPrice) * 100 : (diff > 0 ? Infinity : -Infinity);
+
+                                let status = 'equal';
+                                if (diffPercent > 1) status = 'higher';
+                                if (diffPercent < -1) status = 'lower';
+
+                                game.myData.rrcInfo = {
+                                    status: status,
+                                    diff: diff,
+                                    diffPercent: diffPercent,
+                                    recommended: recommendedRubPrice
+                                };
+                            }
+                        }
+                    }
+                }
+            }
+
             async function wgh_extractAppIdsFromPage() {
                 let appIds = [];
-
                 if (typeof unsafeWindow !== 'undefined' && unsafeWindow.SSR && unsafeWindow.SSR.renderContext && typeof unsafeWindow.SSR.renderContext.queryData === 'string') {
                     try {
                         const queryData = JSON.parse(unsafeWindow.SSR.renderContext.queryData);
-
                         if (queryData && Array.isArray(queryData.queries)) {
                             const wishlistQuery = queryData.queries.find(q =>
                                 q && Array.isArray(q.queryKey) && q.queryKey[0] === 'WishlistSortedFiltered'
                             );
-
                             if (wishlistQuery && wishlistQuery.state && wishlistQuery.state.data && Array.isArray(wishlistQuery.state.data.items)) {
                                 appIds = wishlistQuery.state.data.items.map(item => item.appid);
                             }
@@ -12104,22 +12853,18 @@
                         console.error("[WGH] Ошибка при разборе данных SSR:", e);
                     }
                 }
-
                 if (appIds.length === 0 && typeof unsafeWindow.g_rgWishlistData !== 'undefined' && Array.isArray(unsafeWindow.g_rgWishlistData)) {
                     console.warn("[WGH] Используется резервный метод g_rgWishlistData.");
                     appIds = unsafeWindow.g_rgWishlistData.map(item => item.appid).filter(id => id);
                 }
-
                 if (appIds.length === 0) {
                     throw new Error("Не удалось извлечь AppID. Возможно, структура страницы изменилась или список желаемого пуст.");
                 }
-
                 return [...new Set(appIds)];
             }
 
             function wgh_detectUserRegion() {
                 let found = false;
-
                 if (typeof unsafeWindow?.SSR?.renderContext?.queryData === 'string') {
                     try {
                         const queryData = JSON.parse(unsafeWindow.SSR.renderContext.queryData);
@@ -12127,23 +12872,21 @@
                         const walletInfoInSSR = walletInfoQuery?.state?.data;
 
                         if (walletInfoInSSR?.has_wallet && walletInfoInSSR?.currency_code && walletInfoInSSR?.wallet_country_code) {
-                             wgh_currentUserCurrencyCode = walletInfoInSSR.currency_code;
-                             wgh_currentUserCountryCode = walletInfoInSSR.wallet_country_code;
-                             wgh_currentUserISOCurrencyCode = WGH_CURRENCY_CODE_TO_ISO[wgh_currentUserCurrencyCode] || null;
-                             if (wgh_currentUserCountryCode && wgh_currentUserISOCurrencyCode) {
+                            wgh_currentUserCurrencyCode = walletInfoInSSR.currency_code;
+                            wgh_currentUserCountryCode = walletInfoInSSR.wallet_country_code;
+                            wgh_currentUserISOCurrencyCode = WGH_CURRENCY_CODE_TO_ISO[wgh_currentUserCurrencyCode] || null;
+                            if (wgh_currentUserCountryCode && wgh_currentUserISOCurrencyCode) {
                                 found = true;
                                 console.log(`[WGH] Регион успешно определен через SSR/Wallet: ${wgh_currentUserCountryCode}`);
-                             }
+                            }
                         }
                     } catch(e) {
                         console.error('[WGH] Ошибка при разборе SSR для определения региона:', e);
                     }
                 }
-
                 if (!found && typeof unsafeWindow?.Config?.COUNTRY === 'string') {
                     const countryCode = unsafeWindow.Config.COUNTRY;
                     const currencyInfo = Object.entries(WGH_COUNTRY_CURRENCY_MAP).find(([key, data]) => key === countryCode);
-
                     if (currencyInfo) {
                         wgh_currentUserCountryCode = currencyInfo[0];
                         wgh_currentUserCurrencyCode = currencyInfo[1].code;
@@ -12152,7 +12895,6 @@
                         console.log(`[WGH] Регион определен через резервный метод window.Config: ${wgh_currentUserCountryCode}`);
                     }
                 }
-
                 if (!found && typeof unsafeWindow.g_rgWalletInfo !== 'undefined' && unsafeWindow.g_rgWalletInfo.wallet_currency) {
                     console.warn("[WGH] Используется самый старый резервный метод g_rgWalletInfo.");
                     wgh_currentUserCurrencyCode = unsafeWindow.g_rgWalletInfo.wallet_currency;
@@ -12162,40 +12904,60 @@
                         found = true;
                     }
                 }
-
                 if (!found) {
                     console.warn('[WGH] Не удалось определить регион пользователя, используется значение по умолчанию: RU/RUB.');
                     wgh_currentUserCountryCode = 'RU';
                     wgh_currentUserCurrencyCode = 5;
                     wgh_currentUserISOCurrencyCode = 'RUB';
                 }
-
                 if (wgh_myRegionDisplay) {
                     wgh_myRegionDisplay.textContent = `${wgh_currentUserCountryCode || '??'} (${wgh_currentUserISOCurrencyCode || '???'})`;
                 }
             }
 
-
-
-
             async function wgh_fetchBatchGameData(appIdsBatch, countryCode) {
                 const inputJson = {
-                    ids: appIdsBatch.map(appid => ({
-                        appid
-                    })),
+                    ids: appIdsBatch.map(appid => ({ appid })),
                     context: {
                         language: "russian",
                         country_code: countryCode || 'RU',
                         steam_realm: 1
                     },
                     data_request: {
-                        include_basic_info: true,
                         include_assets: true,
                         include_release: true,
-                        include_reviews: true,
                         include_platforms: true,
                         include_all_purchase_options: true,
-                        include_supported_languages: true
+                        include_screenshots: true,
+                        include_trailers: true,
+                        include_ratings: true,
+                        include_tag_count: true,
+                        include_reviews: true,
+                        include_basic_info: true,
+                        include_supported_languages: true,
+                        include_full_description: true,
+                        include_included_items: true,
+                        included_item_data_request: {
+                            include_assets: true,
+                            include_release: true,
+                            include_platforms: true,
+                            include_all_purchase_options: true,
+                            include_screenshots: true,
+                            include_trailers: true,
+                            include_ratings: true,
+                            include_tag_count: true,
+                            include_reviews: true,
+                            include_basic_info: true,
+                            include_supported_languages: true,
+                            include_full_description: true,
+                            include_included_items: true,
+                            include_assets_without_overrides: true,
+                            apply_user_filters: false,
+                            include_links: true
+                        },
+                        include_assets_without_overrides: true,
+                        apply_user_filters: false,
+                        include_links: true
                     }
                 };
                 return new Promise((resolve, reject) => {
@@ -12232,15 +12994,10 @@
                     if (!item || !item.id || item.success !== 1) return;
                     const appid = item.id;
                     if (!wgh_gameDataStore[appid]) {
-                        wgh_gameDataStore[appid] = {
-                            myData: null,
-                            friendData: null
-                        };
+                        wgh_gameDataStore[appid] = { myData: null, friendData: null };
                     }
-
                     const headerFileName = item.assets?.header;
-                    const imageUrl = headerFileName ? `${WGH_IMAGE_BASE_URL}${item.id}/${headerFileName}` : `${WGH_IMAGE_BASE_URL}${item.appid}/header_292x136.jpg`;
-
+                    const imageUrl = headerFileName ? `${WGH_IMAGE_BASE_URL}${item.id}/${headerFileName}` : `${WGH_IMAGE_BASE_URL}${item.id}/header.jpg`;
                     const extractedData = {
                         appid: item.appid,
                         name: item.name,
@@ -12250,14 +13007,21 @@
                         reviewScore: item.reviews?.summary_filtered?.review_score || 0,
                         reviewPercent: item.reviews?.summary_filtered?.percent_positive || 0,
                         reviewCount: item.reviews?.summary_filtered?.review_count || 0,
-                        reviewDesc: item.reviews?.summary_filtered?.review_score_label || 'Нет отзывов',
+                        reviewDesc: item.reviews?.summary_filtered?.review_score_label || '',
                         platforms: {
                             windows: item.platforms?.windows || false,
                             mac: item.platforms?.mac || false,
                             linux: item.platforms?.steamos_linux || false,
                         },
                         canGift: item.best_purchase_option?.user_can_purchase_as_gift || false,
-                        priceData: null
+                        priceData: null,
+                        publishers: item.basic_info?.publishers?.map(p => p.name).join(", "),
+                        developers: item.basic_info?.developers?.map(d => d.name).join(", "),
+                        franchises: item.basic_info?.franchises?.map(f => f.name).join(", "),
+                        is_early_access: item.release?.is_early_access,
+                        tagids: item.tagids || [],
+                        short_description: item.basic_info?.short_description,
+                        language_support_russian: item.supported_languages?.find(lang => lang.elanguage === 8)
                     };
                     const purchaseOption = item.best_purchase_option;
                     if (purchaseOption) {
@@ -12273,7 +13037,7 @@
                 });
             }
 
-            function wgh_renderResults() {
+            async function wgh_renderResults() {
                 if (!wgh_resultsDiv) return;
                 wgh_resultsDiv.innerHTML = '';
                 const fragment = document.createDocumentFragment();
@@ -12283,29 +13047,81 @@
                     const b = wgh_gameDataStore[idB]?.myData;
                     return wgh_compareItems(a, b, wgh_currentSort.field, wgh_currentSort.direction);
                 });
+                const tagsData = await wgh_loadSteamTags();
                 sortedAppIds.forEach(appid => {
                     const game = wgh_gameDataStore[appid];
                     if (game && game.myData) {
-                        fragment.appendChild(wgh_createGameCard(appid, game));
+                        fragment.appendChild(wgh_createGameCard(appid, game, tagsData));
                     }
                 });
                 wgh_resultsDiv.appendChild(fragment);
-                wgh_applyGiftFilter();
+                wgh_applyFilters();
             }
 
-            function wgh_createGameCard(appid, game) {
+            function wgh_showDescriptionModal(title, description) {
+                const modalId = 'wghDescriptionModal';
+                let modal = document.getElementById(modalId);
+                if (modal) modal.remove();
+
+                modal = document.createElement('div');
+                modal.id = modalId;
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background-color: rgba(0,0,0,0.7); display: flex; align-items: center;
+                    justify-content: center; z-index: 10001;
+                `;
+
+                const content = document.createElement('div');
+                content.style.cssText = `
+                    background-color: #1b2838; color: #c6d4df; padding: 25px;
+                    border-radius: 5px; max-width: 600px; width: 90%; max-height: 80vh;
+                    overflow-y: auto; border: 1px solid #4b6f9c; position: relative;
+                `;
+
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = '&times;';
+                closeBtn.style.cssText = `
+                    position: absolute; top: 10px; right: 15px; background: none; border: none;
+                    color: #aaa; font-size: 28px; cursor: pointer;
+                `;
+                closeBtn.onclick = () => modal.remove();
+
+                const titleEl = document.createElement('h3');
+                titleEl.textContent = title;
+                titleEl.style.cssText = `color: #67c1f5; margin-top: 0;`;
+
+                const descEl = document.createElement('p');
+                descEl.innerHTML = description || 'Описание отсутствует.';
+                descEl.style.lineHeight = '1.6';
+
+                content.appendChild(closeBtn);
+                content.appendChild(titleEl);
+                content.appendChild(descEl);
+                modal.appendChild(content);
+                document.body.appendChild(modal);
+
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.remove();
+                    }
+                });
+            }
+
+            function wgh_createGameCard(appid, game, tagsData) {
                 const myData = game.myData;
                 const friendData = game.friendData;
                 const card = document.createElement('div');
                 card.className = 'wghGameCard';
                 card.dataset.appid = appid;
+                card.dataset.giftablePrice = 'unknown';
+                card.dataset.canGiftApi = myData.canGift ? 'true' : 'false';
+
                 const reviewClass = wgh_getReviewClass(myData.reviewPercent, myData.reviewCount);
                 const releaseDateStr = myData.releaseDateTimestamp ? new Date(myData.releaseDateTimestamp * 1000).toLocaleDateString('ru-RU') : 'Неизвестно';
+
                 let friendPriceStr = '';
                 let priceDiffStr = '';
                 let priceDiffClass = '';
-                card.dataset.giftablePrice = 'unknown';
-                card.dataset.canGiftApi = myData.canGift ? 'true' : 'false';
 
                 if (wgh_giftModeActive && friendData?.priceData && myData?.priceData && wgh_exchangeRates) {
                     const friendCents = friendData.priceData.finalCents;
@@ -12338,7 +13154,75 @@
                     card.dataset.giftablePrice = 'false';
                 }
 
-                card.innerHTML = ` <a href="https://store.steampowered.com/app/${appid}" target="_blank" class="wghCardLink"> <div class="wghCardImageWrapper"> <img src="${myData.imageUrl}" alt="${myData.name}" loading="lazy" onerror="this.onerror=null;this.src='https://via.placeholder.com/292x136?text=No+Image';"> ${myData.priceData?.discountPercent > 0 ? `<div class="wghCardDiscountBadge">-${myData.priceData.discountPercent}%</div>` : ''} </div> <div class="wghCardContent"> <div class="wghCardTitle" title="${myData.name}">${myData.name}</div> <div class="wghCardPrice"> ${myData.priceData?.formattedOriginal ? `<span class="wghOriginalPrice">${myData.priceData.formattedOriginal}</span>` : ''} <span class="wghCurrentPrice">${myData.priceData?.formattedFinal || 'N/A'}</span> </div> <div class="wghCardReviews ${reviewClass}" title="${myData.reviewCount} отзывов"> ${myData.reviewDesc} (${myData.reviewPercent}%) </div> <div class="wghCardReleaseDate">Дата выхода: ${releaseDateStr}</div> ${myData.canGift ? '' : '<div class="wghCannotGift">Нельзя подарить</div>'} ${friendPriceStr ? `<div class="wghFriendPrice">${friendPriceStr}</div>` : ''} ${priceDiffStr ? `<div class="wghPriceDiff ${priceDiffClass}">${priceDiffStr}</div>` : ''} </div> </a> `;
+                const tagsHtml = myData.tagids.slice(0, 5).map(tagId =>
+                    `<div class="wghTag">${tagsData[tagId] || `Тег #${tagId}`}</div>`
+                ).join('');
+
+                let languageSupportRussianText = "Отсутствует";
+                if (myData.language_support_russian) {
+                    let tempLangText = "";
+                    if (myData.language_support_russian.supported) tempLangText += "Интерфейс, ";
+                    if (myData.language_support_russian.full_audio) tempLangText += "Озвучка, ";
+                    if (myData.language_support_russian.subtitles) tempLangText += "Субтитры, ";
+                    if (tempLangText) {
+                        languageSupportRussianText = tempLangText.slice(0, -2);
+                    }
+                }
+
+                let rrcInfoHtml = '';
+                if (myData.rrcInfo) {
+                    const { status, diff, diffPercent, recommended } = myData.rrcInfo;
+                    const textMap = { 'lower': '< РРЦ', 'equal': '= РРЦ', 'higher': '> РРЦ' };
+                    const diffText = `${diff > 0 ? '+' : ''}${diff.toFixed(0)} ₽ (${diffPercent.toFixed(0)}%)`;
+                    const recommendedPriceText = ` | ${recommended.toLocaleString('ru-RU')} ₽`;
+
+                    rrcInfoHtml = `<div class="wghRrcInfo wghRrc-${status}">
+                        <span class="wghRrcStatus">${textMap[status]}${recommendedPriceText}</span>
+                        <span class="wghRrcDiff">${diffText}</span>
+                    </div>`;
+                }
+
+                const descButton = document.createElement('button');
+                descButton.textContent = 'Описание';
+                descButton.className = 'wghDescButton';
+                descButton.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    wgh_showDescriptionModal(myData.name, myData.short_description);
+                };
+
+                card.innerHTML = `
+                    <a href="https://store.steampowered.com/app/${appid}" target="_blank" class="wghCardLink">
+                        <div class="wghCardImageWrapper">
+                            <img src="${myData.imageUrl}" alt="${myData.name}" loading="lazy" onerror="this.onerror=null;this.src='https://via.placeholder.com/292x136?text=No+Image';">
+                            ${myData.priceData?.discountPercent > 0 ? `<div class="wghCardDiscountBadge">-${myData.priceData.discountPercent}%</div>` : ''}
+                        </div>
+                    </a>
+                    <div class="wghCardContent">
+                        <a href="https://store.steampowered.com/app/${appid}" target="_blank" class="wghCardTitle" title="${myData.name}">${myData.name}</a>
+                        <div class="wghCardPrice">
+                            ${myData.priceData?.formattedOriginal ? `<span class="wghOriginalPrice">${myData.priceData.formattedOriginal}</span>` : ''}
+                            <span class="wghCurrentPrice">${myData.priceData?.formattedFinal || 'N/A'}</span>
+                        </div>
+                        ${rrcInfoHtml}
+                        <div class="wghCardReviews ${reviewClass}" title="${myData.reviewCount.toLocaleString('ru-RU')} отзывов">${wgh_getCustomReviewDescription(myData.reviewPercent, myData.reviewCount)} (${myData.reviewPercent}%) | ${myData.reviewCount.toLocaleString('ru-RU')}</div>
+                        <div class="wghCardInfoGrid">
+                            <div class="wghCardInfoItem"><strong>Издатель:</strong> <span>${myData.publishers || 'N/A'}</span></div>
+                            <div class="wghCardInfoItem"><strong>Разработчик:</strong> <span>${myData.developers || 'N/A'}</span></div>
+                            <div class="wghCardInfoItem"><strong>Серия:</strong> <span>${myData.franchises || 'N/A'}</span></div>
+                            <div class="wghCardInfoItem"><strong>Ранний доступ:</strong> <span>${myData.is_early_access ? 'Да' : 'Нет'}</span></div>
+                            <div class="wghCardInfoItem"><strong>Дата выхода:</strong> <span>${releaseDateStr}</span></div>
+                            <div class="wghCardInfoItem"><strong>Русский язык:</strong> <span>${languageSupportRussianText}</span></div>
+                        </div>
+                        <div class="wghTagsContainer">${tagsHtml}</div>
+                        <div class="wghCardFooter">
+                            ${myData.canGift ? '' : '<div class="wghCannotGift">Нельзя подарить</div>'}
+                            ${friendPriceStr ? `<div class="wghFriendPrice">${friendPriceStr}</div>` : ''}
+                            ${priceDiffStr ? `<div class="wghPriceDiff ${priceDiffClass}">${priceDiffStr}</div>` : ''}
+                        </div>
+                    </div>`;
+
+                card.querySelector('.wghCardFooter').prepend(descButton);
                 return card;
             }
 
@@ -12390,10 +13274,7 @@
             }
 
             function wgh_applySort(field, direction) {
-                wgh_currentSort = {
-                    field,
-                    direction
-                };
+                wgh_currentSort = { field, direction };
             }
 
             function wgh_compareItems(a, b, field, direction) {
@@ -12469,7 +13350,7 @@
                 wgh_giftModeContainer.innerHTML = '';
                 const accordionContent = document.createElement('div');
                 accordionContent.id = 'wghGiftAccordionContent';
-                accordionContent.style.cssText = ` display: flex; flex-wrap: wrap; gap: 10px; align-items: center; padding: 10px; border: 1px solid #3a4f6a; border-radius: 4px; background-color: rgba(42, 71, 94, 0.2); `;
+                accordionContent.className = 'wghAccordionContent';
                 const myRegionDiv = document.createElement('div');
                 myRegionDiv.innerHTML = `Ваш регион: <strong id="wghMyRegionDisplay">${wgh_currentUserCountryCode || '??'} (${wgh_currentUserISOCurrencyCode || '???'})</strong>`;
                 myRegionDiv.style.marginRight = '15px';
@@ -12641,7 +13522,7 @@
 
             function wgh_handleGiftableFilterChange() {
                 wgh_showGiftableOnly = wgh_giftableFilterCheckbox.checked;
-                wgh_applyGiftFilter();
+                wgh_applyFilters();
             }
 
             function wgh_applyGiftFilter() {
@@ -12700,364 +13581,516 @@
 
             function wgh_addStyles() {
                 GM_addStyle(`
-                   .wghBtn {
-                       padding: 8px 14px;
-                       font-size: 14px;
-                       color: #c6d4df;
-                       border: 1px solid #4b6f9c;
-                       border-radius: 3px;
-                       cursor: pointer;
-                       white-space: nowrap;
-                       height: 36px;
-                       display: inline-flex;
-                       align-items: center;
-                       justify-content: center;
-                       flex-shrink: 0;
-                       background-color: rgba(42, 71, 94, 0.8);
-                       transition: background-color 0.2s, border-color 0.2s;
-                       text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-                   }
+                        .wghBtn {
+                        	padding: 8px 14px;
+                        	font-size: 14px;
+                        	color: #c6d4df;
+                        	border: 1px solid #4b6f9c;
+                        	border-radius: 3px;
+                        	cursor: pointer;
+                        	white-space: nowrap;
+                        	height: 36px;
+                        	display: inline-flex;
+                        	align-items: center;
+                        	justify-content: center;
+                        	flex-shrink: 0;
+                        	background-color: rgba(42, 71, 94, 0.8);
+                        	transition: background-color 0.2s, border-color 0.2s;
+                        	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
+                        }
 
-                   .wghBtn:hover:not(:disabled) {
-                       background-color: rgba(67, 103, 133, 0.9);
-                       border-color: #67c1f5;
-                   }
+                        .wghBtn:hover:not(:disabled) {
+                        	background-color: rgba(67, 103, 133, 0.9);
+                        	border-color: #67c1f5;
+                        }
 
-                   .wghBtn:disabled {
-                       opacity: 0.6;
-                       cursor: default;
-                   }
+                        .wghBtn:disabled {
+                        	opacity: 0.6;
+                        	cursor: default;
+                        }
 
-                   .wghPrimaryBtn {
-                       background-color: rgba(77, 136, 255, 0.8);
-                       border-color: #4D88FF;
-                   }
+                        .wghPrimaryBtn {
+                        	background-color: rgba(77, 136, 255, 0.8);
+                        	border-color: #4D88FF;
+                        }
 
-                   .wghPrimaryBtn:hover:not(:disabled) {
-                       background-color: rgba(51, 102, 204, 0.9);
-                   }
+                        .wghPrimaryBtn:hover:not(:disabled) {
+                        	background-color: rgba(51, 102, 204, 0.9);
+                        }
 
-                   .wghBtn.sortBtn.active {
-                       background-color: rgba(0, 123, 255, 0.8);
-                       border-color: #007bff;
-                   }
+                        .wghBtn.sortBtn.active {
+                        	background-color: rgba(0, 123, 255, 0.8);
+                        	border-color: #007bff;
+                        }
 
-                   .wghBtn.sortBtn.active:hover {
-                       background-color: rgba(0, 86, 179, 0.9);
-                   }
+                        .wghBtn.sortBtn.active:hover {
+                        	background-color: rgba(0, 86, 179, 0.9);
+                        }
 
-                   #wghGiftModeBtn.active {
-                       background-color: rgba(0, 123, 255, 0.8);
-                       border-color: #007bff;
-                   }
+                        #wghGiftModeBtn.active,
+                        #wghFilterToggleBtn.active {
+                        	background-color: rgba(0, 123, 255, 0.8);
+                        	border-color: #007bff;
+                        }
 
-                   .wghSelect {
-                       margin-left: 5px;
-                       background-color: #333;
-                       color: #eee;
-                       border: 1px solid #555;
-                       border-radius: 4px;
-                       height: 36px;
-                       padding: 0 8px;
-                       font-size: 14px;
-                       cursor: pointer;
-                       flex-shrink: 0;
-                       outline: none;
-                       max-width: 200px;
-                   }
+                        .wghSelect {
+                        	margin-left: 5px;
+                        	background-color: #333;
+                        	color: #eee;
+                        	border: 1px solid #555;
+                        	border-radius: 4px;
+                        	height: 36px;
+                        	padding: 0 8px;
+                        	font-size: 14px;
+                        	cursor: pointer;
+                        	flex-shrink: 0;
+                        	outline: none;
+                        	max-width: 200px;
+                        }
 
-                   .wghSelect:focus {
-                       border-color: #67c1f5;
-                   }
+                        .wghSelect:focus {
+                        	border-color: #67c1f5;
+                        }
 
-                   .wghGameCard {
-                       background-color: rgba(42, 46, 51, 0.85);
-                       border-radius: 6px;
-                       padding: 10px;
-                       display: flex;
-                       flex-direction: column;
-                       transition: transform 0.2s ease, box-shadow 0.2s ease;
-                       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-                       color: #c6d4df;
-                       font-size: 13px;
-                       border: 1px solid #333941;
-                       min-height: 360px;
-                   }
+                        .wghGameCard {
+                        	background-color: rgba(42, 46, 51, 0.85);
+                        	border-radius: 6px;
+                        	padding: 10px;
+                        	display: flex;
+                        	flex-direction: column;
+                        	transition: transform 0.2s ease, box-shadow 0.2s ease;
+                        	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+                        	color: #c6d4df;
+                        	font-size: 13px;
+                        	border: 1px solid #333941;
+                        	min-height: 500px;
+                        }
 
-                   .wghGameCard:hover {
-                       transform: translateY(-2px);
-                       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-                       border-color: #4b6f9c;
-                   }
+                        .wghGameCard:hover {
+                        	transform: translateY(-2px);
+                        	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+                        	border-color: #4b6f9c;
+                        }
 
-                   .wghCardLink {
-                       text-decoration: none;
-                       color: inherit;
-                       display: flex;
-                       flex-direction: column;
-                       height: 100%;
-                   }
+                        .wghCardLink {
+                        	text-decoration: none;
+                        	color: inherit;
+                        	display: block;
+                        }
 
-                   .wghCardImageWrapper {
-                       position: relative;
-                       width: 100%;
-                       aspect-ratio: 292 / 136;
-                       margin-bottom: 8px;
-                       background-color: #111;
-                       border-radius: 4px;
-                       overflow: hidden;
-                       display: flex;
-                       align-items: center;
-                       justify-content: center;
-                       border: 1px solid #333941;
-                   }
+                        .wghCardImageWrapper {
+                        	position: relative;
+                        	width: 100%;
+                        	aspect-ratio: 292 / 136;
+                        	margin-bottom: 8px;
+                        	background-color: #111;
+                        	border-radius: 4px;
+                        	overflow: hidden;
+                        	display: flex;
+                        	align-items: center;
+                        	justify-content: center;
+                        	border: 1px solid #333941;
+                        }
 
-                   .wghCardImageWrapper img {
-                       display: block;
-                       max-width: 100%;
-                       max-height: 100%;
-                       width: 100%;
-                       height: 100%;
-                       object-fit: cover;
-                       border-radius: 4px;
-                   }
+                        .wghCardImageWrapper img {
+                        	display: block;
+                        	max-width: 100%;
+                        	max-height: 100%;
+                        	width: 100%;
+                        	height: 100%;
+                        	object-fit: cover;
+                        	border-radius: 4px;
+                        }
 
-                   .wghCardDiscountBadge {
-                       position: absolute;
-                       bottom: 5px;
-                       right: 5px;
-                       background-color: #e2004b;
-                       color: white;
-                       padding: 2px 6px;
-                       font-size: 12px;
-                       border-radius: 3px;
-                       font-weight: 600;
-                       z-index: 1;
-                   }
+                        .wghCardDiscountBadge {
+                        	position: absolute;
+                        	bottom: 5px;
+                        	right: 5px;
+                        	background-color: #e2004b;
+                        	color: white;
+                        	padding: 2px 6px;
+                        	font-size: 12px;
+                        	border-radius: 3px;
+                        	font-weight: 600;
+                        	z-index: 1;
+                        }
 
-                   .wghCardContent {
-                       flex-grow: 1;
-                       display: flex;
-                       flex-direction: column;
-                   }
+                        .wghCardContent {
+                        	flex-grow: 1;
+                        	display: flex;
+                        	flex-direction: column;
+                        }
 
-                   .wghCardTitle {
-                       font-size: 14px;
-                       font-weight: 500;
-                       line-height: 1.3;
-                       height: 2.6em;
-                       overflow: hidden;
-                       text-overflow: ellipsis;
-                       margin-bottom: 5px;
-                       color: #e5e5e5;
-                       display: -webkit-box;
-                       -webkit-line-clamp: 2;
-                       -webkit-box-orient: vertical;
-                   }
+                        .wghCardTitle {
+                        	font-size: 16px;
+                        	font-weight: 500;
+                        	line-height: 1.3;
+                        	height: 2.6em;
+                        	overflow: hidden;
+                        	text-overflow: ellipsis;
+                        	margin-bottom: 5px;
+                        	color: #e5e5e5;
+                        	display: -webkit-box;
+                        	-webkit-line-clamp: 2;
+                        	-webkit-box-orient: vertical;
+                        	text-decoration: none;
+                        }
 
-                   .wghCardPrice {
-                       display: flex;
-                       align-items: baseline;
-                       gap: 8px;
-                       margin-bottom: 6px;
-                       min-height: 20px;
-                   }
+                        .wghCardTitle:hover {
+                        	color: #fff;
+                        }
 
-                   .wghCurrentPrice {
-                       font-size: 16px;
-                       font-weight: 600;
-                       color: #a4d007;
-                   }
+                        .wghCardPrice {
+                        	display: flex;
+                        	align-items: baseline;
+                        	gap: 8px;
+                        	margin-bottom: 8px;
+                        	min-height: 22px;
+                        }
 
-                   .wghOriginalPrice {
-                       font-size: 13px;
-                       color: #8f98a0;
-                       text-decoration: line-through;
-                   }
+                        .wghCurrentPrice {
+                        	font-size: 18px;
+                        	font-weight: 600;
+                        	color: #a4d007;
+                        }
 
-                   .wghCardReviews {
-                       font-size: 12px;
-                       margin-bottom: 4px;
-                   }
+                        .wghOriginalPrice {
+                        	font-size: 14px;
+                        	color: #8f98a0;
+                        	text-decoration: line-through;
+                        }
 
-                   .wghReviewPositive {
-                       color: #66c0f4;
-                   }
+                        .wghCardReviews {
+                        	font-size: 13px;
+                        	margin-bottom: 8px;
+                        }
 
-                   .wghReviewMixed {
-                       color: #a38b51;
-                   }
+                        .wghReviewPositive {
+                        	color: #66c0f4;
+                        }
 
-                   .wghReviewNegative {
-                       color: #c44c2c;
-                   }
+                        .wghReviewMixed {
+                        	color: #a38b51;
+                        }
 
-                   .wghReviewNone {
-                       color: #8f98a0;
-                   }
+                        .wghReviewNegative {
+                        	color: #c44c2c;
+                        }
 
-                   .wghCardReleaseDate {
-                       font-size: 11px;
-                       color: #8f98a0;
-                       margin-bottom: 8px;
-                   }
+                        .wghReviewNone {
+                        	color: #8f98a0;
+                        }
 
-                   .wghCannotGift {
-                       font-size: 11px;
-                       color: #ff8080;
-                       font-style: italic;
-                       margin-bottom: 5px;
-                       margin-top: auto;
-                       padding-top: 5px;
-                   }
+                        .wghCardInfoGrid {
+                        	display: grid;
+                        	grid-template-columns: 1fr;
+                        	gap: 5px;
+                        	font-size: 12px;
+                        	color: #8f98a0;
+                        	margin-bottom: 8px;
+                        }
 
-                   .wghFriendPrice {
-                       font-size: 12px;
-                       color: #b0e0e6;
-                       margin-top: auto;
-                       padding-top: 5px;
-                   }
+                        .wghCardInfoItem {
+                        	white-space: nowrap;
+                        	overflow: hidden;
+                        	text-overflow: ellipsis;
+                        	line-height: 1.4;
+                        }
 
-                   .wghPriceDiff {
-                       font-size: 12px;
-                       font-weight: bold;
-                       margin-top: 2px;
-                   }
+                        .wghCardInfoItem span {
+                        	color: #c6d4df;
+                        }
 
-                   .wghPriceDiffGood {
-                       color: #77dd77;
-                   }
+                        .wghTagsContainer {
+                        	display: flex;
+                        	flex-wrap: wrap;
+                        	gap: 5px;
+                        	margin-bottom: 10px;
+                        }
 
-                   .wghPriceDiffBad {
-                       color: #ff6961;
-                   }
+                        .wghTag {
+                        	background-color: rgba(103, 193, 245, 0.15);
+                        	color: #8f98a0;
+                        	padding: 3px 7px;
+                        	border-radius: 3px;
+                        	font-size: 12px;
+                        }
 
-                   @keyframes wghSpin {
-                       0% {
-                           transform: rotate(0deg);
-                       }
+                        .wghDescButton {
+                        	background: #4b6f9c;
+                        	color: white;
+                        	border: none;
+                        	padding: 6px 12px;
+                        	border-radius: 3px;
+                        	cursor: pointer;
+                        	font-size: 13px;
+                        	margin-top: 10px;
+                        	width: 100%;
+                        }
 
-                       100% {
-                           transform: rotate(360deg);
-                       }
-                   }
+                        .wghDescButton:hover {
+                        	background: #67c1f5;
+                        }
 
-                   .wghSpinner {
-                       border: 2px solid rgba(255, 255, 255, 0.3);
-                       border-radius: 50%;
-                       border-top-color: #fff;
-                       width: 1em;
-                       height: 1em;
-                       animation: wghSpin 1s linear infinite;
-                       display: inline-block;
-                       vertical-align: middle;
-                       margin-left: 8px;
-                   }
+                        .wghCardFooter {
+                        	margin-top: auto;
+                        	padding-top: 10px;
+                        	border-top: 1px solid #3a4f6a;
+                        }
 
-                   #wghGiftAccordionContent label {
-                       display: flex;
-                       align-items: center;
-                       font-size: 14px;
-                       color: #c6d4df;
-                       cursor: pointer;
-                   }
+                        .wghCannotGift {
+                        	font-size: 12px;
+                        	color: #ff8080;
+                        	font-style: italic;
+                        	margin-top: 5px;
+                        }
 
-                   #wghGiftAccordionContent input[type="checkbox"] {
-                       margin-right: 5px;
-                       width: 16px;
-                       height: 16px;
-                       accent-color: #67c1f5;
-                       cursor: pointer;
-                   }
+                        .wghFriendPrice {
+                        	font-size: 13px;
+                        	color: #b0e0e6;
+                        	margin-top: 5px;
+                        }
 
-                   .wghGameCard.wgh-filtered-out {
-                       display: none !important;
-                   }
+                        .wghPriceDiff {
+                        	font-size: 13px;
+                        	font-weight: bold;
+                        	margin-top: 2px;
+                        }
 
-                   @media (max-width: 1600px) {
-                       #wghResults {
-                           grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                       }
-                   }
+                        .wghPriceDiffGood {
+                        	color: #77dd77;
+                        }
 
-                   @media (max-width: 1300px) {
-                       #wghResults {
-                           grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                       }
-                   }
+                        .wghPriceDiffBad {
+                        	color: #ff6961;
+                        }
 
-                   @media (max-width: 900px) {
-                       #wghResults {
-                           grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-                       }
-                   }
+                        @keyframes wghSpin {
+                        	0% {
+                        		transform: rotate(0deg);
+                        	}
 
-                   @media (max-width: 700px) {
-                       #wghResults {
-                           grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-                       }
+                        	100% {
+                        		transform: rotate(360deg);
+                        	}
+                        }
 
-                       #wghHeader {
-                           flex-direction: column;
-                           align-items: stretch;
-                       }
+                        .wghSpinner {
+                        	border: 2px solid rgba(255, 255, 255, 0.3);
+                        	border-radius: 50%;
+                        	border-top-color: #fff;
+                        	width: 1em;
+                        	height: 1em;
+                        	animation: wghSpin 1s linear infinite;
+                        	display: inline-block;
+                        	vertical-align: middle;
+                        	margin-left: 8px;
+                        }
 
-                       #wghSortButtons {
-                           justify-content: space-around;
-                           margin-left: 0;
-                           margin-top: 5px;
-                           width: 100%;
-                           order: 3;
-                       }
+                        .wghAccordionContainer {
+                        	display: none;
+                        	padding: 10px 0;
+                        	border-bottom: 1px solid #3a4f6a;
+                        	margin-bottom: 10px;
+                        	flex-shrink: 0;
+                        }
 
-                       #wghGiftModeContainer {
-                           margin-top: 5px;
-                       }
+                        .wghAccordionContent,
+                        .wghFilterGrid {
+                        	padding: 10px;
+                        	border: 1px solid #3a4f6a;
+                        	border-radius: 4px;
+                        	background-color: rgba(42, 71, 94, 0.2);
+                        }
 
-                       #wghGiftAccordionContent {
-                           flex-direction: column;
-                           align-items: flex-start;
-                       }
+                        .wghAccordionContent {
+                        	display: flex;
+                        	flex-wrap: wrap;
+                        	gap: 10px;
+                        	align-items: center;
+                        }
 
-                       #wghGiftAccordionContent label {
-                           margin-bottom: 5px;
-                       }
+                        .wghFilterGrid {
+                        	display: grid;
+                        	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                        	margin-bottom: 10px;
+                        }
 
-                       #wghGiftAccordionContent #wghFriendRegionSelect {
-                           width: 100%;
-                           margin-bottom: 10px;
-                       }
+                        .wghFilterGroup {
+                        	display: flex;
+                        	flex-direction: column;
+                        	gap: 5px;
+                        }
 
-                       #wghGiftAccordionContent #wghFetchFriendPricesBtn {
-                           width: 100%;
-                           margin-bottom: 10px;
-                       }
+                        .wghFilterLabel {
+                        	font-size: 13px;
+                        	color: #c6d4df;
+                        	margin-bottom: 3px;
+                        }
 
-                       #wghGiftAccordionContent div[style*='margin-left: auto'] {
-                           width: 100%;
-                           margin-left: 0 !important;
-                           text-align: center;
-                       }
+                        .wghRangeInput {
+                        	display: block;
+                        }
 
-                       #wghHeader>.wghBtn:first-child {
-                           order: 1;
-                           width: 100%;
-                           margin-bottom: 5px;
-                       }
+                        .wghRangeInput input {
+                        	width: 100%;
+                        	margin-bottom: 5px;
+                        }
 
-                       #wghGiftModeBtn {
-                           order: 2;
-                           align-self: flex-end;
-                           margin-bottom: 5px;
-                       }
+                        .wghRangeInput input:last-child {
+                        	margin-bottom: 0;
+                        }
 
-                       #wghStatus {
-                           order: 0;
-                           text-align: center;
-                           justify-content: center;
-                           margin-bottom: 5px;
-                       }
-                   }
+                        .wghRangeInput input {
+                        	width: 50%;
+                        	padding: 5px;
+                        	background: #17202d;
+                        	border: 1px solid #3a4f6a;
+                        	color: #c6d4df;
+                        	border-radius: 3px;
+                        }
+
+                        .wghRadioGroup,
+                        .wghFilterCheckbox {
+                        	display: flex;
+                        	flex-direction: column;
+                        	gap: 3px;
+                        	font-size: 13px;
+                        }
+
+                        #wghResetFilters {
+                        	margin-top: 10px;
+                        }
+
+                        .wghGameCard.wgh-filtered-out {
+                        	display: none !important;
+                        }
+
+                        .wghRrcInfo {
+                        	display: flex;
+                        	justify-content: space-between;
+                        	align-items: center;
+                        	padding: 4px 8px;
+                        	border-radius: 3px;
+                        	margin-bottom: 8px;
+                        	font-size: 13px;
+                        }
+
+                        .wghRrcStatus {
+                        	font-weight: bold;
+                        }
+
+                        .wghRrcDiff {
+                        	font-size: 12px;
+                        }
+
+                        .wghRrc-lower {
+                        	background-color: rgba(102, 192, 244, 0.2);
+                        	border: 1px solid rgba(102, 192, 244, 0.4);
+                        	color: #c6d4df;
+                        }
+
+                        .wghRrc-equal {
+                        	background-color: rgba(92, 184, 92, 0.2);
+                        	border: 1px solid rgba(92, 184, 92, 0.4);
+                        	color: #dff0d8;
+                        }
+
+                        .wghRrc-higher {
+                        	background-color: rgba(217, 83, 79, 0.2);
+                        	border: 1px solid rgba(217, 83, 79, 0.4);
+                        	color: #f2dede;
+                        }
+
+                        .wghRrc-lower .wghRrcStatus {
+                        	color: #d1e5fa;
+                        }
+
+                        .wghRrc-equal .wghRrcStatus {
+                        	color: #c0ef15;
+                        }
+
+                        .wghRrc-higher .wghRrcStatus {
+                        	color: #f2dede;
+                        }
+
+                        @media (max-width: 1600px) {
+                        	#wghResults {
+                        		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+                        	}
+                        }
+
+                        @media (max-width: 1300px) {
+                        	#wghResults {
+                        		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                        	}
+                        }
+
+                        @media (max-width: 900px) {
+                        	#wghResults {
+                        		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                        	}
+                        }
+
+                        @media (max-width: 700px) {
+                        	#wghResults {
+                        		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+                        	}
+
+                        	#wghHeader {
+                        		flex-direction: column;
+                        		align-items: stretch;
+                        	}
+
+                        	#wghSortButtons {
+                        		justify-content: space-around;
+                        		margin-left: 0;
+                        		margin-top: 5px;
+                        		width: 100%;
+                        		order: 3;
+                        	}
+
+                        	#wghGiftAccordionContent {
+                        		flex-direction: column;
+                        		align-items: flex-start;
+                        	}
+
+                        	#wghGiftAccordionContent label {
+                        		margin-bottom: 5px;
+                        	}
+
+                        	#wghGiftAccordionContent #wghFriendRegionSelect,
+                        	#wghGiftAccordionContent #wghFetchFriendPricesBtn {
+                        		width: 100%;
+                        		margin-bottom: 10px;
+                        	}
+
+                        	#wghGiftAccordionContent div[style*='margin-left: auto'] {
+                        		width: 100%;
+                        		margin-left: 0 !important;
+                        		text-align: center;
+                        	}
+
+                        	#wghHeader>.wghBtn:first-child {
+                        		order: 1;
+                        		width: 100%;
+                        		margin-bottom: 5px;
+                        	}
+
+                        	#wghGiftModeBtn,
+                        	#wghFilterToggleBtn {
+                        		order: 2;
+                        		align-self: flex-end;
+                        		margin-bottom: 5px;
+                        	}
+
+                        	#wghStatus {
+                        		order: 0;
+                        		text-align: center;
+                        		justify-content: center;
+                        		margin-bottom: 5px;
+                        	}
+                        }
                 `);
             }
 
@@ -13845,6 +14878,46 @@
                 return isNaN(percent) ? null : percent;
             }
 
+            // Эта функция определяет валюту и приводит цену к рублям
+            async function sm_processItemCurrency(itemData, priceString) {
+                if (!priceString || typeof priceString !== 'string') {
+                    itemData.currency = 'RUB'; // По умолчанию считаем рубли
+                    return itemData;
+                }
+
+                if (priceString.includes('$') || itemData.currency?.toUpperCase() === 'USD' || itemData.currency?.toUpperCase() === 'CIS') {
+                    itemData.currency = 'USD';
+                    const usdToRubRate = sm_exchangeRates?.usd?.rub;
+                    if (usdToRubRate) {
+                        itemData.currentPrice = itemData.currentPrice * usdToRubRate;
+                    } else {
+                        // Если курс USD->RUB не загружен, пробуем обратный курс
+                        const rubToUsdRate = sm_exchangeRates?.rub?.usd;
+                        if(rubToUsdRate) {
+                             itemData.currentPrice = itemData.currentPrice / rubToUsdRate;
+                        } else {
+                            sm_logError(itemData.storeName, 'Нет курсов для конвертации USD в RUB');
+                            return null; // Не можем обработать цену
+                        }
+                    }
+                } else if (priceString.includes('₸') || itemData.currency?.toUpperCase() === 'KZT') {
+                    itemData.currency = 'KZT';
+                    const kztToRubRate = sm_exchangeRates?.kzt?.rub;
+                     if (kztToRubRate) {
+                        itemData.currentPrice = itemData.currentPrice * kztToRubRate;
+                    } else {
+                         sm_logError(itemData.storeName, 'Нет курсов для конвертации KZT в RUB');
+                         return null;
+                    }
+                }
+                else {
+                    itemData.currency = 'RUB'; // Если нет символов, считаем, что это рубли
+                }
+                 // После конвертации все цены в рублях
+                itemData.currency = 'RUB';
+                return itemData;
+            }
+
             function sm_calculateMissingValues(item) {
                 const price = item.currentPrice;
                 let original = item.originalPrice;
@@ -14469,6 +15542,9 @@
                 sm_updateCurrencyToggleButton();
 
                 sm_applyFilters();
+                if (scriptsConfig.salesMasterAutoSearch) {
+                   sm_triggerSearch();
+                }
             }
 
             function sm_hideModal() {
@@ -14500,6 +15576,16 @@
 
             // --- Запуск поиска ---
             async function sm_triggerSearch() {
+                try {
+                    sm_updateStatus('Загрузка курсов валют...', true);
+                    await Promise.all([
+                        sm_fetchExchangeRates('usd'),
+                        sm_fetchExchangeRates('kzt')
+                    ]);
+                } catch(e) {
+                    sm_logError("Core", "Не удалось загрузить все необходимые курсы валют", e);
+                }
+
                 const gameName = sm_getSteamGameName();
                 if (!gameName) {
                     sm_updateStatus('Не удалось определить название игры на странице Steam.');
@@ -14563,6 +15649,14 @@
                 const resultsArrays = await Promise.all(promises);
 
                 sm_currentResults = resultsArrays.flat();
+
+                if (scriptsConfig.salesMasterAutoInsertTitle) {
+                    const gameName = sm_getSteamGameName();
+                    const filterInput = document.getElementById('smTitleFilterInput');
+                    if (gameName && filterInput) {
+                        filterInput.value = gameName;
+                    }
+                }
 
                 sm_updateLoadingProgress(totalStoresToCheck);
                 if (sm_currentResults.length > 0) {
@@ -15196,7 +16290,7 @@
                             currentPriceSpan.textContent = item.currentPrice === null ? 'Нет цены' : 'Нет курса';
                         }
                     } else {
-                        currentPriceSpan.textContent = item.currentPrice !== null ? `${item.currentPrice.toLocaleString('ru-RU')} ₽` : 'Нет цены';
+                        currentPriceSpan.textContent = item.currentPrice !== null ? `${parseFloat(item.currentPrice).toFixed(0).toLocaleString('ru-RU')} ₽` : 'Нет цены';
                     }
                     priceDiv.appendChild(currentPriceSpan);
 
@@ -15212,7 +16306,7 @@
                                 const usdOriginalPrice = item.originalPrice * rubToUsdRate;
                                 originalPriceSpan.textContent = `$${usdOriginalPrice.toFixed(2)}`;
                             } else {
-                                originalPriceSpan.textContent = `${item.originalPrice.toLocaleString('ru-RU')} ₽`;
+                                originalPriceSpan.textContent = `${parseFloat(item.originalPrice).toFixed(0).toLocaleString('ru-RU')} ₽`;
                             }
                             priceDiv.appendChild(originalPriceSpan);
                         }
@@ -15731,17 +16825,17 @@
                 }
 
                 #salesMasterAddExcludeBtn {
-                	display: flex;
-                	align-items: center;
-                	justify-content: center;
-                	padding: 0 12px;
-                	background-color: #4b6f9c;
-                	border: none;
-                	border-left: 1px solid #3a4f6a;
-                	cursor: pointer;
-                	border-radius: 0;
-                	color: #c6d4df;
-                	height: auto;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 36px;
+                    background-color: #4b6f9c;
+                    border: none;
+                    border-left: 1px solid #3a4f6a;
+                    cursor: pointer;
+                    border-radius: 0;
+                    color: #c6d4df;
+                    height: auto;
                 }
 
                 #salesMasterAddExcludeBtn:hover {
@@ -15750,10 +16844,9 @@
                 }
 
                 #salesMasterAddExcludeBtn svg {
-                	width: 26px;
-                	height: 26px;
+                	width: 16px;
+                	height: 16px;
                 	fill: currentColor;
-                    padding-right: 14px;
                 }
 
                 #salesMasterExclusionTagsList {
@@ -16703,37 +17796,32 @@
                             });
                         });
                     },
-                    parseHtml: function(htmlString, storeModule) {
+                    parseHtml: async function(htmlString, storeModule) {
                         const results = [];
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(htmlString, 'text/html');
                         const items = doc.querySelectorAll('.catalog-item');
 
-                        items.forEach(item => {
-                            try {
-                                const linkElement = item;
-                                const imgElement = item.querySelector('.catalog-item__img img');
-                                const nameElement = item.querySelector('.catalog-item__name');
-                                const priceSpanElement = item.querySelector('.catalog-item__price-span');
-                                const discountElement = item.querySelector('.catalog-item__discount');
+                        await sm_fetchExchangeRates('usd').catch(e => sm_logError(storeModule.name, "Не удалось загрузить курсы USD", e));
 
+                        for (const item of items) {
+                            try {
+                                const priceSpanElement = item.querySelector('.catalog-item__price-span');
                                 const currentPriceText = priceSpanElement?.textContent?.trim();
                                 const currentPrice = sm_parsePrice(currentPriceText);
-                                if (currentPrice === null) {
-                                    return;
-                                }
+                                if (currentPrice === null) continue;
 
+                                const nameElement = item.querySelector('.catalog-item__name');
                                 let productName = null;
                                 if (nameElement) {
                                     const nameClone = nameElement.cloneNode(true);
-                                    const infoDiv = nameClone.querySelector('.catalog-item__info');
-                                    if (infoDiv) infoDiv.remove();
+                                    nameClone.querySelector('.catalog-item__info')?.remove();
                                     productName = nameClone.textContent?.trim();
                                 }
 
-                                const productUrl = linkElement?.getAttribute('href');
-                                const imageUrl = imgElement?.getAttribute('src');
-                                const discountPercent = discountElement ? sm_parsePercent(discountElement.textContent) : 0;
+                                const productUrl = item?.getAttribute('href');
+                                const imageUrl = item.querySelector('.catalog-item__img img')?.getAttribute('src');
+                                const discountPercent = sm_parsePercent(item.querySelector('.catalog-item__discount')?.textContent);
 
                                 if (productName && productUrl) {
                                     let data = {
@@ -16750,12 +17838,16 @@
                                         currency: 'RUB',
                                         isAvailable: true
                                     };
-                                    results.push(sm_calculateMissingValues(data));
+
+                                    const processedData = await sm_processItemCurrency(data, currentPriceText);
+                                    if (processedData) {
+                                       results.push(sm_calculateMissingValues(processedData));
+                                    }
                                 }
                             } catch (e) {
                                 sm_logError(storeModule.name, 'Ошибка парсинга элемента', e);
                             }
-                        });
+                        }
                         return results;
                     }
                 }, // --- Конец модуля SteamPay ---
@@ -16849,126 +17941,54 @@
                     isEnabled: true,
                     fetch: async function(query) {
                         const storeModule = this;
-
-                        const searchByName = () => {
-                            const searchUrl = storeModule.searchUrlTemplate.replace('{query}', encodeURIComponent(query));
-                            return new Promise((resolve, reject) => {
-                                GM_xmlhttpRequest({
-                                    method: "GET",
-                                    url: searchUrl,
-                                    timeout: SM_REQUEST_TIMEOUT_MS,
-                                    onload: (response) => {
-                                        if (response.status >= 200 && response.status < 400) {
-                                            resolve(storeModule.parseHtml(response.responseText, storeModule));
-                                        } else {
-                                            reject(new Error(`[Fallback] HTTP статус ${response.status}`));
-                                        }
-                                    },
-                                    onerror: (error) => reject(new Error('[Fallback] Сетевая ошибка')),
-                                    ontimeout: () => reject(new Error('[Fallback] Таймаут запроса'))
-                                });
-                            });
-                        };
-
-                        const steamAppIdMatch = unsafeWindow.location.pathname.match(/\/app\/(\d+)/);
-                        if (!steamAppIdMatch || !steamAppIdMatch[1]) {
-                            return searchByName();
-                        }
-                        const currentAppId = steamAppIdMatch[1];
-                        const xmlFeedUrl = "https://coreplatform.blob.core.windows.net/products-content/steam_pages_feed.xml";
-
+                        const searchUrl = storeModule.searchUrlTemplate.replace('{query}', encodeURIComponent(query));
                         return new Promise((resolve, reject) => {
                             GM_xmlhttpRequest({
                                 method: "GET",
-                                url: xmlFeedUrl,
-                                responseType: 'text',
+                                url: searchUrl,
                                 timeout: SM_REQUEST_TIMEOUT_MS,
                                 onload: (response) => {
                                     if (response.status >= 200 && response.status < 400) {
-                                        try {
-                                            const parser = new DOMParser();
-                                            const xml = parser.parseFromString(response.responseText, "application/xml");
-                                            const match = Array.from(xml.querySelectorAll("game")).find(game => game.querySelector("steam_id")?.textContent === currentAppId);
-
-                                            if (match) {
-                                                const isAvailable = match.querySelector("available")?.textContent === "True";
-                                                const price = sm_parsePrice(match.querySelector("price")?.textContent);
-                                                const gameCode = match.querySelector("code_gb")?.textContent;
-
-                                                if (isAvailable && price !== null && gameCode) {
-                                                    const headerImageElement = document.querySelector('#gameHeaderImageCtn img.game_header_image_full');
-                                                    const mainImageUrl = headerImageElement ? headerImageElement.src : null;
-                                                    const fullOriginalUrl = `https://gamersbase.store/game/${gameCode}`;
-                                                    const referralPrefix = 'https://lsuix.com/g/nzstwno2sac1442ace4bb0de1ddd64/?erid=2bL9aMPo2e49hMef4pfVDVxtYh&ulp=';
-                                                    const productUrl = referralPrefix + encodeURIComponent(fullOriginalUrl);
-
-                                                    let data = {
-                                                        storeId: storeModule.id,
-                                                        storeName: storeModule.name,
-                                                        storeUrl: storeModule.baseUrl,
-                                                        productName: query,
-                                                        productUrl: productUrl,
-                                                        imageUrl: mainImageUrl,
-                                                        currentPrice: price,
-                                                        originalPrice: null,
-                                                        discountPercent: null,
-                                                        discountAmount: null,
-                                                        currency: 'RUB',
-                                                        isAvailable: true
-                                                    };
-                                                    return resolve([sm_calculateMissingValues(data)]);
-                                                }
-                                            }
-                                            searchByName().then(resolve).catch(reject);
-
-                                        } catch (e) {
-                                            sm_logError(storeModule.name, 'Ошибка парсинга XML, переход на поиск по названию.', e);
-                                            searchByName().then(resolve).catch(reject);
-                                        }
+                                        resolve(storeModule.parseHtml(response.responseText, storeModule));
                                     } else {
-                                        sm_logError(storeModule.name, `XML-фид недоступен (статус ${response.status}), переход на поиск по названию.`);
-                                        searchByName().then(resolve).catch(reject);
+                                        reject(new Error(`[Fallback] HTTP статус ${response.status}`));
                                     }
                                 },
-                                onerror: (error) => {
-                                    sm_logError(storeModule.name, 'Сетевая ошибка XML, переход на поиск по названию.', error);
-                                    searchByName().then(resolve).catch(reject);
-                                },
-                                ontimeout: () => {
-                                    sm_logError(storeModule.name, 'Таймаут XML, переход на поиск по названию.');
-                                    searchByName().then(resolve).catch(reject);
-                                }
+                                onerror: (error) => reject(new Error('[Fallback] Сетевая ошибка')),
+                                ontimeout: () => reject(new Error('[Fallback] Таймаут запроса'))
                             });
                         });
                     },
-                    parseHtml: function(htmlString, storeModule) {
+                    parseHtml: async function(htmlString, storeModule) {
                         const results = [];
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(htmlString, 'text/html');
                         const items = doc.querySelectorAll('.js-products-container .ui.cover');
 
-                        items.forEach(item => {
+                        await sm_fetchExchangeRates('usd').catch(e => sm_logError(storeModule.name, "Не удалось загрузить курсы USD", e));
+                        await sm_fetchExchangeRates('kzt').catch(e => sm_logError(storeModule.name, "Не удалось загрузить курсы KZT", e));
+
+
+                        for (const item of items) {
                             try {
                                 const linkElement = item.querySelector('a.cover-holder');
-                                const imgElement = item.querySelector('.image img');
                                 const buyButton = item.querySelector('.js-add-product');
                                 const productDataJson = linkElement?.dataset.product || buyButton?.dataset.product;
-
-                                if (!productDataJson) return;
+                                if (!productDataJson) continue;
 
                                 const productData = JSON.parse(productDataJson);
-                                if (!productData?.name || !productData?.priceData) return;
+                                if (!productData?.name || !productData?.priceData) continue;
 
                                 const productName = productData.name;
                                 const productUrlRaw = linkElement?.getAttribute('href');
-                                const imageUrl = imgElement?.getAttribute('src');
+                                const imageUrl = item.querySelector('.image img')?.getAttribute('src');
                                 const currentPrice = sm_parsePrice(productData.priceData.actualPriceFormatted);
                                 const originalPrice = sm_parsePrice(productData.priceData.standardPriceFormatted);
                                 const discountPercent = productData.priceData.discountPercent || 0;
                                 const currency = productData.priceData.currency || 'RUB';
                                 const isAvailable = item.querySelector('.js-add-product.available-true') !== null;
 
-                                if (productName && productUrlRaw && currentPrice !== null) {
+                                if (productName && productUrlRaw && currentPrice !== null && isAvailable) {
                                     let fullOriginalUrl = productUrlRaw.startsWith('/') ? storeModule.baseUrl + productUrlRaw : productUrlRaw;
                                     const urlObject = new URL(fullOriginalUrl);
                                     if (urlObject.pathname.startsWith('/ru/')) {
@@ -16979,27 +17999,22 @@
                                     const productUrl = referralPrefix + encodeURIComponent(fullOriginalUrl);
 
                                     let data = {
-                                        storeId: storeModule.id,
-                                        storeName: storeModule.name,
-                                        storeUrl: storeModule.baseUrl,
-                                        productName: productName,
-                                        productUrl: productUrl,
-                                        imageUrl: imageUrl,
-                                        currentPrice: currentPrice,
-                                        originalPrice: originalPrice,
-                                        discountPercent: discountPercent,
-                                        discountAmount: null,
-                                        currency: currency,
-                                        isAvailable: isAvailable
+                                        storeId: storeModule.id, storeName: storeModule.name, storeUrl: storeModule.baseUrl,
+                                        productName: productName, productUrl: productUrl, imageUrl: imageUrl,
+                                        currentPrice: currentPrice, originalPrice: originalPrice, discountPercent: discountPercent,
+                                        discountAmount: null, currency: currency, // Передаем оригинальную валюту
+                                        isAvailable: true
                                     };
-                                    if (data.isAvailable) {
-                                        results.push(sm_calculateMissingValues(data));
+
+                                    const processedData = await sm_processItemCurrency(data, productData.priceData.actualPriceFormatted);
+                                    if(processedData) {
+                                        results.push(sm_calculateMissingValues(processedData));
                                     }
                                 }
                             } catch (e) {
                                 sm_logError(storeModule.name, 'Ошибка парсинга элемента или JSON в data-product', e);
                             }
-                        });
+                        }
                         return results;
                     }
                 }, // --- Конец модуля GamerBase ---
@@ -17164,7 +18179,6 @@
                         return results;
                     }
                 }, // --- Конец модуля GamesForFarm ---
-
 
                 { // --- Модуль Gamazavr ---
                     id: 'gamazavr',
@@ -18286,8 +19300,104 @@
                         });
                         return results;
                     }
-                } // --- Конец модуля Plati.Market ---
+                }, // --- Конец модуля Plati.Market ---
+                { // --- Модуль Rushbe ---
+                    id: 'rushbe',
+                    name: 'Rushbe',
+                    baseUrl: 'https://rushbe.ru',
+                    searchUrlTemplate: 'https://rushbe.ru/gateway/api/game-center/games/catalog/search',
+                    isEnabled: true,
+                    fetch: async function(query) {
+                        const storeModule = this;
+                        const searchUrl = this.searchUrlTemplate;
 
+                        const requestPayload = {
+                            filter: query
+                        };
+
+                        const requestHeaders = {
+                            'accept': 'application/json, text/plain, */*',
+                            'content-type': 'application/json;charset=UTF-8',
+                        };
+
+                        return new Promise((resolve, reject) => {
+                            GM_xmlhttpRequest({
+                                method: "POST",
+                                url: searchUrl,
+                                headers: requestHeaders,
+                                data: JSON.stringify(requestPayload),
+                                responseType: 'json',
+                                timeout: SM_REQUEST_TIMEOUT_MS,
+                                onload: (response) => {
+                                    if (response.status >= 200 && response.status < 400 && response.response) {
+                                        resolve(this.parseApiResponse(response.response, storeModule));
+                                    } else {
+                                        reject(new Error(`HTTP статус ${response.status}`));
+                                    }
+                                },
+                                onerror: (error) => reject(new Error('Сетевая ошибка')),
+                                ontimeout: () => reject(new Error('Таймаут запроса'))
+                            });
+                        });
+                    },
+                    parseApiResponse: function(items, storeModule) {
+                        const results = [];
+                        if (!Array.isArray(items)) {
+                            sm_logError(storeModule.name, 'Ответ API не является массивом', items);
+                            return results;
+                        }
+
+                        items.forEach(item => {
+                            try {
+                                if (item.outOfStock === true) {
+                                    return;
+                                }
+                                const isSteamGame = item.activations?.some(act => act.code === 'steam');
+                                if (!isSteamGame) {
+                                    return;
+                                }
+
+                                const productName = item.gameName?.trim();
+                                const productUrlRaw = item.link ? `/games/${item.link}` : null;
+                                const imageUrlRaw = item.horizontalCover?.preview;
+                                const currentPrice = sm_parsePrice(item.priceWithSale);
+                                const originalPrice = sm_parsePrice(item.priceWithoutSale);
+                                const discountPercent = item.sale || 0;
+
+                                if (!productName || !productUrlRaw || currentPrice === null) {
+                                    return;
+                                }
+
+                                if (item.hasDlc && !productName.toLowerCase().includes('dlc') && !productName.toLowerCase().includes('pack')) {
+                                }
+
+                                const productUrl = storeModule.baseUrl + productUrlRaw;
+                                const imageUrl = imageUrlRaw ? storeModule.baseUrl + imageUrlRaw : null;
+
+                                let data = {
+                                    storeId: storeModule.id,
+                                    storeName: storeModule.name,
+                                    storeUrl: storeModule.baseUrl,
+                                    productName: productName,
+                                    productUrl: productUrl,
+                                    imageUrl: imageUrl,
+                                    currentPrice: currentPrice,
+                                    originalPrice: (originalPrice && originalPrice > currentPrice) ? originalPrice : currentPrice,
+                                    discountPercent: discountPercent > 0 ? discountPercent : null,
+                                    discountAmount: null,
+                                    currency: 'RUB',
+                                    isAvailable: true
+                                };
+
+                                results.push(sm_calculateMissingValues(data));
+
+                            } catch (e) {
+                                sm_logError(storeModule.name, 'Ошибка парсинга элемента API', e);
+                            }
+                        });
+                        return results;
+                    }
+                }
 
                 // --- Сюда другие модули ---
             ];
@@ -18456,6 +19566,79 @@
                  return appNameElement ? appNameElement.textContent.trim() : '';
             }
 
+            function ps_exportExclusions() {
+                const keywordsString = ps_exclusionKeywords.join(',');
+                if (!keywordsString) {
+                    alert('Список исключений пуст.');
+                    return;
+                }
+                try {
+                    navigator.clipboard.writeText(keywordsString).then(() => {
+                        const exportBtn = document.getElementById('psExportExclusionsBtn');
+                        if (exportBtn) {
+                            const originalContent = exportBtn.innerHTML;
+                            exportBtn.innerHTML = 'Скопировано!';
+                            exportBtn.disabled = true;
+                            setTimeout(() => {
+                                exportBtn.innerHTML = originalContent;
+                                exportBtn.disabled = false;
+                            }, 1500);
+                        }
+                    }, (err) => {
+                        console.error('[PlatiSearch] Не удалось скопировать в буфер обмена:', err);
+                        prompt('Не удалось скопировать автоматически. Скопируйте вручную:', keywordsString);
+                    });
+                } catch (err) {
+                    console.error('[PlatiSearch] Ошибка доступа к буферу обмена:', err);
+                    prompt('Не удалось скопировать автоматически. Скопируйте вручную:', keywordsString);
+                }
+            }
+
+            function ps_showImportModal() {
+                const existingModal = document.getElementById('psImportModal');
+                if (existingModal) existingModal.remove();
+
+                const importModal = document.createElement('div');
+                importModal.id = 'psImportModal';
+                importModal.innerHTML = `
+                    <div class="psImportModalContent">
+                        <h4>Импорт списка исключений</h4>
+                        <p>Вставьте список слов, разделенных запятыми:</p>
+                        <textarea id="psImportTextarea" rows="6"></textarea>
+                        <div class="psImportModalActions">
+                            <button id="psImportAcceptBtn" class="platiSearchBtn">Принять</button>
+                            <button id="psImportCancelBtn" class="platiSearchBtn">Отмена</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(importModal);
+
+                document.getElementById('psImportAcceptBtn').onclick = ps_handleImport;
+                document.getElementById('psImportCancelBtn').onclick = () => importModal.remove();
+                document.getElementById('psImportTextarea').focus();
+            }
+
+            function ps_handleImport() {
+                const textarea = document.getElementById('psImportTextarea');
+                const importModal = document.getElementById('psImportModal');
+                if (!textarea || !importModal) return;
+
+                const text = textarea.value.trim();
+                if (text) {
+                    const importedKeywords = text.split(',')
+                                               .map(k => k.trim().toLowerCase())
+                                               .filter(k => k.length > 0);
+                    ps_exclusionKeywords = [...new Set(importedKeywords)];
+                    GM_setValue(PS_EXCLUSION_STORAGE_KEY, ps_exclusionKeywords);
+                    ps_renderExclusionTags();
+                    ps_applyFilters();
+                    console.log('[PlatiSearch] Список исключений импортирован.');
+                } else {
+                    alert("Поле ввода пустое. Импорт не выполнен.");
+                }
+                importModal.remove();
+            }
+
             // --- Создание UI ---
             function createPlatiModal() {
                  const existingModal = document.querySelector('#platiSearchModal');
@@ -18589,6 +19772,28 @@
                  exclusionInputGroup.appendChild(ps_excludeInput);
                  exclusionInputGroup.appendChild(ps_addExcludeBtn);
                  ps_exclusionTagsDiv.appendChild(exclusionInputGroup);
+
+                 const exclusionActionsDiv = document.createElement('div');
+                 exclusionActionsDiv.className = 'psExclusionActions';
+
+                 const exportBtn = document.createElement('button');
+                 exportBtn.id = 'psExportExclusionsBtn';
+                 exportBtn.className = 'platiSearchBtn psExclusionActionBtn';
+                 exportBtn.title = 'Экспорт списка исключений';
+                 exportBtn.innerHTML = '←'
+                 exportBtn.onclick = ps_exportExclusions;
+                 exclusionActionsDiv.appendChild(exportBtn);
+
+                 const importBtn = document.createElement('button');
+                 importBtn.id = 'psImportExclusionsBtn';
+                 importBtn.className = 'platiSearchBtn psExclusionActionBtn';
+                 importBtn.title = 'Импорт списка исключений';
+                 importBtn.innerHTML = '→';
+                 importBtn.onclick = ps_showImportModal;
+                 exclusionActionsDiv.appendChild(importBtn);
+
+                 ps_exclusionTagsDiv.appendChild(exclusionActionsDiv);
+
                  ps_exclusionTagsListDiv = document.createElement('div');
                  ps_exclusionTagsListDiv.id = 'platiExclusionTagsList';
                  ps_exclusionTagsDiv.appendChild(ps_exclusionTagsListDiv);
@@ -18619,7 +19824,16 @@
                  applyLoadedFiltersToUI();
                  ps_updateSortButtonsState();
 
-                 function handleEsc(event) { if (event.key === 'Escape') hidePlatiModal(); }
+                 function handleEsc(event) {
+                     if (event.key === 'Escape') {
+                         const importModal = document.getElementById('psImportModal');
+                         if (importModal) {
+                             importModal.remove();
+                         } else {
+                             hidePlatiModal();
+                         }
+                     }
+                 }
                  document.addEventListener('keydown', handleEsc);
                  ps_modal._escHandler = handleEsc;
             }
@@ -20303,6 +21517,108 @@
 
                     .plati_price_button .btnv6_blue_hoverfade:hover {
                     	filter: brightness(1.1);
+                    }
+
+                    .psExclusionActions {
+                        display: flex;
+                        justify-content: flex-end;
+                        gap: 8px;
+                        margin-top: 10px;
+                        padding-bottom: 10px;
+                        border-bottom: 1px solid #444;
+                    }
+
+                    .psExclusionActionBtn {
+                        padding: 0 8px;
+                        height: 30px;
+                        width: 40px;
+                        background-color: #555;
+                        border-color: #666;
+                        font-size: 14px;
+                        font-weight: bold;
+                        line-height: 1;
+                    }
+
+                    #psImportModal {
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-color: rgba(0, 0, 0, 0.7);
+                        z-index: 10003;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .psImportModalContent {
+                        background-color: #2a2a30;
+                        padding: 25px;
+                        border-radius: 5px;
+                        border: 1px solid #007bff;
+                        width: 90%;
+                        max-width: 500px;
+                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+                    }
+
+                    .psImportModalContent h4 {
+                        margin-top: 0;
+                        margin-bottom: 15px;
+                        color: #eee;
+                        font-size: 16px;
+                        text-align: center;
+                    }
+                     .psImportModalContent p {
+                        margin-bottom: 10px;
+                        font-size: 14px;
+                        color: #ccc;
+                     }
+
+                    #psImportTextarea {
+                        width: 100%;
+                        padding: 10px;
+                        font-size: 14px;
+                        background-color: #333;
+                        border: 1px solid #555;
+                        color: #eee;
+                        border-radius: 4px;
+                        margin-bottom: 20px;
+                        min-height: 100px;
+                        resize: vertical;
+                        outline: none;
+                    }
+                    #psImportTextarea:focus {
+                        border-color: #67c1f5;
+                    }
+
+                    .psImportModalActions {
+                        display: flex;
+                        justify-content: flex-end;
+                        gap: 10px;
+                    }
+
+                     .psImportModalActions .platiSearchBtn {
+                        padding: 8px 20px;
+                        height: auto;
+                        font-size: 14px;
+                     }
+
+                    #psImportAcceptBtn {
+                         background-color: #4D88FF;
+                    }
+                    #psImportAcceptBtn:hover {
+                        background-color: #3366CC;
+                    }
+                    #psImportCancelBtn {
+                        background-color: #777;
+                    }
+                     #psImportCancelBtn:hover {
+                        background-color: #888;
+                    }
+
+                    #platiExclusionTagsList {
+                        margin-top: 0;
                     }
                  `);
              }
