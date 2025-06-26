@@ -91,7 +91,7 @@
 <p>Данные загружаются при раскрытии блока.</p>
 <center><img src="https://i.imgur.com/9TaMCbZ.png" alt="[Пример отображения времени друзей и статистики достижений]" style="border: 1px solid #333;"></center>
 <p><strong>Модуль адаптирован для работы на страницах недоступных игр</strong>, открытых с помощью "виртуального режима инкогнито", и отображает на них информацию о друзьях, владеющих игрой.</p>
-        <center><img src="https://i.imgur.com/6jbZ03L.png" alt="[Изображение: Пример]" style="max-width: 100%; height: auto; border-radius: 4px; border: 1px solid #333; margin-top: 10px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;"></center>
+<center><img src="https://i.imgur.com/6jbZ03L.png" alt="[Изображение: Пример]" style="max-width: 100%; height: auto; border-radius: 4px; border: 1px solid #333; margin-top: 10px; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;"></center>
 </div>
 </details>
 <details style="background-color: #17202d; border: 1px solid #2a3f5a;"><summary style="color: #67c1f5;">Индикатор раннего доступа</summary><div style="border-top: 1px solid #2a3f5a;"><p><strong>Что делает:</strong><br>Показывает небольшую плашку над изображением игры с информацией о статусе раннего доступа (Early Access).</p>
@@ -147,20 +147,26 @@
 <li>Фильтрация по цене (RUR, USD, EUR, UAH), продажам, рейтингу, наличию плохих отзывов/возвратов, участию в скидках, дате добавления.</li>
 <li>Исключение товаров по ключевым словам (панель справа).</li>
 <li>Сохранение фильтров, сортировки, валюты и исключений.</li>
+<li>Возможность экспортировать и импортировать список исключений.</li>
 </ul>
 <p>Используются официальные API Plati.Market.</p>
-<center><img src="https://i.imgur.com/j1TGmY8.png" alt="[Модальное окно поиска цен на Plati.Market]" style="border: 1px solid #333;"></center>
+<center><img src="https://i.imgur.com/X5NDh6D.png" alt="[Модальное окно поиска цен на Plati.Market]" style="border: 1px solid #333;"></center>
 </div>
 </details>
 <details style="background-color: #17202d; border: 1px solid #2a3f5a;"><summary style="color: #67c1f5;">Агрегатор цен (%)</summary><div style="border-top: 1px solid #2a3f5a;"><p><strong>Что делает:</strong><br>Добавляет кнопку "%" рядом с кнопкой "В желаемое" на странице игры.<br>Нажатие открывает модальное окно с ценами на эту игру из различных цифровых магазинов.</p>
 <p><strong>Возможности окна агрегатора:</strong></p>
 <ul>
-<li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market и текущей страницы Steam.</li>
+<li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market, <strong>Rushbe</strong> и текущей страницы Steam.</li>
 <li>Конвертация валют: Возможность переключения отображения всех цен между рублями (RUB) и долларами США (USD).</li>
 <li>Сортировка по цене, проценту скидки, сумме скидки, названию.</li>
 <li>Фильтрация по диапазону цен, проценту и сумме скидки, наличию скидки, названию (слова через ";"), магазинам.</li>
 <li>Исключение товаров по ключевым словам.</li>
 <li>Сохранение состояния фильтров, сортировки и исключений.</li>
+<li>Настройки автоматизации (в общем меню настроек U.S.E.):
+<ul style="padding-left:15px; margin-top:5px;">
+<li>Автоматический запуск поиска при открытии окна.</li>
+<li>Автоматическая подстановка названия текущей игры в поле фильтра после завершения сбора данных.</li>
+</ul>
 <li>Экспорт и импорт списка исключений для удобного переноса и резервного копирования.</li>
 </ul>
 <details style="background-color: #111a24; border: 1px solid #2a3f5a; margin-top: 15px; margin-bottom: 15px; padding: 5px 10px; border-radius: 3px;"><summary style="color: #8f98a0; cursor: pointer;">Список рекомендуемых исключений</summary>
@@ -182,23 +188,6 @@
 </ul>
 <p>Использует те же механизмы получения цен и курсов валют, что и помощник для списка желаемого.</p>
 <center><img src="https://i.imgur.com/jDdf4pR.png" alt="[Пример работы помощника подарков на странице игры]" style="border: 1px solid #333;"></center>
-</div>
-</details>
-<details style="background-color: #17202d; border: 1px solid #2a3f5a;"><summary style="color: #67c1f5;">Доступ к недоступным играм (Виртуальный режим инкогнито)</summary><div style="border-top: 1px solid #2a3f5a;"><p><strong>Что делает:</strong><br>Позволяет просматривать страницы игр, недоступных в вашем регионе (которые обычно показывают ошибку "Ой, извините..."), и использовать на них большинство функций расширения.</p>
-<center><img src="https://i.imgur.com/TGmRkOP.png" alt="[Пример работы виртуального режима инкогнито]" style="border: 1px solid #333; max-width: 100%; height: auto;"></center>
-<p><strong>Принцип работы:</strong></p>
-<ul>
-<li>При заходе на заблокированную страницу скрипт автоматически в фоновом режиме получает временную анонимную сессию от Steam.</li>
-<li>Используя эту сессию, он запрашивает страницу игры для другого региона (США), но с русским языком.</li>
-<li>Скрипт автоматически проходит проверку возраста, если она требуется.</li>
-<li>Полученный "разблокированный" код страницы полностью заменяет собой содержимое текущей вкладки, позволяя вам видеть полноценную страницу игры, не покидая ее.</li>
-<li>После этого все модули U.S.E. перезапускаются, чтобы корректно работать на новой странице.</li>
-</ul>
-<div style="background-color: rgba(103, 193, 245, 0.1); border: 1px solid rgba(103, 193, 245, 0.35); padding: 10px; margin-top:15px; border-radius: 4px;">
-<p style="color: #67c1f5; font-weight: bold; margin-top:0; margin-bottom:5px;">⚠️ Легитимность и безопасность:</p>
-<p style="color: #c6d4df; margin-bottom:0; margin-top:0;">Данный метод <strong>не нарушает правила Steam</strong>, так как не использует VPN/прокси, а лишь задействует встроенную функцию Steam для просмотра страниц под другим регионом (<code>?cc=us</code>) в изолированной сессии. Это предназначено <strong>только для просмотра</strong>, совершить покупку таким образом невозможно.</p>
-</div><br>
-<center><img src="https://i.imgur.com/PpjV7oc.png" alt="[Пример работы виртуального режима инкогнито]" style="border: 1px solid #333; max-width: 100%; height: auto;"></center>
 </div>
 </details>
 </div>
@@ -295,6 +284,25 @@
 <center><img src="https://i.imgur.com/KDfW10m.png" alt="Пример модального окна Рулетки Stelicas с фильтрами" style="max-width: 90%; height: auto; margin-top: 10px; border: 1px solid #333; border-radius: 4px;"></center>
 </div>
 </details>
+<details style="background-color: #17202d; border: 1px solid #2a3f5a;"><summary style="color: #67c1f5;">Виртуальный режим «Инкогнито»</summary><div style="border-top:1px solid #cccccc; padding-top:10px;">
+<p><strong>Что делает:</strong><br>Полностью автоматизирует просмотр страниц Steam, недоступных в вашем регионе, без необходимости использования VPN, прокси или ручных манипуляций с URL.</p>
+<p><strong>Принцип работы:</strong></p>
+<ol>
+<li>При переходе на страницу с сообщением "Данный товар недоступен в вашем регионе", скрипт автоматически это распознает.</li>
+<li>Вместо простого редиректа, он в фоновом режиме запрашивает у Steam анонимную сессию.</li>
+<li>Используя эту сессию, скрипт запрашивает страницу для выбранного в настройках региона (по умолчанию — США, <code>?cc=us</code>), автоматически проходя проверку возраста, если она есть.</li>
+<li>Резервный механизм:</strong> Если выбранный пользователем регион (или регион по умолчанию) заблокирован, скрипт автоматически попытается загрузить страницу через цепочку резервных регионов (США → Швейцария → Казахстан → Япония), пока не найдет рабочий вариант.</li>
+<li>Полученный "чистый" HTML-код страницы полностью заменяет содержимое текущей вкладки. Вы остаетесь на том же URL, но видите разблокированную страницу.</li>
+<li>Все остальные модули U.S.E. перезапускаются, чтобы корректно работать с новым содержимым.</li>
+</ol>
+<p><strong>Преимущества и настройки:</strong></p>
+<ul>
+<li><strong>Бесшовная работа:</strong> Не нужно открывать новые окна или вручную редактировать адрес.</li>
+<li><strong>Гибкость:</strong> В настройках скрипта можно отключить автоматический запуск режима, выбрать регион по умолчанию и включить кнопку для ручной активации режима на любой странице Steam.</li>
+<li><strong>Сохранение контекста:</strong> После загрузки страницы такие динамические элементы, как обзоры, подгружаются уже от вашего аккаунта, то есть вы видите обзоры от друзей.</li>
+<li><strong>Безопасность:</strong> Метод не нарушает правила Steam, так как не скрывает ваш IP-адрес, а лишь использует легитимный механизм просмотра магазина для другого региона. Покупка игр через этот режим невозможна.</li>
+</ul>
+</div></details>
 </div>
 <hr style="border: 1px solid #2a3f5a;">
 <div id="market_features">
@@ -325,61 +333,64 @@
 <center>Новости и список желаемого</center>
 </h2>
 <details style="background-color: #17202d; border: 1px solid #2a3f5a;"><summary style="color: #67c1f5;">Наблюдатель (Желаемое/Библиотека)</summary><div style="border-top: 1px solid #2a3f5a;">
-    <p><strong>Что делает:</strong><br>Отслеживает изменения в вашем списке желаемого Steam и в вашей библиотеке игр, отображает календарь релизов.</p>
-    <p><strong>Основные функции:</strong></p>
-    <ol style="margin-left: 20px; padding-left: 5px; list-style-type: decimal;">
-        <li style="margin-bottom: 0.7em;">В правом верхнем углу страниц Steam появляется кнопка "Наблюдатель".</li>
-        <li style="margin-bottom: 0.7em;"><strong>Индикаторы статуса (Ж/Б):</strong> Показывают, как давно обновлялись данные для <strong>Ж</strong>елаемого и <strong>Б</strong>иблиотеки.</li>
-        <li style="margin-bottom: 0.7em;"><strong>Счетчик уведомлений:</strong> Показывает количество новых (непрочитанных) изменений.</li>
-        <li style="margin-bottom: 0.7em;"><strong>Панель уведомлений (по щелчку на кнопку):</strong>
-            <ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
-                <li style="margin-bottom: 0.5em;">Кнопка "Обновить" для ручного запуска проверки (использует Steam API).</li>
-                <li style="margin-bottom: 0.5em;"><strong>Настройки (значок ⚙️):</strong> Открывает выпадающее меню с опциями:
-                    <ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: square;">
-                        <li style="margin-bottom: 0.3em;"><strong>Список желаемого / Библиотека:</strong> Позволяют включать/отключать проверку для каждой из секций.</li>
-                        <li style="margin-bottom: 0.3em;"><strong>Перепроверять игры с русским:</strong> <em>(Опция для Библиотеки)</em>. По умолчанию включена. Если её <strong>отключить</strong>, скрипт пропустит проверку игр, для которых уже известно о наличии <strong>любой</strong> русской локализации. Это значительно ускоряет повторные обновления.</li>
-                        <li style="margin-bottom: 0.3em;"><strong>...только без полной локализации:</strong> <em>(Доступна, если предыдущая опция отключена)</em>. Если включить, то из повторной проверки будут исключаться только игры с <strong>полной</strong> локализацией (интерфейс+озвучка+субтитры). Игры с частичным переводом продолжат проверяться.</li>
-                    </ul>
-                </li>
-                <li style="margin-bottom: 0.5em;">Список изменений:
-                    <ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: square;">
-                        <li style="margin-bottom: 0.3em;"><strong>Список желаемого:</strong> Изменение даты выхода, статуса раннего доступа или русского языка.</li>
-                        <li style="margin-bottom: 0.3em;"><strong>Библиотека:</strong> Выход игры из раннего доступа, появление/изменение русского языка (и тип локализации).</li>
-                    </ul>
-                </li>
-                <li style="margin-bottom: 0.5em;">Кнопки для отметки уведомления как прочитанного (конверт) или удаления (крестик).</li>
-                <li style="margin-bottom: 0.5em;">Кнопка "Очистить" для удаления всех уведомлений.</li>
-                <li style="margin-bottom: 0.5em;">Кнопка "Календарь".</li>
-                <li style="margin-bottom: 0.5em;">Кнопка "Хранилище" для очистки сохраненных данных.</li>
-            </ul>
-         </li><br>
-         <center><img src="https://i.imgur.com/BpuDq6U.png" alt="Пример Трекера 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"></center>
-         <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
-         <li style="margin-bottom: 0.7em;"><strong>Календарь релизов (по щелчку на кнопку "Календарь"):</strong>
-            <ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
-                <li style="margin-bottom: 0.5em;">Отображает игры из вашего списка желаемого в виде календаря по месяцам.</li>
-                <li style="margin-bottom: 0.5em;">Показывает игры с точными датами выхода в будущем.</li>
-                <li style="margin-bottom: 0.5em;">Для игр с примерной датой (месяц, квартал, год) отображается подсказка при наведении.</li>
-                <li style="margin-bottom: 0.5em;">Позволяет подгружать следующие месяцы.</li>
-            </ul>
-         </li><br>
+<p><strong>Что делает:</strong><br>Отслеживает изменения в вашем списке желаемого Steam и в вашей библиотеке игр, отображает календарь релизов.</p>
+<p><strong>Основные функции:</strong></p>
+<ol style="margin-left: 20px; padding-left: 5px; list-style-type: decimal;">
+<li style="margin-bottom: 0.7em;">В правом верхнем углу страниц Steam появляется кнопка "Наблюдатель".</li>
+<li style="margin-bottom: 0.7em;"><strong>Индикаторы статуса (Ж/Б):</strong> Показывают, как давно обновлялись данные для <strong>Ж</strong>елаемого и <strong>Б</strong>иблиотеки.</li>
+<li style="margin-bottom: 0.7em;"><strong>Счетчик уведомлений:</strong> Показывает количество новых (непрочитанных) изменений.</li>
+<li style="margin-bottom: 0.7em;"><strong>Панель уведомлений (по щелчку на кнопку):</strong>
+<ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
+<li style="margin-bottom: 0.5em;">Кнопка "Обновить" для ручного запуска проверки (использует Steam API).</li>
+<li style="margin-bottom: 0.5em;"><strong>Настройки (значок ⚙️):</strong> Открывает выпадающее меню с опциями:
+<ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: square;">
+<li style="margin-bottom: 0.3em;"><strong>Список желаемого / Библиотека:</strong> Позволяют включать/отключать проверку для каждой из секций.</li>
+<li style="margin-bottom: 0.3em;"><strong>Перепроверять игры с русским:</strong> <em>(Опция для Библиотеки)</em>. По умолчанию включена. Если её <strong>отключить</strong>, скрипт пропустит проверку игр, для которых уже известно о наличии <strong>любой</strong> русской локализации. Это значительно ускоряет повторные обновления.</li>
+<li style="margin-bottom: 0.3em;"><strong>...только без полной локализации:</strong> <em>(Доступна, если предыдущая опция отключена)</em>. Если включить, то из повторной проверки будут исключаться только игры с <strong>полной</strong> локализацией (интерфейс+озвучка+субтитры). Игры с частичным переводом продолжат проверяться.</li>
+</ul>
+</li>
+<li style="margin-bottom: 0.5em;">Список изменений:
+<ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: square;">
+<li style="margin-bottom: 0.3em;"><strong>Список желаемого:</strong> Изменение даты выхода, статуса раннего доступа или русского языка.</li>
+<li style="margin-bottom: 0.3em;"><strong>Библиотека:</strong> Выход игры из раннего доступа, появление/изменение русского языка (и тип локализации).</li>
+</ul>
+</li>
+<li style="margin-bottom: 0.5em;">Кнопки для отметки уведомления как прочитанного (конверт) или удаления (крестик).</li>
+<li style="margin-bottom: 0.5em;">Кнопка "Очистить" для удаления всех уведомлений.</li>
+<li style="margin-bottom: 0.5em;">Кнопка "Календарь".</li>
+<li style="margin-bottom: 0.5em;">Кнопка "Хранилище" для очистки сохраненных данных.</li>
+</ul>
+</li><br>
+<center><img src="https://i.imgur.com/BpuDq6U.png" alt="Пример Трекера 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"></center>
+<hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+<li style="margin-bottom: 0.7em;"><strong>Календарь релизов (по щелчку на кнопку "Календарь"):</strong>
+<ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
+<li style="margin-bottom: 0.5em;">Отображает игры из вашего списка желаемого в виде календаря по месяцам.</li>
+<li style="margin-bottom: 0.5em;">Показывает игры с точными датами выхода в будущем.</li>
+<li style="margin-bottom: 0.5em;">Для игр с примерной датой (месяц, квартал, год) отображается подсказка при наведении.</li>
+<li style="margin-bottom: 0.5em;">Позволяет подгружать следующие месяцы.</li>
+</ul>
+</li><br>
 <center><img src="https://i.imgur.com/b5PDYG3.png" alt="Пример Календаря" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"></center>
-         <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
-          <li style="margin-bottom: 0.7em;"><strong>Хранилище (по щелчку на кнопку "Хранилище"):</strong>
-            <ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
-                <li style="margin-bottom: 0.5em;">Позволяет очистить кэш дат/статусов для списка желаемого или для игр библиотеки.</li>
-            </ul>
-         </li><br>
+<hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+<li style="margin-bottom: 0.7em;"><strong>Хранилище (по щелчку на кнопку "Хранилище"):</strong>
+<ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
+<li style="margin-bottom: 0.5em;">Позволяет очистить кэш дат/статусов для списка желаемого или для игр библиотеки.</li>
+</ul>
+</li><br>
 <center><img src="https://i.imgur.com/nI6Uoo0.png" alt="Пример Хранилища" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"></center>
-    </ol>
-    <p>Требует авторизации. Обработка больших списков/библиотек может занять время. Используйте новые опции в настройках для ускорения сканирования библиотеки.</p>
+</ol>
+<p>Требует авторизации. Обработка больших списков/библиотек может занять время. Используйте новые опции в настройках для ускорения сканирования библиотеки.</p>
 </div>
 </details>
 <details style="background-color: #17202d; border: 1px solid #2a3f5a;"><summary style="color: #67c1f5;">Доступность подарков (список желаемого)</summary>
 <div style="border-top: 1px solid #2a3f5a;"><p><strong>Что делает:</strong><br>Добавляет значок лупы. Позволяет определить, какие игры можно подарить друзьям в других регионах.</p>
 <p><strong>Основные функции:</strong></p>
 <ul>
-<li>Загружает игры из отображаемого списка желаемого и выводит их в виде информативных карточек с возможностью сортировки.</li>
+<li>Загружает игры из отображаемого списка желаемого и выводит их в виде информативных карточек.</li>
+<li>На карточках отображается подробная информация: цена, скидка, рейтинг, дата выхода, издатель, разработчик, серия, метки, поддержка русского языка и статус раннего доступа.</li>
+<li><strong>Для пользователей из РФ:</strong> на карточках также отображается информация о соответствии стоимости рекомендованной региональной цене (РРЦ) от Valve. Показывается статус (дороже, дешевле или равно РРЦ), сумма и процент отклонения.</li>
+<li>Предоставляет гибкую систему фильтрации (доступна через значок инструментов) по цене, скидке, рейтингу, дате выхода, поддержке русского языка, статусу раннего доступа, а также <strong>по соответствию РРЦ (для РФ)</strong>.</li>
 <li>Активирует режим <strong>помощника подарков</strong>:
 <ul>
 <li>Вы выбираете регион вашего друга.</li>
@@ -392,7 +403,7 @@
 </ul>
 <p>Это помогает легко найти подходящие и экономически целесообразные подарки для друзей за границей.</p>
 <p>Скорость загрузки данных зависит от размера списка желаемого.</p>
-<center><img src="https://i.imgur.com/WPbhyPI.png" alt="[Пример работы помощника подарков для списка желаемого]" style="border: 1px solid #333;"></center>
+<center><img src="https://i.imgur.com/wq9eRCW.png" alt="[Пример работы помощника подарков для списка желаемого]" style="border: 1px solid #333;"></center>
 </div>
 </details>
 <details style="background-color: #17202d; border: 1px solid #2a3f5a;"><summary style="color: #67c1f5;">Фильтр новостей</summary><div style="border-top: 1px solid #2a3f5a;"><p><strong>Что делает:</strong> Позволяет гибко управлять отображением новостей в новостном центре Steam (<a href="https://store.steampowered.com/news/" target="_blank" style="color:#67c1f5;">store.steampowered.com/news/</a>), скрывая неинтересные материалы.</p>
@@ -432,9 +443,8 @@
 <p>Для настройки отдельных модулей скрипта и их параметров используйте меню настроек U.S.E.<br>Оно находится в выпадающем меню вашего профиля Steam (в правом верхнем углу), как показано ниже:</p>
 <center><img src="https://i.imgur.com/QUdKoCH.png" alt="[Расположение меню настроек U.S.E. в профиле Steam]" style="border: 1px solid #333; margin-top: 10px; margin-bottom: 15px;"></center>
 <p>В открывшемся окне настроек вы сможете включать или отключать модули скрипта:</p>
-<center><img src="https://i.imgur.com/oTJeMwz.png" alt="[Пример панели настроек Ultimate Steam Enhancer]" style="border: 1px solid #333; margin-top: 10px; margin-bottom: 10px; max-width: 100%; height: auto;"></center>
+<center><img src="https://i.imgur.com/E8sOzQ2.png" alt="[Пример панели настроек Ultimate Steam Enhancer]" style="border: 1px solid #333; margin-top: 10px; margin-bottom: 10px; max-width: 100%; height: auto;"></center>
 </div>
-
 <p style="margin-top: 5px; margin-bottom: 15px;">Также в меню настроек доступны следующие опции:</p>
 <details style="background-color: #17202d; border: 1px solid #2a3f5a; margin-bottom: 10px;"><summary style="color: #67c1f5; padding: 8px 12px; cursor: pointer; display: block;">Авто-раскрытие HLTB</summary><div style="border-top: 1px solid #2a3f5a; padding: 10px 12px;"><p>Если включено, блок с информацией о времени прохождения (HLTB) на странице игры будет автоматически раскрываться при загрузке страницы (если основной модуль HLTB включен).</p>
 <p>Удобно, если вы всегда хотите видеть эту информацию без лишнего щелчка.</p>
@@ -448,10 +458,21 @@
 <p>По умолчанию эта информация скрыта для экономии места.</p>
 </div>
 </details>
+<details style="background-color: #17202d; border: 1px solid #2a3f5a; margin-bottom: 10px;"><summary style="color: #67c1f5; padding: 8px 12px; cursor: pointer; display: block;">Авто-сбор цен в агрегаторе цен</summary><div style="border-top: 1px solid #2a3f5a; padding: 10px 12px;"><p>Если опция включена, при открытии модального окна <strong>Агрегатора цен (%)</strong> сбор предложений из магазинов начнется автоматически, без необходимости нажимать кнопку "Обновить %".</p><p>Это удобно, если вы всегда хотите сразу видеть актуальные цены при каждом открытии окна.</p></div></details>
+<details style="background-color: #17202d; border: 1px solid #2a3f5a; margin-bottom: 10px;"><summary style="color: #67c1f5; padding: 8px 12px; cursor: pointer; display: block;">Авто-подстановка названия в агрегаторе цен</summary><div style="border-top: 1px solid #2a3f5a; padding: 10px 12px;"><p>Если опция включена, после завершения сбора данных (как ручного, так и автоматического) название текущей игры будет автоматически вставлено в поле фильтра по названию.</p><div style="margin-top: 15px; padding: 10px; background-color: rgba(255, 179, 0, 0.1); border: 1px solid rgba(255, 179, 0, 0.4); border-radius: 4px; font-size: 0.95em; line-height: 1.4;"><p style="margin: 0 0 5px 0; font-weight: bold; color: #FFB300;">⚠️ Важно:</p><p style="margin: 0; color: #c6d4df;">Для более точного поиска рекомендуется сокращать подставленное название. Например, вместо "DEATH STRANDING DIRECTOR'S CUT" лучше оставить только "DEATH STRANDING". Это поможет найти предложения, где продавцы могли изменить или сократить название, например, "Death Stranding (Director's Cut)" или "Death Stranding D.C.".</p></div></div></details>
+<details style="background-color: #17202d; border: 1px solid #2a3f5a; margin-bottom: 10px;"><summary style="color: #67c1f5; padding: 8px 12px; cursor: pointer; display: block;">Виртуальный режим «Инкогнито»</summary><div style="border-top: 1px solid #2a3f5a; padding: 10px 12px;">
+<p>Эта секция позволяет управлять функцией обхода региональных блокировок.</p>
+<ul>
+<li><strong>Включить режим «Инкогнито»:</strong> Главный переключатель функции. Отключение деактивирует автоматический обход страниц, недоступных в вашем регионе.</li>
+<li><strong>Кнопка режима «Инкогнито»:</strong> Добавляет кнопку "in" рядом с логотипом Steam для ручного запуска режима на любой странице. Полезно, если автоматический запуск не сработал или для страниц, которые не являются игровыми.</li>
+<li><strong>Регион В.Р.И.:</strong> Позволяет выбрать страну, от имени которой будет запрашиваться страница. По умолчанию — США (US).</li>
+</ul>
+<center><img src="https://i.imgur.com/FyKBRMa.png" alt="[Настройки режима Инкогнито]" style="max-width: 90%; height: auto; margin-top: 10px; border: 1px solid #333;"></center>
 </div>
 </details>
 </div>
-<br>
+</details>
+</div>
 <hr style="border: 1px solid #2a3f5a;">
 <p>Автор: 0wn3df1x<br>и команда <a href="https://www.zoneofgames.ru" target="_blank" style="color:#67c1f5;">ZoneOfGames.ru</a></p>
 </div>
