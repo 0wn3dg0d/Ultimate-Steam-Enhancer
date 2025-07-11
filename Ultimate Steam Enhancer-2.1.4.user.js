@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.2
+// @version      2.1.4
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -64,6 +64,8 @@
 // @connect      cdn.ggsel.com
 // @connect      explorer.kupikod.com
 // @connect      rushbe.ru
+// @connect      igm.gg
+// @connect      sous-buy.ru
 // @connect      cdn.jsdelivr.net
 // @connect      img.shields.io
 // ==/UserScript==
@@ -173,12 +175,12 @@
             });
 
             const headers = response.responseHeaders;
-            const cookies = headers.trim().split(/[\r\n]+/)
-                .filter(h => h.toLowerCase().startsWith('set-cookie:'))
-                .map(h => h.substring(h.indexOf(':') + 1).trim());
 
-            const sessionid = cookies.find(c => c.startsWith('sessionid='))?.split(';')[0].split('=')[1] || null;
-            const browserid = cookies.find(c => c.startsWith('browserid='))?.split(';')[0].split('=')[1] || null;
+            const sessionidMatch = headers.match(/sessionid=([^;]+)/);
+            const browseridMatch = headers.match(/browserid=([^;]+)/);
+
+            const sessionid = sessionidMatch ? sessionidMatch[1] : null;
+            const browserid = browseridMatch ? browseridMatch[1] : null;
 
             if (sessionid && browserid) {
                 console.log(`[U.S.E. Unblocker] Успешно получены sessionid=${sessionid}, browserid=${browserid}`);
@@ -364,10 +366,11 @@
          const isIncognitoModeEnabled = GM_getValue('use_incognito_mode_enabled', true);
 
          if (isIncognitoModeEnabled && window.location.pathname.includes('/app/')) {
-             const regionLockMessage = 'Данный товар недоступен в вашем регионе';
+            const russianLockMessage = 'Данный товар недоступен в вашем регионе';
+            const englishLockMessage = 'This item is currently unavailable in your region';
              const errorBox = document.getElementById('error_box');
 
-             if (errorBox && errorBox.innerText.includes(regionLockMessage)) {
+             if (errorBox && (errorBox.innerText.includes(russianLockMessage) || errorBox.innerText.includes(englishLockMessage))) {
                  handleComplexBypass();
                  return;
              }
@@ -404,18 +407,19 @@
         autoLoadReviews: false, // Автоматически загружать дополнительные обзоры
         toggleEnglishLangInfo: false, // Отображает данные об английском языке в дополнительной информации при поиске по каталогу и в активности (функция для переводчиков)
         salesMasterAutoSearch: false, // Автоматически запускать поиск при открытии окна "Агрегатора цен (%)"
-        salesMasterAutoInsertTitle: true // Автоматически подставлять название игры в фильтр "Агрегатора цен (%)" после сбора данных
+        salesMasterAutoInsertTitle: true, // Автоматически подставлять название игры в фильтр "Агрегатора цен (%)" после сбора данных
+        ExternalLinksEnhancer: true
     };
 
 
     /* --- Код для настроек U.S.E. --- */
 	const useDefaultSettings = {
-	    gamePage: true, hltbData: true, friendsPlaytime: true, earlyaccdata: true, zogInfo: true, pageGiftHelper: true,
+	    gamePage: true, hltbData: true, friendsPlaytime: true, earlyaccdata: true, zogInfo: true, pageGiftHelper: true, ExternalLinksEnhancer: true,
 	    platiSales: true, salesMaster: true, catalogInfo: true, catalogHider: false, newsFilter: true,
 	    Kaznachei: true, homeInfo: true, Sledilka: true, wishlistGiftHelper: true, stelicasRoulette: true, RuRegionalPriceAnalyzer: true,
 	    autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false,
         salesMasterAutoSearch: false, salesMasterAutoInsertTitle: true,
-        incognitoModeEnabled: true, showIncognitoButton: false, incognitoDefaultRegion: 'US'
+        incognitoModeEnabled: true, showIncognitoButton: false, incognitoDefaultRegion: 'US', WidgetFixer: true
 	};
 
     const useIncognitoRegions = {
@@ -680,7 +684,7 @@
                 <ul>
                     <li>Выбрать регион друга из списка.</li>
                     <li>Нажать "Узнать", чтобы запросить цену игры в этом регионе.</li>
-                    <li>Увидеть цену друга (сконвертированную в вашу валюту), процент разницы и вердикт (<span style="color:#77dd77; font-weight:bold;">Можно подарить</span> / <span style="color:#ff6961; font-weight:bold;">Нельзя подарить</span>), основанный на правилах Steam о разнице цен (±10%).</li>
+                    <li>Увидеть цену друга (сконвертированную в вашу валюту), процент разницы и вердикт (<span style="color:#77dd77; font-weight:bold;">Можно подарить</span> / <span style="color:#ff6961; font-weight:bold;">Нельзя подарить</span>), основанный на правилах Steam о разнице цен.</li>
                 </ul>
                 <p>Использует те же механизмы получения цен и курсов валют, что и помощник для списка желаемого.</p>
                  <img src="https://i.imgur.com/jDdf4pR.png" alt="Пример PageGiftHelper 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
@@ -700,6 +704,23 @@
                     <img src="https://i.imgur.com/SPzJrpi.png" alt="Пример Раннего Доступа 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                 </ul>
                 <p>Расчет времени динамический. Использует даты со страницы Steam, а также может подтягивать дату старта раннего доступа из собственной базы для вышедших игр, если Steam ее не показывает.</p>
+            `
+        },
+        ExternalLinksEnhancer: {
+            category: 'gamePage',
+            label: "Доп. ссылки (PCGW/SteamDB)",
+            title: "Дополнительные ссылки на PCGamingWiki и SteamDB",
+            details: `
+                <p><strong>Что делает:</strong> Добавляет недостающие кнопки со ссылками на полезные ресурсы прямо в блок с официальными ссылками на странице игры.</p>
+                <p>Работает на страницах как в <strong>магазине Steam</strong>, так и в <strong>сообществе</strong>.</p>
+                <p><strong>Добавляемые кнопки:</strong></p>
+                <ul>
+                    <li><strong>PCGamingWiki:</strong> Добавляет кнопку со ссылкой на соответствующую статью в PCGamingWiki, если она отсутствует. Это полезно для поиска технических деталей, фиксов и твиков.</li>
+                    <li><strong>SteamDB:</strong> Добавляет кнопку со ссылкой на страницу игры в базе данных SteamDB, если она отсутствует. Позволяет быстро получить доступ к подробной статистике, истории цен, данным о пакетах и многому другому.</li>
+                    <li><strong>Страница в магазине:</strong> <em>(Только для страниц сообщества)</em> Если на странице игры в сообществе по какой-то причине нет кнопки для перехода в магазин, этот скрипт её добавит.</li>
+                </ul>
+                <p>Скрипт проверяет наличие этих кнопок и добавляет только те, которых нет, избегая дублирования, если они уже были добавлены другим расширением (например, официальным расширением SteamDB).</p>
+                 <img src="https://i.imgur.com/gJFasl5.png" alt="Пример добавленных ссылок" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
             `
         },
 
@@ -942,8 +963,8 @@
                             <li>Вы выбираете регион вашего друга.</li>
                             <li>Скрипт запрашивает цены на игры из списка желаемого для выбранного региона.</li>
                             <li>Цены друга конвертируются в вашу валюту (используется API курсов валют).</li>
-                            <li>Отображается <strong>разница в цене</strong> между вашим регионом и регионом друга (с цветовой индикацией: <span style="color:#77dd77; font-weight:bold;">зелёный</span> - можно дарить (разница до ±10%), <span style="color:#ff6961; font-weight:bold;">красный</span> - нельзя).</li>
-                            <li>Доступен фильтр <strong>"Можно подарить"</strong>, который показывает только те игры, у которых разница в цене до ±10% и которые Steam разрешает покупать в подарок.</li>
+                            <li>Отображается <strong>разница в цене</strong> между вашим регионом и регионом друга (с цветовой индикацией: <span style="color:#77dd77; font-weight:bold;">зелёный</span> - можно дарить, <span style="color:#ff6961; font-weight:bold;">красный</span> - нельзя).</li>
+                            <li>Доступен фильтр <strong>"Можно подарить"</strong>, который показывает только те игры, у которых разница в цене до ~10%-15% и которые Steam разрешает покупать в подарок.</li>
                         </ul>
                     </li>
                 </ul>
@@ -1031,6 +1052,22 @@
                     <li>Автоматический обход региональных блокировок.</li>
                     <li>Ручной запуск режима инкогнито через кнопку 'in'.</li>
                 </ul>
+            `
+        },
+        WidgetFixer: {
+            category: 'incognitoMode',
+            label: "Исправление виджетов",
+            title: "Автоматическое исправление заблокированных виджетов Steam",
+            details: `
+                <p><strong>Что делает:</strong> Данный модуль работает в фоновом режиме на любой странице и автоматически исправляет встроенные виджеты Steam (например, при вставке ссылки на игру на форуме), которые могут быть заблокированы в вашем регионе.</p>
+                <p><strong>Принцип работы:</strong></p>
+                <ol style="margin-left: 20px; padding-left: 5px; list-style-type: decimal;">
+                    <li style="margin-bottom: 0.7em;">Скрипт находит на странице виджеты, которые ссылаются на <code>store.steampowered.com/widget/</code>.</li>
+                    <li style="margin-bottom: 0.7em;">Он проверяет, отображается ли в виджете ошибка региональной блокировки.</li>
+                    <li style="margin-bottom: 0.7em;">Если виджет заблокирован, скрипт последовательно пытается перезагрузить его с регионом, указанным в настройках «Инкогнито», а затем с резервными регионами (US, CH, KZ, JP).</li>
+                    <li style="margin-bottom: 0.7em;">Как только находится работающий регион, виджет обновляется и начинает отображать контент.</li>
+                    <li style="margin-bottom: 0.7em;">Если ни один из регионов не подходит, виджет заменяется на сообщение об ошибке.</li>
+                </ol>
             `
         }
     };
@@ -12028,7 +12065,7 @@
             const WGH_BATCH_SIZE = 200;
             const WGH_INITIAL_DELAY_MS = 500;
             const WGH_REQUEST_TIMEOUT_MS = 20000;
-            const WGH_GIFT_PRICE_DIFF_THRESHOLD = 0.10;
+            const WGH_GIFT_PRICE_DIFF_THRESHOLD = 0.15;
             const WGH_IMAGE_BASE_URL = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/';
             const WGH_COUNTRY_CURRENCY_MAP = {
                 'AU': {
@@ -13133,7 +13170,7 @@
                             const diff = friendPriceInMyCurrency - myPrice;
                             const diffPercent = myPrice > 0 ? diff / myPrice : (diff > 0 ? Infinity : -Infinity);
                             friendPriceStr = `Цена друга: ${friendPriceInMyCurrency.toLocaleString('ru-RU', { style: 'currency', currency: wgh_currentUserISOCurrencyCode, minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
-                            if (Math.abs(diffPercent) <= WGH_GIFT_PRICE_DIFF_THRESHOLD) {
+                            if (diffPercent <= WGH_GIFT_PRICE_DIFF_THRESHOLD) {
                                 priceDiffClass = 'wghPriceDiffGood';
                                 card.dataset.giftablePrice = 'true';
                             } else {
@@ -14113,7 +14150,7 @@
             const PGH_API_URL = "https://api.steampowered.com/IStoreBrowseService/GetItems/v1";
             const PGH_CURRENCY_API_URL = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/';
             const PGH_REQUEST_TIMEOUT_MS = 15000;
-            const PGH_GIFT_PRICE_DIFF_THRESHOLD = 0.10;
+            const PGH_GIFT_PRICE_DIFF_THRESHOLD = 0.15;
             const PGH_COUNTRY_CURRENCY_MAP = {
                 'US': {
                     name: 'U.S. Dollar',
@@ -14699,7 +14736,7 @@
                     const priceDifference = friendPriceInUserCurrency - userPrice;
                     const priceDifferencePercent = userPrice > 0 ? (priceDifference / userPrice) : (priceDifference > 0 ? Infinity : -Infinity);
 
-                    const isWithinThreshold = Math.abs(priceDifferencePercent) <= PGH_GIFT_PRICE_DIFF_THRESHOLD;
+                    const isWithinThreshold = priceDifferencePercent <= PGH_GIFT_PRICE_DIFF_THRESHOLD;
                     const canGift = isWithinThreshold && canFriendReceiveGift;
 
                     let resultHTML = `
@@ -15497,8 +15534,90 @@
 
                     label.appendChild(checkbox);
                     label.appendChild(document.createTextNode(` ${store.name}`));
+
+                    if (store.id === 'igmgg') {
+                        const settingsBtn = document.createElement('span');
+                        settingsBtn.innerHTML = '⚙️';
+                        settingsBtn.className = 'sm-store-settings-btn';
+                        settingsBtn.title = 'Настройки подписки IGM.gg';
+
+                        settingsBtn.style.cssText = `
+                            margin-left: 8px;
+                            cursor: pointer;
+                            opacity: 0.6;
+                            transition: opacity 0.2s;
+                        `;
+                        settingsBtn.onmouseover = () => settingsBtn.style.opacity = '1';
+                        settingsBtn.onmouseout = () => settingsBtn.style.opacity = '0.6';
+
+                        settingsBtn.addEventListener('click', (e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            sm_showIgmSubscriptionModal();
+                        });
+                        label.appendChild(settingsBtn);
+                    }
+
                     div.appendChild(label);
                     sm_filterStoreCheckboxesContainer.appendChild(div);
+                });
+            }
+
+            function sm_showIgmSubscriptionModal() {
+                const modalId = 'smIgmSubscriptionModal';
+                if (document.getElementById(modalId)) return;
+
+                const modal = document.createElement('div');
+                modal.id = modalId;
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background-color: rgba(0,0,0,0.7); z-index: 10006;
+                    display: flex; align-items: center; justify-content: center;
+                `;
+
+                const content = document.createElement('div');
+                content.style.cssText = `
+                    background-color: #1f2c3a; color: #c6d4df; padding: 25px;
+                    border-radius: 5px; border: 1px solid #67c1f5;
+                    width: 90%; max-width: 450px; text-align: center;
+                `;
+
+                const useSubscription = GM_getValue('sm_igmgg_use_subscription_price', false);
+
+                content.innerHTML = `
+                    <h4 style="margin-top:0; color:#67c1f5;">Настройки IGM.gg</h4>
+                    <p style="margin-bottom:20px; line-height:1.5;">Включите этот параметр, если у вас есть активная подписка на IGM.gg, чтобы видеть цены с учётом подписочной скидки.</p>
+                    <label style="display:inline-flex; align-items:center; cursor:pointer; font-size: 15px;">
+                        <input type="checkbox" id="smIgmSubscriptionCheckbox" style="width:18px; height:18px; margin-right:10px;" ${useSubscription ? 'checked' : ''}>
+                        Учитывать скидку по подписке
+                    </label>
+                    <div style="margin-top:25px;">
+                        <button id="smIgmSubSave" class="salesMasterBtn">Сохранить и закрыть</button>
+                    </div>
+                `;
+
+                modal.appendChild(content);
+                document.body.appendChild(modal);
+
+                const closeModal = () => {
+                    const useSub = document.getElementById('smIgmSubscriptionCheckbox').checked;
+                    const oldValue = GM_getValue('sm_igmgg_use_subscription_price', false);
+
+                    if (useSub !== oldValue) {
+                        GM_setValue('sm_igmgg_use_subscription_price', useSub);
+                        if (sm_currentResults.some(r => r.storeId === 'igmgg')) {
+                            sm_renderResults();
+                        }
+                    }
+                    modal.remove();
+                };
+
+                document.getElementById('smIgmSubSave').onclick = closeModal;
+
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        closeModal();
+                    }
                 });
             }
 
@@ -19301,6 +19420,7 @@
                         return results;
                     }
                 }, // --- Конец модуля Plati.Market ---
+
                 { // --- Модуль Rushbe ---
                     id: 'rushbe',
                     name: 'Rushbe',
@@ -19397,7 +19517,208 @@
                         });
                         return results;
                     }
-                }
+                }, // --- Конец модуля Rushbe ---
+
+                { // --- Модуль Sous-Buy ---
+                    id: 'sousbuy',
+                    name: 'Sous-Buy',
+                    baseUrl: 'https://sous-buy.ru',
+                    searchUrlTemplate: 'https://sous-buy.ru/catalog?GameSearch[game]={query}&GameSearch[instock]=1&GameSearch[key]=1',
+                    isEnabled: true,
+                    fetch: async function(query) {
+                        const searchUrl = this.searchUrlTemplate.replace('{query}', encodeURIComponent(query));
+                        return new Promise((resolve, reject) => {
+                            GM_xmlhttpRequest({
+                                method: "GET",
+                                url: searchUrl,
+                                timeout: SM_REQUEST_TIMEOUT_MS,
+                                onload: (response) => {
+                                    if (response.status >= 200 && response.status < 400) {
+                                        resolve(this.parseHtml(response.responseText, this));
+                                    } else {
+                                        reject(new Error(`HTTP статус ${response.status}`));
+                                    }
+                                },
+                                onerror: (error) => reject(new Error('Сетевая ошибка')),
+                                ontimeout: () => reject(new Error('Таймаут запроса'))
+                            });
+                        });
+                    },
+                    parseHtml: function(htmlString, storeModule) {
+                        const results = [];
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(htmlString, 'text/html');
+                        const items = doc.querySelectorAll('.product__items .product-item');
+
+                        items.forEach(item => {
+                            try {
+                                const platformElement = item.querySelector('.product-item-platform');
+                                if (platformElement && platformElement.textContent.trim() !== 'Steam') {
+                                    return;
+                                }
+
+                                const linkElement = item.querySelector('a');
+                                const titleElement = item.querySelector('.cart-game-name');
+                                const priceElement = item.querySelector('.new-price-game');
+                                const oldPriceElement = item.querySelector('.product-item__price-old');
+
+                                const productName = titleElement?.textContent.trim();
+                                const productUrlRaw = linkElement?.getAttribute('href');
+                                const currentPrice = priceElement ? sm_parsePrice(priceElement.textContent) : null;
+                                const originalPrice = oldPriceElement ? sm_parsePrice(oldPriceElement.textContent) : null;
+
+                                let imageUrl = null;
+                                const bgStyle = item.style.background;
+                                if (bgStyle && bgStyle.includes('url(')) {
+                                    const urlMatch = bgStyle.match(/url\("?(.+?)"?\)/);
+                                    if (urlMatch && urlMatch[1]) {
+                                        imageUrl = urlMatch[1];
+                                    }
+                                }
+
+                                if (!productName || !productUrlRaw || currentPrice === null) {
+                                    return;
+                                }
+
+                                let data = {
+                                    storeId: storeModule.id,
+                                    storeName: storeModule.name,
+                                    storeUrl: storeModule.baseUrl,
+                                    productName: productName,
+                                    productUrl: productUrlRaw.startsWith('/') ? storeModule.baseUrl + productUrlRaw : productUrlRaw,
+                                    imageUrl: imageUrl?.startsWith('/') ? storeModule.baseUrl + imageUrl : imageUrl,
+                                    currentPrice: currentPrice,
+                                    originalPrice: originalPrice,
+                                    discountPercent: null,
+                                    discountAmount: null,
+                                    currency: 'RUB',
+                                    isAvailable: true
+                                };
+                                results.push(sm_calculateMissingValues(data));
+
+                            } catch (e) {
+                                sm_logError(storeModule.name, 'Ошибка парсинга элемента', e);
+                            }
+                        });
+                        return results;
+                    }
+                }, // --- Конец модуля Sous-Buy ---
+
+                { // --- Модуль IGM.GG ---
+                    id: 'igmgg',
+                    name: 'IGM.gg',
+                    baseUrl: 'https://igm.gg',
+                    apiUrl: 'https://igm.gg/api/catalog/list',
+                    isEnabled: true,
+                    fetch: async function(query) {
+                        const storeModule = this;
+                        const requestPayload = {
+                            limit: 20,
+                            offset: 0,
+                            search: query
+                        };
+                        const requestHeaders = {
+                            'accept': 'application/json, text/plain, */*',
+                            'content-type': 'application/json;charset=UTF-8',
+                            "x-igm-app": "igm",
+                            "x-igm-locale": "ru",
+                        };
+
+                        return new Promise((resolve, reject) => {
+                            GM_xmlhttpRequest({
+                                method: "POST",
+                                url: storeModule.apiUrl,
+                                headers: requestHeaders,
+                                data: JSON.stringify(requestPayload),
+                                responseType: 'json',
+                                timeout: SM_REQUEST_TIMEOUT_MS,
+                                onload: (response) => {
+                                    if (response.status >= 200 && response.status < 400 && response.response) {
+                                        resolve(this.parseApiResponse(response.response, storeModule));
+                                    } else {
+                                        reject(new Error(`HTTP статус ${response.status}`));
+                                    }
+                                },
+                                onerror: (error) => reject(new Error('Сетевая ошибка')),
+                                ontimeout: () => reject(new Error('Таймаут запроса'))
+                            });
+                        });
+                    },
+                    parseApiResponse: function(response, storeModule) {
+                        const results = [];
+                        const items = response?.data?.items;
+                        if (!Array.isArray(items)) {
+                            sm_logError(storeModule.name, 'Ответ API не является массивом или отсутствует', response);
+                            return results;
+                        }
+
+                        const useSubscriptionPrice = GM_getValue('sm_igmgg_use_subscription_price', false);
+
+                        items.forEach(item => {
+                            try {
+                                const modification = item.modification;
+                                if (!modification || modification.service?.name !== 'Steam') {
+                                    return;
+                                }
+
+                                const productName = item.name?.trim();
+                                const productUrlRaw = item.slug ? `/game/${item.slug}` : null;
+                                const imageUrl = item.logo?.file_url;
+
+                                const originalPrice = sm_parsePrice(modification.price);
+                                const discountPercent = parseFloat(modification.discount) || 0;
+
+                                let currentPrice = null;
+
+                                if (useSubscriptionPrice) {
+                                    if (modification.final_price_with_special_subscription_discount !== null) {
+                                        currentPrice = sm_parsePrice(modification.final_price_with_special_subscription_discount);
+                                    }
+                                    else if (modification.final_price_with_base_subscription_discount !== null) {
+                                        currentPrice = sm_parsePrice(modification.final_price_with_base_subscription_discount);
+                                    }
+                                }
+
+                                if (currentPrice === null) {
+                                     currentPrice = sm_parsePrice(modification.final_price);
+                                }
+
+                                if (currentPrice === null && originalPrice !== null && discountPercent > 0) {
+                                     currentPrice = originalPrice * (1 - discountPercent / 100);
+                                }
+
+                                if (!productName || !productUrlRaw || currentPrice === null) {
+                                    return;
+                                }
+
+                                const finalOriginalPrice = (originalPrice !== null && originalPrice > currentPrice) ? originalPrice : null;
+
+                                let data = {
+                                    storeId: storeModule.id,
+                                    storeName: storeModule.name,
+                                    storeUrl: storeModule.baseUrl,
+                                    productName: productName,
+                                    productUrl: storeModule.baseUrl + productUrlRaw,
+                                    imageUrl: imageUrl,
+                                    currentPrice: currentPrice,
+                                    originalPrice: finalOriginalPrice,
+                                    discountPercent: discountPercent > 0 ? discountPercent : null,
+                                    discountAmount: null,
+                                    currency: 'RUB',
+                                    isAvailable: item.modification.available_count > 0,
+                                };
+
+                                if (data.isAvailable) {
+                                    results.push(sm_calculateMissingValues(data));
+                                }
+
+                            } catch (e) {
+                                sm_logError(storeModule.name, 'Ошибка парсинга элемента API', e);
+                            }
+                        });
+                        return results;
+                    }
+                } // --- Конец модуля IGM.GG ---
 
                 // --- Сюда другие модули ---
             ];
@@ -20613,7 +20934,6 @@
                 ps_renderResults();
             }
 
-            // --- Добавление кнопки Plati ---
             function addPlatiButton() {
                 const actionsContainer = document.querySelector('#queueActionsCtn');
 
@@ -20640,7 +20960,6 @@
                 }
             }
 
-            // --- Стили ---
              function addPlatiStyles() {
                  GM_addStyle(`
                     /* Стили спиннера */
@@ -21629,6 +21948,210 @@
                 addPlatiButton();
             }
 
+        })();
+    }
+
+    // Скрипт для исправления недоступных виджетов
+    if (scriptsConfig.WidgetFixer) {
+        (function() {
+            'use strict';
+
+            const wf_FALLBACK_REGIONS = ['us', 'ch', 'kz', 'jp'];
+            const wf_LANGUAGE = 'russian';
+            const wf_ERROR_TEXT_MARKER = 'Невозможно загрузить информацию об этом предмете';
+            const wf_FINAL_ERROR_MESSAGE = 'Не удаётся разблокировать виджет, все регионы проверены.';
+            const wf_TARGET_URL_PART = 'store.steampowered.com/widget/';
+
+            const wf_isUrlBlocked = (urlString) => {
+                return new Promise((resolve) => {
+                    GM_xmlhttpRequest({
+                        method: "GET",
+                        url: urlString,
+                        onload: function(response) {
+                            if (response.responseText && response.responseText.includes(wf_ERROR_TEXT_MARKER)) {
+                                resolve(true);
+                            } else {
+                                resolve(false);
+                            }
+                        },
+                        onerror: function() {
+                            resolve(true);
+                        }
+                    });
+                });
+            };
+
+            const wf_createFallbackElement = () => {
+                const fallback = document.createElement('div');
+                fallback.textContent = wf_FINAL_ERROR_MESSAGE;
+                fallback.style.cssText = `
+                    display: flex; align-items: center; justify-content: center;
+                    width: 100%; min-height: 100px; background-color: #1b2838;
+                    color: #ff6b6b; font-family: 'Motiva Sans', sans-serif; font-size: 14px;
+                    text-align: center; border: 1px dashed #ff6b6b; padding: 10px;
+                    box-sizing: border-box;
+                `;
+                return fallback;
+            };
+
+            const wf_processIframe = async (iframe) => {
+                if (iframe.dataset.steamWidgetProcessed) {
+                    return;
+                }
+                iframe.dataset.steamWidgetProcessed = 'true';
+
+                const originalUrl = iframe.src || iframe.dataset.src;
+                if (!originalUrl || !originalUrl.includes(wf_TARGET_URL_PART)) {
+                    return;
+                }
+
+                const isInitiallyBlocked = await wf_isUrlBlocked(originalUrl);
+                if (!isInitiallyBlocked) {
+                    return;
+                }
+
+                const userDefaultRegion = GM_getValue('use_incognito_default_region', 'US').toLowerCase();
+                const regionsToTry = [...new Set([userDefaultRegion, ...wf_FALLBACK_REGIONS])];
+
+                for (const region of regionsToTry) {
+                    const url = new URL(originalUrl);
+                    url.searchParams.set('cc', region);
+                    url.searchParams.set('l', wf_LANGUAGE);
+                    const newUrlString = url.toString();
+
+                    const isStillBlocked = await wf_isUrlBlocked(newUrlString);
+                    if (!isStillBlocked) {
+                        if (iframe.src) iframe.src = newUrlString;
+                        if (iframe.dataset.src) iframe.dataset.src = newUrlString;
+                        return;
+                    }
+                }
+
+                const fallbackElement = wf_createFallbackElement();
+                if (iframe.parentNode) {
+                    iframe.parentNode.replaceChild(fallbackElement, iframe);
+                }
+            };
+
+            const wf_observeAndProcess = () => {
+                const selector = `iframe[src*="${wf_TARGET_URL_PART}"], iframe[data-src*="${wf_TARGET_URL_PART}"]`;
+
+                document.querySelectorAll(selector).forEach(wf_processIframe);
+
+                const observer = new MutationObserver((mutations) => {
+                    for (const mutation of mutations) {
+                        for (const node of mutation.addedNodes) {
+                            if (node.nodeType === Node.ELEMENT_NODE) {
+                                if (node.matches(selector)) {
+                                    wf_processIframe(node);
+                                } else {
+                                    node.querySelectorAll(selector).forEach(wf_processIframe);
+                                }
+                            }
+                        }
+                    }
+                });
+
+                observer.observe(document.documentElement, {
+                    childList: true,
+                    subtree: true
+                });
+            };
+
+            setTimeout(wf_observeAndProcess, 1500);
+
+        })();
+    }
+
+    // Скрипт для добавления ссылок на PCGamingWiki и SteamDB, и кнопки магазина
+    if (scriptsConfig.ExternalLinksEnhancer) {
+        (function() {
+            'use strict';
+
+            const PCGW_SVG = `<?xml version="1.0" encoding="UTF-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve"><polygon opacity="0.75" fill="#FFFFFF" enable-background="new" points="7.5,15.134 1.5,13.23 1.5,2.682 7.5,0.634 "/><path opacity="0.5" fill="#FFFFFF" enable-background="new" d="M12.881,1.305L8.344,0.634v14.5l4.584-0.596L12.881,1.305z M10.344,13.787l-1,0.115V8.5h1V13.787z M12.344,6.947l-1.021-0.075c-0.151,0.222-0.429,0.377-0.72,0.377 c-0.342,0-0.438-0.203-0.574-0.492L9.344,6.688V5.85l0.747,0.075c0.151-0.222,0.292-0.377,0.583-0.377 c0.342,0,0.644,0.203,0.779,0.492l0.891,0.069V6.947z M12.344,4.281l-3-0.26V3.184l3,0.26V4.281z"/></svg>`;
+            const STEAMDB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 128 128" fill="#FFFFFF"><path d="M 63.9 0 C 30.5 0 3.1 11.9 0.1 27.1 l 35.6 6.7 c 2.9 -0.9 6.2 -1.3 9.6 -1.3 l 16.7 -10 c -0.2 -2.5 1.3 -5.1 4.7 -7.2 4.8 -3.1 12.3 -4.8 19.9 -4.8 5.2 -0.1 10.5 0.7 15 2.2 11.2 3.8 13.7 11.1 5.7 16.3 -5.1 3.3 -13.3 5 -21.4 4.8 l -22 7.9 c -0.2 1.6 -1.3 3.1 -3.4 4.5 -5.9 3.8 -17.4 4.7 -25.6 1.9 -3.6 -1.2 -6 -3 -7 -4.8 L 2.5 38.4 C 4.8 42 8.5 45.3 13.3 48.2 5 53 0 59 0 65.5 0 71.9 4.8 77.8 12.9 82.6 4.8 87.3 0 93.2 0 99.6 0 115.3 28.6 128 64 128 99.3 128 128 115.3 128 99.6 128 93.2 123.2 87.3 115.1 82.6 123.2 77.8 128 71.9 128 65.5 128 59 123 52.9 114.6 48.1 122.9 43 127.9 36.7 127.9 29.9 127.9 13.4 99.2 0 63.9 0 Z m 22.8 14.2 c -5.2 0.1 -10.2 1.2 -13.4 3.3 -5.5 3.6 -3.8 8.5 3.8 11.1 7.6 2.6 18.1 1.8 23.6 -1.8 5.5 -3.6 3.8 -8.5 -3.8 -11 -3.1 -1 -6.7 -1.5 -10.2 -1.5 z m 0.3 1.7 c 7.4 0 13.3 2.8 13.3 6.2 0 3.4 -5.9 6.2 -13.3 6.2 -7.4 0 -13.3 -2.8 -13.3 -6.2 -0 -3.4 5.9 -6.2 13.3 -6.2 z m -41.7 18.5 0 0 c -1.6 0.1 -3.1 0.2 -4.6 0.4 l 9.1 1.7 a 10.8 5 0 1 1 -8.1 9.3 l -8.9 -1.7 c 1 0.9 2.4 1.7 4.3 2.4 6.4 2.2 15.4 1.5 20 -1.5 4.6 -3 3.2 -7.2 -3.2 -9.3 -2.6 -0.9 -5.7 -1.3 -8.6 -1.3 z m 63.7 16.6 0 9.3 c 0 11 -20.2 19.9 -45 19.9 -24.9 0 -45 -8.9 -45 -19.9 l 0 -9.2 c 11.5 5.3 27.4 8.6 44.9 8.6 17.6 0 33.6 -3.3 45.2 -8.7 z m 0 34.6 0 8.8 c 0 11 -20.2 19.9 -45 19.9 -24.9 0 -45 -8.9 -45 -19.9 l 0 -8.8 c 11.6 5.1 27.4 8.2 45 8.2 17.6 0 33.5 -3.1 45 -8.2 z" /></svg>`;
+
+            function getAppId() {
+                const match = window.location.pathname.match(/\/app\/(\d+)/);
+                return match ? match[1] : null;
+            }
+
+            function createButton(href, tooltipText, svgHtml) {
+                const link = document.createElement('a');
+                link.className = 'btnv6_blue_hoverfade btn_medium';
+                link.href = href;
+                link.target = '_blank';
+
+
+                const span = document.createElement('span');
+                span.dataset.tooltipText = tooltipText;
+
+                const img = document.createElement('img');
+                img.className = 'ico16';
+                img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgHtml)}`;
+
+                span.appendChild(img);
+                link.appendChild(span);
+
+                return link;
+            }
+
+            function addLinks() {
+                const appId = getAppId();
+                if (!appId) return;
+
+                const container = document.querySelector('.apphub_OtherSiteInfo');
+                if (!container) return;
+
+                let pcgwButton = null;
+                let steamdbButton = null;
+
+                if (!container.querySelector('a[href*="pcgamingwiki.com"]')) {
+                    pcgwButton = createButton(`https://pcgamingwiki.com/api/appid.php?appid=${appId}`, 'Посмотреть на PCGamingWiki', PCGW_SVG);
+                }
+
+                if (!container.querySelector('a[href*="steamdb.info"]')) {
+                    steamdbButton = createButton(`https://steamdb.info/app/${appId}/`, 'Посмотреть на SteamDB', STEAMDB_SVG);
+                }
+
+                if (steamdbButton) {
+                    container.prepend(steamdbButton);
+                }
+
+                if (pcgwButton) {
+                    container.prepend(pcgwButton);
+
+                    if (steamdbButton) {
+                        container.insertBefore(document.createTextNode(' '), pcgwButton.nextSibling);
+                    }
+                }
+
+                if (window.location.hostname.includes('steamcommunity.com')) {
+                    if (!container.querySelector('a[href*="store.steampowered.com/app/"]')) {
+                        const storeButton = document.createElement('a');
+                        storeButton.className = 'btnv6_blue_hoverfade btn_medium';
+                        storeButton.href = `https://store.steampowered.com/app/${appId}`;
+                        storeButton.innerHTML = '<span>Страница в магазине</span>';
+                        storeButton.target = '_blank';
+                        container.appendChild(storeButton);
+                    }
+                }
+            }
+
+            const observer = new MutationObserver((mutations, obs) => {
+                const container = document.querySelector('.apphub_OtherSiteInfo');
+                if (container) {
+                    obs.disconnect();
+                    setTimeout(addLinks, 500);
+                }
+            });
+
+            observer.observe(document.body, {
+                childList: true,
+                subtree: true
+            });
+
+            setTimeout(addLinks, 2500);
         })();
     }
 
