@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.4
+// @version      2.1.5
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -754,6 +754,16 @@
                         </ul>
                     </li>
                     <img src="https://i.imgur.com/MqjuXoD.png" alt="Пример Фильтра DLC" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                    <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+                    <li><strong>Умные метки:</strong>
+                        <ul>
+                            <li>Добавляет кнопку «Настроить метки...», которая открывает модальное окно для тонкой фильтрации по меткам.</li>
+                            <li><em>Активные фильтры:</em> Позволяют отображать только те игры, у которых определённая метка находится в числе первых N (например, показать игры, где "Рогалик" входит в топ-5 меток).</li>
+                            <li><em>Скрытые фильтры:</em> Позволяют полностью скрыть из результатов игры, имеющие хотя бы одну из указанных меток.</li>
+                        </ul>
+                    </li>
+                     <img src="https://i.imgur.com/FoV5Ftb.png" alt="Пример Фильтра по меткам" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                     <img src="https://i.imgur.com/dwYXJka.png" alt="Пример Фильтра по меткам 2" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                 </ul>
                  <p>Фильтры применяются динамически по мере получения данных от API.</p>
             `
@@ -812,11 +822,11 @@
                 <p><strong>Возможности:</strong></p>
                 <ul style="margin-left: 20px; padding-left: 5px; list-style-type: disc;">
                     <li style="margin-bottom: 0.5em;">Загрузка CSV-данных из Stelicas (содержащих информацию о ваших играх и коллекциях).</li>
-                    <li style="margin-bottom: 0.5em;"><strong>Система фильтрации:</strong> по категориям коллекций Stelicas, дате выхода, пользовательским тегам, поддержке русского языка (интерфейс, субтитры, озвучка), а также по диапазонам количества отзывов и общего рейтинга игры.</li>
+                    <li style="margin-bottom: 0.5em;"><strong>Система фильтрации:</strong> по категориям коллекций Stelicas, дате выхода, пользовательскима меткам, поддержке русского языка (интерфейс, субтитры, озвучка), а также по диапазонам количества отзывов и общего рейтинга игры.</li>
                     <li style="margin-bottom: 0.5em;">Анимированная рулетка для выбора случайной игры из отфильтрованного списка.</li>
                     <li style="margin-bottom: 0.5em;">Возможность включить приоритет по отзывам и рейтингу, чтобы игры с лучшими показателями имели больше шансов на выпадение.</li>
                     <li style="margin-bottom: 0.5em;">Переключение в режим <strong>просмотра всей отфильтрованной подборки</strong> игр в виде удобных карточек (изображение и название).</li>
-                    <li style="margin-bottom: 0.5em;">Отображение подробной информации о выбранной (или просматриваемой в подборке) игре: постер, название, рейтинг и количество отзывов, краткое описание, основные теги, точная дата выхода, разработчики/издатели, информация о поддержке русского языка.</li>
+                    <li style="margin-bottom: 0.5em;">Отображение подробной информации о выбранной (или просматриваемой в подборке) игре: постер, название, рейтинг и количество отзывов, краткое описание, основные метки, точная дата выхода, разработчики/издатели, информация о поддержке русского языка.</li>
                     <li style="margin-bottom: 0.5em;">Прямые ссылки на страницу игры в сообществе Steam и для её запуска через протокол <code>steam://run/&lt;AppID&gt;</code>.</li>
                 </ul>
                 <p><strong>Как пользоваться:</strong></p>
@@ -957,7 +967,7 @@
                     <li>Загружает игры из отображаемого списка желаемого и выводит их в виде информативных карточек.</li>
                     <li>На карточках отображается подробная информация: цена, скидка, рейтинг, дата выхода, издатель, разработчик, серия, метки, поддержка русского языка и статус раннего доступа.</li>
                     <li><strong>Для пользователей из РФ:</strong> на карточках также отображается информация о соответствии стоимости рекомендованной региональной цене (РРЦ) от Valve. Показывается статус (дороже, дешевле или равно РРЦ), сумма и процент отклонения.</li>
-                    <li>Предоставляет гибкую систему фильтрации по цене, скидке, рейтингу, дате выхода, поддержке русского языка, статусу раннего доступа, а также <strong>по соответствию РРЦ (для РФ)</strong>.</li>
+                    <li>Предоставляет гибкую систему фильтрации по цене, скидке, рейтингу, дате выхода, поддержке русского языка, статусу раннего доступа, <strong>умным меткам (по приоритету или на исключение)</strong>, а также <strong>по соответствию РРЦ (для РФ)</strong>.</li>
                     <li>Активирует режим <strong>помощника подарков</strong>:
                         <ul>
                             <li>Вы выбираете регион вашего друга.</li>
@@ -970,7 +980,7 @@
                 </ul>
                  <p>Это помогает легко найти подходящие и экономически целесообразные подарки для друзей за границей.</p>
                  <p><i><small>*Примечание: Скорость загрузки данных зависит от размера списка желаемого.</small></i></p>
-                 <img src="https://i.imgur.com/wq9eRCW.png" alt="Пример WishlistGiftHelper 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
+                 <img src="https://i.imgur.com/i7wFMP8.png" alt="Пример WishlistGiftHelper 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
         },
         // --- Дополнительные ---
         autoExpandHltb: {
@@ -6246,6 +6256,10 @@
             const USERDATA_URL = 'https://store.steampowered.com/dynamicstore/userdata/';
             const CACHE_DURATION = 24 * 60 * 60 * 1000;
 
+            let allTags = {};
+            let activeTagFilters = {};
+            let hiddenTagFilters = {};
+
             async function loadSteamTags() {
                 const cached = GM_getValue(STEAM_TAGS_CACHE_KEY, {
                     data: null,
@@ -6277,7 +6291,7 @@
                         return data;
                     }
                 } catch (e) {
-                    console.error('Ошибка загрузки тегов:', e);
+                    console.error('Ошибка загрузки меток:', e);
                     return cached.data || {};
                 }
 
@@ -6469,8 +6483,200 @@
             async function getTagNames(tagIds) {
                 const tagsData = await loadSteamTags();
                 return tagIds.slice(0, 5).map(tagId =>
-                    tagsData[tagId] || `Тег #${tagId}`
+                    tagsData[tagId] || `Метка #${tagId}`
                 );
+            }
+
+            async function createTagFilterModal() {
+                if (document.getElementById('tag-filter-modal')) return;
+
+                const modalOverlay = document.createElement('div');
+                modalOverlay.id = 'tag-filter-modal';
+                modalOverlay.className = 'tag-modal-overlay';
+                modalOverlay.innerHTML = `
+                    <div class="tag-modal">
+                        <div class="tag-modal-header">
+                            <h2>Настройка умных меток</h2>
+                            <button class="tag-modal-close" data-action="close-tag-modal">&times;</button>
+                        </div>
+                        <div class="tag-modal-body">
+                            <input type="text" id="tag-search-input" class="tag-search-input" placeholder="Введите название метки...">
+                            <div id="tag-search-results" class="tag-search-results"></div>
+                            <div class="tag-filters-sections">
+                                <div id="active-tags-section" class="tag-filters-section">
+                                    <div class="tag-filters-section-title">Активные фильтры (по приоритету)</div>
+                                    <div id="active-tag-filters-container"></div>
+                                </div>
+                                <div id="hidden-tags-section" class="tag-filters-section">
+                                    <div class="tag-filters-section-title">Скрытые фильтры (по наличию)</div>
+                                    <div id="hidden-tag-filters-container"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tag-modal-footer">
+                            <button class="btn_green_white_innerfade btn_medium" data-action="apply-tags-and-close">
+                                <span>Применить и закрыть</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modalOverlay);
+
+                const modalContent = modalOverlay.querySelector('.tag-modal');
+                const searchInput = document.getElementById('tag-search-input');
+                const searchResultsContainer = document.getElementById('tag-search-results');
+                const activeFiltersContainer = document.getElementById('active-tag-filters-container');
+                const hiddenFiltersContainer = document.getElementById('hidden-tag-filters-container');
+
+                searchInput.addEventListener('input', () => {
+                    const query = searchInput.value.toLowerCase().trim();
+                    searchResultsContainer.innerHTML = '';
+                    if (query.length < 2) return;
+
+                    const filteredTags = Object.entries(allTags)
+                        .filter(([tagid, name]) => name.toLowerCase().includes(query) && !activeTagFilters[tagid] && !hiddenTagFilters[tagid])
+                        .slice(0, 50);
+
+                    filteredTags.forEach(([tagid, name]) => {
+                        const item = document.createElement('div');
+                        item.className = 'tag-search-result-item';
+                        item.textContent = name;
+                        item.dataset.tagid = tagid;
+                        item.dataset.tagname = name;
+                        searchResultsContainer.appendChild(item);
+                    });
+                });
+
+                searchResultsContainer.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('tag-search-result-item')) {
+                        const tagId = e.target.dataset.tagid;
+                        activeTagFilters[tagId] = 20;
+                        e.target.remove();
+                        renderTagFilters();
+                        searchInput.value = '';
+                        searchResultsContainer.innerHTML = '';
+                    }
+                });
+
+                function handleTagContainerEvents(container, filterObject, isHiddenContainer) {
+                    container.addEventListener('click', (e) => {
+                        if (e.target.classList.contains('btn-remove-tag')) {
+                            const tagId = e.target.dataset.tagid;
+                            delete filterObject[tagId];
+                            renderTagFilters();
+                        }
+                    });
+
+                    if (!isHiddenContainer) {
+                        container.addEventListener('change', (e) => {
+                            if (e.target.classList.contains('tag-position-input')) {
+                                const tagId = e.target.dataset.tagid;
+                                let value = parseInt(e.target.value, 10);
+                                if (isNaN(value) || value < 1) value = 1;
+                                if (value > 20) value = 20;
+                                activeTagFilters[tagId] = value;
+                                e.target.value = value;
+                            }
+                        });
+                    }
+                }
+
+                handleTagContainerEvents(activeFiltersContainer, activeTagFilters, false);
+                handleTagContainerEvents(hiddenFiltersContainer, hiddenTagFilters, true);
+
+                let draggedItem = null;
+
+                function setupDragAndDrop(container) {
+                    container.addEventListener('dragstart', (e) => {
+                        draggedItem = e.target;
+                        setTimeout(() => { e.target.style.opacity = '0.5'; }, 0);
+                    });
+                    container.addEventListener('dragend', (e) => {
+                        e.target.style.opacity = '1';
+                        draggedItem = null;
+                    });
+                }
+
+                setupDragAndDrop(activeFiltersContainer);
+                setupDragAndDrop(hiddenFiltersContainer);
+
+                function setupDropZone(zone, targetFilter, sourceFilter, isHiddenZone) {
+                    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+                    zone.addEventListener('dragleave', () => { zone.classList.remove('drag-over'); });
+                    zone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        zone.classList.remove('drag-over');
+                        if (draggedItem) {
+                            const tagId = draggedItem.dataset.tagid;
+                            if (!targetFilter[tagId]) {
+                                const value = sourceFilter[tagId];
+                                delete sourceFilter[tagId];
+                                targetFilter[tagId] = isHiddenZone ? true : (value || 20);
+                                renderTagFilters();
+                            }
+                        }
+                    });
+                }
+
+                setupDropZone(document.getElementById('active-tags-section'), activeTagFilters, hiddenTagFilters, false);
+                setupDropZone(document.getElementById('hidden-tags-section'), hiddenTagFilters, activeTagFilters, true);
+
+                modalOverlay.addEventListener('click', (e) => {
+                    const actionElement = e.target.closest('[data-action]');
+
+                    if (e.target === modalOverlay) {
+                         modalOverlay.style.display = 'none';
+                         return;
+                    }
+
+                    if (actionElement) {
+                        const action = actionElement.dataset.action;
+                        if (action === 'close-tag-modal') {
+                            modalOverlay.style.display = 'none';
+                        } else if (action === 'apply-tags-and-close') {
+                            modalOverlay.style.display = 'none';
+                            document.querySelectorAll(CAESAR_VISIBLE_ELEMENTS_SELECTOR).forEach(applyRussianLanguageFilter);
+                        }
+                    }
+                });
+            }
+
+            function renderTagFilters() {
+                const activeContainer = document.getElementById('active-tag-filters-container');
+                const hiddenContainer = document.getElementById('hidden-tag-filters-container');
+                activeContainer.innerHTML = '';
+                hiddenContainer.innerHTML = '';
+
+                for (const tagId in activeTagFilters) {
+                    const tagName = allTags[tagId] || `TagID: ${tagId}`;
+                    const position = activeTagFilters[tagId];
+                    const row = document.createElement('div');
+                    row.className = 'active-tag-filter-row';
+                    row.draggable = true;
+                    row.dataset.tagid = tagId;
+                    row.innerHTML = `
+                        <span>${tagName}</span>
+                        <input type="number" class="tag-position-input" value="${position}" min="1" max="20" data-tagid="${tagId}">
+                        <button class="btn-remove-tag" data-tagid="${tagId}">X</button>
+                    `;
+
+                    row.querySelector('.tag-position-input').addEventListener('mousedown', e => e.stopPropagation());
+
+                    activeContainer.appendChild(row);
+                }
+
+                for (const tagId in hiddenTagFilters) {
+                    const tagName = allTags[tagId] || `TagID: ${tagId}`;
+                    const row = document.createElement('div');
+                    row.className = 'hidden-tag-filter-row';
+                    row.draggable = true;
+                    row.dataset.tagid = tagId;
+                    row.innerHTML = `
+                        <span>${tagName}</span>
+                        <button class="btn-remove-tag" data-tagid="${tagId}">X</button>
+                    `;
+                    hiddenContainer.appendChild(row);
+                }
             }
 
             async function displayGameInfo(element, data) {
@@ -6507,7 +6713,7 @@
 
                 const reviewClass = getReviewClassCatalog(data.percent_positive, data.review_count);
                 const earlyAccessClass = data.is_early_access ? 'catalog-early-access-yes' : 'catalog-early-access-no';
-                const tags = await getTagNames(data.tagids || []);
+                const tags = (data.tagids || []).slice(0, 5).map(tagId => allTags[tagId] || `Тег #${tagId}`);
                 const tagsHtml = tags.map(tag =>
                     `<div class="custom-tag">${tag}</div>`
                 ).join('');
@@ -6612,9 +6818,31 @@
                     </div>
                 `;
 
+                const tagFilterBlock = document.createElement('div');
+                tagFilterBlock.className = 'block search_collapse_block';
+                tagFilterBlock.innerHTML = `
+                    <div data-panel="{&quot;focusable&quot;:true,&quot;clickOnActivate&quot;:true}" class="block_header labs_block_header">
+                        <div>Умные метки</div>
+                    </div>
+                    <div class="block_content block_content_inner">
+                        <div class="tab_filter_control_row">
+                             <span id="open-tag-modal-btn-styled" class="tab_filter_control_label">Настроить метки...</span>
+                        </div>
+                    </div>
+                `;
+
                 const priceBlock = document.querySelector('.block.search_collapse_block[data-collapse-name="price"]');
                 priceBlock.parentNode.insertBefore(filterBlock, priceBlock.nextSibling);
                 priceBlock.parentNode.insertBefore(dlcFilterBlock, filterBlock.nextSibling);
+                priceBlock.parentNode.insertBefore(tagFilterBlock, dlcFilterBlock.nextSibling);
+
+                document.getElementById('open-tag-modal-btn-styled').addEventListener('click', () => {
+                    const modal = document.getElementById('tag-filter-modal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        renderTagFilters();
+                    }
+                });
 
                 const translationRow = filterBlock.querySelector('[data-param="russian_translation"]');
                 const voiceRow = filterBlock.querySelector('[data-param="russian_voice"]');
@@ -6676,31 +6904,60 @@
                 if (!gameElement.dataset.gameInfo) return;
 
                 const gameData = JSON.parse(gameElement.dataset.gameInfo);
-                const hasRussianText = gameData.language_support_russian?.supported || gameData.language_support_russian?.subtitles;
-                const hasRussianVoice = gameData.language_support_russian?.full_audio;
-                const hasAnyRussian = hasRussianText || hasRussianVoice;
+                let isVisible = true;
 
-                const translationChecked = document.querySelector('[data-param="russian_translation"] .tab_filter_control').classList.contains('checked');
-                const voiceChecked = document.querySelector('[data-param="russian_voice"] .tab_filter_control').classList.contains('checked');
-                const noRussianChecked = document.querySelector('[data-param="no_russian"] .tab_filter_control').classList.contains('checked');
                 const dlcFilterActive = document.querySelector('[data-param="your_dlc"] .tab_filter_control')?.classList.contains('checked');
-
-                if (dlcFilterActive && !gameElement.classList.contains('es_highlighted_dlcforya')) {
-                    animateDisappearance(gameElement);
-                    return;
+                const isDlcForOwnedGame = gameElement.classList.contains('es_highlighted_dlcforya');
+                if (dlcFilterActive && !isDlcForOwnedGame) {
+                    isVisible = false;
                 }
 
-                if (translationChecked) {
-                    if (!hasRussianText || hasRussianVoice) animateDisappearance(gameElement);
-                    else animateAppearance(gameElement);
-                } else if (voiceChecked) {
-                    if (!hasRussianVoice) animateDisappearance(gameElement);
-                    else animateAppearance(gameElement);
-                } else if (noRussianChecked) {
-                    if (hasAnyRussian) animateDisappearance(gameElement);
-                    else animateAppearance(gameElement);
-                } else {
+                if (isVisible) {
+                    const hasRussianText = gameData.language_support_russian?.supported || gameData.language_support_russian?.subtitles;
+                    const hasRussianVoice = gameData.language_support_russian?.full_audio;
+                    const hasAnyRussian = hasRussianText || hasRussianVoice;
+
+                    const translationChecked = document.querySelector('[data-param="russian_translation"] .tab_filter_control').classList.contains('checked');
+                    const voiceChecked = document.querySelector('[data-param="russian_voice"] .tab_filter_control').classList.contains('checked');
+                    const noRussianChecked = document.querySelector('[data-param="no_russian"] .tab_filter_control').classList.contains('checked');
+
+                    if (translationChecked && (!hasRussianText || hasRussianVoice)) isVisible = false;
+                    else if (voiceChecked && !hasRussianVoice) isVisible = false;
+                    else if (noRussianChecked && hasAnyRussian) isVisible = false;
+                }
+
+                if (isVisible) {
+                     if (Object.keys(activeTagFilters).length > 0 || Object.keys(hiddenTagFilters).length > 0) {
+                        if (!gameData.tagids || gameData.tagids.length === 0) {
+                           if (Object.keys(activeTagFilters).length > 0) isVisible = false;
+                        } else {
+                            for (const tagId in hiddenTagFilters) {
+                                if (gameData.tagids.includes(parseInt(tagId, 10))) {
+                                    isVisible = false;
+                                    break;
+                                }
+                            }
+
+                            if (isVisible) {
+                                for (const tagId in activeTagFilters) {
+                                    const requiredPosition = activeTagFilters[tagId];
+                                    const numericTagId = parseInt(tagId, 10);
+                                    const actualPositionIndex = gameData.tagids.indexOf(numericTagId);
+
+                                    if (actualPositionIndex === -1 || actualPositionIndex >= requiredPosition) {
+                                        isVisible = false;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (isVisible) {
                     animateAppearance(gameElement);
+                } else {
+                    animateDisappearance(gameElement);
                 }
             }
 
@@ -6745,7 +7002,10 @@
                 });
             }
 
-            function initialize() {
+            async function initialize() {
+                await loadSteamTags().then(data => { allTags = data; });
+                createTagFilterModal();
+
                 setTimeout(() => {
                     collectAndFetchAppIds();
                     observeNewElements();
@@ -6832,6 +7092,105 @@
                 .es_highlighted_dlcforya {
                     background: #822dbf linear-gradient(135deg, rgba(0, 0, 0, 0.70) 10%, rgba(0, 0, 0, 0) 100%) !important;
                 }
+                .tag-modal-overlay {
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background: rgba(0,0,0,0.8); z-index: 10001; display: none;
+                    justify-content: center; align-items: center;
+                    font-family: "Motiva Sans", Sans-serif, Arial;
+                }
+                .tag-modal {
+                    background: #1b2838; color: #c6d4df; padding: 20px; border-radius: 6px;
+                    width: 600px; max-width: 90%; box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+                    border: 1px solid #30363d;
+                }
+                .tag-modal-header {
+                    display: flex; justify-content: space-between; align-items: center;
+                    margin-bottom: 15px; border-bottom: 1px solid #2a3a4d; padding-bottom: 10px;
+                }
+                .tag-modal-header h2 {
+                    color: #66c0f4; margin: 0; font-size: 18px;
+                }
+                .tag-modal-close {
+                    background: none; border: none; color: #c6d4df; font-size: 24px;
+                    cursor: pointer; line-height: 1; padding: 0 5px;
+                }
+                .tag-modal-close:hover {
+                    color: #66c0f4;
+                }
+                .tag-search-input {
+                    width: 100%; background: #1a2635; border: 1px solid #2a3a4d;
+                    border-radius: 4px; color: #c6d4df; font-size: 14px;
+                    padding: 8px; margin-bottom: 10px;
+                }
+                .tag-search-results {
+                    max-height: 150px; overflow-y: auto; border: 1px solid #2a3a4d;
+                    border-radius: 4px;
+                }
+                .tag-search-result-item {
+                    padding: 8px; cursor: pointer; border-bottom: 1px solid #2a3a4d;
+                }
+                .tag-search-result-item:last-child {
+                    border-bottom: none;
+                }
+                .tag-search-result-item:hover {
+                    background: #2a3a4d;
+                }
+                .tag-filters-sections {
+                    display: flex; gap: 20px; margin-top: 15px;
+                }
+                .tag-filters-section {
+                    flex: 1; border: 1px solid #2a3a4d; border-radius: 4px; padding: 10px;
+                    background: #16202d; min-height: 150px;
+                }
+                .tag-filters-section-title {
+                    color: #66c0f4; font-size: 14px; margin-bottom: 10px;
+                    text-align: center; border-bottom: 1px solid #2a3a4d; padding-bottom: 5px;
+                }
+                .active-tag-filter-row, .hidden-tag-filter-row {
+                    display: flex; align-items: center; gap: 10px; background: #2a3a4d;
+                    padding: 8px; border-radius: 4px; margin-bottom: 8px; cursor: grab;
+                }
+                .active-tag-filter-row:active, .hidden-tag-filter-row:active {
+                    cursor: grabbing; background: #354658;
+                }
+                .active-tag-filter-row span, .hidden-tag-filter-row span {
+                    flex-grow: 1;
+                }
+                .active-tag-filter-row input {
+                    width: 60px; text-align: center; background: #1a2635;
+                    border: 1px solid #2a3a4d; color: #c6d4df; border-radius: 3px;
+                    padding: 4px;
+                }
+                .btn-remove-tag {
+                    background-color: #a74343; color: white; font-size: 11px;
+                    padding: 3px 8px; border-radius: 3px; border: none; cursor: pointer;
+                }
+                .btn-remove-tag:hover {
+                    background-color: #c45252;
+                }
+                .tag-modal-footer {
+                    margin-top: 20px; text-align: right;
+                }
+                .drag-over {
+                    background-color: rgba(102, 192, 244, 0.1);
+                    border-style: dashed;
+                }
+                #open-tag-modal-btn-styled {
+                    display: block;
+                    width: 100%;
+                    text-align: center;
+                    padding: 5px 0;
+                    border-radius: 2px;
+                    background-color: rgba(103, 193, 245, 0.1);
+                    border: 1px solid rgba(103, 193, 245, 0.2);
+                    cursor: pointer;
+                    transition: background-color 0.2s, border-color 0.2s;
+                }
+                #open-tag-modal-btn-styled:hover {
+                    background-color: rgba(103, 193, 245, 0.2);
+                    border-color: rgba(103, 193, 245, 0.4);
+                }
+
             `;
             document.head.appendChild(style);
         })();
@@ -8163,7 +8522,7 @@
                         return data;
                     }
                 } catch (e) {
-                    console.error('Ошибка загрузки тегов:', e);
+                    console.error('Ошибка загрузки меток:', e);
                     return cached.data || {};
                 }
 
@@ -12067,7 +12426,7 @@
             const WGH_REQUEST_TIMEOUT_MS = 20000;
             const WGH_GIFT_PRICE_DIFF_THRESHOLD = 0.15;
             const WGH_IMAGE_BASE_URL = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/';
-            const WGH_COUNTRY_CURRENCY_MAP = {
+                        const WGH_COUNTRY_CURRENCY_MAP = {
                 'AU': {
                     name: 'Австралийский доллар',
                     code: 21,
@@ -12276,11 +12635,18 @@
             };
             const WGH_CURRENCY_CODE_TO_COUNTRY = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([country, data]) => [data.code, country]));
             const WGH_CURRENCY_CODE_TO_ISO = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([_, data]) => [data.code, data.iso]));
-            const WGH_DEFAULT_SORT = { field: 'price', direction: 'asc' };
+            const WGH_DEFAULT_SORT = {
+                field: 'price',
+                direction: 'asc'
+            };
             const WGH_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v2_wgh';
             const WGH_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
             const WGH_FILTER_STORAGE_KEY = 'wgh_filters_v1';
             const WGH_FILTER_DEBOUNCE_MS = 400;
+
+            let wgh_allTags = {};
+            let wgh_activeTagFilters = {};
+            let wgh_hiddenTagFilters = {};
 
             function debounce(func, wait) {
                 let timeout;
@@ -12302,7 +12668,7 @@
                 if (percent >= 70) return 'В основном положительные';
                 if (percent >= 40) return 'Смешанные';
                 if (percent >= 20) return 'В основном отрицательные';
-                if (percent >= 6)  return 'Очень отрицательные';
+                if (percent >= 6) return 'Очень отрицательные';
                 return 'Крайне отрицательные';
             }
 
@@ -12359,7 +12725,9 @@
             let wgh_currentUserCountryCode = 'RU';
             let wgh_currentUserCurrencyCode = 5;
             let wgh_currentUserISOCurrencyCode = 'RUB';
-            let wgh_currentSort = { ...WGH_DEFAULT_SORT };
+            let wgh_currentSort = {
+                ...WGH_DEFAULT_SORT
+            };
             let wgh_currentFriendCountryCode = null;
             let wgh_exchangeRates = null;
             let wgh_giftModeActive = false;
@@ -12373,18 +12741,32 @@
             let wgh_currentFilters = GM_getValue(WGH_FILTER_STORAGE_KEY, {});
 
             async function wgh_loadSteamTags() {
-                const cached = GM_getValue(WGH_TAGS_CACHE_KEY, { data: null, timestamp: 0 });
+                const cached = GM_getValue(WGH_TAGS_CACHE_KEY, {
+                    data: null,
+                    timestamp: 0
+                });
                 const now = Date.now();
                 const CACHE_DURATION = 744 * 60 * 60 * 1000;
                 if (cached.data && (now - cached.timestamp) < CACHE_DURATION) return cached.data;
                 try {
-                    const response = await new Promise((resolve, reject) => GM_xmlhttpRequest({ method: "GET", url: WGH_TAGS_URL, onload: resolve, onerror: reject }));
+                    const response = await new Promise((resolve, reject) => GM_xmlhttpRequest({
+                        method: "GET",
+                        url: WGH_TAGS_URL,
+                        onload: resolve,
+                        onerror: reject
+                    }));
                     if (response.status === 200) {
                         const data = JSON.parse(response.responseText);
-                        GM_setValue(WGH_TAGS_CACHE_KEY, { data: data, timestamp: now });
+                        GM_setValue(WGH_TAGS_CACHE_KEY, {
+                            data: data,
+                            timestamp: now
+                        });
                         return data;
                     }
-                } catch (e) { console.error('[WGH] Ошибка загрузки тегов:', e); return cached.data || {}; }
+                } catch (e) {
+                    console.error('[WGH] Ошибка загрузки меток:', e);
+                    return cached.data || {};
+                }
                 return {};
             }
 
@@ -12395,13 +12777,33 @@
                 wgh_analyzeBtn.id = 'wghAnalyzeButton';
                 wgh_analyzeBtn.title = 'Помощник подарков';
                 wgh_analyzeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>`;
-                Object.assign(wgh_analyzeBtn.style, { marginLeft: '15px', background: 'rgba(103, 193, 245, 0.1)', border: '1px solid rgba(103, 193, 245, 0.3)', color: '#67c1f5', borderRadius: '3px', cursor: 'pointer', padding: '5px 8px', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', verticalAlign: 'middle' });
-                wgh_analyzeBtn.onmouseover = () => { wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.2)'; };
-                wgh_analyzeBtn.onmouseout = () => { wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.1)'; };
+                Object.assign(wgh_analyzeBtn.style, {
+                    marginLeft: '15px',
+                    background: 'rgba(103, 193, 245, 0.1)',
+                    border: '1px solid rgba(103, 193, 245, 0.3)',
+                    color: '#67c1f5',
+                    borderRadius: '3px',
+                    cursor: 'pointer',
+                    padding: '5px 8px',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    verticalAlign: 'middle'
+                });
+                wgh_analyzeBtn.onmouseover = () => {
+                    wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.2)';
+                };
+                wgh_analyzeBtn.onmouseout = () => {
+                    wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.1)';
+                };
                 wgh_analyzeBtn.onclick = wgh_showModal;
                 const h2Title = titleBlock.querySelector('h2');
-                if (h2Title) { h2Title.style.display = 'inline-block'; h2Title.after(wgh_analyzeBtn); }
-                else { titleBlock.appendChild(wgh_analyzeBtn); }
+                if (h2Title) {
+                    h2Title.style.display = 'inline-block';
+                    h2Title.after(wgh_analyzeBtn);
+                } else {
+                    titleBlock.appendChild(wgh_analyzeBtn);
+                }
             }
 
             function wgh_createFilterAccordion() {
@@ -12425,6 +12827,9 @@
                         <div class="wghFilterGroup">
                             <label class="wghFilterLabel"><input type="checkbox" id="wghFilterDiscounted"> Только со скидками</label>
                             <label class="wghFilterLabel"><input type="checkbox" id="wghFilterNoPrice"> Скрыть без цены</label>
+                            <div style="margin-top: 8px;">
+                                <button id="wghOpenTagModalBtn" class="wghBtn">Умные метки...</button>
+                            </div>
                         </div>
                         <div class="wghFilterGroup">
                             <label class="wghFilterLabel">Кол-во обзоров</label>
@@ -12469,6 +12874,192 @@
                 `;
             }
 
+            function wgh_createTagFilterModal() {
+                if (document.getElementById('wgh-tag-filter-modal')) return;
+
+                const modalOverlay = document.createElement('div');
+                modalOverlay.id = 'wgh-tag-filter-modal';
+                modalOverlay.className = 'tag-modal-overlay';
+                modalOverlay.innerHTML = `
+                    <div class="tag-modal">
+                        <div class="tag-modal-header">
+                            <h2>Настройка умных меток</h2>
+                            <button class="tag-modal-close" data-action="close-tag-modal">&times;</button>
+                        </div>
+                        <div class="tag-modal-body">
+                            <input type="text" id="wgh-tag-search-input" class="tag-search-input" placeholder="Введите название метки...">
+                            <div id="wgh-tag-search-results" class="tag-search-results"></div>
+                            <div class="tag-filters-sections">
+                                <div id="wgh-active-tags-section" class="tag-filters-section">
+                                    <div class="tag-filters-section-title">Активные фильтры (по приоритету)</div>
+                                    <div id="wgh-active-tag-filters-container"></div>
+                                </div>
+                                <div id="wgh-hidden-tags-section" class="tag-filters-section">
+                                    <div class="tag-filters-section-title">Скрытые фильтры (по наличию)</div>
+                                    <div id="wgh-hidden-tag-filters-container"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tag-modal-footer">
+                            <button class="wghBtn wghPrimaryBtn" data-action="apply-tags-and-close">
+                                <span>Применить и закрыть</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modalOverlay);
+
+                const searchInput = document.getElementById('wgh-tag-search-input');
+                const searchResultsContainer = document.getElementById('wgh-tag-search-results');
+                const activeFiltersContainer = document.getElementById('wgh-active-tag-filters-container');
+                const hiddenFiltersContainer = document.getElementById('wgh-hidden-tag-filters-container');
+
+                searchInput.addEventListener('input', () => {
+                    const query = searchInput.value.toLowerCase().trim();
+                    searchResultsContainer.innerHTML = '';
+                    if (query.length < 2) return;
+
+                    const filteredTags = Object.entries(wgh_allTags)
+                        .filter(([tagid, name]) => name.toLowerCase().includes(query) && !wgh_activeTagFilters[tagid] && !wgh_hiddenTagFilters[tagid])
+                        .slice(0, 50);
+
+                    filteredTags.forEach(([tagid, name]) => {
+                        const item = document.createElement('div');
+                        item.className = 'tag-search-result-item';
+                        item.textContent = name;
+                        item.dataset.tagid = tagid;
+                        item.dataset.tagname = name;
+                        searchResultsContainer.appendChild(item);
+                    });
+                });
+
+                searchResultsContainer.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('tag-search-result-item')) {
+                        const tagId = e.target.dataset.tagid;
+                        wgh_activeTagFilters[tagId] = 20;
+                        e.target.remove();
+                        wgh_renderTagFilters();
+                        searchInput.value = '';
+                        searchResultsContainer.innerHTML = '';
+                    }
+                });
+
+                wgh_handleTagContainerEvents(activeFiltersContainer, wgh_activeTagFilters, false);
+                wgh_handleTagContainerEvents(hiddenFiltersContainer, wgh_hiddenTagFilters, true);
+
+                let draggedItem = null;
+
+                function setupDragAndDrop(container) {
+                    container.addEventListener('dragstart', (e) => {
+                        draggedItem = e.target;
+                        setTimeout(() => { e.target.style.opacity = '0.5'; }, 0);
+                    });
+                    container.addEventListener('dragend', (e) => {
+                        e.target.style.opacity = '1';
+                        draggedItem = null;
+                    });
+                }
+
+                setupDragAndDrop(activeFiltersContainer);
+                setupDragAndDrop(hiddenFiltersContainer);
+
+                function setupDropZone(zone, targetFilter, sourceFilter, isHiddenZone) {
+                    zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
+                    zone.addEventListener('dragleave', () => { zone.classList.remove('drag-over'); });
+                    zone.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        zone.classList.remove('drag-over');
+                        if (draggedItem) {
+                            const tagId = draggedItem.dataset.tagid;
+                            if (!targetFilter[tagId]) {
+                                const value = sourceFilter[tagId];
+                                delete sourceFilter[tagId];
+                                targetFilter[tagId] = isHiddenZone ? true : (value || 20);
+                                wgh_renderTagFilters();
+                            }
+                        }
+                    });
+                }
+
+                setupDropZone(document.getElementById('wgh-active-tags-section'), wgh_activeTagFilters, wgh_hiddenTagFilters, false);
+                setupDropZone(document.getElementById('wgh-hidden-tags-section'), wgh_hiddenTagFilters, wgh_activeTagFilters, true);
+
+                modalOverlay.addEventListener('click', (e) => {
+                    const actionElement = e.target.closest('[data-action]');
+                    if (e.target === modalOverlay) {
+                         modalOverlay.style.display = 'none';
+                         return;
+                    }
+                    if (actionElement) {
+                        const action = actionElement.dataset.action;
+                        if (action === 'close-tag-modal') {
+                            modalOverlay.style.display = 'none';
+                        } else if (action === 'apply-tags-and-close') {
+                            modalOverlay.style.display = 'none';
+                            wgh_applyFilters();
+                        }
+                    }
+                });
+            }
+
+            function wgh_handleTagContainerEvents(container, filterObject, isHiddenContainer) {
+                container.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('btn-remove-tag')) {
+                        const tagId = e.target.dataset.tagid;
+                        delete filterObject[tagId];
+                        wgh_renderTagFilters();
+                    }
+                });
+                if (!isHiddenContainer) {
+                    container.addEventListener('change', (e) => {
+                        if (e.target.classList.contains('tag-position-input')) {
+                            const tagId = e.target.dataset.tagid;
+                            let value = parseInt(e.target.value, 10);
+                            if (isNaN(value) || value < 1) value = 1;
+                            if (value > 20) value = 20;
+                            wgh_activeTagFilters[tagId] = value;
+                            e.target.value = value;
+                        }
+                    });
+                }
+            }
+
+            function wgh_renderTagFilters() {
+                const activeContainer = document.getElementById('wgh-active-tag-filters-container');
+                const hiddenContainer = document.getElementById('wgh-hidden-tag-filters-container');
+                activeContainer.innerHTML = '';
+                hiddenContainer.innerHTML = '';
+
+                for (const tagId in wgh_activeTagFilters) {
+                    const tagName = wgh_allTags[tagId] || `TagID: ${tagId}`;
+                    const position = wgh_activeTagFilters[tagId];
+                    const row = document.createElement('div');
+                    row.className = 'active-tag-filter-row';
+                    row.draggable = true;
+                    row.dataset.tagid = tagId;
+                    row.innerHTML = `
+                        <span>${tagName}</span>
+                        <input type="number" class="tag-position-input" value="${position}" min="1" max="20" data-tagid="${tagId}">
+                        <button class="btn-remove-tag" data-tagid="${tagId}">X</button>
+                    `;
+                    row.querySelector('.tag-position-input').addEventListener('mousedown', e => e.stopPropagation());
+                    activeContainer.appendChild(row);
+                }
+
+                for (const tagId in wgh_hiddenTagFilters) {
+                    const tagName = wgh_allTags[tagId] || `TagID: ${tagId}`;
+                    const row = document.createElement('div');
+                    row.className = 'hidden-tag-filter-row';
+                    row.draggable = true;
+                    row.dataset.tagid = tagId;
+                    row.innerHTML = `
+                        <span>${tagName}</span>
+                        <button class="btn-remove-tag" data-tagid="${tagId}">X</button>
+                    `;
+                    hiddenContainer.appendChild(row);
+                }
+            }
+
             function wgh_createModal() {
                 if (document.getElementById('wghModal')) return;
                 wgh_modal = document.createElement('div');
@@ -12496,7 +13087,9 @@
                 wgh_filterToggleBtn.className = 'wghBtn';
                 wgh_filterToggleBtn.title = 'Фильтры';
                 wgh_filterToggleBtn.innerHTML = '🛠️';
-                wgh_filterToggleBtn.onclick = () => { wgh_filterAccordionContainer.style.display = wgh_filterAccordionContainer.style.display === 'none' ? 'block' : 'none'; };
+                wgh_filterToggleBtn.onclick = () => {
+                    wgh_filterAccordionContainer.style.display = wgh_filterAccordionContainer.style.display === 'none' ? 'block' : 'none';
+                };
                 header.appendChild(wgh_filterToggleBtn);
 
                 wgh_sortButtonsContainer = document.createElement('div');
@@ -12539,8 +13132,14 @@
                 wgh_closeBtn.innerHTML = '&times;';
                 wgh_closeBtn.onclick = wgh_hideModal;
                 wgh_closeBtn.style.cssText = ` position: absolute; top: 10px; right: 15px; font-size: 30px; color: #aaa; background: none; border: none; cursor: pointer; line-height: 1; z-index: 10002; padding: 5px; transition: color 0.2s, transform 0.2s; `;
-                wgh_closeBtn.onmouseover = () => { wgh_closeBtn.style.color = '#fff'; wgh_closeBtn.style.transform = 'scale(1.1)'; };
-                wgh_closeBtn.onmouseout = () => { wgh_closeBtn.style.color = '#aaa'; wgh_closeBtn.style.transform = 'scale(1)'; };
+                wgh_closeBtn.onmouseover = () => {
+                    wgh_closeBtn.style.color = '#fff';
+                    wgh_closeBtn.style.transform = 'scale(1.1)';
+                };
+                wgh_closeBtn.onmouseout = () => {
+                    wgh_closeBtn.style.color = '#aaa';
+                    wgh_closeBtn.style.transform = 'scale(1)';
+                };
                 wgh_modal.appendChild(wgh_closeBtn);
                 wgh_modal.appendChild(container);
                 document.body.appendChild(wgh_modal);
@@ -12548,12 +13147,26 @@
                 wgh_createGiftAccordion();
                 wgh_updateSortButtonsState();
                 wgh_setupFilterEventListeners();
+                wgh_createTagFilterModal();
+                document.getElementById('wghOpenTagModalBtn')?.addEventListener('click', () => {
+                    const modal = document.getElementById('wgh-tag-filter-modal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        wgh_renderTagFilters();
+                    }
+                });
 
                 function handleEsc(event) {
                     if (event.key === 'Escape') {
                         const descModal = document.getElementById('wghDescriptionModal');
-                        if (descModal) { descModal.remove(); }
-                        else { wgh_hideModal(); }
+                        const tagModal = document.getElementById('wgh-tag-filter-modal');
+                        if (descModal) {
+                            descModal.remove();
+                        } else if (tagModal && tagModal.style.display !== 'none') {
+                            tagModal.style.display = 'none';
+                        } else {
+                            wgh_hideModal();
+                        }
                     }
                 }
                 document.addEventListener('keydown', handleEsc);
@@ -12614,113 +13227,144 @@
                         if (input.type === 'number' || input.type === 'date') input.value = '';
                         if (input.type === 'radio' && input.value === 'any') input.checked = true;
                     });
+                    wgh_activeTagFilters = {};
+                    wgh_hiddenTagFilters = {};
                     debouncedFilterApplication();
                 });
                 document.querySelectorAll('input[name="wghRrcFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
             }
 
             function wgh_applyFilters() {
-                 if (!wgh_resultsDiv) return;
+                if (!wgh_resultsDiv) return;
 
-                 const getVal = (id) => document.getElementById(id)?.value || null;
-                 const getNum = (id) => { const v = getVal(id); return v ? parseFloat(v) : null; };
-                 const getChecked = (id) => document.getElementById(id)?.checked || false;
-                 const getRadio = (name) => document.querySelector(`input[name="${name}"]:checked`)?.value || 'any';
+                const getVal = (id) => document.getElementById(id)?.value || null;
+                const getNum = (id) => {
+                    const v = getVal(id);
+                    return v ? parseFloat(v) : null;
+                };
+                const getChecked = (id) => document.getElementById(id)?.checked || false;
+                const getRadio = (name) => document.querySelector(`input[name="${name}"]:checked`)?.value || 'any';
 
-                 const filters = {
-                     onlyDiscount: getChecked('wghFilterDiscounted'),
-                     hideNoPrice: getChecked('wghFilterNoPrice'),
-                     reviewCountMin: getNum('wghFilterReviewCountMin'),
-                     reviewCountMax: getNum('wghFilterReviewCountMax'),
-                     ratingMin: getNum('wghFilterRatingMin'),
-                     ratingMax: getNum('wghFilterRatingMax'),
-                     priceMin: getNum('wghFilterPriceMin'),
-                     priceMax: getNum('wghFilterPriceMax'),
-                     discountMin: getNum('wghFilterDiscountMin'),
-                     discountMax: getNum('wghFilterDiscountMax'),
-                     dateMin: getVal('wghFilterDateMin') ? new Date(getVal('wghFilterDateMin')).getTime() : null,
-                     dateMax: getVal('wghFilterDateMax') ? new Date(getVal('wghFilterDateMax')).getTime() : null,
-                     lang: getRadio('wghLangFilter'),
-                     ea: getRadio('wghEaFilter'),
-                     rrc: getRadio('wghRrcFilter')
-                 };
+                const filters = {
+                    onlyDiscount: getChecked('wghFilterDiscounted'),
+                    hideNoPrice: getChecked('wghFilterNoPrice'),
+                    reviewCountMin: getNum('wghFilterReviewCountMin'),
+                    reviewCountMax: getNum('wghFilterReviewCountMax'),
+                    ratingMin: getNum('wghFilterRatingMin'),
+                    ratingMax: getNum('wghFilterRatingMax'),
+                    priceMin: getNum('wghFilterPriceMin'),
+                    priceMax: getNum('wghFilterPriceMax'),
+                    discountMin: getNum('wghFilterDiscountMin'),
+                    discountMax: getNum('wghFilterDiscountMax'),
+                    dateMin: getVal('wghFilterDateMin') ? new Date(getVal('wghFilterDateMin')).getTime() : null,
+                    dateMax: getVal('wghFilterDateMax') ? new Date(getVal('wghFilterDateMax')).getTime() : null,
+                    lang: getRadio('wghLangFilter'),
+                    ea: getRadio('wghEaFilter'),
+                    rrc: getRadio('wghRrcFilter')
+                };
 
-                 GM_setValue(WGH_FILTER_STORAGE_KEY, filters);
+                GM_setValue(WGH_FILTER_STORAGE_KEY, filters);
 
-                 const cards = document.querySelectorAll('.wghGameCard');
-                 const visibleGamesData = [];
+                const cards = document.querySelectorAll('.wghGameCard');
+                const visibleGamesData = [];
 
-                 cards.forEach(card => {
-                     const appid = card.dataset.appid;
-                     const gameData = wgh_gameDataStore[appid]?.myData;
-                     if (!gameData) {
-                         card.style.display = 'none';
-                         return;
-                     }
+                cards.forEach(card => {
+                    const appid = card.dataset.appid;
+                    const gameData = wgh_gameDataStore[appid]?.myData;
+                    if (!gameData) {
+                        card.style.display = 'none';
+                        return;
+                    }
 
-                     let isVisible = true;
+                    let isVisible = true;
 
-                     if (filters.onlyDiscount && (!gameData.priceData || gameData.priceData.discountPercent <= 0)) isVisible = false;
-                     if (isVisible && filters.hideNoPrice && (!gameData.priceData || gameData.priceData.finalCents === null)) isVisible = false;
-                     if (isVisible && filters.reviewCountMin !== null && gameData.reviewCount < filters.reviewCountMin) isVisible = false;
-                     if (isVisible && filters.reviewCountMax !== null && gameData.reviewCount > filters.reviewCountMax) isVisible = false;
-                     if (isVisible && filters.ratingMin !== null && gameData.reviewPercent < filters.ratingMin) isVisible = false;
-                     if (isVisible && filters.ratingMax !== null && gameData.reviewPercent > filters.ratingMax) isVisible = false;
+                    if (filters.onlyDiscount && (!gameData.priceData || gameData.priceData.discountPercent <= 0)) isVisible = false;
+                    if (isVisible && filters.hideNoPrice && (!gameData.priceData || gameData.priceData.finalCents === null)) isVisible = false;
+                    if (isVisible && filters.reviewCountMin !== null && gameData.reviewCount < filters.reviewCountMin) isVisible = false;
+                    if (isVisible && filters.reviewCountMax !== null && gameData.reviewCount > filters.reviewCountMax) isVisible = false;
+                    if (isVisible && filters.ratingMin !== null && gameData.reviewPercent < filters.ratingMin) isVisible = false;
+                    if (isVisible && filters.ratingMax !== null && gameData.reviewPercent > filters.ratingMax) isVisible = false;
 
-                     if (isVisible && gameData.priceData) {
-                         const price = gameData.priceData.finalCents / 100;
-                         if (filters.priceMin !== null && price < filters.priceMin) isVisible = false;
-                         if (isVisible && filters.priceMax !== null && price > filters.priceMax) isVisible = false;
-                     }
+                    if (isVisible && gameData.priceData) {
+                        const price = gameData.priceData.finalCents / 100;
+                        if (filters.priceMin !== null && price < filters.priceMin) isVisible = false;
+                        if (isVisible && filters.priceMax !== null && price > filters.priceMax) isVisible = false;
+                    }
 
-                     if (isVisible && gameData.priceData) {
-                          const discount = gameData.priceData.discountPercent || 0;
-                         if (filters.discountMin !== null && discount < filters.discountMin) isVisible = false;
-                         if (isVisible && filters.discountMax !== null && discount > filters.discountMax) isVisible = false;
-                     }
+                    if (isVisible && gameData.priceData) {
+                        const discount = gameData.priceData.discountPercent || 0;
+                        if (filters.discountMin !== null && discount < filters.discountMin) isVisible = false;
+                        if (isVisible && filters.discountMax !== null && discount > filters.discountMax) isVisible = false;
+                    }
 
-                     if (isVisible && gameData.releaseDateTimestamp) {
-                         const itemDate = gameData.releaseDateTimestamp * 1000;
-                         if (filters.dateMin && itemDate < filters.dateMin) isVisible = false;
-                         if (isVisible && filters.dateMax && itemDate > filters.dateMax) isVisible = false;
-                     }
+                    if (isVisible && gameData.releaseDateTimestamp) {
+                        const itemDate = gameData.releaseDateTimestamp * 1000;
+                        if (filters.dateMin && itemDate < filters.dateMin) isVisible = false;
+                        if (isVisible && filters.dateMax && itemDate > filters.dateMax) isVisible = false;
+                    }
 
-                     if (isVisible && filters.lang !== 'any') {
+                    if (isVisible && filters.lang !== 'any') {
                         const langSupport = gameData.language_support_russian || {};
                         const hasVoice = langSupport.full_audio;
                         const hasText = langSupport.supported || langSupport.subtitles;
                         if (filters.lang === 'text_only' && (!hasText || hasVoice)) isVisible = false;
                         if (filters.lang === 'voice' && !hasVoice) isVisible = false;
                         if (filters.lang === 'none' && (hasText || hasVoice)) isVisible = false;
-                     }
+                    }
 
-                     if (isVisible && filters.ea !== 'any') {
-                         if (filters.ea === 'early_access' && !gameData.is_early_access) isVisible = false;
-                         if (filters.ea === 'released' && gameData.is_early_access) isVisible = false;
-                     }
+                    if (isVisible && filters.ea !== 'any') {
+                        if (filters.ea === 'early_access' && !gameData.is_early_access) isVisible = false;
+                        if (filters.ea === 'released' && gameData.is_early_access) isVisible = false;
+                    }
 
-                     if (isVisible && filters.rrc !== 'any') {
-                         const rrcStatus = gameData.rrcInfo?.status;
-                         if (!rrcStatus || rrcStatus !== filters.rrc) {
-                             isVisible = false;
-                         }
-                     }
+                    if (isVisible && filters.rrc !== 'any') {
+                        const rrcStatus = gameData.rrcInfo?.status;
+                        if (!rrcStatus || rrcStatus !== filters.rrc) {
+                            isVisible = false;
+                        }
+                    }
 
-                     if (isVisible && wgh_showGiftableOnly) {
+                    if (isVisible) {
+                        if (Object.keys(wgh_activeTagFilters).length > 0 || Object.keys(wgh_hiddenTagFilters).length > 0) {
+                            if (!gameData.tagids || gameData.tagids.length === 0) {
+                                if (Object.keys(wgh_activeTagFilters).length > 0) isVisible = false;
+                            } else {
+                                for (const tagId in wgh_hiddenTagFilters) {
+                                    if (gameData.tagids.includes(parseInt(tagId, 10))) {
+                                        isVisible = false;
+                                        break;
+                                    }
+                                }
+                                if (isVisible) {
+                                    for (const tagId in wgh_activeTagFilters) {
+                                        const requiredPosition = wgh_activeTagFilters[tagId];
+                                        const numericTagId = parseInt(tagId, 10);
+                                        const actualPositionIndex = gameData.tagids.indexOf(numericTagId);
+                                        if (actualPositionIndex === -1 || actualPositionIndex >= requiredPosition) {
+                                            isVisible = false;
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (isVisible && wgh_showGiftableOnly) {
                         const isGiftableByPrice = card.dataset.giftablePrice === 'true';
                         const canGiftByApi = card.dataset.canGiftApi === 'true';
                         if (!isGiftableByPrice || !canGiftByApi) {
                             isVisible = false;
                         }
-                     }
+                    }
 
-                     card.style.display = isVisible ? 'flex' : 'none';
-                     if(isVisible) {
+                    card.style.display = isVisible ? 'flex' : 'none';
+                    if (isVisible) {
                         visibleGamesData.push(gameData);
-                     }
-                 });
+                    }
+                });
 
-                 wgh_updateFilterPlaceholders(visibleGamesData);
+                wgh_updateFilterPlaceholders(visibleGamesData);
             }
 
             function wgh_updateFilterPlaceholders() {
@@ -12730,16 +13374,22 @@
                 }).map(game => game.myData);
 
                 if (filteredGames.length === 0) {
-                     ['wghFilterReviewCountMin', 'wghFilterReviewCountMax', 'wghFilterRatingMin', 'wghFilterRatingMax', 'wghFilterPriceMin', 'wghFilterPriceMax', 'wghFilterDiscountMin', 'wghFilterDiscountMax'].forEach(id => {
+                    ['wghFilterReviewCountMin', 'wghFilterReviewCountMax', 'wghFilterRatingMin', 'wghFilterRatingMax', 'wghFilterPriceMin', 'wghFilterPriceMax', 'wghFilterDiscountMin', 'wghFilterDiscountMax'].forEach(id => {
                         const el = document.getElementById(id);
                         if (el) el.placeholder = 'N/A';
-                     });
-                     return;
+                    });
+                    return;
                 }
 
                 const stats = {
-                    minReviews: Infinity, maxReviews: 0, minRating: 101, maxRating: 0,
-                    minPrice: Infinity, maxPrice: 0, minDiscount: 101, maxDiscount: 0
+                    minReviews: Infinity,
+                    maxReviews: 0,
+                    minRating: 101,
+                    maxRating: 0,
+                    minPrice: Infinity,
+                    maxPrice: 0,
+                    minDiscount: 101,
+                    maxDiscount: 0
                 };
 
                 filteredGames.forEach(item => {
@@ -12767,9 +13417,9 @@
                     const el = document.getElementById(id);
                     if (el) {
                         if (value !== Infinity && value !== -Infinity && value !== 101) {
-                             el.placeholder = `${prefix} ${Math.round(value)}`;
+                            el.placeholder = `${prefix} ${Math.round(value)}`;
                         } else {
-                             el.placeholder = fallback;
+                            el.placeholder = fallback;
                         }
                     }
                 };
@@ -12917,7 +13567,7 @@
                                 console.log(`[WGH] Регион успешно определен через SSR/Wallet: ${wgh_currentUserCountryCode}`);
                             }
                         }
-                    } catch(e) {
+                    } catch (e) {
                         console.error('[WGH] Ошибка при разборе SSR для определения региона:', e);
                     }
                 }
@@ -12954,7 +13604,9 @@
 
             async function wgh_fetchBatchGameData(appIdsBatch, countryCode) {
                 const inputJson = {
-                    ids: appIdsBatch.map(appid => ({ appid })),
+                    ids: appIdsBatch.map(appid => ({
+                        appid
+                    })),
                     context: {
                         language: "russian",
                         country_code: countryCode || 'RU',
@@ -13031,7 +13683,10 @@
                     if (!item || !item.id || item.success !== 1) return;
                     const appid = item.id;
                     if (!wgh_gameDataStore[appid]) {
-                        wgh_gameDataStore[appid] = { myData: null, friendData: null };
+                        wgh_gameDataStore[appid] = {
+                            myData: null,
+                            friendData: null
+                        };
                     }
                     const headerFileName = item.assets?.header;
                     const imageUrl = headerFileName ? `${WGH_IMAGE_BASE_URL}${item.id}/${headerFileName}` : `${WGH_IMAGE_BASE_URL}${item.id}/header.jpg`;
@@ -13208,8 +13863,17 @@
 
                 let rrcInfoHtml = '';
                 if (myData.rrcInfo) {
-                    const { status, diff, diffPercent, recommended } = myData.rrcInfo;
-                    const textMap = { 'lower': '< РРЦ', 'equal': '= РРЦ', 'higher': '> РРЦ' };
+                    const {
+                        status,
+                        diff,
+                        diffPercent,
+                        recommended
+                    } = myData.rrcInfo;
+                    const textMap = {
+                        'lower': '< РРЦ',
+                        'equal': '= РРЦ',
+                        'higher': '> РРЦ'
+                    };
                     const diffText = `${diff > 0 ? '+' : ''}${diff.toFixed(0)} ₽ (${diffPercent.toFixed(0)}%)`;
                     const recommendedPriceText = ` | ${recommended.toLocaleString('ru-RU')} ₽`;
 
@@ -13311,7 +13975,10 @@
             }
 
             function wgh_applySort(field, direction) {
-                wgh_currentSort = { field, direction };
+                wgh_currentSort = {
+                    field,
+                    direction
+                };
             }
 
             function wgh_compareItems(a, b, field, direction) {
@@ -14051,6 +14718,173 @@
                         	color: #f2dede;
                         }
 
+                        .tag-modal-overlay {
+                        	position: fixed;
+                        	top: 0;
+                        	left: 0;
+                        	width: 100%;
+                        	height: 100%;
+                        	background: rgba(0, 0, 0, 0.8);
+                        	z-index: 10001;
+                        	display: none;
+                        	justify-content: center;
+                        	align-items: center;
+                        	font-family: "Motiva Sans", Sans-serif, Arial;
+                        }
+
+                        .tag-modal {
+                        	background: #1b2838;
+                        	color: #c6d4df;
+                        	padding: 20px;
+                        	border-radius: 6px;
+                        	width: 600px;
+                        	max-width: 90%;
+                        	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+                        	border: 1px solid #30363d;
+                        }
+
+                        .tag-modal-header {
+                        	display: flex;
+                        	justify-content: space-between;
+                        	align-items: center;
+                        	margin-bottom: 15px;
+                        	border-bottom: 1px solid #2a3a4d;
+                        	padding-bottom: 10px;
+                        }
+
+                        .tag-modal-header h2 {
+                        	color: #66c0f4;
+                        	margin: 0;
+                        	font-size: 18px;
+                        }
+
+                        .tag-modal-close {
+                        	background: none;
+                        	border: none;
+                        	color: #c6d4df;
+                        	font-size: 24px;
+                        	cursor: pointer;
+                        	line-height: 1;
+                        	padding: 0 5px;
+                        }
+
+                        .tag-modal-close:hover {
+                        	color: #66c0f4;
+                        }
+
+                        .tag-search-input {
+                        	width: 100%;
+                        	background: #1a2635;
+                        	border: 1px solid #2a3a4d;
+                        	border-radius: 4px;
+                        	color: #c6d4df;
+                        	font-size: 14px;
+                        	padding: 8px;
+                        	margin-bottom: 10px;
+                        }
+
+                        .tag-search-results {
+                        	max-height: 150px;
+                        	overflow-y: auto;
+                        	border: 1px solid #2a3a4d;
+                        	border-radius: 4px;
+                        }
+
+                        .tag-search-result-item {
+                        	padding: 8px;
+                        	cursor: pointer;
+                        	border-bottom: 1px solid #2a3a4d;
+                        }
+
+                        .tag-search-result-item:last-child {
+                        	border-bottom: none;
+                        }
+
+                        .tag-search-result-item:hover {
+                        	background: #2a3a4d;
+                        }
+
+                        .tag-filters-sections {
+                        	display: flex;
+                        	gap: 20px;
+                        	margin-top: 15px;
+                        }
+
+                        .tag-filters-section {
+                        	flex: 1;
+                        	border: 1px solid #2a3a4d;
+                        	border-radius: 4px;
+                        	padding: 10px;
+                        	background: #16202d;
+                        	min-height: 150px;
+                        }
+
+                        .tag-filters-section-title {
+                        	color: #66c0f4;
+                        	font-size: 14px;
+                        	margin-bottom: 10px;
+                        	text-align: center;
+                        	border-bottom: 1px solid #2a3a4d;
+                        	padding-bottom: 5px;
+                        }
+
+                        .active-tag-filter-row,
+                        .hidden-tag-filter-row {
+                        	display: flex;
+                        	align-items: center;
+                        	gap: 10px;
+                        	background: #2a3a4d;
+                        	padding: 8px;
+                        	border-radius: 4px;
+                        	margin-bottom: 8px;
+                        	cursor: grab;
+                        }
+
+                        .active-tag-filter-row:active,
+                        .hidden-tag-filter-row:active {
+                        	cursor: grabbing;
+                        	background: #354658;
+                        }
+
+                        .active-tag-filter-row span,
+                        .hidden-tag-filter-row span {
+                        	flex-grow: 1;
+                        }
+
+                        .active-tag-filter-row input {
+                        	width: 60px;
+                        	text-align: center;
+                        	background: #1a2635;
+                        	border: 1px solid #2a3a4d;
+                        	color: #c6d4df;
+                        	border-radius: 3px;
+                        	padding: 4px;
+                        }
+
+                        .btn-remove-tag {
+                        	background-color: #a74343;
+                        	color: white;
+                        	font-size: 11px;
+                        	padding: 3px 8px;
+                        	border-radius: 3px;
+                        	border: none;
+                        	cursor: pointer;
+                        }
+
+                        .btn-remove-tag:hover {
+                        	background-color: #c45252;
+                        }
+
+                        .tag-modal-footer {
+                        	margin-top: 20px;
+                        	text-align: right;
+                        }
+
+                        .drag-over {
+                        	background-color: rgba(102, 192, 244, 0.1);
+                        	border-style: dashed;
+                        }
+
                         @media (max-width: 1600px) {
                         	#wghResults {
                         		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -14131,7 +14965,8 @@
                 `);
             }
 
-            function wgh_initialize() {
+            async function wgh_initialize() {
+                await wgh_loadSteamTags().then(data => { wgh_allTags = data; });
                 wgh_detectUserRegion();
                 wgh_addStyles();
                 wgh_addAnalyzeButton();
