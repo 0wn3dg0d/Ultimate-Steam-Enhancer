@@ -10,8 +10,6 @@
 
 ---
 
-<p>В связи с большим объёмом, подробное описание всех функций было перенесено на специальную страницу.</p>
-
 <div align="center">
   <a href="https://0wn3dg0d.github.io/Ultimate-Steam-Enhancer/" title="Посмотреть полное описание функций">
     <img src="https://i.imgur.com/xHlfHv2.png" alt="Посмотреть полное описание" width="450">
