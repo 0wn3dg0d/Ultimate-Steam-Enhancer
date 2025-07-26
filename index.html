@@ -439,33 +439,40 @@
                     <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
                         <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Агрегатор цен (%)</summary>
                         <div class="p-6 border-t border-dx-border space-y-4 details-content">
-                            <p><strong>Что делает:</strong><br>Добавляет кнопку "%" рядом с кнопкой "В желаемое" на странице игры.<br>Нажатие открывает модальное окно с ценами на эту игру из различных цифровых магазинов.</p>
-                            <p><strong>Возможности окна агрегатора:</strong></p>
-                            <ul>
-                                <li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market, Rushbe, <strong>IGM.gg</strong>, <strong>Sous-Buy.ru</strong> и текущей страницы Steam.</li>
-                                <li>Конвертация валют: Возможность переключения отображения всех цен между рублями (RUB) и долларами США (USD).</li>
-                                <li>Сортировка по цене, проценту скидки, сумме скидки, названию.</li>
-                                <li>Фильтрация по диапазону цен, проценту и сумме скидки, наличию скидки, названию (слова через ";"), магазинам.</li>
-                                <li>Исключение товаров по ключевым словам.</li>
-                                <li>Сохранение состояния фильтров, сортировки и исключений.</li>
-                                <li>Настройки автоматизации (в общем меню настроек U.S.E.):
-                                    <ul>
-                                        <li>Автоматический запуск поиска при открытии окна.</li>
-                                        <li>Автоматическая подстановка названия текущей игры в поле фильтра после завершения сбора данных.</li>
-                                        <li>Для магазина <strong>IGM.gg</strong> добавлена опция, позволяющая учитывать наличие подписки, чтобы цены отображались с учётом соответствующей скидки.</li>
-                                    </ul>
-                                </li>
-                                <li>Экспорт и импорт списка исключений для удобного переноса и резервного копирования.</li>
-                            </ul>
-                            <details class="bg-dx-bg border-dx-border border rounded-md mt-4">
-                                <summary class="p-3 text-sm text-dx-text-dark font-medium">Список рекомендуемых исключений</summary>
-                                <div class="p-4 border-t border-dx-border">
-                                    <p>Нажмите кнопку импорта (<strong>→</strong>) и вставьте в появившееся окно следующий текст:</p>
-                                    <pre class="bg-black p-3 rounded-md text-xs text-dx-text whitespace-pre-wrap break-all mt-2">онлайн,оффлайн,dlc,аккаунт,ps4,xbox,digi361,ibloodrue,mangarded,siparisapp,multimarket,trustytop,cyber steam shop,boostgame,cloud-gaming.store,promarket88,offline,-seyter-,paul fox,sirdjinn,аренда,4ilgames,keks12,damhubmarket,nt-store,ps5,@mediasoft,dofamine game,hactier,alz0n,top-games,solo29,nerd shop,1gamestore,tobeclosertoyou</pre>
-                                </div>
-                            </details>
-                            <p class="mt-4">Использует различные методы для получения цен (API, парсинг HTML).</p>
-                            <div class="text-center"><img src="https://i.imgur.com/DcidcTe.png" alt="[Пример интерфейса агрегатора цен]" class="feature-img inline-block"></div>
+                             <p><strong>Что делает:</strong> Добавляет кнопку "%" в секцию с кнопкой "В желаемое" на странице игры. Нажатие открывает модальное окно с ценами на эту игру из различных цифровых магазинов.</p>
+                             <img src="https://i.imgur.com/PsrocCt.png" alt="Пример Агрегатора 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                             <br><p><strong>Возможности окна агрегатора:</strong></p>
+                             <ul>
+                                 <li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market, Rushbe и текущей страницы Steam.</li>
+                                 <li>Сохранение всех настроек фильтров, сортировки и списка исключений между сессиями.</li>
+                                 <li>
+                                     <strong>Выбор издания для поиска:</strong> Кнопка редактирования запроса (✎) открывает окно, где можно выбрать конкретное издание или DLC для поиска. Это позволяет находить цены на определённую версию игры, отсекая лишнее. Вы также можете вручную скорректировать название, если считаете, что оно слишком длинное или содержит спецсимволы, мешающие поиску.
+                                     <ul>
+                                         <li style="margin-top: 5px;">При поиске без выбора конкретного издания в результаты будут добавлены все основные издания игры со страницы Steam (без DLC).</li>
+                                         <li style="margin-top: 5px;">При выборе конкретного издания или DLC оно будет добавлено в результаты для прямого сравнения цен.</li>
+                                     </ul>
+                                     <img src="https://i.imgur.com/bGv9vXX.png" alt="Окно выбора издания" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                                     <img src="https://i.imgur.com/f3uiU1r.png" alt="Пример поиска по конкретному изданию" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                                 </li>
+                                 <li>
+                                     <strong>Гибкая фильтрация по названию:</strong> Помимо простого поиска, фильтр по названию поддерживает логические операторы <strong>{и}</strong>, <strong>{или}</strong>, <strong>{не}</strong> для создания сложных запросов.
+                                     <img src="https://i.imgur.com/MMdcw4Y.png" alt="Пример сложной фильтрации" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                                 </li>
+                                 <li><strong>Сортировка и фильтрация:</strong> Результаты можно сортировать по цене, проценту и сумме скидки, а также по названию. Доступны стандартные фильтры по диапазону цен, скидкам, их наличию и по конкретным магазинам.</li>
+                                 <img src="https://i.imgur.com/WX7xith.png" alt="Панель фильтров" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                                 <li><strong>Исключение по ключевым словам:</strong> Создайте свой список слов-исключений (например, "vr", "валюта", "пополнение"), чтобы автоматически скрывать нерелевантные товары из результатов поиска.</li>
+                                 <img src="https://i.imgur.com/sCel0o8.png" alt="Панель исключений" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                                 <li>
+                                     <strong>Импорт и экспорт исключений:</strong> Списком исключений можно легко поделиться. Функция импорта предлагает два режима: <strong>"Добавить к списку"</strong> (объединяет ваш текущий список с импортируемым) и <strong>"Перезаписать список"</strong> (полностью заменяет старый список новым).
+                                     <img src="https://i.imgur.com/RhIz6KT.png" alt="Окно импорта исключений" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                                 </li>
+                                 <li><strong>Переключение валют:</strong> Позволяет просматривать все цены в рублях (RUB) или долларах США (USD) с автоматической конвертацией по актуальному курсу. Ваш выбор сохраняется для будущих сессий.</li>
+                                 <img src="https://i.imgur.com/WGJvnji.png" alt="Пример отображения в USD" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                                 <li><strong>Режим сворачивания:</strong> Окно агрегатора можно временно скрыть, нажав кнопку "—". Оно свернётся в компактную кнопку в правом нижнем углу экрана, не прерывая поиск и не сбрасывая результаты. Нажатие на кнопку восстановит окно в прежнем виде.</li>
+                                 <img src="https://i.imgur.com/NdORT5T.png" alt="Кнопка для восстановления окна" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                             </ul>
+                             <p><strong>Пример окна:</strong></p>
+                             <img src="https://i.imgur.com/zw9ViR6.png" alt="Общий вид агрегатора" style="max-width: 100%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                         </div>
                     </details>
                     <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
