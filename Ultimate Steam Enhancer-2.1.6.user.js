@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.5
+// @version      2.1.6
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -66,6 +66,10 @@
 // @connect      rushbe.ru
 // @connect      igm.gg
 // @connect      sous-buy.ru
+// @connect      storage.yandexcloud.net
+// @connect      graph.digiseller.ru
+// @connect      steamcdn-a.akamaihd.net
+// @connect      img.ggsel.ru
 // @connect      cdn.jsdelivr.net
 // @connect      img.shields.io
 // ==/UserScript==
@@ -574,7 +578,7 @@
             label: "Поиск цен Plati.Market",
             title: "Поиск цен на Plati.Market",
             details: `
-                <p><strong>Что делает:</strong> Добавляет кнопку "Plati" рядом с кнопкой "В желаемое" на странице игры. Нажатие открывает полноэкранное окно для поиска предложений по этой игре на торговой площадке Plati.Market.</p>
+                <p><strong>Что делает:</strong> Добавляет кнопку "Plati" в секцию с кнопкой "В желаемое" на странице игры. Нажатие открывает полноэкранное окно для поиска предложений по этой игре на торговой площадке Plati.Market.</p>
                 <p><strong>Возможности окна поиска:</strong></p>
                 <ul>
                     <li>Автозаполнение поиска названием текущей игры.</li>
@@ -612,20 +616,40 @@
             label: "Агрегатор цен (%)",
             title: "Агрегатор цен (%)",
             details: `
-                <p><strong>Что делает:</strong> Добавляет кнопку "%" рядом с кнопкой "В желаемое" на странице игры. Нажатие открывает модальное окно с ценами на эту игру из различных цифровых магазинов.</p>
-                <p><strong>Возможности окна агрегатора:</strong></p>
+                <p><strong>Что делает:</strong> Добавляет кнопку "%" в секцию с кнопкой "В желаемое" на странице игры. Нажатие открывает модальное окно с ценами на эту игру из различных цифровых магазинов.</p>
+                <img src="https://i.imgur.com/PsrocCt.png" alt="Пример Агрегатора 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                <br><p><strong>Возможности окна агрегатора:</strong></p>
                 <ul>
                     <li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market, Rushbe и текущей страницы Steam.</li>
-                    <li>Переключение валют: Возможность просмотра всех цен в рублях (RUB, по умолчанию) или в долларах США (USD), с автоматической конвертацией по актуальному курсу. Выбор валюты сохраняется.</li>
-                    <li>Сортировка по цене, проценту скидки, сумме скидки, названию.</li>
-                    <li>Фильтрация по диапазону цен, проценту и сумме скидки, наличию скидки, названию (слова через ";"), магазинам.</li>
-                    <li>Исключение товаров по ключевым словам.</li>
-                    <li>Сохранение состояния фильтров, сортировки и исключений.</li>
-                    <li>Возможность экспортировать и импортировать список исключений.</li>
+                    <li>Сохранение всех настроек фильтров, сортировки и списка исключений между сессиями.</li>
+                    <li>
+                        <strong>Выбор издания для поиска:</strong> Кнопка редактирования запроса (✎) открывает окно, где можно выбрать конкретное издание или DLC для поиска. Это позволяет находить цены на определённую версию игры, отсекая лишнее. Вы также можете вручную скорректировать название, если считаете, что оно слишком длинное или содержит спецсимволы, мешающие поиску.
+                        <ul>
+                            <li style="margin-top: 5px;">При поиске без выбора конкретного издания в результаты будут добавлены все основные издания игры со страницы Steam (без DLC).</li>
+                            <li style="margin-top: 5px;">При выборе конкретного издания или DLC оно будет добавлено в результаты для прямого сравнения цен.</li>
+                        </ul>
+                        <img src="https://i.imgur.com/bGv9vXX.png" alt="Окно выбора издания" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                        <img src="https://i.imgur.com/f3uiU1r.png" alt="Пример поиска по конкретному изданию" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                    </li>
+                    <li>
+                        <strong>Гибкая фильтрация по названию:</strong> Помимо простого поиска, фильтр по названию поддерживает логические операторы <strong>{и}</strong>, <strong>{или}</strong>, <strong>{не}</strong> для создания сложных запросов.
+                        <img src="https://i.imgur.com/MMdcw4Y.png" alt="Пример сложной фильтрации" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                    </li>
+                    <li><strong>Сортировка и фильтрация:</strong> Результаты можно сортировать по цене, проценту и сумме скидки, а также по названию. Доступны стандартные фильтры по диапазону цен, скидкам, их наличию и по конкретным магазинам.</li>
+                    <img src="https://i.imgur.com/WX7xith.png" alt="Панель фильтров" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                    <li><strong>Исключение по ключевым словам:</strong> Создайте свой список слов-исключений (например, "vr", "валюта", "пополнение"), чтобы автоматически скрывать нерелевантные товары из результатов поиска.</li>
+                    <img src="https://i.imgur.com/sCel0o8.png" alt="Панель исключений" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                    <li>
+                        <strong>Импорт и экспорт исключений:</strong> Списком исключений можно легко поделиться. Функция импорта предлагает два режима: <strong>"Добавить к списку"</strong> (объединяет ваш текущий список с импортируемым) и <strong>"Перезаписать список"</strong> (полностью заменяет старый список новым).
+                        <img src="https://i.imgur.com/RhIz6KT.png" alt="Окно импорта исключений" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                    </li>
+                    <li><strong>Переключение валют:</strong> Позволяет просматривать все цены в рублях (RUB) или долларах США (USD) с автоматической конвертацией по актуальному курсу. Ваш выбор сохраняется для будущих сессий.</li>
+                    <img src="https://i.imgur.com/WGJvnji.png" alt="Пример отображения в USD" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
+                    <li><strong>Режим сворачивания:</strong> Окно агрегатора можно временно скрыть, нажав кнопку "—". Оно свернётся в компактную кнопку в правом нижнем углу экрана, не прерывая поиск и не сбрасывая результаты. Нажатие на кнопку восстановит окно в прежнем виде.</li>
+                    <img src="https://i.imgur.com/NdORT5T.png" alt="Кнопка для восстановления окна" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;"><br>
                 </ul>
-                 <p>Использует различные методы для получения цен (API, парсинг HTML).</p>
-                <img src="https://i.imgur.com/PsrocCt.png" alt="Пример Агрегатора 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
-                <img src="https://i.imgur.com/DcidcTe.png" alt="Пример Агрегатора 2" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                <p><strong>Пример окна:</strong></p>
+                <img src="https://i.imgur.com/zw9ViR6.png" alt="Общий вид агрегатора" style="max-width: 100%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
             `
         },
         friendsPlaytime: {
@@ -11720,7 +11744,7 @@
                                     <a href="https://store.steampowered.com/app/${notification.appid}" target="_blank">
                                         <img src="${imageUrl}"
                                              class="sledilka-notification-image" loading="lazy"
-                                             onerror="this.onerror=null; this.src='https://via.placeholder.com/80x45?text=No+Img'; this.style.objectFit='contain';">
+                                             onerror="this.onerror=null; this.src='https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit='contain';">
                                     </a>
                                     <div class="sledilka-notification-text">
                                         <div class="sledilka-notification-type">${getNotificationTitle(notificationType)}</div>
@@ -12286,7 +12310,7 @@
                                 dayGames.sort((a, b) => a.name.localeCompare(b.name)).forEach(game => {
                                     const isApproximate = ['date_month', 'date_quarter', 'date_year'].includes(game.releaseInfo.displayType);
                                     const imageUrl = game.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/${game.header}` : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
-                                    const gameElement = $(`<a href="https://store.steampowered.com/app/${game.appid}" target="_blank" class="calendar-game ${isApproximate ? 'calendar-game-approximate wt-tooltip' : ''}"> <img src="${imageUrl}" class="calendar-game-image" loading="lazy" onerror="this.onerror=null; this.src='https://via.placeholder.com/100x45?text=No+Img'; this.style.objectFit='contain';"> <div class="calendar-game-title">${game.name}</div> ${isApproximate ? `<div class="wt-tooltiptext">Приблизительная дата: ${getApproximateDateText(game.releaseInfo)}</div>` : ''} </a>`);
+                                    const gameElement = $(`<a href="https://store.steampowered.com/app/${game.appid}" target="_blank" class="calendar-game ${isApproximate ? 'calendar-game-approximate wt-tooltip' : ''}"> <img src="${imageUrl}" class="calendar-game-image" loading="lazy" onerror="this.onerror=null; this.src='https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit='contain';"> <div class="calendar-game-title">${game.name}</div> ${isApproximate ? `<div class="wt-tooltiptext">Приблизительная дата: ${getApproximateDateText(game.releaseInfo)}</div>` : ''} </a>`);
                                     dayElement.append(gameElement);
                                 });
                                 grid.append(dayElement);
@@ -13895,7 +13919,7 @@
                 card.innerHTML = `
                     <a href="https://store.steampowered.com/app/${appid}" target="_blank" class="wghCardLink">
                         <div class="wghCardImageWrapper">
-                            <img src="${myData.imageUrl}" alt="${myData.name}" loading="lazy" onerror="this.onerror=null;this.src='https://via.placeholder.com/292x136?text=No+Image';">
+                            <img src="${myData.imageUrl}" alt="${myData.name}" loading="lazy" onerror="this.onerror=null;this.src='https://i.imgur.com/yF0hawg.jpeg';">
                             ${myData.priceData?.discountPercent > 0 ? `<div class="wghCardDiscountBadge">-${myData.priceData.discountPercent}%</div>` : ''}
                         </div>
                     </a>
@@ -15703,6 +15727,9 @@
             const SM_REQUEST_TIMEOUT_MS = 15000; // 15 секунд на запрос к магазину
 
             // --- Глобальные переменные SM ---
+            let sm_currentSearchQuery = '';
+            let sm_steamPageOffersCache = [];
+            let sm_selectedSteamItem = null;
             let sm_currentResults = [];
             let sm_stores = {};
             let sm_activeRequests = 0;
@@ -15722,6 +15749,7 @@
                 stores: {}
             });
             let sm_filterDebounceTimeout;
+            let sm_isMinimized = false;
 
             // --- Переменные для конвертации валют ---
             const SM_CURRENCY_MODE_STORAGE_KEY = SM_STORAGE_PREFIX + 'currencyMode';
@@ -15750,10 +15778,49 @@
                 return isNaN(percent) ? null : percent;
             }
 
-            // Эта функция определяет валюту и приводит цену к рублям
+            async function sm_processPriceString(priceString) {
+                if (!priceString || typeof priceString !== 'string' || priceString.toLowerCase().includes('n/a') || priceString.toLowerCase().includes('free') || priceString.trim() === '') {
+                    return null;
+                }
+                const price = sm_parsePrice(priceString);
+                if (price === null) {
+                    return null;
+                }
+                let currencyCode = 'RUB';
+                let rate = 1;
+                const currencyMap = [
+                    { symbols: ['$', 'USD'], code: 'USD' },
+                    { symbols: ['€', 'EUR'], code: 'EUR' },
+                    { symbols: ['£', 'GBP'], code: 'GBP' },
+                    { symbols: ['₸'], code: 'KZT' },
+                    { symbols: ['₴', 'UAH'], code: 'UAH' },
+                    { symbols: ['¥', 'JPY', 'CNY'], code: 'CNY' }
+                ];
+                for (const currency of currencyMap) {
+                    if (currency.symbols.some(symbol => priceString.includes(symbol))) {
+                        currencyCode = currency.code;
+                        break;
+                    }
+                }
+                if (currencyCode !== 'RUB') {
+                    try {
+                        const rates = await sm_fetchExchangeRates(currencyCode.toLowerCase());
+                        rate = rates?.rub;
+                        if (!rate) {
+                            sm_logError('CurrencyConverter', `Не найден курс для ${currencyCode} -> RUB`);
+                            return null;
+                        }
+                    } catch (e) {
+                        sm_logError('CurrencyConverter', `Ошибка получения курса для ${currencyCode}`, e);
+                        return null;
+                    }
+                }
+                return price * rate;
+            }
+
             async function sm_processItemCurrency(itemData, priceString) {
                 if (!priceString || typeof priceString !== 'string') {
-                    itemData.currency = 'RUB'; // По умолчанию считаем рубли
+                    itemData.currency = 'RUB';
                     return itemData;
                 }
 
@@ -15763,13 +15830,12 @@
                     if (usdToRubRate) {
                         itemData.currentPrice = itemData.currentPrice * usdToRubRate;
                     } else {
-                        // Если курс USD->RUB не загружен, пробуем обратный курс
                         const rubToUsdRate = sm_exchangeRates?.rub?.usd;
                         if(rubToUsdRate) {
                              itemData.currentPrice = itemData.currentPrice / rubToUsdRate;
                         } else {
                             sm_logError(itemData.storeName, 'Нет курсов для конвертации USD в RUB');
-                            return null; // Не можем обработать цену
+                            return null;
                         }
                     }
                 } else if (priceString.includes('₸') || itemData.currency?.toUpperCase() === 'KZT') {
@@ -15783,9 +15849,8 @@
                     }
                 }
                 else {
-                    itemData.currency = 'RUB'; // Если нет символов, считаем, что это рубли
+                    itemData.currency = 'RUB';
                 }
-                 // После конвертации все цены в рублях
                 itemData.currency = 'RUB';
                 return itemData;
             }
@@ -15798,7 +15863,6 @@
 
                 if (price === null) return item;
 
-                // 1. Есть цена и процент -> считаем оригинал и сумму скидки
                 if (price !== null && percent !== null && original === null) {
                     if (percent > 0 && percent < 100) {
                         original = price / (1 - percent / 100);
@@ -15807,14 +15871,12 @@
                     }
                 }
 
-                // 2. Есть цена и оригинал -> считаем процент и сумму скидки
                 if (price !== null && original !== null && percent === null && original > price) {
                     percent = ((original - price) / original) * 100;
                 } else if (price !== null && original !== null && percent === null && original <= price) {
                     percent = 0;
                 }
 
-                // 3. Есть цена и сумма скидки -> считаем оригинал и процент
                 if (price !== null && amount !== null && original === null) {
                     original = price + amount;
                 }
@@ -15822,16 +15884,15 @@
                     percent = (amount / original) * 100;
                 }
 
-                // 4. Всегда считаем сумму скидки, если есть цена и оригинал
                 if (price !== null && original !== null && amount === null && original > price) {
                     amount = original - price;
                 } else if (price !== null && original !== null && amount === null && original <= price) {
                     amount = 0;
                 }
 
-                item.originalPrice = original !== null ? parseFloat(original.toFixed(2)) : null;
-                item.discountPercent = percent !== null ? parseFloat(percent.toFixed(1)) : null;
-                item.discountAmount = amount !== null ? parseFloat(amount.toFixed(2)) : null;
+                item.originalPrice = typeof original === 'number' ? parseFloat(original.toFixed(2)) : null;
+                item.discountPercent = typeof percent === 'number' ? parseFloat(percent.toFixed(1)) : null;
+                item.discountAmount = typeof amount === 'number' ? parseFloat(amount.toFixed(2)) : null;
 
                 if (item.discountPercent !== null && item.discountPercent <= 0) {
                     item.discountPercent = 0;
@@ -15976,6 +16037,46 @@
                 sm_updateSortButtonsState();
             }
 
+            function sm_showFilterHelpModal() {
+                const modalId = 'smFilterHelpModal';
+                if (document.getElementById(modalId)) return;
+
+                const helpModal = document.createElement('div');
+                helpModal.id = modalId;
+                Object.assign(helpModal.style, {
+                    position: 'fixed', top: '0', left: '0', width: '100%', height: '100%',
+                    backgroundColor: 'rgba(0,0,0,0.8)', zIndex: '10007', display: 'flex',
+                    alignItems: 'center', justifyContent: 'center'
+                });
+
+                helpModal.innerHTML = `
+                    <div class="sm-help-modal-content">
+                        <button class="sm-help-close-btn">&times;</button>
+                        <h4 style="margin-top:0; color:#67c1f5;">Справка по фильтру названий</h4>
+                        <p style="font-size: 16px; margin-bottom: 20px;">Используйте операторы <strong>{и}</strong>, <strong>{или}</strong>, <strong>{не}</strong> для создания сложных запросов.</p>
+                        <ul style="list-style:none; padding-left:0; line-height:1.8; font-size: 15px;">
+                            <li><code style="background:#1a2635; padding:2px 5px; border-radius:3px;">Witcher 3{и}Deluxe</code><br><span style="color:#8f98a0; font-size:14px;">Найдет товары, содержащие и "Witcher 3", и "Deluxe".</span></li>
+                            <li style="margin-top:15px;"><code style="background:#1a2635; padding:2px 5px; border-radius:3px;">Witcher{или}Ведьмак</code><br><span style="color:#8f98a0; font-size:14px;">Найдет товары, содержащие "Witcher" или "Ведьмак".</span></li>
+                            <li style="margin-top:15px;"><code style="background:#1a2635; padding:2px 5px; border-radius:3px;">Witcher 3{не}GOTY</code><br><span style="color:#8f98a0; font-size:14px;">Найдет "Witcher 3", но исключит из результатов те, что содержат "GOTY".</span></li>
+                            <li style="margin-top:15px;"><code style="background:#1a2635; padding:2px 5px; border-radius:3px;">Deluxe{и}Gold{не}Standard{или}Ultimate</code><br><span style="color:#8f98a0; font-size:14px;">Найдены будут товары, которые: (содержат "Deluxe" И "Gold" И НЕ содержат "Standard") ИЛИ (содержат "Ultimate").</span></li>
+                        </ul>
+                        <p style="font-size:14px; color:#8f98a0; margin-top:25px; border-top: 1px solid #3a4f6a; padding-top: 15px;">Операторы не чувствительны к регистру.</p>
+                    </div>
+                `;
+
+                document.body.appendChild(helpModal);
+
+                helpModal.addEventListener('click', (event) => {
+                    if (event.target === helpModal) {
+                        helpModal.remove();
+                    }
+                });
+
+                helpModal.querySelector('.sm-help-close-btn').addEventListener('click', () => {
+                    helpModal.remove();
+                });
+            }
+
             function sm_handleCurrencyToggle() {
                 if (sm_currentCurrencyMode === 'RUB') {
                     sm_showUsdSwitchConfirmation();
@@ -15997,7 +16098,15 @@
                 const header = document.createElement('div');
                 header.id = 'salesMasterHeader';
 
-                // --- Левая часть шапки ---
+                const editQueryBtn = document.createElement('button');
+                editQueryBtn.id = 'smEditQueryBtn';
+                editQueryBtn.className = 'salesMasterBtn';
+                editQueryBtn.title = 'Изменить поисковый запрос';
+                editQueryBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path></svg>`;
+                editQueryBtn.onclick = sm_showEditQueryModal;
+                editQueryBtn.style.padding = '0 12px';
+                header.appendChild(editQueryBtn);
+
                 sm_searchBtn = document.createElement('button');
                 sm_searchBtn.textContent = 'Обновить %';
                 sm_searchBtn.id = 'salesMasterSearchGoBtn';
@@ -16010,12 +16119,10 @@
                 headerStatusDiv.id = 'salesMasterHeaderStatus';
                 header.appendChild(headerStatusDiv);
 
-                // --- Разделитель ---
                 const spacer = document.createElement('div');
                 spacer.style.flexGrow = '1';
                 header.appendChild(spacer);
 
-                // --- Правая часть шапки ---
                 const rightControls = document.createElement('div');
                 rightControls.style.display = 'flex';
                 rightControls.style.alignItems = 'center';
@@ -16027,7 +16134,7 @@
                 insertTitleBtn.textContent = 'Подставить название >';
                 insertTitleBtn.title = 'Подставить название текущей игры в фильтр';
                 insertTitleBtn.onclick = () => {
-                    const gameName = sm_getSteamGameName();
+                    const gameName = sm_currentSearchQuery || sm_getSteamGameName();
                     const filterInput = document.getElementById('smTitleFilterInput');
                     if (gameName && filterInput) {
                         filterInput.value = gameName;
@@ -16043,6 +16150,13 @@
                 titleFilterInput.placeholder = 'Фильтр по названию (слова через ;)';
                 titleFilterInput.addEventListener('input', sm_debounce(sm_applyFilters, SM_FILTER_DEBOUNCE_MS));
                 rightControls.appendChild(titleFilterInput);
+
+                const helpBtn = document.createElement('button');
+                helpBtn.className = 'salesMasterBtn sm-filter-help-btn';
+                helpBtn.textContent = '?';
+                helpBtn.title = 'Справка по фильтру';
+                helpBtn.onclick = sm_showFilterHelpModal;
+                rightControls.appendChild(helpBtn);
 
                 const currencyToggleBtn = document.createElement('button');
                 currencyToggleBtn.id = 'smCurrencyToggleBtn';
@@ -16138,8 +16252,22 @@
                 sm_closeBtn.innerHTML = '&times;';
                 sm_closeBtn.onclick = sm_hideModal;
                 sm_modal.appendChild(sm_closeBtn);
+
+                const sm_minimizeBtn = document.createElement('button');
+                sm_minimizeBtn.id = 'salesMasterMinimizeBtn';
+                sm_minimizeBtn.innerHTML = '—';
+                sm_minimizeBtn.onclick = sm_minimizeModal;
+                sm_modal.appendChild(sm_minimizeBtn);
+
                 sm_modal.appendChild(container);
                 document.body.appendChild(sm_modal);
+
+                const restoreBtn = document.createElement('button');
+                restoreBtn.id = 'salesMasterRestoreBtn';
+                restoreBtn.innerHTML = '<span>&#x25A3;</span> Развернуть SalesMaster';
+                restoreBtn.onclick = sm_restoreModal;
+                restoreBtn.style.display = 'none';
+                document.body.appendChild(restoreBtn);
 
                 document.getElementById('smSelectAllStores')?.addEventListener('click', sm_selectAllStores);
                 document.getElementById('smDeselectAllStores')?.addEventListener('click', sm_deselectAllStores);
@@ -16153,8 +16281,19 @@
 
                 function handleEsc(event) {
                     if (event.key === 'Escape') {
+                        const helpModal = document.getElementById('smFilterHelpModal');
                         const importModal = document.getElementById('smImportModal');
-                        if (importModal) { importModal.remove(); }
+                        const editQueryModal = document.getElementById('smEditQueryModal');
+                        const igmModal = document.getElementById('smIgmSubscriptionModal');
+                        const usdConfirmModal = document.getElementById('smUsdConfirmDialog');
+                        const overwriteModal = document.getElementById('smOverwriteConfirmModal');
+
+                        if (helpModal) { helpModal.remove(); }
+                        else if (importModal) { importModal.remove(); }
+                        else if (editQueryModal) { editQueryModal.remove(); }
+                        else if (igmModal) { igmModal.remove(); }
+                        else if (usdConfirmModal) { usdConfirmModal.remove(); }
+                        else if (overwriteModal) { overwriteModal.remove(); }
                         else { sm_hideModal(); }
                     }
                 }
@@ -16202,19 +16341,23 @@
                         <p>Вставьте список слов, разделенных запятыми:</p>
                         <textarea id="smImportTextarea" rows="6"></textarea>
                         <div class="smImportModalActions">
-                            <button id="smImportAcceptBtn" class="salesMasterBtn">Принять</button>
+                            <button id="smImportAppendBtn" class="salesMasterBtn">Добавить к списку</button>
+                            <button id="smImportOverwriteBtn" class="salesMasterBtn" style="background-color: #c9302c; border-color: #ac2925;">Перезаписать список</button>
                             <button id="smImportCancelBtn" class="salesMasterBtn">Отмена</button>
                         </div>
                     </div>
                 `;
                 document.body.appendChild(importModal);
 
-                document.getElementById('smImportAcceptBtn').onclick = sm_handleImport;
+                document.getElementById('smImportAppendBtn').onclick = () => sm_handleImport(false);
+                document.getElementById('smImportOverwriteBtn').onclick = () => {
+                     sm_showOverwriteConfirmationModal(() => sm_handleImport(true));
+                };
                 document.getElementById('smImportCancelBtn').onclick = () => importModal.remove();
                 document.getElementById('smImportTextarea').focus();
             }
 
-            function sm_handleImport() {
+            function sm_handleImport(isOverwrite) {
                 const textarea = document.getElementById('smImportTextarea');
                 const importModal = document.getElementById('smImportModal');
                 if (!textarea || !importModal) return;
@@ -16224,11 +16367,16 @@
                     const importedKeywords = text.split(',')
                                                .map(k => k.trim().toLowerCase())
                                                .filter(k => k.length > 0);
-                    sm_exclusionKeywords = [...new Set(importedKeywords)];
+
+                    if (isOverwrite) {
+                        sm_exclusionKeywords = [...new Set(importedKeywords)];
+                    } else {
+                        sm_exclusionKeywords = [...new Set([...sm_exclusionKeywords, ...importedKeywords])];
+                    }
+
                     GM_setValue(SM_EXCLUSION_STORAGE_KEY, sm_exclusionKeywords);
                     sm_renderExclusionTags();
                     sm_applyFilters();
-                    console.log('[SalesMaster] Список исключений импортирован.');
                 } else {
                     alert("Поле ввода пустое. Импорт не выполнен.");
                 }
@@ -16468,13 +16616,29 @@
             async function sm_showModal() {
                 if (!sm_modal) sm_createModal();
 
+                if(sm_isMinimized) {
+                    sm_restoreModal();
+                }
+                const restoreBtn = document.getElementById('salesMasterRestoreBtn');
+                if (restoreBtn) restoreBtn.style.display = 'none';
+                document.getElementById('salesMasterContainer').style.display = 'flex';
+                sm_isMinimized = false;
+
+                sm_currentSearchQuery = sm_getSteamGameName();
+                sm_steamPageOffersCache = [];
+                sm_selectedSteamItem = null;
+
                 try {
                     sm_updateStatus('Загрузка курсов валют...', true);
-                    await sm_fetchExchangeRates('rub');
+                    await Promise.allSettled([
+                        sm_fetchExchangeRates('rub'), sm_fetchExchangeRates('usd'),
+                        sm_fetchExchangeRates('eur'), sm_fetchExchangeRates('gbp'),
+                        sm_fetchExchangeRates('kzt'), sm_fetchExchangeRates('uah')
+                    ]);
                     sm_updateStatus('Нажмите "Обновить %" для поиска цен...');
                 } catch (e) {
                     sm_updateStatus('Ошибка загрузки курсов валют!', false);
-                    console.error("[SalesMaster] Не удалось загрузить курсы валют при открытии модального окна:", e);
+                    console.error("[SalesMaster] Не удалось загрузить курсы валют:", e);
                 }
 
                 if (sm_currentResults.length > 0 || sm_resultsDiv.innerHTML !== '') {
@@ -16483,11 +16647,9 @@
                 }
                 const titleFilterInput = document.getElementById('smTitleFilterInput');
                 if (titleFilterInput) titleFilterInput.value = '';
-
                 document.body.style.overflow = 'hidden';
                 sm_modal.style.display = 'block';
                 sm_modal.scrollTop = 0;
-
                 sm_renderExclusionTags();
                 sm_applyLoadedFiltersToUI();
                 sm_updateSortButtonsState();
@@ -16495,13 +16657,22 @@
                 sm_positionSidePanels();
                 sm_updateCurrencyToggleButton();
 
-                sm_applyFilters();
                 if (scriptsConfig.salesMasterAutoSearch) {
-                   sm_triggerSearch();
+                    sm_triggerSearch(false, false);
+                } else {
+                    sm_currentResults = [];
+                    sm_resultsDiv.innerHTML = '';
+                    sm_stores = {};
+                    sm_highlightErrorStores();
+                    sm_updateStatus(`Нажмите "Обновить %" для поиска "${sm_currentSearchQuery}"`);
                 }
             }
 
             function sm_hideModal() {
+                const restoreBtn = document.getElementById('salesMasterRestoreBtn');
+                if (restoreBtn) restoreBtn.style.display = 'none';
+                sm_isMinimized = false;
+
                 if (sm_modal) {
                     sm_modal.style.display = 'none';
                     if (sm_modal._escHandler) {
@@ -16510,6 +16681,341 @@
                     }
                 }
                 document.body.style.overflow = '';
+            }
+
+            function sm_minimizeModal() {
+                const restoreBtn = document.getElementById('salesMasterRestoreBtn');
+                if (sm_modal) sm_modal.style.display = 'none';
+                if (restoreBtn) restoreBtn.style.display = 'flex';
+                document.body.style.overflow = '';
+                sm_isMinimized = true;
+            }
+
+            function sm_restoreModal() {
+                const restoreBtn = document.getElementById('salesMasterRestoreBtn');
+                if (sm_modal) sm_modal.style.display = 'block';
+                if (restoreBtn) restoreBtn.style.display = 'none';
+                document.body.style.overflow = 'hidden';
+                sm_isMinimized = false;
+            }
+
+            function sm_showOverwriteConfirmationModal(onConfirm) {
+                const modalId = 'smOverwriteConfirmModal';
+                if (document.getElementById(modalId)) return;
+
+                const modal = document.createElement('div');
+                modal.id = modalId;
+                modal.style.cssText = `
+                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+                    background-color: rgba(0,0,0,0.8); z-index: 10008;
+                    display: flex; align-items: center; justify-content: center;
+                `;
+
+                const content = document.createElement('div');
+                content.style.cssText = `
+                    background-color: #1f2c3a; color: #c6d4df; padding: 25px;
+                    border-radius: 5px; border: 1px solid #d9534f;
+                    width: 90%; max-width: 450px; text-align: center;
+                `;
+
+                content.innerHTML = `
+                    <h4 style="margin-top:0; color:#d9534f;">Подтверждение</h4>
+                    <p style="margin-bottom:20px; line-height:1.6; font-size: 15px;">Вы уверены, что хотите перезаписать список исключений? Все прошлые данные будут утеряны.</p>
+                    <div style="display: flex; justify-content: center; gap: 15px;">
+                        <button id="smOverwriteYes" class="salesMasterBtn" style="background-color:#d9534f; border-color:#d43f3a; color:#fff;">Да, перезаписать</button>
+                        <button id="smOverwriteNo" class="salesMasterBtn">Отмена</button>
+                    </div>
+                `;
+                modal.appendChild(content);
+                document.body.appendChild(modal);
+
+                document.getElementById('smOverwriteYes').onclick = () => {
+                    onConfirm();
+                    modal.remove();
+                };
+                document.getElementById('smOverwriteNo').onclick = () => modal.remove();
+            }
+
+            async function sm_scrapeSteamPageOffers() {
+                const offers = { editions: [], dlc: [] };
+                const processOffer = async (element, isDLC) => {
+                    let title, priceText, originalPriceText, discountPercent = 0, id, type, subIdInput, bundleIdInput, appid;
+                    if (isDLC) {
+                        appid = element.dataset.dsAppid;
+                        const dlcNameElement = element.querySelector('.game_area_dlc_name');
+                        if (dlcNameElement) {
+                            const clone = dlcNameElement.cloneNode(true);
+                            clone.querySelector('.dlc_highlight_reason_container')?.remove();
+                            title = clone.textContent.trim();
+                        }
+
+                        const priceContainer = element.querySelector('.game_area_dlc_price');
+                        if (!priceContainer) return null;
+                        const discountBlock = priceContainer.querySelector('.discount_block');
+                        if (discountBlock) {
+                            priceText = discountBlock.querySelector('.discount_final_price')?.textContent.trim();
+                            originalPriceText = discountBlock.querySelector('.discount_original_price')?.textContent.trim();
+                            discountPercent = sm_parsePercent(discountBlock.querySelector('.discount_pct')?.textContent);
+                        } else {
+                            priceText = priceContainer.textContent.trim();
+                        }
+                        id = appid;
+                        type = 'dlc';
+                    } else {
+                        const gamePurchaseDiv = element.querySelector('.game_area_purchase_game, .game_area_purchase_game_dropdown_subscription');
+                        if (!gamePurchaseDiv) return null;
+
+                        const titleElement = gamePurchaseDiv.querySelector('h2.title');
+                        if (!titleElement) return null;
+
+                        const clonedTitleElement = titleElement.cloneNode(true);
+                        clonedTitleElement.querySelector('.bundle_label')?.remove();
+                        title = clonedTitleElement.textContent.trim().replace(/^(Купить|Buy)\s+/, '').replace(/\s*—\s*НАБОР.*/, '').trim();
+
+                        const discountBlock = gamePurchaseDiv.querySelector('.discount_block');
+                        const priceBlock = gamePurchaseDiv.querySelector('.game_purchase_price.price');
+                        if (discountBlock) {
+                            priceText = discountBlock.querySelector('.discount_final_price')?.textContent.trim();
+                            originalPriceText = discountBlock.querySelector('.discount_original_price')?.textContent.trim();
+                            discountPercent = sm_parsePercent(discountBlock.querySelector('.discount_pct')?.textContent);
+                        } else if (priceBlock) {
+                            priceText = priceBlock.textContent.trim();
+                        }
+                        subIdInput = gamePurchaseDiv.querySelector('input[name="subid"]');
+                        bundleIdInput = gamePurchaseDiv.querySelector('input[name="bundleid"]');
+                        id = subIdInput?.value || bundleIdInput?.value;
+                        type = subIdInput ? 'sub' : 'bundle';
+                    }
+                    if (!id || !title) return null;
+                    const price = await sm_processPriceString(priceText);
+                    const originalPrice = await sm_processPriceString(originalPriceText);
+                    return { id, title, price, originalPrice, priceText, originalPriceText, discountPercent: discountPercent || 0, type };
+                };
+                const editionPromises = Array.from(document.querySelectorAll('.game_area_purchase_game_wrapper')).map(wrapper => processOffer(wrapper, false));
+                const dlcPromises = Array.from(document.querySelectorAll('#gameAreaDLCSection .game_area_dlc_row')).map(row => processOffer(row, true));
+                offers.editions = (await Promise.all(editionPromises)).filter(Boolean);
+                offers.dlc = (await Promise.all(dlcPromises)).filter(Boolean);
+                return offers;
+            }
+
+            async function sm_showEditQueryModal() {
+                const modalId = 'smEditQueryModal';
+                if (document.getElementById(modalId)) return;
+
+                const modal = document.createElement('div');
+                modal.id = modalId;
+
+                const allOffers = await sm_scrapeSteamPageOffers();
+                allOffers.editions.forEach((item, index) => item.defaultOrder = index);
+                allOffers.dlc.forEach((item, index) => item.defaultOrder = index);
+
+                let sortState = {
+                    editions: { field: 'default', direction: 'asc' },
+                    dlc: { field: 'default', direction: 'asc' }
+                };
+
+                let filterState = {
+                    editions: '',
+                    dlc: ''
+                };
+
+                const createListHTML = (items) => {
+                    if (items.length === 0) return '<li>Нет данных</li>';
+                    const isUsdMode = sm_currentCurrencyMode === 'USD';
+                    const rubToUsdRate = sm_exchangeRates['rub']?.usd || null;
+                    return items.map(item => {
+                        let displayPrice = 'N/A';
+                        if (item.price !== null) {
+                            if (isUsdMode && rubToUsdRate) {
+                                const usdPrice = item.price * rubToUsdRate;
+                                displayPrice = `$${usdPrice.toFixed(2)}`;
+                            } else {
+                                displayPrice = `${Math.round(item.price).toLocaleString('ru-RU')} ₽`;
+                            }
+                        }
+                        return `<li data-id="${item.id}" data-type="${item.type}" title="${item.title}">
+                            <span class="sm-edit-title-text">${item.title}</span>
+                            <span class="sm-edit-price">${displayPrice}</span>
+                        </li>`;
+                    }).join('');
+                };
+
+                const sortList = (list, state) => {
+                    const { field, direction } = state;
+                    const dir = direction === 'asc' ? 1 : -1;
+
+                    list.sort((a, b) => {
+                        if (field === 'default') {
+                            return (a.defaultOrder - b.defaultOrder) * dir;
+                        }
+                        if (field === 'name') {
+                            return a.title.localeCompare(b.title) * dir;
+                        }
+                        if (field === 'price') {
+                            if (a.price === null && b.price === null) return 0;
+                            if (a.price === null) return 1;
+                            if (b.price === null) return -1;
+                            return (a.price - b.price) * dir;
+                        }
+                        return 0;
+                    });
+                };
+
+                const updateSortButtonsUI = () => {
+                    modal.querySelectorAll('.sm-edit-sort-btn').forEach(btn => {
+                        const type = btn.dataset.type;
+                        const field = btn.dataset.field;
+                        const state = sortState[type];
+                        btn.classList.remove('active', 'asc', 'desc');
+                        if (state.field === field) {
+                            btn.classList.add('active', state.direction);
+                        }
+                    });
+                };
+
+                const renderLists = () => {
+                    const editionsList = document.getElementById('sm-edit-editions-list');
+                    const dlcList = document.getElementById('sm-edit-dlc-list');
+
+                    const filteredEditions = allOffers.editions.filter(item =>
+                        item.title.toLowerCase().includes(filterState.editions.toLowerCase())
+                    );
+                    const filteredDLCs = allOffers.dlc.filter(item =>
+                        item.title.toLowerCase().includes(filterState.dlc.toLowerCase())
+                    );
+
+                    sortList(filteredEditions, sortState.editions);
+                    sortList(filteredDLCs, sortState.dlc);
+
+                    editionsList.innerHTML = createListHTML(filteredEditions);
+                    dlcList.innerHTML = createListHTML(filteredDLCs);
+                    updateSortButtonsUI();
+                    attachItemClickListeners();
+                };
+
+                const debouncedRender = sm_debounce(renderLists, 250);
+
+                const handleSortClick = (type, field) => {
+                    const state = sortState[type];
+                    const defaultDirections = { name: 'asc', price: 'asc', default: 'asc' };
+
+                    if (state.field === field) {
+                        state.direction = state.direction === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        state.field = field;
+                        state.direction = defaultDirections[field];
+                    }
+                    renderLists();
+                };
+
+                const attachItemClickListeners = () => {
+                    modal.querySelectorAll('.sm-edit-list li').forEach(li => {
+                        li.addEventListener('click', () => {
+                            modal.querySelectorAll('li.selected').forEach(sel => sel.classList.remove('selected'));
+                            li.classList.add('selected');
+                            document.getElementById('smEditQueryInput').value = li.querySelector('.sm-edit-title-text').textContent.trim();
+                        });
+                    });
+                };
+
+                modal.innerHTML = `
+                    <div class="sm-edit-query-content">
+                        <h4 style="margin-top:0; color:#67c1f5;">Изменить поисковый запрос</h4>
+                        <p style="margin-bottom:15px; font-size: 14px;">Выберите издание/DLC или скорректируйте название вручную.</p>
+                        <div class="sm-edit-columns">
+                            <div class="sm-edit-column">
+                                <div class="sm-edit-column-header">
+                                    <div class="sm-edit-controls">
+                                        <input type="text" id="sm-edit-editions-filter" class="sm-edit-filter-input" placeholder="Поиск в изданиях...">
+                                        <div class="sm-edit-sort-buttons">
+                                            <button class="sm-edit-sort-btn" data-type="editions" data-field="default" title="Сортировка по умолчанию">#</button>
+                                            <button class="sm-edit-sort-btn" data-type="editions" data-field="name" title="Сортировка по названию">А-Я</button>
+                                            <button class="sm-edit-sort-btn" data-type="editions" data-field="price" title="Сортировка по цене">${sm_getCurrencySymbol()}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul id="sm-edit-editions-list" class="sm-edit-list"></ul>
+                            </div>
+                            <div class="sm-edit-column">
+                                <div class="sm-edit-column-header">
+                                    <div class="sm-edit-controls">
+                                        <input type="text" id="sm-edit-dlc-filter" class="sm-edit-filter-input" placeholder="Поиск в DLC...">
+                                        <div class="sm-edit-sort-buttons">
+                                            <button class="sm-edit-sort-btn" data-type="dlc" data-field="default" title="Сортировка по умолчанию">#</button>
+                                            <button class="sm-edit-sort-btn" data-type="dlc" data-field="name" title="Сортировка по названию">А-Я</button>
+                                            <button class="sm-edit-sort-btn" data-type="dlc" data-field="price" title="Сортировка по цене">${sm_getCurrencySymbol()}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ul id="sm-edit-dlc-list" class="sm-edit-list"></ul>
+                            </div>
+                        </div>
+                        <input type="text" id="smEditQueryInput" value="" style="width: 100%; padding: 10px; font-size: 16px; background-color: #1a2635; border: 1px solid #3a4f6a; color: #c6d4df; border-radius: 3px; margin-bottom: 20px;">
+                        <div style="text-align: right;">
+                            <button id="smEditQuerySaveBtn" class="salesMasterBtn">Искать по выбранному</button>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const input = document.getElementById('smEditQueryInput');
+                input.value = sm_currentSearchQuery;
+                input.focus();
+
+                const saveAndClose = () => {
+                    sm_currentSearchQuery = input.value.trim();
+                    const selectedLi = modal.querySelector('li.selected');
+                    sm_selectedSteamItem = null;
+                    if (selectedLi) {
+                        const id = selectedLi.dataset.id;
+                        const type = selectedLi.dataset.type;
+                        const allItems = [...allOffers.editions, ...allOffers.dlc];
+                        const selectedOfferData = allItems.find(o => o.id === id && o.type === type);
+                        if (selectedOfferData) {
+                            const newSteamOffer = {
+                                storeId: 'steam_current_page',
+                                storeName: 'Steam',
+                                storeUrl: 'https://store.steampowered.com',
+                                productName: selectedOfferData.title,
+                                productUrl: window.location.href,
+                                imageUrl: document.querySelector('#gameHeaderImageCtn img.game_header_image_full')?.src,
+                                currentPrice: selectedOfferData.price,
+                                originalPrice: selectedOfferData.originalPrice,
+                                discountPercent: selectedOfferData.discountPercent,
+                                currency: 'RUB',
+                                isAvailable: true,
+                                type: selectedOfferData.type
+                            };
+                            sm_selectedSteamItem = sm_calculateMissingValues(newSteamOffer);
+                        }
+                    }
+                    sm_triggerSearch(true, false);
+                    modal.remove();
+                };
+
+                document.getElementById('smEditQuerySaveBtn').onclick = saveAndClose;
+                input.onkeydown = (e) => {
+                    if (e.key === 'Enter') saveAndClose();
+                };
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) modal.remove();
+                });
+
+                modal.querySelectorAll('.sm-edit-filter-input').forEach(filterInput => {
+                    filterInput.addEventListener('input', (e) => {
+                        const type = e.target.id.includes('editions') ? 'editions' : 'dlc';
+                        filterState[type] = e.target.value;
+                        debouncedRender();
+                    });
+                });
+
+                modal.querySelectorAll('.sm-edit-sort-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        handleSortClick(btn.dataset.type, btn.dataset.field);
+                    });
+                });
+
+                renderLists();
             }
 
             // --- Обновление статуса ---
@@ -16528,47 +17034,67 @@
                 }
             }
 
-            // --- Запуск поиска ---
-            async function sm_triggerSearch() {
+            async function sm_triggerSearch(isReSearch = false, initialSearch = false) {
                 try {
-                    sm_updateStatus('Загрузка курсов валют...', true);
-                    await Promise.all([
-                        sm_fetchExchangeRates('usd'),
-                        sm_fetchExchangeRates('kzt')
+                    await Promise.allSettled([
+                        sm_fetchExchangeRates('usd'), sm_fetchExchangeRates('eur'),
+                        sm_fetchExchangeRates('kzt'), sm_fetchExchangeRates('gbp'),
+                        sm_fetchExchangeRates('uah')
                     ]);
-                } catch(e) {
-                    sm_logError("Core", "Не удалось загрузить все необходимые курсы валют", e);
+                } catch (e) {
+                    sm_logError("Core", "Не удалось загрузить курсы валют", e);
                 }
 
-                const gameName = sm_getSteamGameName();
+                const gameName = sm_currentSearchQuery;
                 if (!gameName) {
-                    sm_updateStatus('Не удалось определить название игры на странице Steam.');
+                    sm_updateStatus('Не удалось определить название игры.');
                     return;
                 }
 
-                const titleFilterInput = document.getElementById('smTitleFilterInput');
-                if (titleFilterInput) titleFilterInput.value = '';
+                if (!isReSearch) {
+                    sm_currentResults = [];
+                    sm_resultsDiv.innerHTML = '';
+                    sm_stores = {};
+                    sm_highlightErrorStores();
+                } else {
+                    sm_currentResults = sm_currentResults.filter(r => r.storeId === 'steam_current_page');
+                    Object.keys(sm_stores).forEach(storeId => {
+                        if (storeId !== 'steam_current_page') delete sm_stores[storeId];
+                    });
+                }
 
-                sm_currentResults = [];
-                sm_resultsDiv.innerHTML = '';
-                sm_stores = {};
-                sm_highlightErrorStores();
                 sm_updateStatus(`Поиск "${gameName}"...`, true);
                 sm_activeRequests = 0;
-
-
                 const promises = [];
                 let totalStoresToCheck = 0;
+                let finalSteamResults = [];
+                const steamModule = sm_storeModules.find(m => m.id === 'steam_current_page');
 
-                sm_storeModules.filter(m => m && typeof m.fetch === 'function').forEach(storeModule => {
+                if (steamModule && sm_currentFilters.stores[steamModule.id] !== false) {
+                    sm_stores[steamModule.id] = { name: steamModule.name, status: 'pending', error: null };
+                    try {
+                        if (sm_steamPageOffersCache.length === 0) {
+                            await steamModule.fetch(gameName, true);
+                        }
+
+                        if (isReSearch && sm_selectedSteamItem) {
+                            finalSteamResults = [sm_selectedSteamItem];
+                        } else {
+                            finalSteamResults = sm_steamPageOffersCache.filter(item => item.type === 'sub' || item.type === 'bundle');
+                        }
+                        sm_stores[steamModule.id].status = 'success';
+                    } catch (error) {
+                        sm_stores[steamModule.id].status = 'error';
+                        sm_stores[steamModule.id].error = error.message || 'Ошибка парсинга Steam';
+                        sm_logError(steamModule.name, "Ошибка при получении данных со страницы Steam", error);
+                    }
+                }
+
+                sm_storeModules.filter(m => m && typeof m.fetch === 'function' && m.id !== 'steam_current_page').forEach(storeModule => {
                     if (sm_currentFilters.stores[storeModule.id] !== false) {
                         totalStoresToCheck++;
                         sm_activeRequests++;
-                        sm_stores[storeModule.id] = {
-                            name: storeModule.name,
-                            status: 'pending',
-                            error: null
-                        };
+                        sm_stores[storeModule.id] = { name: storeModule.name, status: 'pending', error: null };
                         promises.push(
                             storeModule.fetch(gameName)
                             .then(results => {
@@ -16587,31 +17113,12 @@
                             })
                         );
                     } else {
-                        sm_stores[storeModule.id] = {
-                            name: storeModule.name,
-                            status: 'skipped',
-                            error: null
-                        };
+                        sm_stores[storeModule.id] = { name: storeModule.name, status: 'skipped', error: null };
                     }
                 });
 
-                if (promises.length === 0) {
-                    sm_updateStatus('Нет активных магазинов для поиска.');
-                    return;
-                }
-
-                const resultsArrays = await Promise.all(promises);
-
-                sm_currentResults = resultsArrays.flat();
-
-                if (scriptsConfig.salesMasterAutoInsertTitle) {
-                    const gameName = sm_getSteamGameName();
-                    const filterInput = document.getElementById('smTitleFilterInput');
-                    if (gameName && filterInput) {
-                        filterInput.value = gameName;
-                    }
-                }
-
+                const otherStoresResultsArrays = await Promise.all(promises);
+                sm_currentResults = [...finalSteamResults, ...otherStoresResultsArrays.flat()];
                 sm_updateLoadingProgress(totalStoresToCheck);
                 if (sm_currentResults.length > 0) {
                     sm_applySort(sm_currentSort.field, sm_currentSort.direction);
@@ -16625,9 +17132,7 @@
             function sm_updateLoadingProgress(totalStores) {
                 const completedStores = Object.values(sm_stores).filter(s => s.status !== 'pending').length;
                 const skippedStores = Object.values(sm_stores).filter(s => s.status === 'skipped').length;
-                const successStores = Object.values(sm_stores).filter(s => s.status === 'success').length;
                 const errorStores = Object.values(sm_stores).filter(s => s.status === 'error');
-
                 const searchedCompletedCount = completedStores - skippedStores;
 
                 if (sm_activeRequests > 0) {
@@ -16637,7 +17142,7 @@
                     if (sm_currentResults.length > 0) {
                         statusMessage = `Найдено ${sm_currentResults.length} предложений. `;
                     } else {
-                         const gameName = sm_getSteamGameName();
+                        const gameName = sm_currentSearchQuery;
                         if (gameName) {
                            statusMessage = `Предложений не найдено. `;
                         } else {
@@ -16647,12 +17152,19 @@
                     if (errorStores.length > 0) {
                         statusMessage += `Ошибки в магазинах: ${errorStores.map(s => s.name).join(', ')}.`;
                     }
-                    if (sm_currentResults.length === 0 && errorStores.length === 0 && sm_activeRequests === 0 && sm_getSteamGameName()) {
-                         statusMessage = `По запросу "${sm_getSteamGameName()}" ничего не найдено в выбранных магазинах.`;
+                    if (sm_currentResults.length === 0 && errorStores.length === 0 && sm_activeRequests === 0 && sm_currentSearchQuery) {
+                        statusMessage = `По запросу "${sm_currentSearchQuery}" ничего не найдено в выбранных магазинах.`;
                     }
 
                     sm_updateStatus(statusMessage.trim(), false);
                     sm_highlightErrorStores();
+
+                    if (scriptsConfig.salesMasterAutoInsertTitle) {
+                        const filterInput = document.getElementById('smTitleFilterInput');
+                        if (sm_currentSearchQuery && filterInput) {
+                            filterInput.value = sm_currentSearchQuery;
+                        }
+                    }
 
                     const anyFilterActive = (parseFloat(sm_currentFilters.priceMin) || 0) > 0 || (parseFloat(sm_currentFilters.priceMax) || Infinity) < Infinity ||
                                             (parseFloat(sm_currentFilters.discountPercentMin) || 0) > 0 || (parseFloat(sm_currentFilters.discountPercentMax) || 100) < 100 ||
@@ -17002,16 +17514,9 @@
             function sm_applyFilters() {
                 if (!sm_resultsDiv || !sm_currentResults) return;
 
-                // Получаем фильтр по названию из поля ввода
                 const titleFilterInput = document.getElementById('smTitleFilterInput');
                 const rawTitleFilterText = titleFilterInput ? titleFilterInput.value.trim() : '';
-                // Разбиваем на отдельные слова/фразы по ";" и приводим к нижнему регистру
-                const titleFilterTerms = rawTitleFilterText
-                    .split(';')
-                    .map(term => term.trim().toLowerCase())
-                    .filter(term => term.length > 0);
 
-                // Получаем ключевые слова для исключения и фильтры
                 const keywords = sm_exclusionKeywords.map(k => k.toLowerCase());
                 const pMin = parseFloat(sm_currentFilters.priceMin) || 0;
                 const pMax = parseFloat(sm_currentFilters.priceMax) || Infinity;
@@ -17022,40 +17527,56 @@
                 const hasDiscountFilter = sm_currentFilters.hasDiscount || false;
                 const activeStoreFilters = sm_currentFilters.stores;
 
+                const orGroups = rawTitleFilterText.split(/{или}/gi).map(g => g.trim()).filter(g => g);
+
+                const checkTitleAdvanced = (itemTitle) => {
+                    if (orGroups.length === 0) {
+                        return true;
+                    }
+
+                    return orGroups.some(group => {
+                        const notParts = group.split(/{не}/gi);
+                        const mustHaveSegment = notParts[0];
+                        const mustNotHaveTerms = notParts.slice(1).map(t => t.trim().toLowerCase()).filter(t => t);
+                        const mustHaveTerms = mustHaveSegment.split(/{и}/gi).map(t => t.trim().toLowerCase()).filter(t => t);
+
+                        const allMustHavesMet = mustHaveTerms.every(term => itemTitle.includes(term));
+                        const noMustNotHavesFound = mustNotHaveTerms.every(term => !itemTitle.includes(term));
+
+                        return allMustHavesMet && noMustNotHavesFound;
+                    });
+                };
+
                 let visibleCount = 0;
                 const items = sm_resultsDiv.querySelectorAll('.salesMasterItem');
 
                 items.forEach(itemElement => {
-                     const index = Array.from(sm_resultsDiv.children).indexOf(itemElement);
-                     if (index < 0 || index >= sm_currentResults.length) {
-                          itemElement.classList.add('hidden-by-filter');
-                          return;
-                     }
-                     const itemData = sm_currentResults[index];
-                     if (!itemData) {
-                          itemElement.classList.add('hidden-by-filter');
-                          return;
-                     }
+                    const index = Array.from(sm_resultsDiv.children).indexOf(itemElement);
+                    if (index < 0 || index >= sm_currentResults.length) {
+                        itemElement.classList.add('hidden-by-filter');
+                        return;
+                    }
+                    const itemData = sm_currentResults[index];
+                    if (!itemData) {
+                        itemElement.classList.add('hidden-by-filter');
+                        return;
+                    }
 
                     const titleElement = itemElement.querySelector('.sm-title');
                     const itemTitle = titleElement ? titleElement.textContent.trim().toLowerCase() : '';
 
-                    let hideByTitleFilter = false;
-                    if (titleFilterTerms.length > 0 && !titleFilterTerms.some(term => itemTitle.includes(term))) {
-                        hideByTitleFilter = true;
-                    }
-
                     let shouldHide = false;
 
-                    // 1. Фильтр по магазину
-                    if (activeStoreFilters[itemData.storeId] === false) {
+                    if (!checkTitleAdvanced(itemTitle)) {
                         shouldHide = true;
                     }
 
-                    // 2. Фильтр по ключевым словам (исключения)
+                    if (!shouldHide && activeStoreFilters[itemData.storeId] === false) {
+                        shouldHide = true;
+                    }
+
                     if (!shouldHide && keywords.length > 0) {
                         let textToSearch = itemTitle;
-
                         if (itemData.storeId === 'platimarket' && itemData.sellerName) {
                             textToSearch += ' ' + itemData.sellerName.toLowerCase();
                         }
@@ -17064,18 +17585,16 @@
                         }
                     }
 
-                    // 3. Фильтр по цене
                     if (!shouldHide && itemData.currentPrice !== null) {
                         if (itemData.currentPrice < pMin || itemData.currentPrice > pMax) {
                             shouldHide = true;
                         }
                     } else if (!shouldHide && itemData.currentPrice === null && (pMin > 0 || pMax < Infinity)) {
-                         if (!(pMin === 0 && pMax === Infinity)) {
-                           shouldHide = true;
-                         }
+                        if (!(pMin === 0 && pMax === Infinity)) {
+                            shouldHide = true;
+                        }
                     }
 
-                    // 4. Фильтр по % скидки
                     if (!shouldHide) {
                         const discountP = itemData.discountPercent ?? 0;
                         if (discountP < dpMin || discountP > dpMax) {
@@ -17083,7 +17602,6 @@
                         }
                     }
 
-                    // 5. Фильтр по сумме скидки
                     if (!shouldHide) {
                         const discountA = itemData.discountAmount ?? 0;
                         if (discountA < daMin || discountA > daMax) {
@@ -17091,15 +17609,13 @@
                         }
                     }
 
-                    // 6. Фильтр "Только со скидкой"
                     if (!shouldHide && hasDiscountFilter) {
                         if (!itemData.discountPercent || itemData.discountPercent <= 0) {
                             shouldHide = true;
                         }
                     }
 
-                    // Применяем класс скрытия, если сработал любой фильтр ИЛИ фильтр по названию
-                    if (shouldHide || hideByTitleFilter) {
+                    if (shouldHide) {
                         itemElement.classList.add('hidden-by-filter');
                     } else {
                         itemElement.classList.remove('hidden-by-filter');
@@ -17107,9 +17623,8 @@
                     }
                 });
 
-                // Обновляем статус в шапке
                 const totalLoadedCount = sm_currentResults.length;
-                const anyFilterActive = pMin > 0 || pMax < Infinity || dpMin > 0 || dpMax < 100 || daMin > 0 || daMax < Infinity || hasDiscountFilter || keywords.length > 0 || Object.values(activeStoreFilters).some(v => v === false) || titleFilterTerms.length > 0;
+                const anyFilterActive = pMin > 0 || pMax < Infinity || dpMin > 0 || dpMax < 100 || daMin > 0 || daMax < Infinity || hasDiscountFilter || keywords.length > 0 || Object.values(activeStoreFilters).some(v => v === false) || rawTitleFilterText.length > 0;
                 const errorStoresCount = Object.values(sm_stores).filter(s => s.status === 'error').length;
 
                 let statusMessage = '';
@@ -17121,18 +17636,17 @@
                             statusMessage = `Найдено ${totalLoadedCount} предложений. `;
                         }
                     } else {
-                         const gameName = sm_getSteamGameName();
+                        const gameName = sm_getSteamGameName();
                         if (gameName) {
-                           statusMessage = `Предложений не найдено. `;
+                            statusMessage = `Предложений не найдено. `;
                         } else {
-                           statusMessage = `Введите запрос или обновите для поиска.`;
+                            statusMessage = `Введите запрос или обновите для поиска.`;
                         }
                     }
                     if (errorStoresCount > 0) {
                         statusMessage += `(${errorStoresCount} маг. с ошибками).`;
                     }
                     sm_updateStatus(statusMessage.trim(), false);
-                } else {
                 }
 
                 if (visibleCount === 0 && totalLoadedCount > 0 && anyFilterActive && sm_activeRequests === 0) {
@@ -17217,16 +17731,16 @@
                             const storeBaseUrl = new URL(item.storeUrl || sm_storeModules.find(s => s.id === item.storeId)?.baseUrl || unsafeWindow.location.origin);
                             imgSrc = new URL(imgSrc, storeBaseUrl.origin).href;
                         } catch (e) {
-                            imgSrc = 'https://via.placeholder.com/150x80?text=No+Image';
+                            imgSrc = 'https://i.imgur.com/yF0hawg.jpeg';
                         }
                     } else if (!imgSrc) {
-                        imgSrc = 'https://via.placeholder.com/150x80?text=No+Image';
+                        imgSrc = 'https://i.imgur.com/yF0hawg.jpeg';
                     }
                     img.src = imgSrc;
                     img.alt = item.productName || 'Изображение товара';
                     img.loading = 'lazy';
                     img.onerror = function() {
-                        this.onerror = null; this.src = 'https://via.placeholder.com/150x80?text=Load+Error'; this.style.objectFit = 'contain';
+                        this.onerror = null; this.src = 'https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit = 'contain';
                     };
                     imageWrapper.appendChild(img);
                     link.appendChild(imageWrapper);
@@ -17390,7 +17904,7 @@
 
                 #salesMasterCloseBtn {
                 	position: fixed;
-                	top: 15px;
+                	top: 10px;
                 	right: 20px;
                 	font-size: 35px;
                 	color: #aaa;
@@ -17408,12 +17922,58 @@
                 	transform: scale(1.1);
                 }
 
+                #salesMasterMinimizeBtn {
+                    position: fixed;
+                    top: 15px;
+                    right: 65px; /* Правее кнопки закрытия */
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #aaa;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    line-height: 1;
+                    z-index: 10002;
+                    padding: 5px;
+                    transition: color 0.2s, transform 0.2s;
+                }
+                #salesMasterMinimizeBtn:hover {
+                    color: #fff;
+                    transform: scale(1.1);
+                }
+                #salesMasterRestoreBtn {
+                    position: fixed;
+                    bottom: 20px;
+                    right: 20px;
+                    z-index: 10008;
+                    background-color: #1b2838;
+                    color: #c6d4df;
+                    border: 1px solid #67c1f5;
+                    border-radius: 4px;
+                    padding: 10px 15px;
+                    font-size: 14px;
+                    cursor: pointer;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    transition: all 0.2s;
+                }
+                #salesMasterRestoreBtn:hover {
+                    background-color: #2a475e;
+                    color: #fff;
+                }
+                #salesMasterRestoreBtn span {
+                    font-size: 20px;
+                    line-height: 1;
+                }
+
                 /* --- Шапка --- */
                 #salesMasterHeader {
                 	display: flex;
                 	align-items: center;
                 	gap: 10px;
-                	flex-wrap: wrap;
+                	flex-wrap: nowrap;
                 	position: relative;
                 	z-index: 1001;
                 	background-color: rgba(27, 40, 56, 0.95);
@@ -17477,12 +18037,48 @@
                 	font-size: 12px;
                 }
 
+                .sm-filter-help-btn {
+                    padding: 0;
+                    width: 36px;
+                    font-weight: bold;
+                    font-size: 16px;
+                    margin-left: -5px;
+                }
+
                 #salesMasterSortButtons {
                 	display: flex;
                 	gap: 5px;
                 	align-items: center;
                 	margin-left: 10px;
                 }
+
+                .sm-help-modal-content {
+                    background-color:#1f2c3a;
+                    color:#c6d4df;
+                    padding:25px;
+                    border-radius:5px;
+                    border:1px solid #67c1f5;
+                    width:90%;
+                    max-width:600px;
+                    text-align:left;
+                    position: relative;
+                }
+                .sm-help-close-btn {
+                    position: absolute;
+                    top: 5px;
+                    right: 10px;
+                    font-size: 28px;
+                    color: #aaa;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    line-height: 1;
+                    padding: 5px;
+                }
+                .sm-help-close-btn:hover {
+                    color: #fff;
+                }
+
 
                 /* --- Кнопки --- */
                 .salesMasterBtn {
@@ -17558,6 +18154,155 @@
                 #salesMasterResetSortBtn.active {
                 	background-color: rgba(0, 123, 255, 0.8);
                 	border-color: #007bff;
+                }
+
+                .sm-edit-column-header {
+                    margin-bottom: 10px;
+                }
+                .sm-edit-controls {
+                    display: flex;
+                    gap: 10px;
+                    align-items: center;
+                }
+                .sm-edit-filter-input {
+                    flex-grow: 1;
+                    padding: 5px 8px;
+                    background-color: #1a2635;
+                    border: 1px solid #3a4f6a;
+                    color: #c6d4df;
+                    border-radius: 3px;
+                    font-size: 13px;
+                }
+                .sm-edit-filter-input:focus {
+                    outline: none;
+                    border-color: #67c1f5;
+                }
+                .sm-edit-sort-buttons {
+                    display: flex;
+                    gap: 5px;
+                }
+                .sm-edit-sort-btn {
+                    padding: 4px 8px;
+                    font-size: 12px;
+                    background-color: #2a3f5a;
+                    border: 1px solid #3a4f6a;
+                    color: #c6d4df;
+                    cursor: pointer;
+                    border-radius: 3px;
+                    transition: all 0.2s;
+                    min-width: 30px;
+                }
+                .sm-edit-sort-btn:hover {
+                    background-color: #3a4f6a;
+                    border-color: #67c1f5;
+                }
+                .sm-edit-sort-btn.active {
+                    background-color: #4b6f9c;
+                    border-color: #67c1f5;
+                    color: #fff;
+                }
+                .sm-edit-sort-btn.active::after {
+                    content: '';
+                    display: inline-block;
+                    width: 0;
+                    height: 0;
+                    margin-left: 5px;
+                    vertical-align: middle;
+                    border-left: 4px solid transparent;
+                    border-right: 4px solid transparent;
+                }
+                .sm-edit-sort-btn.active.asc::after {
+                    border-bottom: 4px solid #fff;
+                }
+                .sm-edit-sort-btn.active.desc::after {
+                    border-top: 4px solid #fff;
+                }
+
+                #smEditQueryModal {
+                    position: fixed;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-color: rgba(0,0,0,0.8);
+                    z-index: 100007;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: "Motiva Sans", Sans-serif, Arial;
+                }
+                .sm-edit-query-content {
+                    background-color: #1f2c3a;
+                    color: #c6d4df;
+                    padding: 25px;
+                    border-radius: 5px;
+                    border: 1px solid #67c1f5;
+                    width: 90%;
+                    max-width: 900px;
+                    text-align: left;
+                    display: flex;
+                    flex-direction: column;
+                    max-height: 90vh;
+                }
+                .sm-edit-columns {
+                    display: flex;
+                    gap: 20px;
+                    margin-bottom: 20px;
+                    overflow: hidden;
+                    flex-grow: 1;
+                }
+                .sm-edit-column {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    min-width: 0;
+                }
+                .sm-edit-column h5 {
+                    margin: 0 0 10px 0;
+                    color: #67c1f5;
+                    border-bottom: 1px solid #3a4f6a;
+                    padding-bottom: 5px;
+                }
+                .sm-edit-list {
+                    list-style: none;
+                    padding: 5px;
+                    margin: 0;
+                    overflow-y: auto;
+                    background-color: #1a2635;
+                    border: 1px solid #3a4f6a;
+                    border-radius: 3px;
+                    flex-grow: 1;
+                    height: 400px; /* Фиксированная высота для скролла */
+                }
+                .sm-edit-list li {
+                    padding: 8px 10px;
+                    cursor: pointer;
+                    border-radius: 3px;
+                    margin-bottom: 4px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    gap: 15px;
+                    transition: background-color 0.2s;
+                }
+                .sm-edit-list li:hover {
+                    background-color: #2a3f5a;
+                }
+                .sm-edit-list li.selected {
+                    background-color: #4b6f9c;
+                    color: #fff;
+                    font-weight: bold;
+                }
+                .sm-edit-title-text {
+                    white-space: normal;
+                    word-break: break-word;
+                    flex-grow: 1;
+                }
+                .sm-edit-price {
+                    color: #a4d007;
+                    font-weight: normal;
+                    margin-left: 15px;
+                    flex-shrink: 0;
                 }
 
                 /* --- Боковые панели ("плавающие") --- */
@@ -18399,140 +19144,30 @@
                     id: 'steam_current_page',
                     name: 'Steam',
                     baseUrl: 'https://store.steampowered.com',
-                    searchUrlTemplate: '',
                     isEnabled: true,
-                    fetch: async function(query) {
-                        const storeModule = this;
-                        const results = [];
-                        const currencySymbol = sm_getCurrencySymbol();
-
-                        const currencyMeta = document.querySelector('meta[itemprop="priceCurrency"]');
-                        const pageCurrency = currencyMeta ? currencyMeta.content.toUpperCase() : 'RUB';
-
-                        let exchangeRate = 1.0;
-
-                        if (pageCurrency !== 'RUB') {
-                            try {
-                                const rates = await sm_fetchExchangeRates(pageCurrency);
-                                if (rates && rates['rub']) {
-                                    exchangeRate = parseFloat(rates['rub']);
-                                    if (isNaN(exchangeRate) || exchangeRate <= 0) {
-                                        sm_logError(storeModule.name, `Invalid exchange rate for ${pageCurrency} -> RUB: ${rates['rub']}`);
-                                        exchangeRate = 1.0;
-                                    }
-                                } else {
-                                    sm_logError(storeModule.name, `Could not get RUB rate for ${pageCurrency}`);
-                                }
-                            } catch (error) {
-                                sm_logError(storeModule.name, `Error fetching exchange rates for ${pageCurrency}: ${error.message}`, error);
-                            }
-                        }
-
-                        const headerImageElement = document.querySelector('#gameHeaderImageCtn img.game_header_image_full');
-                        const mainImageUrl = headerImageElement ? headerImageElement.src : null;
-
-                        const purchaseWrappers = document.querySelectorAll('.game_area_purchase_game_wrapper');
-
-                        purchaseWrappers.forEach(wrapper => {
-                            try {
-                                const gamePurchaseDiv = wrapper.querySelector('.game_area_purchase_game, .game_area_purchase_game_dropdown_subscription');
-                                if (!gamePurchaseDiv) return;
-
-                                const titleElement = gamePurchaseDiv.querySelector('[id^="game_area_purchase_section_add_to_cart_title_"], [id^="bundle_purchase_label_"]');
-                                let productName = null;
-                                if (titleElement) {
-                                    let cleanedText = titleElement.textContent.trim();
-                                    cleanedText = cleanedText.replace(/^(Купить|Buy)[\s\u00A0]+/, '');
-                                    cleanedText = cleanedText.replace(/\s*(—\s*НАБОР|BUNDLE)\s*\(\?\)\s*$/, '');
-                                    productName = cleanedText.trim();
-                                }
-
-                                if (!productName) return;
-
-                                let currentPrice = null;
-                                let originalPrice = null;
-                                let discountPercent = 0;
-                                let imageUrl = mainImageUrl;
-
-                                const priceSimpleElement = gamePurchaseDiv.querySelector('.game_purchase_price.price[data-price-final]');
-                                const discountBlockElement = gamePurchaseDiv.querySelector('.discount_block.game_purchase_discount');
-
-                                if (discountBlockElement) {
-                                    const finalPriceText = discountBlockElement.querySelector('.discount_final_price')?.textContent;
-                                    const originalPriceText = discountBlockElement.querySelector('.discount_original_price')?.textContent;
-                                    const discountPercentText = discountBlockElement.querySelector('.discount_pct')?.textContent;
-                                    const dataPriceFinal = discountBlockElement.dataset.priceFinal;
-                                    const dataDiscount = discountBlockElement.dataset.discount;
-                                    const dataBundleDiscount = discountBlockElement.dataset.bundlediscount;
-
-                                    if (finalPriceText) {
-                                        currentPrice = sm_parsePrice(finalPriceText);
-                                    } else if (dataPriceFinal) {
-                                        currentPrice = parseFloat(dataPriceFinal) / 100;
-                                        if (isNaN(currentPrice)) currentPrice = null;
-                                    }
-
-                                    if (originalPriceText) {
-                                        originalPrice = sm_parsePrice(originalPriceText);
-                                    }
-
-                                    if (discountPercentText) {
-                                        discountPercent = sm_parsePercent(discountPercentText) || 0;
-                                    } else if (dataDiscount) {
-                                        discountPercent = parseFloat(dataDiscount) || 0;
-                                    }
-
-                                    if (discountPercent === 0 && dataBundleDiscount) {
-                                        const bundleDiscountVal = parseFloat(dataBundleDiscount);
-                                        if (bundleDiscountVal > 0) {
-                                            discountPercent = bundleDiscountVal;
-                                            if (originalPrice === null && currentPrice !== null) {
-                                                originalPrice = currentPrice / (1 - discountPercent / 100);
-                                            }
-                                        }
-                                    }
-
-                                } else if (priceSimpleElement) {
-                                    const dataPriceFinal = priceSimpleElement.dataset.priceFinal;
-                                    if (dataPriceFinal) {
-                                        currentPrice = parseFloat(dataPriceFinal) / 100;
-                                        if (isNaN(currentPrice)) currentPrice = null;
-                                    } else {
-                                        currentPrice = sm_parsePrice(priceSimpleElement.textContent);
-                                    }
-                                    originalPrice = currentPrice;
-                                    discountPercent = 0;
-                                }
-
-                                if (currentPrice !== null) {
-                                    const finalCurrentPrice = parseFloat((currentPrice * exchangeRate).toFixed(2));
-                                    const finalOriginalPrice = originalPrice !== null ? parseFloat((originalPrice * exchangeRate).toFixed(2)) : null;
-                                    const effectiveOriginalPrice = (finalOriginalPrice === null || isNaN(finalOriginalPrice)) ? finalCurrentPrice : finalOriginalPrice;
-
-                                    let data = {
-                                        storeId: storeModule.id,
-                                        storeName: storeModule.name,
-                                        storeUrl: storeModule.baseUrl,
-                                        productName: productName,
-                                        productUrl: unsafeWindow.location.href,
-                                        imageUrl: imageUrl,
-                                        currentPrice: finalCurrentPrice,
-                                        originalPrice: effectiveOriginalPrice,
-                                        discountPercent: discountPercent > 0 ? discountPercent : null,
-                                        discountAmount: null,
-                                        currency: 'RUB',
-                                        isAvailable: true
-                                    };
-
-                                    results.push(sm_calculateMissingValues(data));
-                                }
-
-                            } catch (e) {
-                                sm_logError(storeModule.name, `Error parsing purchase block for "${productName || 'unnamed element'}"`, e);
-                            }
-                        });
-
-                        return results;
+                    fetch: async function(query, initialSearch = false) {
+                        if (!initialSearch) return [];
+                        const offers = await sm_scrapeSteamPageOffers();
+                        const allSteamItems = [...offers.editions, ...offers.dlc];
+                        const mapOfferToItem = (offer) => {
+                            let item = {
+                                storeId: this.id,
+                                storeName: this.name,
+                                storeUrl: this.baseUrl,
+                                productName: offer.title,
+                                productUrl: window.location.href,
+                                imageUrl: document.querySelector('#gameHeaderImageCtn img.game_header_image_full')?.src,
+                                currentPrice: offer.price,
+                                originalPrice: offer.originalPrice,
+                                discountPercent: offer.discountPercent,
+                                currency: 'RUB',
+                                isAvailable: offer.price !== null,
+                                type: offer.type
+                            };
+                            return sm_calculateMissingValues(item);
+                        };
+                        sm_steamPageOffersCache = allSteamItems.map(mapOfferToItem);
+                        return sm_steamPageOffersCache.filter(item => item.type === 'sub' || item.type === 'bundle');
                     }
                 },
 
