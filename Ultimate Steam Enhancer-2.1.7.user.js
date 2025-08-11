@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.6
+// @version      2.1.7
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -16037,44 +16037,51 @@
                 sm_updateSortButtonsState();
             }
 
-            function sm_showFilterHelpModal() {
-                const modalId = 'smFilterHelpModal';
-                if (document.getElementById(modalId)) return;
+            function sm_insertOperatorIntoFilter(operator) {
+                const input = document.getElementById('smTitleFilterInput');
+                if (!input) return;
 
-                const helpModal = document.createElement('div');
-                helpModal.id = modalId;
-                Object.assign(helpModal.style, {
-                    position: 'fixed', top: '0', left: '0', width: '100%', height: '100%',
-                    backgroundColor: 'rgba(0,0,0,0.8)', zIndex: '10007', display: 'flex',
-                    alignItems: 'center', justifyContent: 'center'
-                });
+                const start = input.selectionStart;
+                const end = input.selectionEnd;
+                const text = input.value;
+                const before = text.substring(0, start);
+                const after = text.substring(end, text.length);
 
-                helpModal.innerHTML = `
-                    <div class="sm-help-modal-content">
-                        <button class="sm-help-close-btn">&times;</button>
-                        <h4 style="margin-top:0; color:#67c1f5;">Справка по фильтру названий</h4>
-                        <p style="font-size: 16px; margin-bottom: 20px;">Используйте операторы <strong>{и}</strong>, <strong>{или}</strong>, <strong>{не}</strong> для создания сложных запросов.</p>
-                        <ul style="list-style:none; padding-left:0; line-height:1.8; font-size: 15px;">
-                            <li><code style="background:#1a2635; padding:2px 5px; border-radius:3px;">Witcher 3{и}Deluxe</code><br><span style="color:#8f98a0; font-size:14px;">Найдет товары, содержащие и "Witcher 3", и "Deluxe".</span></li>
-                            <li style="margin-top:15px;"><code style="background:#1a2635; padding:2px 5px; border-radius:3px;">Witcher{или}Ведьмак</code><br><span style="color:#8f98a0; font-size:14px;">Найдет товары, содержащие "Witcher" или "Ведьмак".</span></li>
-                            <li style="margin-top:15px;"><code style="background:#1a2635; padding:2px 5px; border-radius:3px;">Witcher 3{не}GOTY</code><br><span style="color:#8f98a0; font-size:14px;">Найдет "Witcher 3", но исключит из результатов те, что содержат "GOTY".</span></li>
-                            <li style="margin-top:15px;"><code style="background:#1a2635; padding:2px 5px; border-radius:3px;">Deluxe{и}Gold{не}Standard{или}Ultimate</code><br><span style="color:#8f98a0; font-size:14px;">Найдены будут товары, которые: (содержат "Deluxe" И "Gold" И НЕ содержат "Standard") ИЛИ (содержат "Ultimate").</span></li>
-                        </ul>
-                        <p style="font-size:14px; color:#8f98a0; margin-top:25px; border-top: 1px solid #3a4f6a; padding-top: 15px;">Операторы не чувствительны к регистру.</p>
-                    </div>
-                `;
+                const operatorWithSpaces = ` ${operator} `;
+                input.value = before + operatorWithSpaces + after;
 
-                document.body.appendChild(helpModal);
+                const newCursorPos = start + operatorWithSpaces.length;
+                input.focus();
+                input.setSelectionRange(newCursorPos, newCursorPos);
 
-                helpModal.addEventListener('click', (event) => {
-                    if (event.target === helpModal) {
-                        helpModal.remove();
-                    }
-                });
+                input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
 
-                helpModal.querySelector('.sm-help-close-btn').addEventListener('click', () => {
-                    helpModal.remove();
-                });
+            function sm_closeFilterHelpPanelOnClickOutside(event) {
+                const wrapper = document.getElementById('smTitleFilterWrapper');
+                if (wrapper && !wrapper.contains(event.target)) {
+                    sm_toggleFilterHelpPanel();
+                }
+            }
+
+            function sm_toggleFilterHelpPanel() {
+                const panel = document.getElementById('smFilterHelpPanel');
+                const button = document.getElementById('smToggleFilterHelpBtn');
+                if (!panel || !button) return;
+
+                const isVisible = panel.style.display === 'block';
+
+                if (isVisible) {
+                    panel.style.display = 'none';
+                    button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>`;
+                    document.removeEventListener('click', sm_closeFilterHelpPanelOnClickOutside, true);
+                } else {
+                    panel.style.display = 'block';
+                    button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M7.646 4.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1-.708.708L8 5.707l-5.646 5.647a.5.5 0 0 1-.708-.708l6-6z"/></svg>`;
+                    setTimeout(() => {
+                        document.addEventListener('click', sm_closeFilterHelpPanelOnClickOutside, true);
+                    }, 0);
+                }
             }
 
             function sm_handleCurrencyToggle() {
@@ -16144,19 +16151,55 @@
                 };
                 rightControls.appendChild(insertTitleBtn);
 
+                const titleFilterWrapper = document.createElement('div');
+                titleFilterWrapper.id = 'smTitleFilterWrapper';
+
+                const titleFilterGroup = document.createElement('div');
+                titleFilterGroup.id = 'smTitleFilterGroup';
+
                 const titleFilterInput = document.createElement('input');
                 titleFilterInput.type = 'text';
                 titleFilterInput.id = 'smTitleFilterInput';
-                titleFilterInput.placeholder = 'Фильтр по названию (слова через ;)';
+                titleFilterInput.placeholder = 'Фильтр по названию...';
                 titleFilterInput.addEventListener('input', sm_debounce(sm_applyFilters, SM_FILTER_DEBOUNCE_MS));
-                rightControls.appendChild(titleFilterInput);
+                titleFilterGroup.appendChild(titleFilterInput);
 
                 const helpBtn = document.createElement('button');
+                helpBtn.id = 'smToggleFilterHelpBtn';
                 helpBtn.className = 'salesMasterBtn sm-filter-help-btn';
-                helpBtn.textContent = '?';
-                helpBtn.title = 'Справка по фильтру';
-                helpBtn.onclick = sm_showFilterHelpModal;
-                rightControls.appendChild(helpBtn);
+                helpBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>`;
+                helpBtn.title = 'Справка и операторы для фильтра';
+                helpBtn.onclick = sm_toggleFilterHelpPanel;
+                titleFilterGroup.appendChild(helpBtn);
+
+                titleFilterWrapper.appendChild(titleFilterGroup);
+
+                const helpPanel = document.createElement('div');
+                helpPanel.id = 'smFilterHelpPanel';
+                helpPanel.innerHTML = `
+                    <div class="sm-filter-help-operators">
+                        <button class="salesMasterBtn sm-operator-btn" data-operator="{и}">И</button>
+                        <button class="salesMasterBtn sm-operator-btn" data-operator="{или}">ИЛИ</button>
+                        <button class="salesMasterBtn sm-operator-btn" data-operator="{не}">НЕ</button>
+                    </div>
+                    <div class="sm-filter-help-text">
+                        <p>Используйте операторы для создания сложных запросов.</p>
+                        <ul style="list-style:none; padding-left:0;">
+                            <li><code>Witcher 3{и}Deluxe</code><br><span>Найдет товары, содержащие "Witcher 3" и "Deluxe".</span></li>
+                            <li><code>Witcher{или}Ведьмак</code><br><span>Найдет товары с "Witcher" или "Ведьмак".</span></li>
+                            <li><code>Witcher 3{не}GOTY</code><br><span>Найдет "Witcher 3", исключая те, что содержат "GOTY".</span></li>
+                        </ul>
+                    </div>
+                `;
+                titleFilterWrapper.appendChild(helpPanel);
+                rightControls.appendChild(titleFilterWrapper);
+
+                helpPanel.querySelectorAll('.sm-operator-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        sm_insertOperatorIntoFilter(e.currentTarget.dataset.operator);
+                    });
+                });
 
                 const currencyToggleBtn = document.createElement('button');
                 currencyToggleBtn.id = 'smCurrencyToggleBtn';
@@ -16281,14 +16324,16 @@
 
                 function handleEsc(event) {
                     if (event.key === 'Escape') {
-                        const helpModal = document.getElementById('smFilterHelpModal');
+                        const contextMenu = document.getElementById('smContextMenu');
+                        const helpPanel = document.getElementById('smFilterHelpPanel');
                         const importModal = document.getElementById('smImportModal');
                         const editQueryModal = document.getElementById('smEditQueryModal');
                         const igmModal = document.getElementById('smIgmSubscriptionModal');
                         const usdConfirmModal = document.getElementById('smUsdConfirmDialog');
                         const overwriteModal = document.getElementById('smOverwriteConfirmModal');
 
-                        if (helpModal) { helpModal.remove(); }
+                        if (contextMenu) { contextMenu.remove(); }
+                        else if (helpPanel && helpPanel.style.display !== 'none') { sm_toggleFilterHelpPanel(); }
                         else if (importModal) { importModal.remove(); }
                         else if (editQueryModal) { editQueryModal.remove(); }
                         else if (igmModal) { igmModal.remove(); }
@@ -16997,9 +17042,18 @@
                 input.onkeydown = (e) => {
                     if (e.key === 'Enter') saveAndClose();
                 };
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) modal.remove();
-                });
+                let mousedownOnBackdrop = false;
+                modal.addEventListener('mousedown', (e) => {
+                    if (e.target === modal) {
+                        mousedownOnBackdrop = true;
+                    }
+                });
+                modal.addEventListener('mouseup', (e) => {
+                    if (e.target === modal && mousedownOnBackdrop) {
+                        modal.remove();
+                    }
+                    mousedownOnBackdrop = false;
+                });
 
                 modal.querySelectorAll('.sm-edit-filter-input').forEach(filterInput => {
                     filterInput.addEventListener('input', (e) => {
@@ -17691,6 +17745,109 @@
                 });
             }
 
+            function sm_addExclusionKeywordFromText(keyword) {
+                const cleanKeyword = keyword.trim().toLowerCase();
+                if (cleanKeyword && !sm_exclusionKeywords.includes(cleanKeyword)) {
+                    sm_exclusionKeywords.push(cleanKeyword);
+                    GM_setValue(SM_EXCLUSION_STORAGE_KEY, sm_exclusionKeywords);
+                    sm_renderExclusionTags();
+                    sm_applyFilters();
+                }
+            }
+
+            function sm_showCustomContextMenu(event) {
+                const selectedText = window.getSelection().toString().trim();
+                if (!selectedText) {
+                    return;
+                }
+                event.preventDefault();
+                event.stopPropagation();
+
+                const existingMenu = document.getElementById('smContextMenu');
+                if (existingMenu) existingMenu.remove();
+
+                const menu = document.createElement('div');
+                menu.id = 'smContextMenu';
+                menu.innerHTML = `
+                    <div class="sm-context-menu-item" data-action="filter-and">
+                        <span>Добавить в фильтр с {и}</span>
+                    </div>
+                    <div class="sm-context-menu-item" data-action="filter-or">
+                        <span>Добавить в фильтр с {или}</span>
+                    </div>
+                    <div class="sm-context-menu-item" data-action="filter-not">
+                        <span>Добавить в фильтр с {не}</span>
+                    </div>
+                    <div class="sm-context-menu-separator"></div>
+                    <div class="sm-context-menu-item" data-action="exclude">
+                        <span>Добавить в список исключений</span>
+                    </div>
+                    <div class="sm-context-menu-separator"></div>
+                    <div class="sm-context-menu-item" data-action="copy">
+                        <span>Копировать текст</span>
+                    </div>
+                `;
+
+                document.body.appendChild(menu);
+
+                const menuRect = menu.getBoundingClientRect();
+                let x = event.clientX;
+                let y = event.clientY;
+
+                if (x + menuRect.width > window.innerWidth) {
+                    x = window.innerWidth - menuRect.width - 5;
+                }
+                if (y + menuRect.height > window.innerHeight) {
+                    y = window.innerHeight - menuRect.height - 5;
+                }
+
+                menu.style.left = `${x}px`;
+                menu.style.top = `${y}px`;
+
+                menu.addEventListener('click', (e) => {
+                    const item = e.target.closest('.sm-context-menu-item');
+                    if (!item) return;
+
+                    const action = item.dataset.action;
+                    const filterInput = document.getElementById('smTitleFilterInput');
+                    const currentFilterValue = filterInput.value.trim();
+
+                    switch(action) {
+                        case 'filter-and':
+                        case 'filter-or':
+                        case 'filter-not':
+                            const operatorMap = {
+                                'filter-and': 'и',
+                                'filter-or': 'или',
+                                'filter-not': 'не'
+                            };
+                            const operator = operatorMap[action];
+                            filterInput.value = currentFilterValue ? `${currentFilterValue} {${operator}} ${selectedText}` : selectedText;
+                            filterInput.dispatchEvent(new Event('input', { bubbles: true }));
+                            break;
+                        case 'exclude':
+                            sm_addExclusionKeywordFromText(selectedText);
+                            break;
+                        case 'copy':
+                            navigator.clipboard.writeText(selectedText).catch(err => console.error('[SalesMaster] Copy error:', err));
+                            break;
+                    }
+                    menu.remove();
+                });
+
+                const closeMenu = (e) => {
+                    if (!menu.contains(e.target)) {
+                        menu.remove();
+                        document.removeEventListener('click', closeMenu, true);
+                        document.removeEventListener('contextmenu', closeMenu, true);
+                    }
+                };
+                setTimeout(() => {
+                    document.addEventListener('click', closeMenu, true);
+                    document.addEventListener('contextmenu', closeMenu, true);
+                }, 0);
+            }
+
            // --- Рендеринг результатов ---
             function sm_renderResults() {
                 if (!sm_resultsDiv) return;
@@ -17808,7 +17965,7 @@
                             sellerLink.onclick = (e) => { e.stopPropagation(); };
                             storeInfoContainer.appendChild(sellerLink);
                         } catch (e) {
-                             const sellerText = document.createElement('div'); sellerText.className = 'sm-seller-link no-link'; sellerText.textContent = `Продавец: ${item.sellerName}`; storeInfoContainer.appendChild(sellerText);
+                            const sellerText = document.createElement('div'); sellerText.className = 'sm-seller-link no-link'; sellerText.textContent = `Продавец: ${item.sellerName}`; storeInfoContainer.appendChild(sellerText);
                         }
                     } else if (item.storeId === 'ggsel' && item.sellerId && item.sellerName) {
                         const sellerLink = document.createElement('a');
@@ -17830,6 +17987,12 @@
 
                     itemDiv.appendChild(link);
                     fragment.appendChild(itemDiv);
+
+                    titleDiv.addEventListener('contextmenu', sm_showCustomContextMenu);
+                    const sellerLink = itemDiv.querySelector('.sm-seller-link');
+                    if (sellerLink) {
+                        sellerLink.addEventListener('contextmenu', sm_showCustomContextMenu);
+                    }
                 });
 
                 sm_resultsDiv.appendChild(fragment);
@@ -17925,7 +18088,7 @@
                 #salesMasterMinimizeBtn {
                     position: fixed;
                     top: 15px;
-                    right: 65px; /* Правее кнопки закрытия */
+                    right: 65px;
                     font-size: 24px;
                     font-weight: bold;
                     color: #aaa;
@@ -18037,14 +18200,6 @@
                 	font-size: 12px;
                 }
 
-                .sm-filter-help-btn {
-                    padding: 0;
-                    width: 36px;
-                    font-weight: bold;
-                    font-size: 16px;
-                    margin-left: -5px;
-                }
-
                 #salesMasterSortButtons {
                 	display: flex;
                 	gap: 5px;
@@ -18052,31 +18207,86 @@
                 	margin-left: 10px;
                 }
 
-                .sm-help-modal-content {
-                    background-color:#1f2c3a;
-                    color:#c6d4df;
-                    padding:25px;
-                    border-radius:5px;
-                    border:1px solid #67c1f5;
-                    width:90%;
-                    max-width:600px;
-                    text-align:left;
+                #smTitleFilterWrapper {
                     position: relative;
+                    display: flex;
+                    flex-shrink: 0;
                 }
-                .sm-help-close-btn {
+
+                #smTitleFilterGroup {
+                    display: flex;
+                }
+
+                #smTitleFilterWrapper #smTitleFilterInput {
+                    border-top-right-radius: 0;
+                    border-bottom-right-radius: 0;
+                    border-right: none;
+                }
+
+                #smTitleFilterWrapper .sm-filter-help-btn {
+                    border-top-left-radius: 0;
+                    border-bottom-left-radius: 0;
+                    margin-left: -1px;
+                    width: auto;
+                    padding: 0 8px;
+                }
+
+                #smFilterHelpPanel {
                     position: absolute;
-                    top: 5px;
-                    right: 10px;
-                    font-size: 28px;
-                    color: #aaa;
-                    background: none;
-                    border: none;
-                    cursor: pointer;
-                    line-height: 1;
-                    padding: 5px;
+                    top: calc(100% + 5px);
+                    right: 0;
+                    z-index: 1005;
+                    background-color: #1f2c3a;
+                    border: 1px solid #67c1f5;
+                    border-radius: 4px;
+                    padding: 15px;
+                    width: 380px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+                    display: none;
+                    text-align: left;
                 }
-                .sm-help-close-btn:hover {
-                    color: #fff;
+
+                .sm-filter-help-operators {
+                    display: flex;
+                    gap: 10px;
+                    margin-bottom: 15px;
+                }
+
+                .sm-operator-btn {
+                    padding: 5px 10px;
+                    height: auto;
+                    font-size: 13px;
+                    flex-grow: 1;
+                }
+
+                .sm-filter-help-text p {
+                    font-size: 14px;
+                    margin-bottom: 10px;
+                }
+
+                .sm-filter-help-text ul {
+                    font-size: 13px;
+                    line-height: 1.8;
+                    margin: 0;
+                }
+
+                .sm-filter-help-text code {
+                  background:#1a2635;
+                  padding:2px 5px;
+                  border-radius:3px;
+                }
+
+                .sm-filter-help-text li {
+                    margin-top: 10px;
+                }
+
+                .sm-filter-help-text li:first-child {
+                    margin-top: 0;
+                }
+
+                .sm-filter-help-text span {
+                    color:#8f98a0;
+                    font-size:12px;
                 }
 
 
@@ -18272,7 +18482,7 @@
                     border: 1px solid #3a4f6a;
                     border-radius: 3px;
                     flex-grow: 1;
-                    height: 400px; /* Фиксированная высота для скролла */
+                    height: 400px;
                 }
                 .sm-edit-list li {
                     padding: 8px 10px;
@@ -18303,6 +18513,55 @@
                     font-weight: normal;
                     margin-left: 15px;
                     flex-shrink: 0;
+                }
+
+                /* --- Кастомное контекстное меню --- */
+                #smContextMenu {
+                    position: fixed;
+                    z-index: 10010;
+                    background-color: #1f2c3a;
+                    border: 1px solid #67c1f5;
+                    border-radius: 4px;
+                    padding: 5px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+                    min-width: 200px;
+                    font-size: 14px;
+                }
+                .sm-context-menu-item {
+                    padding: 8px 12px;
+                    color: #c6d4df;
+                    cursor: pointer;
+                    position: relative;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    border-radius: 3px;
+                }
+                .sm-context-menu-item:hover {
+                    background-color: #2a475e;
+                    color: #fff;
+                }
+                .sm-context-menu-item .sm-submenu-arrow {
+                    margin-left: 10px;
+                }
+                .sm-context-menu-separator {
+                    height: 1px;
+                    background-color: #3a4f6a;
+                    margin: 4px 0;
+                }
+                .sm-context-submenu {
+                    display: none;
+                    position: absolute;
+                    left: 100%;
+                    top: -5px;
+                    background-color: #1f2c3a;
+                    border: 1px solid #67c1f5;
+                    border-radius: 4px;
+                    padding: 5px;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+                }
+                .sm-context-menu-item:hover > .sm-context-submenu {
+                    display: block;
                 }
 
                 /* --- Боковые панели ("плавающие") --- */
@@ -20593,7 +20852,7 @@
                             }
 
                             const fullProductUrl = storeModule.baseUrl + productUrlRaw;
-                            const productUrlWithRef = fullProductUrl + '?ref=zoneofgames';
+                            const productUrlWithRef = fullProductUrl;
 
                             let data = {
                                 storeId: storeModule.id,
@@ -21188,7 +21447,7 @@
                         });
                         return results;
                     }
-                } // --- Конец модуля IGM.GG ---
+                }, // --- Конец модуля IGM.GG ---
 
                 // --- Сюда другие модули ---
             ];
