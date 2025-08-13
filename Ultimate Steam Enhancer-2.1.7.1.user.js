@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.7
+// @version      2.1.7.1
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -57,6 +57,7 @@
 // @connect      gamazavr.ru
 // @connect      gameray.ru
 // @connect      shop.buka.ru
+// @connect      static.buka.ru
 // @connect      upload.wikimedia.org
 // @connect      keysforgamers.com
 // @connect      api4.ggsel.com
@@ -11927,7 +11928,7 @@
                         })),
                         context: {
                             language: 'russian',
-                            country_code: 'RU',
+                            country_code: 'US',
                             steam_realm: 1
                         },
                         data_request: {
