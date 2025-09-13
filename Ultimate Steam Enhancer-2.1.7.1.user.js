@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.7.1
+// @version      2.1.7.2
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -6997,7 +6997,7 @@
             }
 
             function animateAppearance(element) {
-                element.style.display = 'block';
+                element.style.display = '';
                 element.style.opacity = '0';
                 element.style.transform = 'translateX(-100%)';
                 element.style.transition = 'opacity 0.5s ease-in-out, transform 0.5s ease-in-out';
