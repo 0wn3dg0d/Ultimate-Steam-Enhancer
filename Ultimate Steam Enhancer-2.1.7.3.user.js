@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.7.2
+// @version      2.1.7.3
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -918,25 +918,31 @@
                             <li style="margin-bottom: 0.5em;">Кнопка "Календарь".</li>
                             <li style="margin-bottom: 0.5em;">Кнопка "Хранилище" для очистки сохраненных данных.</li>
                         </ul>
-                     </li>
-                     <img src="https://i.imgur.com/BpuDq6U.png" alt="Пример Трекера 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
-                     <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
-                     <li style="margin-bottom: 0.7em;"><strong>Календарь релизов (по щелчку на кнопку "Календарь"):</strong>
+                   </li>
+                   <img src="https://i.imgur.com/BpuDq6U.png" alt="Пример Трекера 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                   <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+                   <li style="margin-bottom: 0.7em;"><strong>Календарь релизов (по щелчку на кнопку "Календарь"):</strong>
                         <ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
                             <li style="margin-bottom: 0.5em;">Отображает игры из вашего списка желаемого в виде календаря по месяцам.</li>
-                            <li style="margin-bottom: 0.5em;">Показывает игры с точными датами выхода в будущем.</li>
+                            <li style="margin-bottom: 0.5em;">В верхней части календаря находится <strong>панель фильтров</strong> для управления временным диапазоном:
+                                <ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: square;">
+                                    <li style="margin-bottom: 0.3em;"><strong>Режим по умолчанию ("Сброс"):</strong> Показывает релизы с текущего месяца и на будущее.</li>
+                                    <li style="margin-bottom: 0.3em;"><strong>Фильтр по году/месяцу:</strong> Можно выбрать год (для просмотра с января) или год и месяц, чтобы задать свою точку отсчёта, и нажать "Применить".</li>
+                                    <li style="margin-bottom: 0.3em;"><strong>Режим "Всё":</strong> Отключает фильтрацию и показывает все игры с датами релиза, включая давно вышедшие.</li>
+                                </ul>
+                            </li>
                             <li style="margin-bottom: 0.5em;">Для игр с примерной датой (месяц, квартал, год) отображается подсказка при наведении.</li>
-                            <li style="margin-bottom: 0.5em;">Позволяет подгружать следующие месяцы.</li>
+                            <li style="margin-bottom: 0.5em;">Позволяет подгружать следующие месяцы кнопкой внизу календаря.</li>
                         </ul>
-                     </li>
-                     <img src="https://i.imgur.com/b5PDYG3.png" alt="Пример Календаря" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
-                     <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
-                      <li style="margin-bottom: 0.7em;"><strong>Хранилище (по щелчку на кнопку "Хранилище"):</strong>
+                   </li>
+                   <img src="https://i.imgur.com/JKMJ0zO.png" alt="Пример Календаря" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                   <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+                    <li style="margin-bottom: 0.7em;"><strong>Хранилище (по щелчку на кнопку "Хранилище"):</strong>
                         <ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
                             <li style="margin-bottom: 0.5em;">Позволяет очистить кэш дат/статусов для списка желаемого или для игр библиотеки.</li>
                         </ul>
-                     </li>
-                     <img src="https://i.imgur.com/nI6Uoo0.png" alt="Пример Хранилища" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                   </li>
+                   <img src="https://i.imgur.com/nI6Uoo0.png" alt="Пример Хранилища" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                 </ol>
                 <p>Требует авторизации. Обработка больших списков/библиотек может занять время. Используйте новые опции в настройках для ускорения сканирования библиотеки.</p>
             `
@@ -12254,109 +12260,206 @@
 
                 function showCalendarModal() {
                     const gameData = GM_getValue(STORAGE_KEYS.WISHLIST_GAME_DATA, {});
-                    const monthsData = getGamesByMonths(gameData);
+                    const allGamesWithDates = Object.values(gameData).filter(g => g.releaseInfo?.date && typeof g.releaseInfo.date === 'number');
+                    const availableYears = [...new Set(allGamesWithDates.map(g => new Date(g.releaseInfo.date * 1000).getFullYear()))].sort((a, b) => a - b);
+
+                    const yearOptions = availableYears.map(y => `<option value="${y}">${y}</option>`).join('');
+                    const monthOptions = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+                        .map((m, i) => `<option value="${i}">${m}</option>`).join('');
+
                     const wtmodal = $(`
-                         <div class="calendar-wtmodal">
-                             <div class="calendar-header"> <div class="calendar-title">Календарь релизов (${Object.keys(gameData).length} игр в списке)</div> <div class="calendar-close">×</div> </div>
-                             <div class="calendar-content"></div>
-                         </div>`);
+                        <div class="calendar-wtmodal">
+                            <style>
+                                .calendar-filters { display: flex; align-items: center; gap: 10px; flex-grow: 1; justify-content: flex-end; }
+                                .calendar-filters button {
+                                    background: rgba(30, 45, 60, 0.7); border: none; color: #c6d4df; padding: 6px 12px;
+                                    cursor: pointer; border-radius: 2px; font-size: 13px; text-transform: uppercase;
+                                    transition: background 0.2s ease;
+                                }
+                                .calendar-filters button:hover { background: rgba(40, 60, 80, 0.9); }
+
+                                .select-wrapper { position: relative; }
+
+                                .select-wrapper::after {
+                                    content: '▼';
+                                    font-size: 10px;
+                                    color: #c6d4df;
+                                    position: absolute;
+                                    right: 10px;
+                                    top: 50%;
+                                    transform: translateY(-50%);
+                                    pointer-events: none;
+                                }
+
+                                .calendar-filters select {
+                                    background: #171a21; color: #c6d4df; border: 1px solid #2a475e; border-radius: 2px; padding: 5px 28px 5px 8px; font-size: 13px;
+                                    -webkit-appearance: none;
+                                    -moz-appearance: none;
+                                    appearance: none;
+                                }
+                                .calendar-filters select:focus { border-color: #67c1f5; outline: none; }
+                            </style>
+                            <div class="calendar-header">
+                                <div class="calendar-title">Календарь релизов (${Object.keys(gameData).length} игр)</div>
+                                <div class="calendar-filters">
+                                    <div class="select-wrapper">
+                                        <select id="calendarYearFilter"> <option value="">Год</option> ${yearOptions} </select>
+                                    </div>
+                                    <div class="select-wrapper">
+                                        <select id="calendarMonthFilter"> <option value="">Месяц</option> ${monthOptions} </select>
+                                    </div>
+                                    <button id="calendarApplyBtn" title="Применить выбранный год и/или месяц как точку отсчёта">Применить</button>
+                                    <button id="calendarShowAllBtn" title="Показать все игры, включая давно вышедшие">Всё</button>
+                                    <button id="calendarResetBtn" title="Сбросить к стандартному виду (текущий и будущие месяцы)">Сброс</button>
+                                </div>
+                                <div class="calendar-close">×</div>
+                            </div>
+                            <div class="calendar-content"></div>
+                        </div>`);
+
                     const clickHandler = (e) => {
                         if (!$(e.target).closest('.calendar-wtmodal').length) {
                             wtmodal.remove();
                             $(document).off('click', clickHandler);
                         }
                     };
+
                     wtmodal.find('.calendar-close').click((e) => {
                         e.preventDefault();
                         e.stopPropagation();
                         wtmodal.remove();
                         $(document).off('click', clickHandler);
                     });
+
                     wtmodal.click(e => e.stopPropagation());
                     $(document).on('click', clickHandler);
                     $('body').append(wtmodal);
                     wtmodal.addClass('active');
-                    let visibleMonths = 3;
-                    const renderCalendar = () => {
-                        const visibleData = monthsData.slice(0, visibleMonths);
+
+                    let visibleMonthsCount = 3;
+
+                    const renderCalendar = (options = {}) => {
+                        const { startYear = null, startMonth = null, showAll = false } = options;
+                        const monthsData = getGamesByMonths(gameData, { startYear, startMonth, showAll });
                         const content = wtmodal.find('.calendar-content').empty();
+                        visibleMonthsCount = 3;
+
                         if (monthsData.length === 0) {
-                            content.append('<div style="text-align:center; padding: 30px; color: #8f98a0;">Нет игр с датой выхода в будущем в вашем списке желаемого.</div>');
+                            content.append('<div style="text-align:center; padding: 30px; color: #8f98a0;">Игры по заданным фильтрам не найдены.</div>');
                             return;
                         }
-                        visibleData.forEach(({
-                            month,
-                            year,
-                            games
-                        }) => {
-                            const monthDate = new Date(year, month);
-                            const monthName = monthDate.toLocaleString('ru-RU', {
-                                month: 'long'
+
+                        const displayMonths = () => {
+                            content.find('.calendar-month, .load-more-months').remove();
+                            const visibleData = monthsData.slice(0, visibleMonthsCount);
+
+                            visibleData.forEach(({ month, year, games }) => {
+                                const monthDate = new Date(year, month);
+                                const monthName = monthDate.toLocaleString('ru-RU', { month: 'long' });
+                                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                                const firstDay = new Date(year, month, 1).getDay();
+                                const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
+                                const monthBlock = $(`<div class="calendar-month"> <div class="month-header">${monthName} ${year}</div> <div class="calendar-grid"></div> </div>`);
+                                const grid = monthBlock.find('.calendar-grid');
+                                grid.append('<div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>');
+
+                                for (let i = 0; i < adjustedFirstDay; i++) {
+                                    grid.append('<div class="calendar-day"></div>');
+                                }
+
+                                for (let day = 1; day <= daysInMonth; day++) {
+                                    const dayGames = games.filter(g => {
+                                        const releaseDate = new Date(g.releaseInfo.date * 1000);
+                                        return releaseDate.getDate() === day && releaseDate.getMonth() === month && releaseDate.getFullYear() === year;
+                                    });
+                                    const dayElement = $(`<div class="calendar-day"> <div class="day-number">${day}</div> </div>`);
+                                    dayGames.sort((a, b) => a.name.localeCompare(b.name)).forEach(game => {
+                                        const isApproximate = ['date_month', 'date_quarter', 'date_year'].includes(game.releaseInfo.displayType);
+                                        const imageUrl = game.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/${game.header}` : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
+                                        const gameElement = $(`<a href="https://store.steampowered.com/app/${game.appid}" target="_blank" class="calendar-game ${isApproximate ? 'calendar-game-approximate wt-tooltip' : ''}"> <img src="${imageUrl}" class="calendar-game-image" loading="lazy" onerror="this.onerror=null; this.src='https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit='contain';"> <div class="calendar-game-title">${game.name}</div> ${isApproximate ? `<div class="wt-tooltiptext">Приблизительная дата: ${getApproximateDateText(game.releaseInfo)}</div>` : ''} </a>`);
+                                        dayElement.append(gameElement);
+                                    });
+                                    grid.append(dayElement);
+                                }
+                                content.append(monthBlock);
                             });
-                            const daysInMonth = new Date(year, month + 1, 0).getDate();
-                            const firstDay = new Date(year, month, 1).getDay();
-                            const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
-                            const monthBlock = $(`<div class="calendar-month"> <div class="month-header">${monthName} ${year}</div> <div class="calendar-grid"></div> </div>`);
-                            const grid = monthBlock.find('.calendar-grid');
-                            grid.append('<div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>');
-                            for (let i = 0; i < adjustedFirstDay; i++) {
-                                grid.append('<div class="calendar-day"></div>');
-                            }
-                            for (let day = 1; day <= daysInMonth; day++) {
-                                const dayGames = games.filter(g => {
-                                    const releaseDate = new Date(g.releaseInfo.date * 1000);
-                                    return releaseDate.getDate() === day && releaseDate.getMonth() === month && releaseDate.getFullYear() === year;
+
+                            if (visibleMonthsCount < monthsData.length) {
+                                content.append(`<div class="load-more-months"> <button class="load-more-btn">Показать ещё 3 месяца</button> </div>`);
+                                content.find('.load-more-btn').click(() => {
+                                    visibleMonthsCount += 3;
+                                    displayMonths();
                                 });
-                                const dayElement = $(`<div class="calendar-day"> <div class="day-number">${day}</div> </div>`);
-                                dayGames.sort((a, b) => a.name.localeCompare(b.name)).forEach(game => {
-                                    const isApproximate = ['date_month', 'date_quarter', 'date_year'].includes(game.releaseInfo.displayType);
-                                    const imageUrl = game.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/${game.header}` : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
-                                    const gameElement = $(`<a href="https://store.steampowered.com/app/${game.appid}" target="_blank" class="calendar-game ${isApproximate ? 'calendar-game-approximate wt-tooltip' : ''}"> <img src="${imageUrl}" class="calendar-game-image" loading="lazy" onerror="this.onerror=null; this.src='https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit='contain';"> <div class="calendar-game-title">${game.name}</div> ${isApproximate ? `<div class="wt-tooltiptext">Приблизительная дата: ${getApproximateDateText(game.releaseInfo)}</div>` : ''} </a>`);
-                                    dayElement.append(gameElement);
-                                });
-                                grid.append(dayElement);
                             }
-                            content.append(monthBlock);
-                        });
-                        if (visibleMonths < monthsData.length) {
-                            content.append(`<div class="load-more-months"> <button class="load-more-btn">Показать ещё 3 месяца</button> </div>`);
-                            content.find('.load-more-btn').click(() => {
-                                visibleMonths += 3;
-                                renderCalendar();
-                            });
-                        }
+                        };
+                        displayMonths();
                     };
+
+                    wtmodal.find('#calendarApplyBtn').on('click', () => {
+                        const yearVal = wtmodal.find('#calendarYearFilter').val();
+                        const monthVal = wtmodal.find('#calendarMonthFilter').val();
+                        if (!yearVal) {
+                            alert("Пожалуйста, выберите год для применения фильтра.");
+                            return;
+                        }
+                        const startYear = parseInt(yearVal, 10);
+                        const startMonth = monthVal ? parseInt(monthVal, 10) : 0;
+                        renderCalendar({ startYear, startMonth });
+                    });
+
+                    wtmodal.find('#calendarShowAllBtn').on('click', () => {
+                        wtmodal.find('select').val('');
+                        renderCalendar({ showAll: true });
+                    });
+
+                    wtmodal.find('#calendarResetBtn').on('click', () => {
+                        wtmodal.find('select').val('');
+                        renderCalendar();
+                    });
+
                     renderCalendar();
                 }
 
-                function getGamesByMonths(gameData) {
-                    const now = new Date();
-                    const currentYear = now.getFullYear();
-                    const currentMonth = now.getMonth();
-                    const games = Object.entries(gameData).map(([appid, game]) => ({
+                function getGamesByMonths(gameData, options = {}) {
+                    const { startYear = null, startMonth = null, showAll = false } = options;
+
+                    let games = Object.entries(gameData).map(([appid, game]) => ({
                             appid: parseInt(appid),
                             ...game,
                             releaseDate: game.releaseInfo?.date && typeof game.releaseInfo.date === 'number' ? new Date(game.releaseInfo.date * 1000) : null
                         }))
-                        .filter(g => g.releaseDate).filter(g => {
+                        .filter(g => g.releaseDate);
+
+                    if (!showAll) {
+                        let year, month;
+
+                        if (startYear !== null) {
+                            year = startYear;
+                            month = startMonth !== null ? startMonth : 0;
+                        } else {
+                            const now = new Date();
+                            year = now.getFullYear();
+                            month = now.getMonth();
+                        }
+
+                        games = games.filter(g => {
                             const releaseYear = g.releaseDate.getFullYear();
                             const releaseMonth = g.releaseDate.getMonth();
-                            return (releaseYear > currentYear) || (releaseYear === currentYear && releaseMonth >= currentMonth);
+                            return (releaseYear > year) || (releaseYear === year && releaseMonth >= month);
                         });
+                    }
+
                     const monthMap = games.reduce((acc, game) => {
                         const year = game.releaseDate.getFullYear();
                         const month = game.releaseDate.getMonth();
-                        const key = `${year}-${month}`;
+                        const key = `${year}-${String(month).padStart(2, '0')}`;
                         if (!acc[key]) {
-                            acc[key] = {
-                                year,
-                                month,
-                                games: []
-                            };
+                            acc[key] = { year, month, games: [] };
                         }
                         acc[key].games.push(game);
                         return acc;
                     }, {});
+
                     return Object.values(monthMap).sort((a, b) => a.year === b.year ? a.month - b.month : a.year - b.year);
                 }
 
