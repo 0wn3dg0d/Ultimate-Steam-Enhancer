@@ -666,7 +666,7 @@
             <section id="news-wishlist">
                 <h2 class="text-3xl font-semibold text-dx-gold mb-6 border-b-2 border-dx-border pb-2 mt-12 text-center">Новости и список желаемого</h2>
                 <div class="space-y-4">
-                    <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
+<details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
                         <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Наблюдатель (Желаемое/Библиотека)</summary>
                         <div class="p-6 border-t border-dx-border space-y-4 details-content">
                             <p><strong>Что делает:</strong><br>Отслеживает изменения в вашем списке желаемого Steam и в вашей библиотеке игр, отображает календарь релизов.</p>
@@ -701,12 +701,18 @@
                                 <li><strong>Календарь релизов (по щелчку на кнопку "Календарь"):</strong>
                                     <ul>
                                         <li>Отображает игры из вашего списка желаемого в виде календаря по месяцам.</li>
-                                        <li>Показывает игры с точными датами выхода в будущем.</li>
+                                        <li>В верхней части календаря находится <strong>панель фильтров</strong> для управления временным диапазоном:
+                                            <ul>
+                                                <li><strong>Режим по умолчанию ("Сброс"):</strong> Показывает релизы с текущего месяца и на будущее.</li>
+                                                <li><strong>Фильтр по году/месяцу:</strong> Можно выбрать год (для просмотра с января) или год и месяц, чтобы задать свою точку отсчёта, и нажать "Применить".</li>
+                                                <li><strong>Режим "Всё":</strong> Отключает фильтрацию и показывает все игры с датами релиза, включая давно вышедшие.</li>
+                                            </ul>
+                                        </li>
                                         <li>Для игр с примерной датой (месяц, квартал, год) отображается подсказка при наведении.</li>
-                                        <li>Позволяет подгружать следующие месяцы.</li>
+                                        <li>Позволяет подгружать следующие месяцы кнопкой внизу календаря.</li>
                                     </ul>
                                 </li>
-                                <center><img src="https://i.imgur.com/b5PDYG3.png" alt="Пример Календаря" class="feature-img inline-block"></center>
+                                <center><img src="https://i.imgur.com/JKMJ0zO.png" alt="Пример Календаря" class="feature-img inline-block"></center>
                                 <li><strong>Хранилище (по щелчку на кнопку "Хранилище"):</strong>
                                     <ul>
                                         <li>Позволяет очистить кэш дат/статусов для списка желаемого или для игр библиотеки.</li>
