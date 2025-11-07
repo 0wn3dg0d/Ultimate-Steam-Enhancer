@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.7.4
+// @version      2.1.7.5
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -440,7 +440,10 @@
 
 
     function runUSEModules() {
-    GM_addStyle('.banner_open_in_steam { display: none !important; }');
+    GM_addStyle(`
+        .banner_open_in_steam { display: none !important; }
+        .page_top_area { overflow-y: visible !important; }
+    `);
     addIncognitoButton();
     const scriptsConfig = {
         // Основные скрипты
@@ -3370,7 +3373,7 @@
             Object.assign(hltbBlock.style, {
                 position: 'absolute',
                 top: '0',
-                left: '334px',
+                left: 'calc(100% + 10px)',
                 width: '30px',
                 height: '30px',
                 background: 'rgba(27, 40, 56, 0.95)',
@@ -3444,7 +3447,7 @@
                     }
                 }
                 hltbBlock.style.top = topPosition;
-                hltbBlock.style.left = '334px';
+                hltbBlock.style.left = 'calc(100% + 10px)';
                 if (hltbBlock.style.opacity === '0') {
                     fadeInElement(hltbBlock);
                 }
@@ -3785,7 +3788,7 @@
         (async function() {
             const zogBlock = document.createElement('div');
             Object.assign(zogBlock.style, {
-                position: 'absolute', left: '334px', width: '30px', height: '30px',
+                position: 'absolute', left: 'calc(100% + 10px)', width: '30px', height: '30px',
                 background: 'rgba(27, 40, 56, 0.95)', padding: '15px', borderRadius: '4px',
                 border: '1px solid #3c3c3c', boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
                 zIndex: '2', fontFamily: 'Arial, sans-serif', overflow: 'hidden',
@@ -3819,7 +3822,7 @@
                 } else {
                     if (document.querySelector('#gameHeaderImageCtn')) zogBlock.style.top = '0px';
                 }
-                zogBlock.style.left = '334px';
+                zogBlock.style.left = 'calc(100% + 10px)';
                 zogBlock.style.zIndex = '2';
                 if (isFirstUpdate) {
                     requestAnimationFrame(() => {
@@ -3897,8 +3900,30 @@
             const arrow = document.createElement('div');
             Object.assign(arrow.style, { position: 'absolute', bottom: '5px', left: '50%', width: '0', height: '0', borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid #67c1f5', cursor: 'pointer', transition: 'transform 0.3s ease', transform: 'translateX(-50%)' });
 
-            zogBlock.append(arrow, title, content);
-            document.querySelector('#gameHeaderImageCtn').appendChild(zogBlock);
+zogBlock.append(arrow, title, content);
+
+const headerCtn = document.querySelector('#gameHeaderImageCtn');
+if (headerCtn) {
+    // 1. Принудительно поднимаем сам контейнер картинки
+    headerCtn.style.position = 'relative';
+    headerCtn.style.zIndex = '2005';
+
+    // 2. Ищем и поднимаем основные родительские блоки, которые могут создавать
+    // "низкий" контекст наложения или обрезать содержимое.
+    // Обычно это .page_content (верхний) или .page_top_area
+    const topContentParent = headerCtn.closest('.page_content, .page_top_area');
+    if (topContentParent) {
+        // Важно: иногда Steam ставит overflow: hidden на верхнюю часть,
+        // из-за чего длинные меню просто обрезаются, а не перекрываются.
+        // На всякий случай ставим visible.
+        topContentParent.style.overflow = 'visible';
+        topContentParent.style.position = 'relative';
+        topContentParent.style.zIndex = '2004';
+    }
+
+    // 3. Вставляем блок
+    headerCtn.appendChild(zogBlock);
+}
 
             await new Promise(resolve => setTimeout(resolve, 10));
             setupPageChangeObservers();
@@ -4286,7 +4311,7 @@
                 const statsBlock = document.createElement('div');
                 statsBlock.style.position = 'absolute';
                 statsBlock.style.top = '0px';
-                statsBlock.style.left = '406px';
+                statsBlock.style.left = 'calc(100% + 82px)';
                 statsBlock.style.width = '30px';
                 statsBlock.style.height = '30px';
                 statsBlock.style.background = 'rgba(27, 40, 56, 0.95)';
@@ -4337,7 +4362,7 @@
 
                 const toggleBlock = async () => {
                     if (content.style.display === 'none') {
-                        statsBlock.style.width = '250px';
+                        statsBlock.style.width = '230px';
                         statsBlock.style.height = '60px';
                         content.style.display = 'block';
                         content.textContent = 'Загрузка...';
@@ -4613,7 +4638,7 @@
                 Object.assign(infoBox.style, {
                     position: 'absolute',
                     top: '-46px',
-                    left: '334px',
+                    left: 'calc(100% + 10px)',
                     background: isReleased ? 'rgba(103, 193, 245, 0.15)' : 'rgba(245, 166, 35, 0.15)',
                     padding: '6.5px',
                     borderRadius: '3px',
