@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.7.5
+// @version      2.1.7.7
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -797,6 +797,7 @@
                 <p>Работает на страницах как в <strong>магазине Steam</strong>, так и в <strong>сообществе</strong>.</p>
                 <p><strong>Добавляемые кнопки:</strong></p>
                 <ul>
+                    <li><strong>Копировать (EN):</strong> <em>(Только для страниц магазина)</em> Добавляет кнопку для копирования оригинального (английского) названия игры в буфер обмена. Выполняет быстрый запрос к API Steam для получения названия.</li>
                     <li><strong>PCGamingWiki:</strong> Добавляет кнопку со ссылкой на соответствующую статью в PCGamingWiki, если она отсутствует. Это полезно для поиска технических деталей, фиксов и твиков.</li>
                     <li><strong>SteamDB:</strong> Добавляет кнопку со ссылкой на страницу игры в базе данных SteamDB, если она отсутствует. Позволяет быстро получить доступ к подробной статистике, истории цен, данным о пакетах и многому другому.</li>
                     <li><strong>Страница в магазине:</strong> <em>(Только для страниц сообщества)</em> Если на странице игры в сообществе по какой-то причине нет кнопки для перехода в магазин, этот скрипт её добавит.</li>
@@ -3534,7 +3535,7 @@
                     hltbBlock.style.height = '40px';
                     await new Promise(resolve => setTimeout(resolve, 300));
 
-                    content.textContent = 'Ищем в базе...';
+                    content.textContent = 'Получение токена...';
                     content.style.display = 'block';
                     triangle.classList.remove('triangle-down');
                     triangle.classList.add('triangle-up');
@@ -3542,51 +3543,87 @@
                     triangle.style.borderBottom = '5px solid #67c1f5';
 
                     let gameName = getGameName();
-                    let gameNameNormalized = normalizeGameName(gameName);
-                    let orangutanFetchUrl = 'https://umadb.ro/hltb/fetch.php';
-                    let orangutanHltbUrl = "https://howlongtobeat.com";
+                    let searchName = gameName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace("’", "'").replace(/[^a-z _0-9`~!@#$%^&*()_=+|\\\]}[{;:',<.>/?]/gi, '').toLowerCase().split(/\s+/);
 
+                    let hltbToken = null;
                     try {
-                        const response = await new Promise((resolve, reject) => {
+                        const tokenResponse = await new Promise((resolve, reject) => {
                             GM_xmlhttpRequest({
                                 method: "GET",
-                                url: orangutanFetchUrl,
+                                url: "https://howlongtobeat.com/api/search/init?t=",
+                                headers: {
+                                    "Accept": "*/*",
+                                    "User-Agent": navigator.userAgent,
+                                    "Referer": "https://howlongtobeat.com/?q="
+                                },
                                 onload: resolve,
-                                onerror: reject,
-                                ontimeout: reject,
-                                timeout: 7000
+                                onerror: reject
                             });
                         });
-                        if (response.status === 200) {
-                            const key = response.responseText.trim();
-                            orangutanHltbUrl = "https://howlongtobeat.com" + key;
+
+                        if (tokenResponse.status === 200) {
+                            const data = JSON.parse(tokenResponse.responseText);
+                            hltbToken = data.token;
                         } else {
-                            throw new Error('Failed to fetch key. Status: ' + response.status);
+                            throw new Error("Token status: " + tokenResponse.status);
                         }
-                    } catch (error) {
-                        content.textContent = 'Ошибка при получении ключа.';
+                    } catch (e) {
+                        console.error("HLTB Token Error:", e);
+                        content.textContent = 'Ошибка токена HLTB';
                         return;
                     }
 
-                    let chimpQuery = '{"searchType":"games","searchTerms":[' + gameNameNormalized + '],"searchPage":1,"size":20,"searchOptions":{"games":{"userId":0,"platform":"","sortCategory":"popular","rangeCategory":"main","rangeTime":{"min":null,"max":null},"gameplay":{"perspective":"","flow":"","genre":"","difficulty":""},"rangeYear":{"min":"","max":""},"modifier":""},"users":{"sortCategory":"postcount"},"lists":{"sortCategory":"follows"},"filter":"","sort":0,"randomizer":0},"useCache":true}';
+                    content.textContent = 'Ищем игру...';
+
+                    const searchPayload = {
+                        "searchType": "games",
+                        "searchTerms": searchName,
+                        "searchPage": 1,
+                        "size": 20,
+                        "searchOptions": {
+                            "games": {
+                                "userId": 0,
+                                "platform": "",
+                                "sortCategory": "popular",
+                                "rangeCategory": "main",
+                                "rangeTime": { "min": null, "max": null },
+                                "gameplay": { "perspective": "", "flow": "", "genre": "", "difficulty": "" },
+                                "rangeYear": { "min": "", "max": "" },
+                                "modifier": ""
+                            },
+                            "users": { "sortCategory": "postcount" },
+                            "lists": { "sortCategory": "follows" },
+                            "filter": "",
+                            "sort": 0,
+                            "randomizer": 0
+                        },
+                        "useCache": true
+                    };
+
                     GM_xmlhttpRequest({
                         method: "POST",
-                        url: orangutanHltbUrl,
-                        data: chimpQuery,
+                        url: "https://howlongtobeat.com/api/search",
+                        data: JSON.stringify(searchPayload),
                         headers: {
                             "Content-Type": "application/json",
-                            "origin": "https://howlongtobeat.com",
-                            "referer": "https://howlongtobeat.com/"
+                            "Origin": "https://howlongtobeat.com",
+                            "Referer": "https://howlongtobeat.com/",
+                            "User-Agent": navigator.userAgent,
+                            "x-auth-token": hltbToken
                         },
                         onload: async function(response) {
                             let baboonData = { count: 0, data: [] };
-                            if (!response.responseText.includes("<title>HowLongToBeat - 404</title>")) {
-                                try {
-                                    baboonData = JSON.parse(response.responseText);
-                                } catch (e) {
-                                    content.textContent = 'Ошибка при обработке данных.';
-                                    return;
-                                }
+
+                            if (response.responseText.includes("<!DOCTYPE html>")) {
+                                content.textContent = 'Ошибка: Cloudflare блок.';
+                                return;
+                            }
+
+                            try {
+                                baboonData = JSON.parse(response.responseText);
+                            } catch (e) {
+                                content.textContent = 'Ошибка парсинга данных.';
+                                return;
                             }
 
                             if (baboonData.count === 0 && /[а-яё]/i.test(gameName)) {
@@ -3594,32 +3631,27 @@
                                 const steamApiUrl = `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json={"ids": [{"appid": ${appId}}], "context": {"language": "english", "country_code": "US", "steam_realm": 1}, "data_request": {"include_assets": true}}`;
                                 try {
                                     const steamResponse = await new Promise((resolve, reject) => {
-                                        GM_xmlhttpRequest({
-                                            method: "GET",
-                                            url: steamApiUrl,
-                                            onload: resolve,
-                                            onerror: reject
-                                        });
+                                        GM_xmlhttpRequest({ method: "GET", url: steamApiUrl, onload: resolve, onerror: reject });
                                     });
                                     if (steamResponse.status === 200) {
                                         const steamData = JSON.parse(steamResponse.responseText);
                                         const englishName = steamData.response.store_items[0]?.name;
                                         if (englishName) {
-                                            gameName = englishName;
-                                            gameNameNormalized = normalizeGameName(gameName);
-                                            chimpQuery = '{"searchType":"games","searchTerms":[' + gameNameNormalized + '],"searchPage":1,"size":20,"searchOptions":{"games":{"userId":0,"platform":"","sortCategory":"popular","rangeCategory":"main","rangeTime":{"min":null,"max":null},"gameplay":{"perspective":"","flow":"","genre":"","difficulty":""},"rangeYear":{"min":"","max":""},"modifier":""},"users":{"sortCategory":"postcount"},"lists":{"sortCategory":"follows"},"filter":"","sort":0,"randomizer":0},"useCache":true}';
+                                            searchPayload.searchTerms = englishName.toLowerCase().split(/\s+/);
+
                                             const secondResponse = await new Promise((resolve, reject) => {
                                                 GM_xmlhttpRequest({
                                                     method: "POST",
-                                                    url: orangutanHltbUrl,
-                                                    data: chimpQuery,
+                                                    url: "https://howlongtobeat.com/api/search",
+                                                    data: JSON.stringify(searchPayload),
                                                     headers: {
                                                         "Content-Type": "application/json",
-                                                        "origin": "https://howlongtobeat.com",
-                                                        "referer": "https://howlongtobeat.com/"
+                                                        "Origin": "https://howlongtobeat.com",
+                                                        "Referer": "https://howlongtobeat.com/",
+                                                        "User-Agent": navigator.userAgent,
+                                                        "x-auth-token": hltbToken
                                                     },
-                                                    onload: resolve,
-                                                    onerror: reject
+                                                    onload: resolve, onerror: reject
                                                 });
                                             });
                                             if (secondResponse.status === 200) {
@@ -3628,7 +3660,7 @@
                                         }
                                     }
                                 } catch (error) {
-                                    console.error('Ошибка при запросе к Steam API:', error);
+                                    console.error('Ошибка при повторном поиске:', error);
                                 }
                             }
 
@@ -3640,11 +3672,15 @@
                                     return;
                                 }
                             }
-                            renderContent(baboonData.data[0]);
+                            if (baboonData.data && baboonData.data.length > 0) {
+                                renderContent(baboonData.data[0]);
+                            } else {
+                                renderContent(null);
+                            }
                             hltbBlock.style.height = `${content.scrollHeight + 30}px`;
                         },
-                        onerror: function(error) { content.textContent = 'Ошибка при запросе к HLTB.'; },
-                        ontimeout: function() { content.textContent = 'Тайм-аут при запросе к HLTB.'; },
+                        onerror: function(error) { content.textContent = 'Ошибка сети HLTB.'; },
+                        ontimeout: function() { content.textContent = 'Тайм-аут HLTB.'; },
                         timeout: 10000
                     });
                 } else {
@@ -7311,18 +7347,122 @@ if (headerCtn) {
         (function() {
             "use strict";
 
+            GM_addStyle(`
+            input[type=checkbox].my-checkbox {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                border: 6px inset rgba(255, 0, 0, 0.8);
+                border-radius: 50%;
+                width: 42px;
+                height: 42px;
+                outline: none;
+                transition: .15s ease-in-out;
+                vertical-align: middle;
+                position: absolute;
+                left: 0px;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: rgba(0, 0, 0, 0.0);
+                box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0.5);
+                cursor: pointer;
+                z-index: 999;
+            }
+
+            input[type=checkbox].my-checkbox:checked {
+                background-color: rgba(0, 0, 0, 0.5);
+                border-color: #b71c1c;
+                box-shadow: inset 0 0 0 12px rgba(255, 0, 0, 0.5);
+            }
+
+            input[type=checkbox].my-checkbox:after {
+                content: "";
+                display: block;
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) scale(0);
+                width: 25px;
+                height: 25px;
+                border-radius: 50%;
+                background-color: rgba(0, 0, 0, 0.9);
+                opacity: 0.9;
+                box-shadow: 0 0 0 0 #b71c1c;
+                transition: transform .15s ease-in-out, box-shadow .15s ease-in-out;
+            }
+
+            input[type=checkbox].my-checkbox:checked:after {
+                transform: translate(-50%, -50%) scale(1);
+                box-shadow: 0 0 0 4px #b71c1c;
+            }
+
+            .my-button {
+                margin-right: 10px;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 50px;
+                font-size: 16px;
+                font-weight: 700;
+                color: #fff;
+                background: linear-gradient(to right, #16202D, #1B2838);
+                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+                cursor: pointer;
+                font-family: "Roboto", sans-serif;
+                margin-top: 245px;
+            }
+
+            .my-button:hover {
+                background: linear-gradient(to right, #0072ff, #00c6ff);
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
+            }
+
+            .floating-button {
+                position: fixed;
+                top: -189px;
+                left: 240px;
+                z-index: 1000;
+            }
+
+            .game-counter {
+                margin-right: 10px;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 50px;
+                font-size: 16px;
+                font-weight: 700;
+                color: #fff;
+                background: linear-gradient(to right, #16202D, #1B2838);
+                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+                font-family: "Roboto", sans-serif;
+                margin-top: 195px;
+            }
+            `);
+
             function addBeetles() {
-                const scarabLinks = document.querySelectorAll("a.search_result_row:not(.ds_ignored):not(.ds_excluded_by_preferences):not(.ds_wishlist):not(.ds_owned)");
+                const container = document.getElementById('search_resultsRows');
+                if (!container) return;
+
+                const scarabLinks = container.querySelectorAll("a.search_result_row:not(.ds_ignored):not(.ds_excluded_by_preferences):not(.ds_wishlist):not(.ds_owned)");
+
                 scarabLinks.forEach(link => {
                     if (link.querySelector(".my-checkbox")) return;
+
+                    if (!link.dataset.dsAppid) return;
+
                     const ladybug = document.createElement("input");
                     ladybug.type = "checkbox";
                     ladybug.className = "my-checkbox";
                     ladybug.dataset.aphid = link.dataset.dsAppid;
+
                     link.insertBefore(ladybug, link.firstChild);
 
-                    ladybug.addEventListener("change", function() {
+                    ladybug.addEventListener("change", function(e) {
+                        e.stopPropagation();
                         link.style.background = this.checked ? "linear-gradient(to bottom, #381616, #5d1414)" : "";
+                    });
+
+                    ladybug.addEventListener("click", function(e) {
+                         e.stopPropagation();
                     });
                 });
             }
@@ -7333,15 +7473,18 @@ if (headerCtn) {
 
                 if (!sessionID) {
                     console.error('[CatalogHider] Не удалось получить g_sessionID!');
-                    alert('Не удалось получить ID сессии для скрытия игр. Пожалуйста, убедитесь, что вы авторизованы.');
+                    alert('Не удалось получить ID сессии. Убедитесь, что вы авторизованы.');
                     return;
                 }
 
                 checkedLadybugs.forEach(ladybug => {
                     const aphid = ladybug.dataset.aphid;
-                    const link = document.querySelector(`a[data-ds-appid="${aphid}"]`);
+                    const link = document.querySelector(`a.search_result_row[data-ds-appid="${aphid}"]`);
+
                     if (link) {
                         link.classList.add("ds_ignored", "ds_flagged");
+                        link.style.display = "none";
+
                         ladybug.remove();
 
                         GM_xmlhttpRequest({
@@ -7350,22 +7493,22 @@ if (headerCtn) {
                             data: `sessionid=${sessionID}&appid=${aphid}&remove=0&snr=1_account_notinterested_`,
                             headers: { "Content-Type": "application/x-www-form-urlencoded" },
                             onload: function(response) {
-                                console.log(`[CatalogHider] Игра с appid ${aphid} добавлена в список игнорируемого.`);
+                                console.log(`[CatalogHider] Игра ${aphid} скрыта.`);
                                 if (typeof unsafeWindow !== 'undefined' && unsafeWindow.GDynamicStore) {
                                     unsafeWindow.GDynamicStore.InvalidateCache();
                                 }
                             },
                             onerror: function(error) {
-                                console.error(`[CatalogHider] Ошибка при скрытии игры ${aphid}:`, error);
+                                console.error(`[CatalogHider] Ошибка скрытия ${aphid}:`, error);
                             }
                         });
                     }
                 });
-                setTimeout(updateAntCounter, 500);
+                setTimeout(updateAntCounter, 200);
             }
 
             function removeIgnoredDragonflies() {
-                const ignoredGames = document.querySelectorAll("a.search_result_row.ds_ignored, a.search_result_row.ds_excluded_by_preferences,a.search_result_row.ds_wishlist");
+                const ignoredGames = document.querySelectorAll("a.search_result_row.ds_ignored, a.search_result_row.ds_excluded_by_preferences, a.search_result_row.ds_wishlist");
                 ignoredGames.forEach(game => game.remove());
                 updateAntCounter();
             }
@@ -7380,7 +7523,10 @@ if (headerCtn) {
 
             const grasshopperButton = document.createElement("button");
             grasshopperButton.textContent = "Скрыть выбранное";
-            grasshopperButton.addEventListener("click", hideSelectedCrickets);
+            grasshopperButton.addEventListener("click", function(e) {
+                e.preventDefault();
+                hideSelectedCrickets();
+            });
             grasshopperButton.classList.add("my-button", "floating-button");
             document.body.appendChild(grasshopperButton);
 
@@ -7389,113 +7535,31 @@ if (headerCtn) {
             cockroach.classList.add("game-counter", "floating-button");
             document.body.appendChild(cockroach);
 
+            const resultsContainer = document.getElementById('search_resultsRows');
 
+            if (resultsContainer) {
+                const butterflyObserver = new MutationObserver(mutations => {
+                    let shouldUpdate = false;
+                    mutations.forEach(mutation => {
+                        if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
+                            shouldUpdate = true;
+                        }
+                    });
 
-            GM_addStyle(`
-            input[type=checkbox].my-checkbox {
-            	-webkit-appearance: none;
-            	-moz-appearance: none;
-            	appearance: none;
-            	border: 6px inset rgba(255, 0, 0, 0.8);
-            	border-radius: 50%;
-            	width: 42px;
-            	height: 42px;
-            	outline: none;
-            	transition: .15s ease-in-out;
-            	vertical-align: middle;
-            	position: absolute;
-            	left: 0px;
-            	top: 50%;
-            	transform: translateY(-50%);
-            	background-color: rgba(0, 0, 0, 0.0);
-            	box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0.5);
-            	cursor: pointer;
-            	z-index: 9999;
-            }
-
-            input[type=checkbox].my-checkbox:checked {
-            	background-color: rgba(0, 0, 0, 0.5);
-            	border-color: #b71c1c;
-            	box-shadow: inset 0 0 0 12px rgba(255, 0, 0, 0.5);
-            }
-
-            input[type=checkbox].my-checkbox:after {
-            	content: "";
-            	display: block;
-            	position: absolute;
-            	left: 50%;
-            	top: 50%;
-            	transform: translate(-50%, -50%) scale(0);
-            	width: 25px;
-            	height: 25px;
-            	border-radius: 50%;
-            	background-color: rgba(0, 0, 0, 0.9);
-            	opacity: 0.9;
-            	box-shadow: 0 0 0 0 #b71c1c;
-            	transition: transform .15s ease-in-out, box-shadow .15s ease-in-out;
-            }
-
-            input[type=checkbox].my-checkbox:checked:after {
-            	transform: translate(-50%, -50%) scale(1);
-            	box-shadow: 0 0 0 4px #b71c1c;
-            }
-
-            .my-button {
-            	margin-right: 10px;
-            	padding: 10px 20px;
-            	border: none;
-            	border-radius: 50px;
-            	font-size: 16px;
-            	font-weight: 700;
-            	color: #fff;
-            	background: linear-gradient(to right, #16202D, #1B2838);
-            	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-            	cursor: pointer;
-            	font-family: "Roboto", sans-serif;
-            	margin-top: 245px;
-            }
-
-            .my-button:hover {
-            	background: linear-gradient(to right, #0072ff, #00c6ff);
-            	box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
-            }
-
-            .floating-button {
-            	position: fixed;
-            	top: -189px;
-            	left: 240px;
-            	z-index: 1000;
-            }
-
-            .game-counter {
-            	margin-right: 10px;
-            	padding: 10px 20px;
-            	border: none;
-            	border-radius: 50px;
-            	font-size: 16px;
-            	font-weight: 700;
-            	color: #fff;
-            	background: linear-gradient(to right, #16202D, #1B2838);
-            	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-            	font-family: "Roboto", sans-serif;
-            	margin-top: 195px;
-            }
-    `);
-
-            const butterflyObserver = new MutationObserver(mutations => {
-                mutations.forEach(mutation => {
-                    if (mutation.type === "childList" && mutation.addedNodes.length) {
+                    if (shouldUpdate) {
                         addBeetles();
                         removeIgnoredDragonflies();
                         updateAntCounter();
                     }
                 });
-            });
 
-            butterflyObserver.observe(document.body, {
-                childList: true,
-                subtree: true
-            });
+                butterflyObserver.observe(resultsContainer, {
+                    childList: true,
+                    subtree: false
+                });
+            } else {
+                console.warn("[CatalogHider] Контейнер search_resultsRows не найден. Скрипт может не работать при бесконечной прокрутке.");
+            }
 
             addBeetles();
             removeIgnoredDragonflies();
@@ -24044,10 +24108,13 @@ if (headerCtn) {
         })();
     }
 
-    // Скрипт для добавления ссылок на PCGamingWiki и SteamDB, и кнопки магазина
+    // Скрипт для добавления ссылок на PCGamingWiki и SteamDB, и кнопки магазина + копирование англ. названия
     if (scriptsConfig.ExternalLinksEnhancer) {
         (function() {
             'use strict';
+
+            const COPY_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#FFFFFF" viewBox="0 0 16 16" opacity="0.9"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A1.5 1.5 0 0 1 9.5 2.5h-3A1.5 1.5 0 0 1 5 1.5v-1H4a.5.5 0 0 0-.5.5V14a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V3.5a.5.5 0 0 0-.5-.5H6.5v1A.5.5 0 0 1 6 2h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5V1.5H4z"/><path d="M5 1.5v-1H6a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1A1.5 1.5 0 0 1 9.5 2.5h-3A1.5 1.5 0 0 1 5 1.5z"/></svg>`;
+            const CHECK_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#77dd77" viewBox="0 0 16 16" opacity="0.9"><path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A1.5 1.5 0 0 1 9.5 2.5h-3A1.5 1.5 0 0 1 5 1.5v-1H4a.5.5 0 0 0-.5.5V14a.5.5 0 0 0 .5.5h10a.5.5 0 0 0 .5-.5V3.5a.5.5 0 0 0-.5-.5H6.5v1A.5.5 0 0 1 6 2h4a.5.5 0 0 1 0 1H6a.5.5 0 0 1-.5-.5V1.5H4z"/><path d="M5 1.5v-1H6a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v1A1.5 1.5 0 0 1 9.5 2.5h-3A1.5 1.5 0 0 1 5 1.5z"/></svg>`;
 
             const PCGW_SVG = `<?xml version="1.0" encoding="UTF-8"?><svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="16px" height="16px" viewBox="0 0 16 16" enable-background="new 0 0 16 16" xml:space="preserve"><polygon opacity="0.75" fill="#FFFFFF" enable-background="new" points="7.5,15.134 1.5,13.23 1.5,2.682 7.5,0.634 "/><path opacity="0.5" fill="#FFFFFF" enable-background="new" d="M12.881,1.305L8.344,0.634v14.5l4.584-0.596L12.881,1.305z M10.344,13.787l-1,0.115V8.5h1V13.787z M12.344,6.947l-1.021-0.075c-0.151,0.222-0.429,0.377-0.72,0.377 c-0.342,0-0.438-0.203-0.574-0.492L9.344,6.688V5.85l0.747,0.075c0.151-0.222,0.292-0.377,0.583-0.377 c0.342,0,0.644,0.203,0.779,0.492l0.891,0.069V6.947z M12.344,4.281l-3-0.26V3.184l3,0.26V4.281z"/></svg>`;
             const STEAMDB_SVG = `<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 128 128" fill="#FFFFFF"><path d="M 63.9 0 C 30.5 0 3.1 11.9 0.1 27.1 l 35.6 6.7 c 2.9 -0.9 6.2 -1.3 9.6 -1.3 l 16.7 -10 c -0.2 -2.5 1.3 -5.1 4.7 -7.2 4.8 -3.1 12.3 -4.8 19.9 -4.8 5.2 -0.1 10.5 0.7 15 2.2 11.2 3.8 13.7 11.1 5.7 16.3 -5.1 3.3 -13.3 5 -21.4 4.8 l -22 7.9 c -0.2 1.6 -1.3 3.1 -3.4 4.5 -5.9 3.8 -17.4 4.7 -25.6 1.9 -3.6 -1.2 -6 -3 -7 -4.8 L 2.5 38.4 C 4.8 42 8.5 45.3 13.3 48.2 5 53 0 59 0 65.5 0 71.9 4.8 77.8 12.9 82.6 4.8 87.3 0 93.2 0 99.6 0 115.3 28.6 128 64 128 99.3 128 128 115.3 128 99.6 128 93.2 123.2 87.3 115.1 82.6 123.2 77.8 128 71.9 128 65.5 128 59 123 52.9 114.6 48.1 122.9 43 127.9 36.7 127.9 29.9 127.9 13.4 99.2 0 63.9 0 Z m 22.8 14.2 c -5.2 0.1 -10.2 1.2 -13.4 3.3 -5.5 3.6 -3.8 8.5 3.8 11.1 7.6 2.6 18.1 1.8 23.6 -1.8 5.5 -3.6 3.8 -8.5 -3.8 -11 -3.1 -1 -6.7 -1.5 -10.2 -1.5 z m 0.3 1.7 c 7.4 0 13.3 2.8 13.3 6.2 0 3.4 -5.9 6.2 -13.3 6.2 -7.4 0 -13.3 -2.8 -13.3 -6.2 -0 -3.4 5.9 -6.2 13.3 -6.2 z m -41.7 18.5 0 0 c -1.6 0.1 -3.1 0.2 -4.6 0.4 l 9.1 1.7 a 10.8 5 0 1 1 -8.1 9.3 l -8.9 -1.7 c 1 0.9 2.4 1.7 4.3 2.4 6.4 2.2 15.4 1.5 20 -1.5 4.6 -3 3.2 -7.2 -3.2 -9.3 -2.6 -0.9 -5.7 -1.3 -8.6 -1.3 z m 63.7 16.6 0 9.3 c 0 11 -20.2 19.9 -45 19.9 -24.9 0 -45 -8.9 -45 -19.9 l 0 -9.2 c 11.5 5.3 27.4 8.6 44.9 8.6 17.6 0 33.6 -3.3 45.2 -8.7 z m 0 34.6 0 8.8 c 0 11 -20.2 19.9 -45 19.9 -24.9 0 -45 -8.9 -45 -19.9 l 0 -8.8 c 11.6 5.1 27.4 8.2 45 8.2 17.6 0 33.5 -3.1 45 -8.2 z" /></svg>`;
@@ -24063,13 +24130,14 @@ if (headerCtn) {
                 link.href = href;
                 link.target = '_blank';
 
-
                 const span = document.createElement('span');
                 span.dataset.tooltipText = tooltipText;
 
                 const img = document.createElement('img');
                 img.className = 'ico16';
                 img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgHtml)}`;
+                img.style.width = '16px';
+                img.style.height = '16px';
 
                 span.appendChild(img);
                 link.appendChild(span);
@@ -24084,30 +24152,54 @@ if (headerCtn) {
                 const container = document.querySelector('.apphub_OtherSiteInfo');
                 if (!container) return;
 
+                if (container.querySelector('#use_copy_eng_name_btn') || container.querySelector('.use_pcgw_btn')) {
+                    return;
+                }
+
+                let copyButton = null;
                 let pcgwButton = null;
                 let steamdbButton = null;
 
-                if (!container.querySelector('a[href*="pcgamingwiki.com"]')) {
-                    pcgwButton = createButton(`https://pcgamingwiki.com/api/appid.php?appid=${appId}`, 'Посмотреть на PCGamingWiki', PCGW_SVG);
-                }
+                if (window.location.hostname.includes('store.steampowered.com')) {
+                    copyButton = createButton('#', 'Копировать английское название', COPY_SVG);
+                    copyButton.id = 'use_copy_eng_name_btn';
+                    copyButton.addEventListener('click', (e) => {
+                        e.preventDefault();
 
-                if (!container.querySelector('a[href*="steamdb.info"]')) {
-                    steamdbButton = createButton(`https://steamdb.info/app/${appId}/`, 'Посмотреть на SteamDB', STEAMDB_SVG);
-                }
+                        const img = copyButton.querySelector('img');
+                        const originalSrc = img.src;
+                        if (img.src.includes("77dd77")) return;
 
-                if (steamdbButton) {
-                    container.prepend(steamdbButton);
-                }
+                        const apiUrl = `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json=${encodeURIComponent(JSON.stringify({
+                            ids: [{ appid: parseInt(appId) }],
+                            context: { language: "english", country_code: "US" },
+                            data_request: { include_basic_info: true }
+                        }))}`;
 
-                if (pcgwButton) {
-                    container.prepend(pcgwButton);
+                        GM_xmlhttpRequest({
+                            method: "GET",
+                            url: apiUrl,
+                            timeout: 10000,
+                            onload: function(response) {
+                                try {
+                                    if (response.status === 200 && response.responseText) {
+                                        const data = JSON.parse(response.responseText);
+                                        const gameName = data?.response?.store_items?.[0]?.name;
+                                        if (gameName) {
+                                            navigator.clipboard.writeText(gameName).then(() => {
+                                                img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(CHECK_SVG)}`;
+                                                setTimeout(() => { img.src = originalSrc; }, 2000);
+                                            }).catch(err => console.error('[ExternalLinksEnhancer] Ошибка копирования:', err));
+                                        } else { console.error('[ExternalLinksEnhancer] Имя не найдено в API:', data); }
+                                    } else { console.error('[ExternalLinksEnhancer] Ошибка API:', response.status); }
+                                } catch (e) { console.error('[ExternalLinksEnhancer] Ошибка парсинга JSON:', e, response.responseText); }
+                            },
+                            onerror: (err) => console.error('[ExternalLinksEnhancer] Сетевая ошибка:', err),
+                            ontimeout: () => console.error('[ExternalLinksEnhancer] Таймаут API.')
+                        });
+                    });
 
-                    if (steamdbButton) {
-                        container.insertBefore(document.createTextNode(' '), pcgwButton.nextSibling);
-                    }
-                }
-
-                if (window.location.hostname.includes('steamcommunity.com')) {
+                } else if (window.location.hostname.includes('steamcommunity.com')) {
                     if (!container.querySelector('a[href*="store.steampowered.com/app/"]')) {
                         const storeButton = document.createElement('a');
                         storeButton.className = 'btnv6_blue_hoverfade btn_medium';
@@ -24115,6 +24207,42 @@ if (headerCtn) {
                         storeButton.innerHTML = '<span>Страница в магазине</span>';
                         storeButton.target = '_blank';
                         container.appendChild(storeButton);
+                    }
+                }
+
+                if (!container.querySelector('a[href*="pcgamingwiki.com"]')) {
+                    pcgwButton = createButton(`https://pcgamingwiki.com/api/appid.php?appid=${appId}`, 'Посмотреть на PCGamingWiki', PCGW_SVG);
+                    pcgwButton.classList.add('use_pcgw_btn');
+                }
+
+                if (!container.querySelector('a[href*="steamdb.info"]')) {
+                    steamdbButton = createButton(`https://steamdb.info/app/${appId}/`, 'Посмотреть на SteamDB', STEAMDB_SVG);
+                    steamdbButton.classList.add('use_steamdb_btn');
+                }
+
+                let addedAnyButton = false;
+                if (steamdbButton) {
+                    container.prepend(steamdbButton);
+                    addedAnyButton = true;
+                }
+
+                if (pcgwButton) {
+                    container.prepend(pcgwButton);
+                    if (steamdbButton) {
+                        container.insertBefore(document.createTextNode(' '), pcgwButton.nextSibling);
+                    }
+                    addedAnyButton = true;
+                }
+
+                if (copyButton) {
+                    container.prepend(copyButton);
+                    const existingPcgw = container.querySelector('a[href*="pcgamingwiki.com"]');
+                    const existingSteamDb = container.querySelector('a[href*="steamdb.info"]');
+
+                    if (addedAnyButton || (existingPcgw && existingPcgw !== copyButton) || (existingSteamDb && existingSteamDb !== copyButton)) {
+                        if (copyButton.nextSibling && copyButton.nextSibling.nodeType !== Node.TEXT_NODE) {
+                             container.insertBefore(document.createTextNode(' '), copyButton.nextSibling);
+                        }
                     }
                 }
             }
