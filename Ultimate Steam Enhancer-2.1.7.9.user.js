@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.7.8
+// @version      2.1.7.9
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -1915,7 +1915,7 @@
 
                 function setColor(hasSupport) {
                     const borderColor = hasSupport ? '#2A5891' : '#3c3c3c';
-                    const svgFill = hasSupport ? '#FFFFFF' : '#0E1C25';
+                    const svgFill = hasSupport ? '#FFFFFF' : '#3A3B3B';
 
                     grape.style.border = `1px solid ${borderColor}`;
                     if (svgElement) {
@@ -3553,11 +3553,11 @@
                         const tokenResponse = await new Promise((resolve, reject) => {
                             GM_xmlhttpRequest({
                                 method: "GET",
-                                url: "https://howlongtobeat.com/api/search/init?t=",
+                                url: "https://howlongtobeat.com/api/finder/init?t=" + Date.now(),
                                 headers: {
                                     "Accept": "*/*",
                                     "User-Agent": navigator.userAgent,
-                                    "Referer": "https://howlongtobeat.com/?q="
+                                    "Referer": "https://howlongtobeat.com/"
                                 },
                                 onload: resolve,
                                 onerror: reject
@@ -3605,7 +3605,7 @@
 
                     GM_xmlhttpRequest({
                         method: "POST",
-                        url: "https://howlongtobeat.com/api/search",
+                        url: "https://howlongtobeat.com/api/finder",
                         data: JSON.stringify(searchPayload),
                         headers: {
                             "Content-Type": "application/json",
@@ -3645,7 +3645,7 @@
                                             const secondResponse = await new Promise((resolve, reject) => {
                                                 GM_xmlhttpRequest({
                                                     method: "POST",
-                                                    url: "https://howlongtobeat.com/api/search",
+                                                    url: "https://howlongtobeat.com/api/finder",
                                                     data: JSON.stringify(searchPayload),
                                                     headers: {
                                                         "Content-Type": "application/json",
@@ -13114,8 +13114,20 @@ if (headerCtn) {
             }
 
             function wgh_addAnalyzeButton() {
-                const titleBlock = document.querySelector('div.jfAmlCmNzHQ-');
+                let titleBlock = document.querySelector('div.G-xGsXlx-Sw-');
+
+                if (!titleBlock) {
+                    const allH2 = document.querySelectorAll('h2');
+                    for (const h2 of allH2) {
+                        if (h2.textContent && (h2.textContent.includes('WISHLIST') || h2.textContent.includes('СПИСОК ЖЕЛАЕМОГО'))) {
+                            titleBlock = h2.parentElement;
+                            break;
+                        }
+                    }
+                }
+
                 if (!titleBlock || document.getElementById('wghAnalyzeButton')) return;
+
                 wgh_analyzeBtn = document.createElement('button');
                 wgh_analyzeBtn.id = 'wghAnalyzeButton';
                 wgh_analyzeBtn.title = 'Помощник подарков';
@@ -13140,6 +13152,7 @@ if (headerCtn) {
                     wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.1)';
                 };
                 wgh_analyzeBtn.onclick = wgh_showModal;
+
                 const h2Title = titleBlock.querySelector('h2');
                 if (h2Title) {
                     h2Title.style.display = 'inline-block';
@@ -21597,11 +21610,11 @@ if (headerCtn) {
                     }
                 }, // --- Конец модуля Rushbe ---
 
-                { // --- Модуль Sous-Buy ---
+                { // --- Модуль Sous-Buy (Fix) ---
                     id: 'sousbuy',
                     name: 'Sous-Buy',
                     baseUrl: 'https://sous-buy.ru',
-                    searchUrlTemplate: 'https://sous-buy.ru/catalog?GameSearch[game]={query}&GameSearch[instock]=1&GameSearch[key]=1',
+                    searchUrlTemplate: 'https://sous-buy.ru/catalog?GameSearch[game]={query}&GameSearch[instock]=1&GameSearch[key]=1&GameSearch[platform]=1',
                     isEnabled: true,
                     fetch: async function(query) {
                         const searchUrl = this.searchUrlTemplate.replace('{query}', encodeURIComponent(query));
@@ -21609,6 +21622,10 @@ if (headerCtn) {
                             GM_xmlhttpRequest({
                                 method: "GET",
                                 url: searchUrl,
+                                headers: {
+                                    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+                                    "User-Agent": navigator.userAgent
+                                },
                                 timeout: SM_REQUEST_TIMEOUT_MS,
                                 onload: (response) => {
                                     if (response.status >= 200 && response.status < 400) {
@@ -21631,7 +21648,7 @@ if (headerCtn) {
                         items.forEach(item => {
                             try {
                                 const platformElement = item.querySelector('.product-item-platform');
-                                if (platformElement && platformElement.textContent.trim() !== 'Steam') {
+                                if (platformElement && !platformElement.textContent.includes('Steam')) {
                                     return;
                                 }
 
@@ -21646,12 +21663,12 @@ if (headerCtn) {
                                 const originalPrice = oldPriceElement ? sm_parsePrice(oldPriceElement.textContent) : null;
 
                                 let imageUrl = null;
-                                const bgStyle = item.style.background;
-                                if (bgStyle && bgStyle.includes('url(')) {
-                                    const urlMatch = bgStyle.match(/url\("?(.+?)"?\)/);
-                                    if (urlMatch && urlMatch[1]) {
-                                        imageUrl = urlMatch[1];
-                                    }
+                                const styleAttr = item.getAttribute('style');
+                                if (styleAttr && styleAttr.includes('--image')) {
+                                     const urlMatch = styleAttr.match(/url\("?(.+?)"?\)/);
+                                     if (urlMatch && urlMatch[1]) {
+                                         imageUrl = urlMatch[1];
+                                     }
                                 }
 
                                 if (!productName || !productUrlRaw || currentPrice === null) {
@@ -21664,7 +21681,7 @@ if (headerCtn) {
                                     storeUrl: storeModule.baseUrl,
                                     productName: productName,
                                     productUrl: productUrlRaw.startsWith('/') ? storeModule.baseUrl + productUrlRaw : productUrlRaw,
-                                    imageUrl: imageUrl?.startsWith('/') ? storeModule.baseUrl + imageUrl : imageUrl,
+                                    imageUrl: imageUrl && imageUrl.startsWith('/') ? storeModule.baseUrl + imageUrl : imageUrl,
                                     currentPrice: currentPrice,
                                     originalPrice: originalPrice,
                                     discountPercent: null,
