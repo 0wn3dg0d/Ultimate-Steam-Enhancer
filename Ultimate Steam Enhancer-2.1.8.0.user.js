@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.7.9
+// @version      2.1.8.0
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -74,6 +74,8 @@
 // @connect      api-public-gaming.eco.rt.ru
 // @connect      igrovoy.rt.ru
 // @connect      cdn.igrovoy.rt.ru
+// @connect      backend.gamershub.ru
+// @connect      backoffice.gamershub.ru
 // @connect      cdn.jsdelivr.net
 // @connect      img.shields.io
 // ==/UserScript==
@@ -495,7 +497,7 @@
         'HK': { name: 'Гонконгский доллар' },
         'AE': { name: 'Дирхам ОАЭ' },
         'US': { name: 'Доллар США' },
-        'EU': { name: 'Евро' },
+        'DE': { name: 'Евро' },
         'IL': { name: 'Израильский новый шекель' },
         'IN': { name: 'Индийская рупия' },
         'ID': { name: 'Индонезийская рупия' },
@@ -4815,7 +4817,7 @@ if (headerCtn) {
                     code: 1,
                     iso: 'usd'
                 },
-                'EU': {
+                'DE': {
                     name: 'Евро',
                     code: 3,
                     iso: 'eur'
@@ -5022,7 +5024,7 @@ if (headerCtn) {
                     code: 1,
                     iso: 'usd'
                 },
-                'EU': {
+                'DE': {
                     name: 'Euro',
                     code: 3,
                     iso: 'eur'
@@ -12805,7 +12807,7 @@ if (headerCtn) {
                     code: 1,
                     iso: 'usd'
                 },
-                'EU': {
+                'DE': {
                     name: 'Евро',
                     code: 3,
                     iso: 'eur'
@@ -15348,7 +15350,7 @@ if (headerCtn) {
                     code: 1,
                     iso: 'usd'
                 },
-                'EU': {
+                'DE': {
                     name: 'Euro',
                     code: 3,
                     iso: 'eur'
@@ -21108,6 +21110,7 @@ if (headerCtn) {
                         let allItems = [];
                         let pageIndex = 0;
                         let hasNext = true;
+                        const MAX_PAGES = 2;
                         const storeModule = this;
 
                         async function fetchBukaPage(currentIndex) {
@@ -21153,7 +21156,8 @@ if (headerCtn) {
                                     }
 
                                     hasNext = pageInfo?.hasNext ?? false;
-                                    if (hasNext) {
+
+                                    if (hasNext && currentIndex < MAX_PAGES - 1) {
                                         await fetchBukaPage(currentIndex + 1);
                                     }
 
@@ -21173,19 +21177,16 @@ if (headerCtn) {
 
                     parseApiItem: function(item, storeModule) {
                         try {
-                            // --- Фильтрация ---
                             const platformFilter = item.filters?.find(f => f.field === 'platform');
                             const isPC = platformFilter?.values?.some(v => v.title === 'PC');
 
                             if (!isPC) return null;
 
-                            // 2. Проверяем статус продажи
                             const saleState = item.saleState;
                             if (saleState !== 'available' && saleState !== 'pre-order') {
                                 return null;
                             }
 
-                            // --- Сбор данных ---
                             const productName = item.title?.trim();
                             const productUrlRaw = item.alias ? `/item/${item.alias}` : null;
 
@@ -21204,7 +21205,6 @@ if (headerCtn) {
                             let originalPrice = typeof priceObj.old === 'number' ? priceObj.old : sm_parsePrice(priceObj.old);
                             if (originalPrice === 0) originalPrice = null;
 
-                            // Скидка
                             let discountPercent = priceObj.discount;
                             if (!discountPercent && originalPrice && currentPrice < originalPrice) {
                                 discountPercent = Math.round((1 - currentPrice / originalPrice) * 100);
@@ -21610,7 +21610,7 @@ if (headerCtn) {
                     }
                 }, // --- Конец модуля Rushbe ---
 
-                { // --- Модуль Sous-Buy (Fix) ---
+                { // --- Модуль Sous-Buy ---
                     id: 'sousbuy',
                     name: 'Sous-Buy',
                     baseUrl: 'https://sous-buy.ru',
@@ -21943,6 +21943,94 @@ if (headerCtn) {
                         return results;
                     }
                 }, // --- Конец модуля Ростелеком ---
+
+                { // --- Модуль Gamers Hub ---
+                    id: 'gamershub',
+                    name: 'Gamers Hub',
+                    baseUrl: 'https://gamershub.ru',
+                    searchUrlTemplate: 'https://backend.gamershub.ru/api/Catalog/Groups/Goods?userId=&sort=1&page=1&pageSize=25&filter={query}&groupIds=&parameters=%D0%A1%D0%B5%D1%80%D0%B2%D0%B8%D1%81%20%D0%B0%D0%BA%D1%82%D0%B8%D0%B2%D0%B0%D1%86%D0%B8%D0%B8:Steam',
+                    isEnabled: true,
+                    fetch: async function(query) {
+                        const searchUrl = this.searchUrlTemplate.replace('{query}', encodeURIComponent(query));
+                        return new Promise((resolve, reject) => {
+                            GM_xmlhttpRequest({
+                                method: "GET",
+                                url: searchUrl,
+                                headers: {
+                                    "Accept": "application/json",
+                                    "User-Agent": navigator.userAgent
+                                },
+                                timeout: SM_REQUEST_TIMEOUT_MS,
+                                onload: async (response) => {
+                                    if (response.status >= 200 && response.status < 400) {
+                                        try {
+                                            const json = JSON.parse(response.responseText);
+                                            resolve(await this.parseJson(json, this));
+                                        } catch (e) {
+                                            reject(new Error('Ошибка обработки JSON'));
+                                        }
+                                    } else {
+                                        reject(new Error(`HTTP статус ${response.status}`));
+                                    }
+                                },
+                                onerror: (error) => reject(new Error('Сетевая ошибка')),
+                                ontimeout: () => reject(new Error('Таймаут запроса'))
+                            });
+                        });
+                    },
+                    parseJson: async function(json, storeModule) {
+                        const results = [];
+                        const products = json.data || [];
+
+                        await sm_fetchExchangeRates('usd').catch(e => sm_logError(storeModule.name, "Не удалось загрузить курсы", e));
+
+                        for (const item of products) {
+                            try {
+                                const productName = item.name?.trim();
+
+                                const currentPrice = parseFloat(item.newPrice);
+                                let originalPrice = parseFloat(item.oldPrice);
+
+                                if (isNaN(currentPrice)) continue;
+
+                                if (isNaN(originalPrice) || originalPrice <= currentPrice) {
+                                    originalPrice = null;
+                                }
+
+                                const discountPercent = item.discount ? parseInt(item.discount, 10) : null;
+                                const imageUrl = item.image || (item.carouselImages && item.carouselImages[0]) || null;
+
+                                const productUrl = storeModule.baseUrl + '/product/' + item.id;
+
+                                if (!productName) continue;
+
+                                let data = {
+                                    storeId: storeModule.id,
+                                    storeName: storeModule.name,
+                                    storeUrl: storeModule.baseUrl,
+                                    productName: productName,
+                                    productUrl: productUrl,
+                                    imageUrl: imageUrl,
+                                    currentPrice: currentPrice,
+                                    originalPrice: originalPrice,
+                                    discountPercent: discountPercent > 0 ? discountPercent : null,
+                                    discountAmount: null,
+                                    currency: item.currency || 'RUB',
+                                    isAvailable: true
+                                };
+
+                                const processedData = await sm_processItemCurrency(data, currentPrice.toString());
+                                if (processedData) {
+                                    results.push(sm_calculateMissingValues(processedData));
+                                }
+
+                            } catch (e) {
+                                sm_logError(storeModule.name, 'Ошибка парсинга JSON элемента', e);
+                            }
+                        }
+                        return results;
+                    }
+                }, // --- Конец модуля Gamers Hub ---
 
                 // --- Сюда другие модули ---
             ];
