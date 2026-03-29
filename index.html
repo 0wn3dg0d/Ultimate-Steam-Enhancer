@@ -387,9 +387,9 @@
                         <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Анализатор цен</summary>
                         <div class="p-6 border-t border-dx-border space-y-4 details-content">
                             <p><strong>Что делает:</strong> Добавляет кнопку "Анализатор цен" на страницу игры. Этот продвинутый инструмент позволяет детально анализировать региональные цены Steam, сравнивая их с выбранной базовой валютой и официальными моделями ценообразования Valve.</p>
-                            
+
                             <p>После нажатия кнопки "Сбор данных" модуль выполняет глубокий анализ:</p>
-                            
+
                             <ul>
                                 <li><strong>Выбор базового региона:</strong> В верхней панели можно выбрать любую валюту в качестве базы для сравнения (по умолчанию используется регион пользователя, например, рубли).</li>
                                 <li><strong>Глобальный сбор:</strong> Запрашивает фактические цены игры для более чем 40 регионов через официальное API Steam.</li>
@@ -402,14 +402,11 @@
 
                             <p>Инструмент позволяет разработчикам, кураторам и обычным игрокам мгновенно оценить, насколько справедливо издатель установил цены в различных уголках мира.</p>
 
-                            <div class="bg-blue-900/20 border border-blue-500/50 text-blue-300 p-4 rounded-lg mt-4">
-                                <p class="font-bold mb-2">⚠️ Важная информация:</p>
-                                <p>Каждый полный сбор данных подразумевает отправку <strong>~41 запроса</strong> к серверам Steam (количество зависит от числа доступных регионов). Пожалуйста, используйте эту функцию обдуманно. Частое нажатие кнопки на разных играх в течение короткого периода времени может привести к временному ограничению доступа к API Steam (обычно на 5-15 минут).</p>
+                            <div style="margin-top: 15px; padding: 10px; background-color: rgba(103, 193, 245, 0.1); border: 1px solid rgba(103, 193, 245, 0.35); border-radius: 4px; font-size: 0.95em; line-height: 1.4;">
+                                <p style="margin: 0 0 5px 0; font-weight: bold; color: #67c1f5;">⚠️ Важная информация:</p>
+                                <p style="margin: 0; color: #c6d4df;">Каждый полный сбор данных подразумевает отправку <strong>~41 запроса</strong> к серверам Steam (количество зависит от числа доступных регионов). Пожалуйста, используйте эту функцию обдуманно. Частое нажатие кнопки на разных играх в течение короткого периода времени может привести к временному ограничению доступа к API Steam (обычно на 5-15 минут).</p>
                             </div>
-                            
-                            <div class="text-center mt-4">
-                                <img src="https://i.imgur.com/uAZ55Qf.png" alt="Пример интерфейса анализатора цен" class="feature-img inline-block">
-                            </div>
+                            <img src="https://i.imgur.com/uAZ55Qf.png" alt="Пример интерфейса анализатора цен" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                         </div>
                     </details>
                     <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
@@ -721,8 +718,7 @@
                     <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
                         <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Доступность подарков (список желаемого)</summary>
                         <div class="p-6 border-t border-dx-border space-y-4 details-content">
-                            <p><strong>Что делает:</strong> Добавляет кнопку со значком лупы <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" class="inline-block align-text-bottom"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg> на страницу списка желаемого, позволяющую анализировать цены, скидки и определять, какие игры можно подарить друзьям в других регионах.</p>
-                            
+                            <p><strong>Что делает:</strong> Добавляет кнопку со значком лупы <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align: middle;"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg> на страницу списка желаемого, позволяющую анализировать цены, скидки и определять, какие игры можно подарить друзьям в других регионах.</p>
                             <p><strong>Основные функции:</strong></p>
                             <ul>
                                 <li>Загружает игры из отображаемого списка желаемого и выводит их в виде информативных карточек.</li>
@@ -734,18 +730,14 @@
                                         <li>Вы выбираете регион вашего друга.</li>
                                         <li>Скрипт запрашивает цены на игры из списка желаемого для выбранного региона.</li>
                                         <li>Цены друга конвертируются в вашу валюту по актуальному биржевому курсу.</li>
-                                        <li>Отображается <strong>разница в цене</strong> между вашим регионом и регионом друга (с цветовой индикацией: <span class="text-green-400 font-bold">зелёный</span> - можно дарить, <span class="text-red-400 font-bold">красный</span> - нельзя).</li>
+                                        <li>Отображается <strong>разница в цене</strong> между вашим регионом и регионом друга (с цветовой индикацией: <span style="color:#77dd77; font-weight:bold;">зелёный</span> - можно дарить, <span style="color:#ff6961; font-weight:bold;">красный</span> - нельзя).</li>
                                         <li>Доступен фильтр <strong>"Можно подарить"</strong>, который показывает только те игры, у которых разница в цене находится в допустимых пределах (до ~10%-15%) и которые Steam системно разрешает покупать в подарок.</li>
                                     </ul>
                                 </li>
                             </ul>
-                            
-                            <p>Это помогает легко находить выгодные предложения, оценивать адекватность ценообразования издателя и подбирать экономически целесообразные подарки для друзей за границей.</p>
-                            <p class="text-sm text-gray-400"><i>*Примечание: Скорость загрузки данных зависит от размера списка желаемого.</i></p>
-                            
-                            <div class="text-center mt-4">
-                                <img src="https://i.imgur.com/X8zPj0M.png" alt="Пример WishlistGiftHelper" class="feature-img inline-block">
-                            </div>
+                             <p>Это помогает легко находить выгодные предложения, оценивать адекватность ценообразования издателя и подбирать экономически целесообразные подарки для друзей за границей.</p>
+                             <p><i><small>*Примечание: Скорость загрузки данных зависит от размера списка желаемого.</small></i></p>
+                             <img src="https://i.imgur.com/X8zPj0M.png" alt="Пример WishlistGiftHelper" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                         </div>
                     </details>
                     <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
