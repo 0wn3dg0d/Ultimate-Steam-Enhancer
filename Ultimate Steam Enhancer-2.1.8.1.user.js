@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.8.0
+// @version      2.1.8.1
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -78,6 +78,7 @@
 // @connect      backoffice.gamershub.ru
 // @connect      cdn.jsdelivr.net
 // @connect      img.shields.io
+// @connect      partner.steamgames.com
 // ==/UserScript==
 
 
@@ -582,58 +583,27 @@
             label: "Анализатор цен",
             title: "Анализатор цен",
             details: `
-                <p><strong>Что делает:</strong> Добавляет кнопку "Анализатор цен" на страницу игры. Этот инструмент позволяет анализировать региональные цены двумя способами: в рублях (по умолчанию) и в долларах США.</p>
+                <p><strong>Что делает:</strong> Добавляет кнопку "Анализатор цен" на страницу игры. Этот продвинутый инструмент позволяет детально анализировать региональные цены Steam, сравнивая их с выбранной базовой валютой и официальными моделями ценообразования Valve.</p>
 
-                <p>После нажатия кнопки "Сбор данных" в специальном окне, модуль выполняет следующее в зависимости от выбранного режима:</p>
+                <p>После нажатия кнопки "Сбор данных" модуль выполняет глубокий анализ:</p>
 
-                <div style="display: flex; gap: 20px; margin-top:10px; margin-bottom:10px;">
-                    <div style="flex: 1; padding:10px; background-color: rgba(0,0,0,0.1); border-radius:4px;">
-                        <h4 style="margin-top:0; color: #67c1f5;">Режим Рублей (по умолчанию):</h4>
-                        <ul>
-                            <li>Определяет AppID текущей игры и запрашивает цены через официальное API Steam (<code>IStoreBrowseService/GetItems</code>) для множества регионов.</li>
-                            <li>В качестве базы для расчета <strong>рекомендованной рублевой цены</strong> используется цена в США (USD).</li>
-                            <li>Цены из всех регионов, включая Россию, <strong>конвертируются в рубли</strong> по актуальным обменным курсам для прямого сопоставления.</li>
-                            <li>Производится ключевое сравнение: фактическая цена в российском Steam сопоставляется с <strong>официально рекомендованной Valve ценой для России</strong>. Отклонения подсвечиваются.</li>
-                            <li>Отображается <strong>рейтинг российской цены</strong> среди всех проанализированных стран, позволяя увидеть её место от самой дешёвой к самой дорогой в рублевом эквиваленте.</li>
-                        </ul>
-                    </div>
-                    <div style="flex: 1; padding:10px; background-color: rgba(0,0,0,0.1); border-radius:4px;">
-                        <h4 style="margin-top:0; color: #67c1f5;">Режим Долларов США (переключаемый):</h4>
-                        <ul>
-                            <li>Активируется кнопкой "USD" в окне анализатора. Интерфейс и названия валют <strong>переключаются на английский язык</strong>.</li>
-                            <li>Цены всех регионов также запрашиваются через API Steam и <strong>конвертируются в доллары США</strong>.</li>
-                            <li>Цена в США используется как <strong>базовый ориентир (100%)</strong> для сравнения.</li>
-                            <li>Отображается <strong>процентное отклонение</strong> цен других регионов от цены в США.</li>
-                            <li>Представляется общий рейтинг всех региональных цен в долларовом эквиваленте.</li>
-                            <li>Этот режим полезен для оценки ценовой политики при общении с разработчиками/издателями.</li>
-                        </ul>
-                    </div>
-                </div>
+                <ul>
+                    <li><strong>Выбор базового региона:</strong> В верхней панели можно выбрать любую валюту в качестве базы для сравнения (по умолчанию используется регион пользователя, например, рубли).</li>
+                    <li><strong>Глобальный сбор:</strong> Запрашивает фактические цены игры для более чем 40 регионов через официальное API Steam.</li>
+                    <li><strong>Извлечение скрытых данных:</strong> Скрипт расшифровывает внутреннюю матрицу Steamworks, чтобы получить официальные рекомендованные цены для каждого региона.</li>
+                    <li><strong>Детальная сводка (Сайдбар):</strong> Показывает ранг выбранного базового региона среди всех стран (от самой дешёвой к самой дорогой), а также отображает, насколько текущая цена игры соответствует рекомендациям Valve.</li>
+                    <li><strong>Умная таблица:</strong> Генерирует 11-колоночную таблицу со встроенной сортировкой. Все локальные цены конвертируются в выбранную базу по актуальному биржевому курсу.</li>
+                    <li><strong>Три модели Valve:</strong> Для каждой страны рассчитывается точное отклонение в процентах от трёх параметров ценообразования: <em>Умная цена (Valve)</em>, <em>Паритет покупательной способности (ППС)</em> и <em>Прямой конвертационный курс</em>.</li>
+                    <li><strong>Международный режим (USD):</strong> При выборе доллара США (USD) в качестве базовой валюты интерфейс и таблица автоматически переключаются на английский язык. Этот режим идеален для создания скриншотов-отчётов и обсуждения ценовой политики напрямую с зарубежными разработчиками или издателями.</li>
+                </ul>
 
-                <p>В обоих режимах, если игра в США бесплатна или цена не найдена, возможности анализа могут быть ограничены. Вся собранная информация представляется в модальном окне.</p>
+                <p>Инструмент позволяет разработчикам, кураторам и обычным игрокам мгновенно оценить, насколько справедливо издатель установил цены в различных уголках мира.</p>
 
                 <div style="margin-top: 15px; padding: 10px; background-color: rgba(103, 193, 245, 0.1); border: 1px solid rgba(103, 193, 245, 0.35); border-radius: 4px; font-size: 0.95em; line-height: 1.4;">
                     <p style="margin: 0 0 5px 0; font-weight: bold; color: #67c1f5;">⚠️ Важная информация:</p>
                     <p style="margin: 0; color: #c6d4df;">Каждый полный сбор данных подразумевает отправку <strong>~41 запроса</strong> к серверам Steam (количество зависит от числа доступных регионов). Пожалуйста, используйте эту функцию обдуманно. Частое нажатие кнопки на разных играх в течение короткого периода времени может привести к временному ограничению доступа к API Steam (обычно на 5-15 минут).</p>
                 </div>
-                <img src="https://i.imgur.com/OzebvaA.png" alt="Пример интерфейса анализатора цен" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
-            `
-        },
-        hltbData: {
-            category: 'gamePage',
-            label: "Время прохождения (HLTB)",
-            title: "Время прохождения HLTB",
-            details: `
-                <p><strong>Что делает:</strong> Добавляет компактный блок с информацией о времени прохождения игры, полученной с популярного сайта HowLongToBeat.com.</p>
-                <p>Показывает среднее время для разных стилей:</p>
-                <ul>
-                    <li>Только основной сюжет.</li>
-                    <li>Сюжет + дополнительные задания.</li>
-                    <li>Полное прохождение (100%).</li>
-                    <li>Усредненное время для всех стилей.</li>
-                </ul>
-                <p>Рядом со временем указывается количество игроков, на чьих данных основана статистика. Поиск игры в базе HLTB идет по названию, при неоднозначности предлагается выбор из похожих вариантов.</p>
-                <img src="https://i.imgur.com/6tgxA2s.png" alt="Пример HLTB 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                <img src="https://i.imgur.com/uAZ55Qf.png" alt="Пример интерфейса анализатора цен" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
             `
         },
         platiSales: {
@@ -1055,26 +1025,26 @@
             label: "Доступность подарков (список желаемого)",
             title: "Доступность подарков (список желаемого)",
             details: `
-                <p><strong>Что делает:</strong> Добавляет кнопку со значком лупы <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align: middle;"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg> на страницу списка желаемого, позволяющую определить, какие игры можно подарить друзьям в других регионах.</p>
+                <p><strong>Что делает:</strong> Добавляет кнопку со значком лупы <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="vertical-align: middle;"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"></path></svg> на страницу списка желаемого, позволяющую анализировать цены, скидки и определять, какие игры можно подарить друзьям в других регионах.</p>
                 <p><strong>Основные функции:</strong></p>
                 <ul>
                     <li>Загружает игры из отображаемого списка желаемого и выводит их в виде информативных карточек.</li>
                     <li>На карточках отображается подробная информация: цена, скидка, рейтинг, дата выхода, издатель, разработчик, серия, метки, поддержка русского языка и статус раннего доступа.</li>
-                    <li><strong>Для пользователей из РФ:</strong> на карточках также отображается информация о соответствии стоимости рекомендованной региональной цене (РРЦ) от Valve. Показывается статус (дороже, дешевле или равно РРЦ), сумма и процент отклонения.</li>
-                    <li>Предоставляет гибкую систему фильтрации по цене, скидке, рейтингу, дате выхода, поддержке русского языка, статусу раннего доступа, <strong>умным меткам (по приоритету или на исключение)</strong>, а также <strong>по соответствию РРЦ (для РФ)</strong>.</li>
+                    <li><strong>Анализ цен Valve:</strong> скрипт извлекает скрытую матрицу Steam и показывает соответствие текущей стоимости игры трём официальным рекомендациям: <strong>Умная цена (Valve)</strong>, <strong>Паритет покупательной способности (ППС)</strong> и <strong>Прямой курс</strong>. Отображается статус, сумма в валюте пользователя и процент отклонения. Функция работает для любого заданного региона.</li>
+                    <li>Предоставляет гибкую систему фильтрации по цене, скидке, рейтингу, дате выхода, поддержке русского языка, статусу раннего доступа, <strong>умным меткам (по приоритету или на исключение)</strong>, а также <strong>по соответствию главной рекомендованной цене Valve</strong>.</li>
                     <li>Активирует режим <strong>помощника подарков</strong>:
                         <ul>
                             <li>Вы выбираете регион вашего друга.</li>
                             <li>Скрипт запрашивает цены на игры из списка желаемого для выбранного региона.</li>
-                            <li>Цены друга конвертируются в вашу валюту (используется API курсов валют).</li>
+                            <li>Цены друга конвертируются в вашу валюту по актуальному биржевому курсу.</li>
                             <li>Отображается <strong>разница в цене</strong> между вашим регионом и регионом друга (с цветовой индикацией: <span style="color:#77dd77; font-weight:bold;">зелёный</span> - можно дарить, <span style="color:#ff6961; font-weight:bold;">красный</span> - нельзя).</li>
-                            <li>Доступен фильтр <strong>"Можно подарить"</strong>, который показывает только те игры, у которых разница в цене до ~10%-15% и которые Steam разрешает покупать в подарок.</li>
+                            <li>Доступен фильтр <strong>"Можно подарить"</strong>, который показывает только те игры, у которых разница в цене находится в допустимых пределах (до ~10%-15%) и которые Steam системно разрешает покупать в подарок.</li>
                         </ul>
                     </li>
                 </ul>
-                 <p>Это помогает легко найти подходящие и экономически целесообразные подарки для друзей за границей.</p>
+                 <p>Это помогает легко находить выгодные предложения, оценивать адекватность ценообразования издателя и подбирать экономически целесообразные подарки для друзей за границей.</p>
                  <p><i><small>*Примечание: Скорость загрузки данных зависит от размера списка желаемого.</small></i></p>
-                 <img src="https://i.imgur.com/i7wFMP8.png" alt="Пример WishlistGiftHelper 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
+                 <img src="https://i.imgur.com/X8zPj0M.png" alt="Пример WishlistGiftHelper" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
         },
         // --- Дополнительные ---
         autoExpandHltb: {
@@ -4808,592 +4778,308 @@ if (headerCtn) {
         (function regionalPriceAnalyzer() {
             'use strict';
 
-            let rpa_currentDisplayMode = 'RUB';
-            let rpa_hideUsdSwitchWarning = localStorage.getItem('rpa_hide_usd_switch_warning') === 'true';
-
             const userProvidedRegionsRU = {
-                'US': {
-                    name: 'Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'DE': {
-                    name: 'Евро',
-                    code: 3,
-                    iso: 'eur'
-                },
-                'AR': {
-                    name: 'Лат. Ам. - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'AU': {
-                    name: 'Австралийский доллар',
-                    code: 21,
-                    iso: 'aud'
-                },
-                'BR': {
-                    name: 'Бразильский реал',
-                    code: 7,
-                    iso: 'brl'
-                },
-                'GB': {
-                    name: 'Британский фунт',
-                    code: 2,
-                    iso: 'gbp'
-                },
-                'CA': {
-                    name: 'Канадский доллар',
-                    code: 20,
-                    iso: 'cad'
-                },
-                'CL': {
-                    name: 'Чилийское песо',
-                    code: 25,
-                    iso: 'clp'
-                },
-                'CN': {
-                    name: 'Китайский юань',
-                    code: 23,
-                    iso: 'cny'
-                },
-                'AZ': {
-                    name: 'СНГ - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'CO': {
-                    name: 'Колумбийское песо',
-                    code: 27,
-                    iso: 'cop'
-                },
-                'CR': {
-                    name: 'Коста-риканский колон',
-                    code: 40,
-                    iso: 'crc'
-                },
-                'HK': {
-                    name: 'Гонконгский доллар',
-                    code: 29,
-                    iso: 'hkd'
-                },
-                'IN': {
-                    name: 'Индийская рупия',
-                    code: 24,
-                    iso: 'inr'
-                },
-                'ID': {
-                    name: 'Индонезийская рупия',
-                    code: 10,
-                    iso: 'idr'
-                },
-                'IL': {
-                    name: 'Израильский новый шекель',
-                    code: 35,
-                    iso: 'ils'
-                },
-                'JP': {
-                    name: 'Японская иена',
-                    code: 8,
-                    iso: 'jpy'
-                },
-                'KZ': {
-                    name: 'Казахстанский тенге',
-                    code: 37,
-                    iso: 'kzt'
-                },
-                'KW': {
-                    name: 'Кувейтский динар',
-                    code: 38,
-                    iso: 'kwd'
-                },
-                'MY': {
-                    name: 'Малазийский ринггит',
-                    code: 11,
-                    iso: 'myr'
-                },
-                'MX': {
-                    name: 'Мексиканское песо',
-                    code: 19,
-                    iso: 'mxn'
-                },
-                'NZ': {
-                    name: 'Новозеландский доллар',
-                    code: 22,
-                    iso: 'nzd'
-                },
-                'NO': {
-                    name: 'Норвежская крона',
-                    code: 9,
-                    iso: 'nok'
-                },
-                'PE': {
-                    name: 'Перуанский соль',
-                    code: 26,
-                    iso: 'pen'
-                },
-                'PH': {
-                    name: 'Филиппинское песо',
-                    code: 12,
-                    iso: 'php'
-                },
-                'PL': {
-                    name: 'Польский злотый',
-                    code: 6,
-                    iso: 'pln'
-                },
-                'QA': {
-                    name: 'Катарский риал',
-                    code: 39,
-                    iso: 'qar'
-                },
-                'RU': {
-                    name: 'Российский рубль',
-                    code: 5,
-                    iso: 'rub'
-                },
-                'SA': {
-                    name: 'Саудовский риал',
-                    code: 31,
-                    iso: 'sar'
-                },
-                'SG': {
-                    name: 'Сингапурский доллар',
-                    code: 13,
-                    iso: 'sgd'
-                },
-                'ZA': {
-                    name: 'Южноафриканский рэнд',
-                    code: 28,
-                    iso: 'zar'
-                },
-                'PK': {
-                    name: 'Юж. Азия - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'KR': {
-                    name: 'Южнокорейская вона',
-                    code: 16,
-                    iso: 'krw'
-                },
-                'CH': {
-                    name: 'Швейцарский франк',
-                    code: 4,
-                    iso: 'chf'
-                },
-                'TW': {
-                    name: 'Тайваньский доллар',
-                    code: 30,
-                    iso: 'twd'
-                },
-                'TH': {
-                    name: 'Тайский бат',
-                    code: 14,
-                    iso: 'thb'
-                },
-                'TR': {
-                    name: 'MENA - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'AE': {
-                    name: 'Дирхам ОАЭ',
-                    code: 32,
-                    iso: 'aed'
-                },
-                'UA': {
-                    name: 'Украинская гривна',
-                    code: 18,
-                    iso: 'uah'
-                },
-                'UY': {
-                    name: 'Уругвайское песо',
-                    code: 41,
-                    iso: 'uyu'
-                },
-                'VN': {
-                    name: 'Вьетнамский донг',
-                    code: 15,
-                    iso: 'vnd'
-                }
+                'US': { name: 'Доллар США', code: 1, iso: 'usd' },
+                'DE': { name: 'Евро', code: 3, iso: 'eur' },
+                'AR': { name: 'Лат. Ам. - Доллар США', code: 1, iso: 'usd' },
+                'AU': { name: 'Австралийский доллар', code: 21, iso: 'aud' },
+                'BR': { name: 'Бразильский реал', code: 7, iso: 'brl' },
+                'GB': { name: 'Британский фунт', code: 2, iso: 'gbp' },
+                'CA': { name: 'Канадский доллар', code: 20, iso: 'cad' },
+                'CL': { name: 'Чилийское песо', code: 25, iso: 'clp' },
+                'CN': { name: 'Китайский юань', code: 23, iso: 'cny' },
+                'AZ': { name: 'СНГ - Доллар США', code: 1, iso: 'usd' },
+                'CO': { name: 'Колумбийское песо', code: 27, iso: 'cop' },
+                'CR': { name: 'Коста-риканский колон', code: 40, iso: 'crc' },
+                'HK': { name: 'Гонконгский доллар', code: 29, iso: 'hkd' },
+                'IN': { name: 'Индийская рупия', code: 24, iso: 'inr' },
+                'ID': { name: 'Индонезийская рупия', code: 10, iso: 'idr' },
+                'IL': { name: 'Израильский новый шекель', code: 35, iso: 'ils' },
+                'JP': { name: 'Японская иена', code: 8, iso: 'jpy' },
+                'KZ': { name: 'Казахстанский тенге', code: 37, iso: 'kzt' },
+                'KW': { name: 'Кувейтский динар', code: 38, iso: 'kwd' },
+                'MY': { name: 'Малазийский ринггит', code: 11, iso: 'myr' },
+                'MX': { name: 'Мексиканское песо', code: 19, iso: 'mxn' },
+                'NZ': { name: 'Новозеландский доллар', code: 22, iso: 'nzd' },
+                'NO': { name: 'Норвежская крона', code: 9, iso: 'nok' },
+                'PE': { name: 'Перуанский соль', code: 26, iso: 'pen' },
+                'PH': { name: 'Филиппинское песо', code: 12, iso: 'php' },
+                'PL': { name: 'Польский злотый', code: 6, iso: 'pln' },
+                'QA': { name: 'Катарский риал', code: 39, iso: 'qar' },
+                'RU': { name: 'Российский рубль', code: 5, iso: 'rub' },
+                'SA': { name: 'Саудовский риал', code: 31, iso: 'sar' },
+                'SG': { name: 'Сингапурский доллар', code: 13, iso: 'sgd' },
+                'ZA': { name: 'Южноафриканский рэнд', code: 28, iso: 'zar' },
+                'PK': { name: 'Юж. Азия - Доллар США', code: 1, iso: 'usd' },
+                'KR': { name: 'Южнокорейская вона', code: 16, iso: 'krw' },
+                'CH': { name: 'Швейцарский франк', code: 4, iso: 'chf' },
+                'TW': { name: 'Тайваньский доллар', code: 30, iso: 'twd' },
+                'TH': { name: 'Тайский бат', code: 14, iso: 'thb' },
+                'TR': { name: 'MENA - Доллар США', code: 1, iso: 'usd' },
+                'AE': { name: 'Дирхам ОАЭ', code: 32, iso: 'aed' },
+                'UA': { name: 'Украинская гривна', code: 18, iso: 'uah' },
+                'UY': { name: 'Уругвайское песо', code: 41, iso: 'uyu' },
+                'VN': { name: 'Вьетнамский донг', code: 15, iso: 'vnd' }
             };
+
             const userProvidedRegionsEN = {
-                'US': {
-                    name: 'United States Dollar',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'DE': {
-                    name: 'Euro',
-                    code: 3,
-                    iso: 'eur'
-                },
-                'AR': {
-                    name: 'Latin America - USD',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'AU': {
-                    name: 'Australian Dollar',
-                    code: 21,
-                    iso: 'aud'
-                },
-                'BR': {
-                    name: 'Brazilian Real',
-                    code: 7,
-                    iso: 'brl'
-                },
-                'GB': {
-                    name: 'British Pound',
-                    code: 2,
-                    iso: 'gbp'
-                },
-                'CA': {
-                    name: 'Canadian Dollar',
-                    code: 20,
-                    iso: 'cad'
-                },
-                'CL': {
-                    name: 'Chilean Peso',
-                    code: 25,
-                    iso: 'clp'
-                },
-                'CN': {
-                    name: 'Chinese Yuan Renminbi',
-                    code: 23,
-                    iso: 'cny'
-                },
-                'AZ': {
-                    name: 'CIS - USD',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'CO': {
-                    name: 'Colombian Peso',
-                    code: 27,
-                    iso: 'cop'
-                },
-                'CR': {
-                    name: 'Costa Rican Colon',
-                    code: 40,
-                    iso: 'crc'
-                },
-                'HK': {
-                    name: 'Hong Kong Dollar',
-                    code: 29,
-                    iso: 'hkd'
-                },
-                'IN': {
-                    name: 'Indian Rupee',
-                    code: 24,
-                    iso: 'inr'
-                },
-                'ID': {
-                    name: 'Indonesian Rupiah',
-                    code: 10,
-                    iso: 'idr'
-                },
-                'IL': {
-                    name: 'Israeli New Shekel',
-                    code: 35,
-                    iso: 'ils'
-                },
-                'JP': {
-                    name: 'Japanese Yen',
-                    code: 8,
-                    iso: 'jpy'
-                },
-                'KZ': {
-                    name: 'Kazakhstani Tenge',
-                    code: 37,
-                    iso: 'kzt'
-                },
-                'KW': {
-                    name: 'Kuwaiti Dinar',
-                    code: 38,
-                    iso: 'kwd'
-                },
-                'MY': {
-                    name: 'Malaysian Ringgit',
-                    code: 11,
-                    iso: 'myr'
-                },
-                'MX': {
-                    name: 'Mexican Peso',
-                    code: 19,
-                    iso: 'mxn'
-                },
-                'NZ': {
-                    name: 'New Zealand Dollar',
-                    code: 22,
-                    iso: 'nzd'
-                },
-                'NO': {
-                    name: 'Norwegian Krone',
-                    code: 9,
-                    iso: 'nok'
-                },
-                'PE': {
-                    name: 'Peruvian Sol',
-                    code: 26,
-                    iso: 'pen'
-                },
-                'PH': {
-                    name: 'Philippine Peso',
-                    code: 12,
-                    iso: 'php'
-                },
-                'PL': {
-                    name: 'Polish Zloty',
-                    code: 6,
-                    iso: 'pln'
-                },
-                'QA': {
-                    name: 'Qatari Riyal',
-                    code: 39,
-                    iso: 'qar'
-                },
-                'RU': {
-                    name: 'Russian Ruble',
-                    code: 5,
-                    iso: 'rub'
-                },
-                'SA': {
-                    name: 'Saudi Riyal',
-                    code: 31,
-                    iso: 'sar'
-                },
-                'SG': {
-                    name: 'Singapore Dollar',
-                    code: 13,
-                    iso: 'sgd'
-                },
-                'ZA': {
-                    name: 'South African Rand',
-                    code: 28,
-                    iso: 'zar'
-                },
-                'PK': {
-                    name: 'South Asia - USD',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'KR': {
-                    name: 'South Korean Won',
-                    code: 16,
-                    iso: 'krw'
-                },
-                'CH': {
-                    name: 'Swiss Franc',
-                    code: 4,
-                    iso: 'chf'
-                },
-                'TW': {
-                    name: 'New Taiwan Dollar',
-                    code: 30,
-                    iso: 'twd'
-                },
-                'TH': {
-                    name: 'Thai Baht',
-                    code: 14,
-                    iso: 'thb'
-                },
-                'TR': {
-                    name: 'MENA - USD',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'AE': {
-                    name: 'UAE Dirham',
-                    code: 32,
-                    iso: 'aed'
-                },
-                'UA': {
-                    name: 'Ukrainian Hryvnia',
-                    code: 18,
-                    iso: 'uah'
-                },
-                'UY': {
-                    name: 'Uruguayan Peso',
-                    code: 41,
-                    iso: 'uyu'
-                },
-                'VN': {
-                    name: 'Vietnamese Dong',
-                    code: 15,
-                    iso: 'vnd'
-                }
+                'US': { name: 'United States Dollar', code: 1, iso: 'usd' },
+                'DE': { name: 'Euro', code: 3, iso: 'eur' },
+                'AR': { name: 'Latin America - USD', code: 1, iso: 'usd' },
+                'AU': { name: 'Australian Dollar', code: 21, iso: 'aud' },
+                'BR': { name: 'Brazilian Real', code: 7, iso: 'brl' },
+                'GB': { name: 'British Pound', code: 2, iso: 'gbp' },
+                'CA': { name: 'Canadian Dollar', code: 20, iso: 'cad' },
+                'CL': { name: 'Chilean Peso', code: 25, iso: 'clp' },
+                'CN': { name: 'Chinese Yuan Renminbi', code: 23, iso: 'cny' },
+                'AZ': { name: 'CIS - USD', code: 1, iso: 'usd' },
+                'CO': { name: 'Colombian Peso', code: 27, iso: 'cop' },
+                'CR': { name: 'Costa Rican Colon', code: 40, iso: 'crc' },
+                'HK': { name: 'Hong Kong Dollar', code: 29, iso: 'hkd' },
+                'IN': { name: 'Indian Rupee', code: 24, iso: 'inr' },
+                'ID': { name: 'Indonesian Rupiah', code: 10, iso: 'idr' },
+                'IL': { name: 'Israeli New Shekel', code: 35, iso: 'ils' },
+                'JP': { name: 'Japanese Yen', code: 8, iso: 'jpy' },
+                'KZ': { name: 'Kazakhstani Tenge', code: 37, iso: 'kzt' },
+                'KW': { name: 'Kuwaiti Dinar', code: 38, iso: 'kwd' },
+                'MY': { name: 'Malaysian Ringgit', code: 11, iso: 'myr' },
+                'MX': { name: 'Mexican Peso', code: 19, iso: 'mxn' },
+                'NZ': { name: 'New Zealand Dollar', code: 22, iso: 'nzd' },
+                'NO': { name: 'Norwegian Krone', code: 9, iso: 'nok' },
+                'PE': { name: 'Peruvian Sol', code: 26, iso: 'pen' },
+                'PH': { name: 'Philippine Peso', code: 12, iso: 'php' },
+                'PL': { name: 'Polish Zloty', code: 6, iso: 'pln' },
+                'QA': { name: 'Qatari Riyal', code: 39, iso: 'qar' },
+                'RU': { name: 'Russian Ruble', code: 5, iso: 'rub' },
+                'SA': { name: 'Saudi Riyal', code: 31, iso: 'sar' },
+                'SG': { name: 'Singapore Dollar', code: 13, iso: 'sgd' },
+                'ZA': { name: 'South African Rand', code: 28, iso: 'zar' },
+                'PK': { name: 'South Asia - USD', code: 1, iso: 'usd' },
+                'KR': { name: 'South Korean Won', code: 16, iso: 'krw' },
+                'CH': { name: 'Swiss Franc', code: 4, iso: 'chf' },
+                'TW': { name: 'New Taiwan Dollar', code: 30, iso: 'twd' },
+                'TH': { name: 'Thai Baht', code: 14, iso: 'thb' },
+                'TR': { name: 'MENA - USD', code: 1, iso: 'usd' },
+                'AE': { name: 'UAE Dirham', code: 32, iso: 'aed' },
+                'UA': { name: 'Ukrainian Hryvnia', code: 18, iso: 'uah' },
+                'UY': { name: 'Uruguayan Peso', code: 41, iso: 'uyu' },
+                'VN': { name: 'Vietnamese Dong', code: 15, iso: 'vnd' }
             };
 
             const RPA_CONFIG = {
-                regions: [],
-                currencyApiUrl: 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/',
+                regions: Object.entries(userProvidedRegionsRU).map(([key, value]) => ({
+                    cc: key === 'EU' ? 'DE' : key,
+                    nameRU: value.name,
+                    nameEN: userProvidedRegionsEN[key].name,
+                    steamCurrencyId: value.code,
+                    iso: value.iso
+                })),
                 steamApiUrl: 'https://api.steampowered.com/IStoreBrowseService/GetItems/v1/',
-                priorButtonText: '',
-                modalTitle: '',
-                fetchButtonText: '',
                 delayBetweenBatches: 300,
                 batchSize: 10,
             };
 
-            function rpa_updateTextsAndRegionNames() {
-                const isUSDMode = rpa_currentDisplayMode === 'USD';
-                RPA_CONFIG.priorButtonText = isUSDMode ? 'Price Analyzer' : 'Анализатор цен';
-                RPA_CONFIG.modalTitle = isUSDMode ? 'Regional Price Analyzer' : 'Анализатор цен';
-                RPA_CONFIG.fetchButtonText = isUSDMode ? 'Fetch Data' : 'Сбор данных';
+            const SteamCurrencyRules = {
+                1: { strSymbol: "$" }, 2: { strSymbol: "£" }, 3: { strSymbol: "€" }, 4: { strSymbol: "CHF" },
+                5: { strSymbol: "руб.", bSuffixSymbol: true, bWholeUnitsOnly: true, bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: " " },
+                6: { strSymbol: "zł", bSuffixSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: " " },
+                7: { strSymbol: "R$", bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                8: { strSymbol: "¥", bWholeUnitsOnly: true, bSpaceForSymbol: true },
+                9: { strSymbol: "kr", bSuffixSymbol: true, bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                10: { strSymbol: "Rp", bWholeUnitsOnly: true, bSpaceForSymbol: true, strDecimalSymbol: ".", strThousandsSeparator: " " },
+                11: { strSymbol: "RM" }, 12: { strSymbol: "P" }, 13: { strSymbol: "S$" }, 14: { strSymbol: "฿" },
+                15: { strSymbol: "₫", bWholeUnitsOnly: true, bSuffixSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                16: { strSymbol: "₩", bWholeUnitsOnly: true, bSpaceForSymbol: true },
+                17: { strSymbol: "TL", bSuffixSymbol: true, bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                18: { strSymbol: "₴", bSuffixSymbol: true, bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: " " },
+                19: { strSymbol: "Mex$", bSpaceForSymbol: true }, 20: { strSymbol: "CDN$", bSpaceForSymbol: true },
+                21: { strSymbol: "A$", bSpaceForSymbol: true }, 22: { strSymbol: "NZ$", bSpaceForSymbol: true },
+                23: { strSymbol: "¥", bSpaceForSymbol: true }, 24: { strSymbol: "₹", bSpaceForSymbol: true, bWholeUnitsOnly: true },
+                25: { strSymbol: "CLP$", bSpaceForSymbol: true, bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                26: { strSymbol: "S/." }, 27: { strSymbol: "COL$", bSpaceForSymbol: true, bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                28: { strSymbol: "R", bSpaceForSymbol: true, strDecimalSymbol: ".", strThousandsSeparator: " " },
+                29: { strSymbol: "HK$", bSpaceForSymbol: true }, 30: { strSymbol: "NT$", bWholeUnitsOnly: true, bSpaceForSymbol: true },
+                31: { strSymbol: "SR", bSuffixSymbol: true, bSpaceForSymbol: true }, 32: { strSymbol: "AED", bSuffixSymbol: true, bSpaceForSymbol: true },
+                33: { strSymbol: "kr", bSpaceForSymbol: true, bSuffixSymbol: true }, 34: { strSymbol: "ARS$", bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                35: { strSymbol: "₪" }, 36: { strSymbol: "Br" }, 37: { strSymbol: "₸", bSuffixSymbol: true, bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: " " },
+                38: { strSymbol: "KD", bSuffixSymbol: true, bSpaceForSymbol: true }, 39: { strSymbol: "QR", bSuffixSymbol: true, bSpaceForSymbol: true },
+                40: { strSymbol: "₡", bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                41: { strSymbol: "$U", bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                42: { strSymbol: "лв", bSuffixSymbol: true, bSpaceForSymbol: true }, 43: { strSymbol: "kn", bSuffixSymbol: true, bSpaceForSymbol: true },
+                44: { strSymbol: "Kč", bSuffixSymbol: true, bSpaceForSymbol: true }, 45: { strSymbol: "kr.", bSuffixSymbol: true, bSpaceForSymbol: true },
+                46: { strSymbol: "Ft", bSuffixSymbol: true, bSpaceForSymbol: true }, 47: { strSymbol: "lei", bSuffixSymbol: true, bSpaceForSymbol: true }
+            };
 
-                const sourceRegions = isUSDMode ? userProvidedRegionsEN : userProvidedRegionsRU;
-                RPA_CONFIG.regions = Object.entries(sourceRegions).map(([key, value]) => ({
-                    cc: key === 'EU' ? 'DE' : key,
-                    name: value.name,
-                    currencyApiCode: value.iso.toLowerCase(),
-                    steamCurrencyId: value.code
-                }));
-
-                if (rpa_priorButton) rpa_priorButton.textContent = RPA_CONFIG.priorButtonText;
-                const modalTitleEl = rpa_modal ? rpa_modal.querySelector('#rpaHeaderBar h3') : null;
-                if (modalTitleEl) modalTitleEl.textContent = RPA_CONFIG.modalTitle;
-                const fetchBtnEl = rpa_modal ? rpa_modal.querySelector('#rpaFetchDataButton') : null;
-                if (fetchBtnEl) fetchBtnEl.textContent = RPA_CONFIG.fetchButtonText;
-                rpa_updateModeToggleButtonText();
+            function formatSteamPrice(priceInCents, currencyCode) {
+                const defaultRules = { strSymbol: "", bSuffixSymbol: false, bSpaceForSymbol: false, bWholeUnitsOnly: false, strDecimalSymbol: ".", strThousandsSeparator: "," };
+                const rules = { ...defaultRules, ...(SteamCurrencyRules[currencyCode] || {}) };
+                let price = priceInCents;
+                const isNegative = price < 0;
+                if (isNegative) price = -price;
+                const dropDecimals = rules.bWholeUnitsOnly && (price % 100 === 0);
+                let parts = [];
+                for (let i = 0; i < 2; i++) {
+                    if (!dropDecimals) parts.push(price % 10);
+                    price = Math.floor(price / 10);
+                }
+                if (!dropDecimals && rules.strDecimalSymbol) parts.push(rules.strDecimalSymbol);
+                let digitCount = 0;
+                do {
+                    if (digitCount > 0 && digitCount % 3 === 0 && rules.strThousandsSeparator) parts.push(rules.strThousandsSeparator);
+                    parts.push(price % 10);
+                    price = Math.floor(price / 10);
+                    digitCount++;
+                } while (price > 0);
+                const formattedNumber = parts.reverse().join("");
+                const space = rules.bSpaceForSymbol ? " " : "";
+                const minus = isNegative ? "-" : "";
+                return rules.bSuffixSymbol ? `${minus}${formattedNumber}${space}${rules.strSymbol}` : `${minus}${rules.strSymbol}${space}${formattedNumber}`;
             }
 
-            let rpa_exchangeRates = {};
+            async function rpa_fetchExchangeRates(signal) {
+                return new Promise((resolve, reject) => {
+                    const xhr = GM_xmlhttpRequest({
+                        method: "GET",
+                        url: `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/usd.json`,
+                        timeout: 10000,
+                        onload: function(resp) {
+                            if (resp.status >= 200 && resp.status < 400) {
+                                try {
+                                    const json = JSON.parse(resp.responseText);
+                                    resolve(json.usd);
+                                } catch (e) { reject(e); }
+                            } else reject(new Error("API Error"));
+                        },
+                        onerror: (err) => reject(err),
+                        ontimeout: () => reject(new Error("Timeout"))
+                    });
+                    if (signal) signal.addEventListener('abort', () => { xhr.abort(); reject(new DOMException('AbortError', 'AbortError')); });
+                });
+            }
+
+            let rpa_steamPricingMatrix = null;
+
+            async function rpa_fetchSteamPricingMatrix(signal) {
+                if (rpa_steamPricingMatrix) return rpa_steamPricingMatrix;
+                return new Promise((resolve, reject) => {
+                    const xhr = GM_xmlhttpRequest({
+                        method: "GET",
+                        url: "https://partner.steamgames.com/pricing/explorer",
+                        timeout: 15000,
+                        onload: function(response) {
+                            try {
+                                const html = response.responseText;
+                                let searchStr = html;
+                                for(let i = 0; i < 3; i++) {
+                                    searchStr = searchStr.replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+                                }
+
+                                let offset = 0;
+                                let found = false;
+                                while (true) {
+                                    const startIdx = searchStr.indexOf('"data":[', offset);
+                                    if (startIdx === -1) break;
+                                    const arrayStart = startIdx + 7;
+                                    let openBrackets = 0;
+                                    let endIdx = -1;
+                                    let inString = false;
+                                    for (let i = arrayStart; i < searchStr.length; i++) {
+                                        const char = searchStr[i];
+                                        if (char === '"' && searchStr[i-1] !== '\\') inString = !inString;
+                                        if (!inString) {
+                                            if (char === '[') openBrackets++;
+                                            else if (char === ']') {
+                                                openBrackets--;
+                                                if (openBrackets === 0) { endIdx = i; break; }
+                                            }
+                                        }
+                                    }
+                                    if (endIdx !== -1) {
+                                        const jsonArrayStr = searchStr.substring(arrayStart, endIdx + 1);
+                                        try {
+                                            const arr = JSON.parse(jsonArrayStr);
+                                            if (arr.length > 0 && arr[0].usd_price !== undefined && arr[0].convert_method !== undefined) {
+                                                rpa_steamPricingMatrix = arr;
+                                                found = true;
+                                                break;
+                                            }
+                                        } catch (e) {}
+                                    }
+                                    offset = startIdx + 8;
+                                }
+
+                                if (found) {
+                                    resolve(rpa_steamPricingMatrix);
+                                } else {
+                                    reject(new Error("Не удалось извлечь данные: нужный массив не найден в коде Steam."));
+                                }
+                            } catch (e) {
+                                reject(new Error("Ошибка парсера: " + e.message));
+                            }
+                        },
+                        onerror: () => reject(new Error("Сетевая ошибка (матрица Steam)")),
+                        ontimeout: () => reject(new Error("Таймаут (матрица Steam)"))
+                    });
+                    if (signal) signal.addEventListener('abort', () => { xhr.abort(); reject(new DOMException('Request aborted', 'AbortError')); });
+                });
+            }
+
+            function getRecommendedPriceCentsFromMatrix(matrix, baseUsdCents, currencyCode, convertMethod) {
+                if (currencyCode === 1 && convertMethod === 1) return baseUsdCents;
+                if (currencyCode === 1 && convertMethod === 2) return baseUsdCents;
+                if (currencyCode === 1 && convertMethod === 3) return baseUsdCents;
+
+                const filteredMatrix = matrix.filter(m => m.convert_method === convertMethod);
+                if (!filteredMatrix || filteredMatrix.length === 0) return null;
+
+                let closestRow = filteredMatrix[0];
+                let minDiff = Math.abs((filteredMatrix[0].usd_price || 0) - baseUsdCents);
+
+                for (let row of filteredMatrix) {
+                    let diff = Math.abs((row.usd_price || 0) - baseUsdCents);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closestRow = row;
+                    }
+                }
+
+                if (closestRow && closestRow.currency_prices) {
+                    const cp = closestRow.currency_prices.find(c => c.currency_code === currencyCode);
+                    if (cp) return cp.price;
+                }
+                return null;
+            }
+
             let rpa_modal = null;
             let rpa_priorButton = null;
             let rpa_currentAppId = null;
             let rpa_currentGameName = '';
             let rpa_progressBarFill = null;
             let rpa_fetchController = null;
-            let rpa_modeToggleButton = null;
-
-            function calculateRecommendedRubPrice(pUSD) {
-                if (typeof pUSD !== 'number' || isNaN(pUSD)) return null;
-                if (pUSD < 0.99) return 42;
-                if (pUSD >= 0.99 && pUSD < 1.99) return 42;
-                if (pUSD >= 1.99 && pUSD < 2.99) return 82;
-                if (pUSD >= 2.99 && pUSD < 3.99) return 125;
-                if (pUSD >= 3.99 && pUSD < 4.99) return 165;
-                if (pUSD >= 4.99 && pUSD < 5.99) return 200;
-                if (pUSD >= 5.99 && pUSD < 6.99) return 240;
-                if (pUSD >= 6.99 && pUSD < 7.99) return 280;
-                if (pUSD >= 7.99 && pUSD < 8.99) return 320;
-                if (pUSD >= 8.99 && pUSD < 9.99) return 350;
-                if (pUSD >= 9.99 && pUSD < 10.99) return 385;
-                if (pUSD >= 10.99 && pUSD < 11.99) return 420;
-                if (pUSD >= 11.99 && pUSD < 12.99) return 460;
-                if (pUSD >= 12.99 && pUSD < 13.99) return 490;
-                if (pUSD >= 13.99 && pUSD < 14.99) return 520;
-                if (pUSD >= 14.99 && pUSD < 15.99) return 550;
-                if (pUSD >= 15.99 && pUSD < 16.99) return 590;
-                if (pUSD >= 16.99 && pUSD < 17.99) return 620;
-                if (pUSD >= 17.99 && pUSD < 18.99) return 650;
-                if (pUSD >= 18.99 && pUSD < 19.99) return 680;
-                if (pUSD >= 19.99 && pUSD < 22.99) return 710;
-                if (pUSD >= 22.99 && pUSD < 27.99) return 880;
-                if (pUSD >= 27.99 && pUSD < 32.99) return 1100;
-                if (pUSD >= 32.99 && pUSD < 37.99) return 1200;
-                if (pUSD >= 37.99 && pUSD < 43.99) return 1300;
-                if (pUSD >= 43.99 && pUSD < 47.99) return 1500;
-                if (pUSD >= 47.99 && pUSD < 52.99) return 1600;
-                if (pUSD >= 52.99 && pUSD < 57.99) return 1750;
-                if (pUSD >= 57.99 && pUSD < 63.99) return 1900;
-                if (pUSD >= 63.99 && pUSD < 67.99) return 2100;
-                if (pUSD >= 67.99 && pUSD < 74.99) return 2250;
-                if (pUSD >= 74.99 && pUSD < 79.99) return 2400;
-                if (pUSD >= 79.99 && pUSD < 84.99) return 2600;
-                if (pUSD >= 84.99 && pUSD < 89.99) return 2700;
-                if (pUSD >= 89.99 && pUSD < 99.99) return 2900;
-                if (pUSD >= 99.99 && pUSD < 109.99) return 3200;
-                if (pUSD >= 109.99 && pUSD < 119.99) return 3550;
-                if (pUSD >= 119.99 && pUSD < 129.99) return 3900;
-                if (pUSD >= 129.99 && pUSD < 139.99) return 4200;
-                if (pUSD >= 139.99 && pUSD < 149.99) return 4500;
-                if (pUSD >= 149.99 && pUSD < 199.99) return 4800;
-                if (pUSD >= 199.99) return 6500;
-                return null;
-            }
+            let rpa_lastTableData = [];
+            let rpa_currentSort = { col: 'actualBase', asc: true };
 
             function rpa_getAppIdFromUrl() {
                 const match = unsafeWindow.location.pathname.match(/\/app\/(\d+)/);
                 return match ? match[1] : null;
             }
 
-            async function rpa_fetchExchangeRates(baseCurrency = 'usd', signal) {
-                baseCurrency = baseCurrency.toLowerCase();
-                if (rpa_exchangeRates[baseCurrency] && Object.keys(rpa_exchangeRates[baseCurrency]).length > 0) {
-                    return rpa_exchangeRates[baseCurrency];
-                }
-                if (baseCurrency === 'rub' && !rpa_exchangeRates['rub']) rpa_exchangeRates['rub'] = {};
-                if (baseCurrency === 'rub' && rpa_exchangeRates['rub']['rub'] === 1) return rpa_exchangeRates['rub'];
-                if (baseCurrency === 'usd' && !rpa_exchangeRates['usd']) rpa_exchangeRates['usd'] = {};
-                if (baseCurrency === 'usd' && rpa_exchangeRates['usd']['usd'] === 1 && Object.keys(rpa_exchangeRates['usd']).length > 1) return rpa_exchangeRates['usd'];
-
-                try {
-                    const response = await new Promise((resolve, reject) => {
-                        const xhr = GM_xmlhttpRequest({
-                            method: "GET",
-                            url: `${RPA_CONFIG.currencyApiUrl}${baseCurrency}.json`,
-                            timeout: 8000,
-                            onload: function(resp) {
-                                if (resp.status >= 200 && resp.status < 400) {
-                                    try {
-                                        resolve(JSON.parse(resp.responseText));
-                                    } catch (e) {
-                                        reject(new Error(`JSON Parse error for ${baseCurrency}: ${e.message}`));
-                                    }
-                                } else {
-                                    reject(new Error(`Currency API error: ${resp.status} for ${baseCurrency}`));
-                                }
-                            },
-                            onerror: (err) => reject(new Error(`Network error for ${baseCurrency}: ${err}`)),
-                            ontimeout: () => reject(new Error(`Currency API timeout for ${baseCurrency}`))
-                        });
-                        if (signal) {
-                            signal.addEventListener('abort', () => {
-                                xhr.abort();
-                                reject(new DOMException('Request aborted', 'AbortError'));
-                            });
-                        }
-                    });
-                    rpa_exchangeRates[baseCurrency] = response[baseCurrency] || {};
-                    rpa_exchangeRates[baseCurrency][baseCurrency] = 1;
-                    return rpa_exchangeRates[baseCurrency];
-                } catch (error) {
-                    if (error.name === 'AbortError') {
-                        console.log(`[RPA] Exchange rate request for ${baseCurrency} aborted.`);
-                    } else {
-                        console.error(`[RPA] Error fetching exchange rates for ${baseCurrency}:`, error);
-                    }
-                    throw error;
-                }
-            }
-
             function rpa_getPriceInCents(purchaseOption) {
-                if (purchaseOption && purchaseOption.discount_pct > 0 && purchaseOption.original_price_in_cents) {
-                    return parseInt(purchaseOption.original_price_in_cents, 10);
-                }
-                if (purchaseOption && purchaseOption.final_price_in_cents) {
-                    return parseInt(purchaseOption.final_price_in_cents, 10);
-                }
+                if (purchaseOption && purchaseOption.discount_pct > 0 && purchaseOption.original_price_in_cents) return parseInt(purchaseOption.original_price_in_cents, 10);
+                if (purchaseOption && purchaseOption.final_price_in_cents) return parseInt(purchaseOption.final_price_in_cents, 10);
                 return null;
             }
 
             function rpa_getDisplayFormattedPrice(purchaseOption) {
                 if (purchaseOption) {
-                    if (purchaseOption.discount_pct > 0 && purchaseOption.formatted_original_price) {
-                        return purchaseOption.formatted_original_price;
-                    }
-                    if (purchaseOption.formatted_final_price) {
-                        return purchaseOption.formatted_final_price;
-                    }
+                    if (purchaseOption.discount_pct > 0 && purchaseOption.formatted_original_price) return purchaseOption.formatted_original_price;
+                    if (purchaseOption.formatted_final_price) return purchaseOption.formatted_final_price;
                 }
                 return 'N/A';
             }
 
             async function rpa_fetchItemData(appid, countryCode, signal) {
-                const lang = rpa_currentDisplayMode === 'USD' ? 'english' : 'russian';
+                const lang = localStorage.getItem('rpa_base_currency') === 'US' ? 'english' : 'russian';
                 const url = `${RPA_CONFIG.steamApiUrl}?input_json=${encodeURIComponent(JSON.stringify({
                     "ids": [{ "appid": parseInt(appid) }],
                     "context": { "country_code": countryCode, "steam_realm": 1, "language": lang },
@@ -5401,43 +5087,27 @@ if (headerCtn) {
                 }))}`;
                 return new Promise((resolve, reject) => {
                     const xhr = GM_xmlhttpRequest({
-                        method: "GET",
-                        url: url,
-                        timeout: 15000,
+                        method: "GET", url: url, timeout: 15000,
                         onload: function(response) {
                             try {
                                 if (response.status >= 200 && response.status < 400) {
                                     const data = JSON.parse(response.responseText);
-                                    if (data.response && data.response.store_items && data.response.store_items.length > 0) {
-                                        resolve(data.response.store_items[0]);
-                                    } else {
-                                        resolve(null);
-                                    }
-                                } else {
-                                    reject(new Error(`Steam API error: ${response.status} for ${countryCode}`));
-                                }
-                            } catch (e) {
-                                reject(new Error(`Error parsing Steam API response for ${countryCode}: ${e.message}`));
-                            }
+                                    if (data.response && data.response.store_items && data.response.store_items.length > 0) resolve(data.response.store_items[0]);
+                                    else resolve(null);
+                                } else reject(new Error(`Steam API error: ${response.status} for ${countryCode}`));
+                            } catch (e) { reject(new Error(`Error parsing Steam API response for ${countryCode}: ${e.message}`)); }
                         },
                         onerror: (err) => reject(new Error(`Network error for ${countryCode}: ${err.toString()}`)),
                         ontimeout: () => reject(new Error(`Timeout for ${countryCode}`))
                     });
-                    if (signal) {
-                        signal.addEventListener('abort', () => {
-                            xhr.abort();
-                            reject(new DOMException('Request aborted', 'AbortError'));
-                        });
-                    }
+                    if (signal) signal.addEventListener('abort', () => { xhr.abort(); reject(new DOMException('Request aborted', 'AbortError')); });
                 });
             }
 
             function rpa_addPriorButton() {
                 if (document.getElementById('rpaPriorButton')) return;
                 let targetWrapper = document.querySelector('.game_area_purchase_game_wrapper');
-                if (!targetWrapper) {
-                    return;
-                }
+                if (!targetWrapper) return;
                 const allPurchaseWrappers = document.querySelectorAll('.game_area_purchase_game_wrapper');
                 for (let wrapper of allPurchaseWrappers) {
                     if (wrapper.querySelector('.game_purchase_action .price, .game_purchase_action .discount_block')) {
@@ -5447,150 +5117,13 @@ if (headerCtn) {
                 }
                 rpa_priorButton = document.createElement('button');
                 rpa_priorButton.id = 'rpaPriorButton';
-                rpa_priorButton.textContent = RPA_CONFIG.priorButtonText;
+                rpa_priorButton.textContent = 'Анализатор цен';
                 rpa_priorButton.className = 'btnv6_blue_hoverfade btn_medium';
-                Object.assign(rpa_priorButton.style, {
-                    marginRight: '10px',
-                    marginBottom: '10px',
-                    height: '32px',
-                    padding: '0 15px',
-                    lineHeight: '32px'
-                });
+                Object.assign(rpa_priorButton.style, { marginRight: '10px', marginBottom: '10px', height: '32px', padding: '0 15px', lineHeight: '32px' });
                 rpa_priorButton.addEventListener('click', rpa_openModal);
                 const buttonContainer = document.createElement('div');
                 buttonContainer.appendChild(rpa_priorButton);
-                if (targetWrapper.parentNode) {
-                    targetWrapper.parentNode.insertBefore(buttonContainer, targetWrapper);
-                }
-            }
-
-            function rpa_updateModeToggleButtonText() {
-                if (!rpa_modeToggleButton) return;
-                if (rpa_currentDisplayMode === 'USD') {
-                    rpa_modeToggleButton.textContent = 'RUB';
-                    rpa_modeToggleButton.title = 'Вернуться в режим рублей?';
-                } else {
-                    rpa_modeToggleButton.textContent = 'USD';
-                    rpa_modeToggleButton.title = 'Переключиться на режим долларов?';
-                }
-            }
-
-            function rpa_handleModeToggle() {
-                if (rpa_currentDisplayMode === 'RUB') {
-                    if (rpa_hideUsdSwitchWarning) {
-                        rpa_switchToUsdMode();
-                    } else {
-                        rpa_showUsdSwitchConfirmation();
-                    }
-                } else {
-                    rpa_switchToRubMode();
-                }
-            }
-
-            function rpa_switchToUsdMode() {
-                rpa_currentDisplayMode = 'USD';
-                rpa_updateTextsAndRegionNames();
-                if (rpa_modal && rpa_modal.style.display === 'flex') {
-                    document.getElementById('rpaSummaryDiv').innerHTML = `<p>Click "Fetch Data" to begin.</p>`;
-                    document.getElementById('rpaResultsDiv').innerHTML = '';
-                    rpa_updateModalStatus('Click "Fetch Data" to start analysis.');
-                }
-                rpa_updateModeToggleButtonText();
-            }
-
-            function rpa_switchToRubMode() {
-                rpa_currentDisplayMode = 'RUB';
-                rpa_updateTextsAndRegionNames();
-                if (rpa_modal && rpa_modal.style.display === 'flex') {
-                    document.getElementById('rpaSummaryDiv').innerHTML = '<p>Нажмите "Сбор данных" для начала.</p>';
-                    document.getElementById('rpaResultsDiv').innerHTML = '';
-                    rpa_updateModalStatus('Нажмите "Сбор данных" для начала анализа.');
-                }
-                rpa_updateModeToggleButtonText();
-            }
-
-            function rpa_showUsdSwitchConfirmation() {
-                let existingDialog = document.getElementById('rpaUsdConfirmDialog');
-                if (existingDialog) existingDialog.remove();
-
-                const dialog = document.createElement('div');
-                dialog.id = 'rpaUsdConfirmDialog';
-                Object.assign(dialog.style, {
-                    position: 'fixed',
-                    top: '50%',
-                    left: '50%',
-                    transform: 'translate(-50%, -50%)',
-                    backgroundColor: '#1b2838',
-                    color: '#c6d4df',
-                    padding: '25px',
-                    borderRadius: '5px',
-                    boxShadow: '0 0 20px rgba(0,0,0,0.7)',
-                    zIndex: '100005',
-                    textAlign: 'left',
-                    border: '1px solid #000',
-                    maxWidth: '450px'
-                });
-
-                const message = document.createElement('p');
-                message.innerHTML = 'Вы переходите в режим долларов. Данный режим предназначен для получения цен в долларах США и может быть полезен для оценки ценовой политики при общении с разработчиками/издателями.<br><br>Продолжить?';
-                message.style.marginBottom = '20px';
-                message.style.lineHeight = '1.6';
-
-                const checkboxContainer = document.createElement('div');
-                checkboxContainer.style.marginBottom = '20px';
-                const checkbox = document.createElement('input');
-                checkbox.type = 'checkbox';
-                checkbox.id = 'rpaDontShowAgainUsd';
-                checkbox.style.marginRight = '8px';
-                const label = document.createElement('label');
-                label.htmlFor = 'rpaDontShowAgainUsd';
-                label.textContent = 'Больше не показывать это сообщение';
-                checkboxContainer.appendChild(checkbox);
-                checkboxContainer.appendChild(label);
-
-                const buttonsContainer = document.createElement('div');
-                buttonsContainer.style.textAlign = 'right';
-
-                const yesButton = document.createElement('button');
-                yesButton.textContent = 'Да';
-                Object.assign(yesButton.style, {
-                    padding: '8px 15px',
-                    marginRight: '10px',
-                    backgroundColor: '#76b72a',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '3px',
-                    cursor: 'pointer'
-                });
-                yesButton.onclick = () => {
-                    if (checkbox.checked) {
-                        rpa_hideUsdSwitchWarning = true;
-                        localStorage.setItem('rpa_hide_usd_switch_warning', 'true');
-                    }
-                    rpa_switchToUsdMode();
-                    dialog.remove();
-                };
-
-                const cancelButton = document.createElement('button');
-                cancelButton.textContent = 'Отмена';
-                Object.assign(cancelButton.style, {
-                    padding: '8px 15px',
-                    backgroundColor: '#55606e',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '3px',
-                    cursor: 'pointer'
-                });
-                cancelButton.onclick = () => {
-                    dialog.remove();
-                };
-
-                buttonsContainer.appendChild(yesButton);
-                buttonsContainer.appendChild(cancelButton);
-                dialog.appendChild(message);
-                dialog.appendChild(checkboxContainer);
-                dialog.appendChild(buttonsContainer);
-                document.body.appendChild(dialog);
+                if (targetWrapper.parentNode) targetWrapper.parentNode.insertBefore(buttonContainer, targetWrapper);
             }
 
             function rpa_createModal() {
@@ -5598,87 +5131,67 @@ if (headerCtn) {
                 rpa_modal = document.createElement('div');
                 rpa_modal.id = 'rpaRegionalPriceModal';
                 Object.assign(rpa_modal.style, {
-                    position: 'fixed',
-                    top: '0',
-                    left: '0',
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundColor: 'rgba(21, 33, 45, 0.985)',
-                    color: '#c6d4df',
-                    zIndex: '100001',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    fontFamily: '"Motiva Sans", Sans-serif, Arial',
-                    padding: '0'
+                    position: 'fixed', top: '0', left: '0', width: '100vw', height: '100vh',
+                    backgroundColor: 'rgba(21, 33, 45, 0.985)', color: '#c6d4df', zIndex: '100001',
+                    display: 'flex', flexDirection: 'column', fontFamily: '"Motiva Sans", Sans-serif, Arial', padding: '0'
                 });
 
                 const headerBar = document.createElement('div');
                 headerBar.id = 'rpaHeaderBar';
                 Object.assign(headerBar.style, {
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'space-between',
-                    padding: '10px 20px',
-                    backgroundColor: '#17202d',
-                    borderBottom: '1px solid #2a3f5a',
-                    flexShrink: '0'
+                    display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                    padding: '10px 20px', backgroundColor: '#17202d', borderBottom: '1px solid #2a3f5a', flexShrink: '0'
                 });
 
                 const title = document.createElement('h3');
-                title.textContent = RPA_CONFIG.modalTitle;
-                Object.assign(title.style, {
-                    margin: '0',
-                    color: '#67c1f5',
-                    fontSize: '18px',
-                    fontWeight: '500'
-                });
+                title.id = 'rpaModalTitle';
+                title.textContent = 'Анализатор цен Steam';
+                Object.assign(title.style, { margin: '0', color: '#67c1f5', fontSize: '18px', fontWeight: '500' });
 
                 const gameNameDisplay = document.createElement('p');
                 gameNameDisplay.id = 'rpaGameNameDisplay';
                 Object.assign(gameNameDisplay.style, {
-                    margin: '0 0 0 20px',
-                    fontSize: '16px',
-                    color: '#e5e5e5',
-                    fontWeight: 'bold',
-                    flexGrow: '1',
-                    textAlign: 'center'
+                    margin: '0 0 0 20px', fontSize: '16px', color: '#e5e5e5',
+                    fontWeight: 'bold', flexGrow: '1', textAlign: 'center'
                 });
 
-                rpa_modeToggleButton = document.createElement('button');
-                Object.assign(rpa_modeToggleButton.style, {
-                    background: '#4b6f9c',
-                    color: 'white',
-                    border: '1px solid #2a3f5a',
-                    borderRadius: '3px',
-                    padding: '5px 10px',
-                    cursor: 'pointer',
-                    fontSize: '13px',
-                    marginRight: '15px'
+                const rightControls = document.createElement('div');
+                rightControls.style.display = 'flex';
+                rightControls.style.alignItems = 'center';
+
+                const rpaCurrencySelect = document.createElement('select');
+                rpaCurrencySelect.id = 'rpaCurrencySelect';
+                Object.assign(rpaCurrencySelect.style, {
+                    background: '#1a2430', color: '#67c1f5', border: '1px solid #2a3f5a',
+                    borderRadius: '3px', padding: '4px 8px', marginRight: '15px',
+                    fontSize: '13px', outline: 'none', cursor: 'pointer'
                 });
-                rpa_modeToggleButton.onmouseover = () => rpa_modeToggleButton.style.backgroundColor = '#67c1f5';
-                rpa_modeToggleButton.onmouseout = () => rpa_modeToggleButton.style.backgroundColor = '#4b6f9c';
-                rpa_modeToggleButton.addEventListener('click', rpa_handleModeToggle);
-                rpa_updateModeToggleButtonText();
+
+                Object.entries(userProvidedRegionsRU).forEach(([cc, data]) => {
+                    const opt = document.createElement('option');
+                    opt.value = cc;
+                    opt.textContent = `База: ${data.name} (${data.iso.toUpperCase()})`;
+                    rpaCurrencySelect.appendChild(opt);
+                });
+
+                rpaCurrencySelect.value = localStorage.getItem('rpa_base_currency') || 'RU';
+
+                rpaCurrencySelect.addEventListener('change', (e) => {
+                    localStorage.setItem('rpa_base_currency', e.target.value);
+                    rpa_updateLanguage();
+                });
 
                 const closeButton = document.createElement('button');
                 closeButton.innerHTML = '&times;';
                 Object.assign(closeButton.style, {
-                    background: 'none',
-                    border: 'none',
-                    color: '#8f98a0',
-                    fontSize: '30px',
-                    cursor: 'pointer',
-                    lineHeight: '1',
-                    padding: '0 8px'
+                    background: 'none', border: 'none', color: '#8f98a0', fontSize: '30px',
+                    cursor: 'pointer', lineHeight: '1', padding: '0 8px'
                 });
                 closeButton.onmouseover = () => closeButton.style.color = '#fff';
                 closeButton.onmouseout = () => closeButton.style.color = '#8f98a0';
                 closeButton.addEventListener('click', rpa_closeModal);
 
-                const rightControls = document.createElement('div');
-                rightControls.style.display = 'flex';
-                rightControls.style.alignItems = 'center';
-                rightControls.appendChild(rpa_modeToggleButton);
+                rightControls.appendChild(rpaCurrencySelect);
                 rightControls.appendChild(closeButton);
 
                 headerBar.appendChild(title);
@@ -5689,98 +5202,56 @@ if (headerCtn) {
                 const controlsBar = document.createElement('div');
                 controlsBar.id = 'rpaControlsBar';
                 Object.assign(controlsBar.style, {
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '15px',
-                    padding: '10px 20px',
-                    backgroundColor: '#1a2430',
-                    borderBottom: '1px solid #23313f',
-                    flexShrink: '0'
+                    display: 'flex', alignItems: 'center', gap: '15px', padding: '10px 20px',
+                    backgroundColor: '#1a2430', borderBottom: '1px solid #23313f', flexShrink: '0'
                 });
 
                 const fetchButton = document.createElement('button');
-                fetchButton.textContent = RPA_CONFIG.fetchButtonText;
+                fetchButton.textContent = 'Сбор данных';
                 fetchButton.id = 'rpaFetchDataButton';
                 Object.assign(fetchButton.style, {
-                    padding: '8px 20px',
-                    backgroundColor: '#76b72a',
-                    color: 'white',
-                    border: '1px solid #5c9e1f',
-                    borderRadius: '3px',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                    textShadow: '1px 1px 0px rgba(0,0,0,0.3)',
-                    fontWeight: '500',
-                    cursor: 'pointer',
-                    fontSize: '14px',
-                    lineHeight: '1.5'
+                    padding: '8px 20px', backgroundColor: '#76b72a', color: 'white',
+                    border: '1px solid #5c9e1f', borderRadius: '3px', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+                    textShadow: '1px 1px 0px rgba(0,0,0,0.3)', fontWeight: '500', cursor: 'pointer',
+                    fontSize: '14px', lineHeight: '1.5'
                 });
-                fetchButton.onmouseover = () => {
-                    fetchButton.style.backgroundColor = '#85c83a';
-                };
-                fetchButton.onmouseout = () => {
-                    fetchButton.style.backgroundColor = '#76b72a';
-                };
-                fetchButton.onmousedown = () => {
-                    fetchButton.style.backgroundColor = '#6aa424';
-                };
-                fetchButton.onmouseup = () => {
-                    fetchButton.style.backgroundColor = '#85c83a';
-                };
+                fetchButton.onmouseover = () => fetchButton.style.backgroundColor = '#85c83a';
+                fetchButton.onmouseout = () => fetchButton.style.backgroundColor = '#76b72a';
+                fetchButton.onmousedown = () => fetchButton.style.backgroundColor = '#6aa424';
+                fetchButton.onmouseup = () => fetchButton.style.backgroundColor = '#85c83a';
                 fetchButton.addEventListener('click', rpa_handleFetchData);
                 controlsBar.appendChild(fetchButton);
 
                 const progressBarContainer = document.createElement('div');
                 progressBarContainer.id = 'rpaProgressBarContainer';
                 Object.assign(progressBarContainer.style, {
-                    flexGrow: '1',
-                    height: '10px',
-                    backgroundColor: '#2a3f5a',
-                    borderRadius: '5px',
-                    overflow: 'hidden',
-                    display: 'none'
+                    flexGrow: '1', height: '10px', backgroundColor: '#2a3f5a',
+                    borderRadius: '5px', overflow: 'hidden', display: 'none'
                 });
                 rpa_progressBarFill = document.createElement('div');
                 rpa_progressBarFill.id = 'rpaProgressBarFill';
                 Object.assign(rpa_progressBarFill.style, {
-                    width: '0%',
-                    height: '100%',
-                    backgroundColor: '#67c1f5',
-                    borderRadius: '5px',
-                    transition: 'width 0.2s ease-out'
+                    width: '0%', height: '100%', backgroundColor: '#67c1f5',
+                    borderRadius: '5px', transition: 'width 0.2s ease-out'
                 });
                 progressBarContainer.appendChild(rpa_progressBarFill);
                 controlsBar.appendChild(progressBarContainer);
 
                 const statusDiv = document.createElement('div');
                 statusDiv.id = 'rpaStatusDiv';
-                Object.assign(statusDiv.style, {
-                    minWidth: '250px',
-                    textAlign: 'right',
-                    fontSize: '13px',
-                    color: '#8f98a0'
-                });
+                Object.assign(statusDiv.style, { minWidth: '250px', textAlign: 'right', fontSize: '13px', color: '#8f98a0' });
                 controlsBar.appendChild(statusDiv);
                 rpa_modal.appendChild(controlsBar);
 
                 const mainContentWrapper = document.createElement('div');
                 mainContentWrapper.id = 'rpaMainContentWrapper';
-                Object.assign(mainContentWrapper.style, {
-                    display: 'flex',
-                    flexGrow: '1',
-                    overflow: 'hidden',
-                    padding: '15px 20px'
-                });
+                Object.assign(mainContentWrapper.style, { display: 'flex', flexGrow: '1', overflow: 'hidden', padding: '15px 20px' });
 
                 const leftSidebar = document.createElement('div');
                 leftSidebar.id = 'rpaLeftSidebar';
                 Object.assign(leftSidebar.style, {
-                    width: '280px',
-                    flexShrink: '0',
-                    paddingRight: '15px',
-                    borderRight: '1px solid #23313f',
-                    overflowY: 'auto',
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: '#4b6f9c #1e2c3a'
+                    width: '280px', flexShrink: '0', paddingRight: '15px', borderRight: '1px solid #23313f',
+                    overflowY: 'auto', scrollbarWidth: 'thin', scrollbarColor: '#4b6f9c #1e2c3a'
                 });
                 leftSidebar.innerHTML = `<style>
                     #rpaLeftSidebar::-webkit-scrollbar { width: 6px; }
@@ -5799,13 +5270,7 @@ if (headerCtn) {
 
                 const resultsArea = document.createElement('div');
                 resultsArea.id = 'rpaResultsArea';
-                Object.assign(resultsArea.style, {
-                    flexGrow: '1',
-                    overflow: 'auto',
-                    paddingLeft: '15px',
-                    scrollbarWidth: 'thin',
-                    scrollbarColor: '#4b6f9c #1e2c3a'
-                });
+                Object.assign(resultsArea.style, { flexGrow: '1', overflow: 'auto', paddingLeft: '15px', scrollbarWidth: 'thin', scrollbarColor: '#4b6f9c #1e2c3a' });
                 resultsArea.innerHTML = `<style>
                     #rpaResultsArea::-webkit-scrollbar { width: 8px; height: 8px; }
                     #rpaResultsArea::-webkit-scrollbar-track { background: #1e2c3a; border-radius: 4px; }
@@ -5825,56 +5290,63 @@ if (headerCtn) {
                 style.textContent = `
                     @keyframes rpa_spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
                     .rpa_spinner { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; width: 0.9em; height: 0.9em; animation: rpa_spin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left: 8px; }
-                    .rpaSinglePriceTable { width: auto; min-width: 680px; border-collapse: collapse; font-size: 12px; table-layout: fixed; background-color: #1e2c3a; border-radius: 3px; margin-left: 0; }
-                    .rpaSinglePriceTable th, .rpaSinglePriceTable td { border: 1px solid #2a3f5a; padding: 6px 8px; text-align: left; }
-                    .rpaSinglePriceTable th { background-color: #23313f; color: #a0b1c3; font-weight: 500; position: sticky; top: 0; z-index: 1; }
-                    .rpaSinglePriceTable th.col-rank-header { width: 45px; }
-                    .rpaSinglePriceTable th.col-region-header { width: 230px; }
-                    .rpaSinglePriceTable th.col-local-price-header { width: 110px; }
-                    .rpaSinglePriceTable th.col-rub-price-header, .rpaSinglePriceTable th.col-usd-price-header { width: 110px; }
-                    .rpaSinglePriceTable th.col-diff-ru-header, .rpaSinglePriceTable th.col-diff-us-header { width: 120px; }
-                    .rpaSinglePriceTable td.col-rank { text-align: center; }
-                    .rpaSinglePriceTable td.col-region { word-break: break-word; white-space: normal; }
-                    .rpaSinglePriceTable td.col-local-price, .rpaSinglePriceTable td.col-rub-price, .rpaSinglePriceTable td.col-usd-price, .rpaSinglePriceTable td.col-diff-ru, .rpaSinglePriceTable td.col-diff-us { text-align: right; white-space: nowrap; }
-                    .rpaSinglePriceTable td.col-diff-ru.positive, .rpaSinglePriceTable td.col-diff-us.positive { color: lightgreen; }
-                    .rpaSinglePriceTable td.col-diff-ru.negative, .rpaSinglePriceTable td.col-diff-us.negative { color: salmon; }
-                    .rpaSinglePriceTable td.col-diff-ru.neutral, .rpaSinglePriceTable td.col-diff-us.neutral { color: #c6d4df; }
-                    .rpaSinglePriceTable tr.highlight-ru td, .rpaSinglePriceTable tr.highlight-us td { background-color: rgba(103, 193, 245, 0.15) !important; font-weight: bold; }
+                    .rpaTable { width: auto; min-width: 100%; border-collapse: collapse; font-size: 12px; white-space: nowrap; background-color: #1e2c3a; border-radius: 3px; }
+                    .rpaTable th, .rpaTable td { border: 1px solid #2a3f5a; padding: 6px 8px; text-align: right; }
+                    .rpaTable th { background-color: #23313f; color: #a0b1c3; font-weight: 500; position: sticky; top: 0; z-index: 1; cursor: pointer; user-select: none; }
+                    .rpaTable th:hover { background-color: #2a3f5a; color: #fff; }
+                    .rpaTable th.col-region, .rpaTable td.col-region { text-align: left; }
+                    .rpaTable td.positive { color: lightgreen; }
+                    .rpaTable td.negative { color: salmon; }
+                    .rpaTable td.neutral { color: #c6d4df; }
+                    .rpaTable tr.highlight-base td { background-color: rgba(103, 193, 245, 0.15) !important; font-weight: bold; }
                 `;
                 document.head.appendChild(style);
+                rpa_updateLanguage();
+            }
+
+            function rpa_updateLanguage() {
+                const isUSD = document.getElementById('rpaCurrencySelect').value === 'US';
+                const btn = document.getElementById('rpaPriorButton');
+                if (btn) btn.textContent = isUSD ? 'Price Analyzer' : 'Анализатор цен';
+
+                const modalTitle = document.getElementById('rpaModalTitle');
+                if (modalTitle) modalTitle.textContent = isUSD ? 'Regional Price Analyzer' : 'Анализатор цен Steam';
+
+                const fetchBtn = document.getElementById('rpaFetchDataButton');
+                if (fetchBtn) fetchBtn.textContent = isUSD ? 'Fetch Data' : 'Сбор данных';
+
+                const summaryDiv = document.getElementById('rpaSummaryDiv');
+                if (summaryDiv) summaryDiv.innerHTML = isUSD ? '<p>Click "Fetch Data" to begin.</p>' : '<p>Нажмите "Сбор данных" для начала.</p>';
+
+                const resultsDiv = document.getElementById('rpaResultsDiv');
+                if (resultsDiv) resultsDiv.innerHTML = '';
+
+                rpa_updateModalStatus(isUSD ? 'Ready.' : 'Готов.');
             }
 
             function rpa_updateProgressBar(percentage) {
-                if (rpa_progressBarFill) {
-                    rpa_progressBarFill.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
-                }
+                if (rpa_progressBarFill) rpa_progressBarFill.style.width = `${Math.min(100, Math.max(0, percentage))}%`;
                 const progressBarContainer = document.getElementById('rpaProgressBarContainer');
-                if (progressBarContainer) {
-                    progressBarContainer.style.display = (percentage > 0 && percentage < 100) ? 'flex' : 'none';
-                }
+                if (progressBarContainer) progressBarContainer.style.display = (percentage > 0 && percentage < 100) ? 'flex' : 'none';
             }
 
             function rpa_openModal() {
                 if (!rpa_modal) rpa_createModal();
-                rpa_updateTextsAndRegionNames();
                 rpa_currentAppId = rpa_getAppIdFromUrl();
-                const initialMsg = rpa_currentDisplayMode === 'USD' ? 'Click "Fetch Data" to begin.' : 'Нажмите "Сбор данных" для начала.';
-                const statusMsg = rpa_currentDisplayMode === 'USD' ? 'Click "Fetch Data" to start analysis.' : 'Нажмите "Сбор данных" для начала анализа.';
+                const isUSD = document.getElementById('rpaCurrencySelect').value === 'US';
 
                 if (!rpa_currentAppId) {
-                    alert(rpa_currentDisplayMode === 'USD' ? '[RPA] Could not determine AppID of the game.' : '[RPA] Не удалось определить AppID игры.');
+                    alert(isUSD ? '[RPA] AppID not found.' : '[RPA] Не удалось определить AppID игры.');
                     return;
                 }
 
                 const gameTitleElement = document.querySelector('#appHubAppName');
-                rpa_currentGameName = gameTitleElement ? gameTitleElement.textContent.trim() : (rpa_currentDisplayMode === 'USD' ? `Game #${rpa_currentAppId}` : `Игра #${rpa_currentAppId}`);
+                rpa_currentGameName = gameTitleElement ? gameTitleElement.textContent.trim() : `App #${rpa_currentAppId}`;
                 const gameNameDisplay = document.getElementById('rpaGameNameDisplay');
                 if (gameNameDisplay) gameNameDisplay.textContent = rpa_currentGameName;
 
                 rpa_modal.style.display = 'flex';
-                document.getElementById('rpaSummaryDiv').innerHTML = `<p>${initialMsg}</p>`;
-                document.getElementById('rpaResultsDiv').innerHTML = '';
-                rpa_updateModalStatus(statusMsg);
+                rpa_updateLanguage();
                 document.getElementById('rpaFetchDataButton').disabled = false;
                 rpa_updateProgressBar(0);
             }
@@ -5885,175 +5357,139 @@ if (headerCtn) {
                     rpa_fetchController = null;
                 }
                 if (rpa_modal) rpa_modal.style.display = 'none';
-                const statusMsg = rpa_currentDisplayMode === 'USD' ? 'Ready for new analysis.' : 'Готово к новому анализу.';
-                rpa_updateModalStatus(statusMsg);
                 rpa_updateProgressBar(0);
             }
 
             function rpa_updateModalStatus(message, isLoading = false) {
                 const statusDiv = document.getElementById('rpaStatusDiv');
                 const fetchBtn = document.getElementById('rpaFetchDataButton');
-                if (statusDiv) {
-                    statusDiv.innerHTML = isLoading ? `${message} <span class="rpa_spinner"></span>` : message;
-                }
-                if (fetchBtn) {
-                    fetchBtn.disabled = isLoading;
-                }
+                if (statusDiv) statusDiv.innerHTML = isLoading ? `${message} <span class="rpa_spinner"></span>` : message;
+                if (fetchBtn) fetchBtn.disabled = isLoading;
             }
 
             async function rpa_handleFetchData() {
-                if (rpa_fetchController) {
-                    rpa_fetchController.abort();
-                    console.log("[RPA] Previous data fetch aborted.");
-                }
+                if (rpa_fetchController) rpa_fetchController.abort();
                 rpa_fetchController = new AbortController();
                 const signal = rpa_fetchController.signal;
 
+                const baseCc = document.getElementById('rpaCurrencySelect').value;
+                const isUSD = baseCc === 'US';
+                const baseRegionConfig = RPA_CONFIG.regions.find(r => r.cc === baseCc);
+                const baseIso = baseRegionConfig.iso.toUpperCase();
+
                 rpa_updateProgressBar(0);
-                rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Initializing...' : 'Инициализация...', true);
+                rpa_updateModalStatus(isUSD ? 'Initializing...' : 'Инициализация...', true);
+
                 const summaryDiv = document.getElementById('rpaSummaryDiv');
                 const resultsDiv = document.getElementById('rpaResultsDiv');
-                summaryDiv.innerHTML = `<h4>${rpa_currentDisplayMode === 'USD' ? 'Summary:' : 'Сводная информация:'}</h4>`;
+                summaryDiv.innerHTML = `<h4>${isUSD ? 'Summary:' : 'Сводная информация:'}</h4>`;
                 resultsDiv.innerHTML = '';
 
-                if (!rpa_currentAppId) {
-                    rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Error: AppID not defined.' : 'Ошибка: AppID не определен.', false);
-                    rpa_updateProgressBar(0);
+                try {
+                    rpa_updateModalStatus(isUSD ? 'Fetching Steam Matrices...' : 'Получение матрицы цен Steam...', true);
+                    await rpa_fetchSteamPricingMatrix(signal);
+                } catch (e) {
+                    if (e.name !== 'AbortError') rpa_updateModalStatus((isUSD ? 'Matrix Error: ' : 'Ошибка Матрицы: ') + e.message, false);
                     return;
                 }
 
-                const gameTitleElement = document.querySelector('#appHubAppName');
-                rpa_currentGameName = gameTitleElement ? gameTitleElement.textContent.trim() : (rpa_currentDisplayMode === 'USD' ? `Game #${rpa_currentAppId}` : `Игра #${rpa_currentAppId}`);
-                const gameNameDisplay = document.getElementById('rpaGameNameDisplay');
-                if (gameNameDisplay) gameNameDisplay.textContent = rpa_currentGameName;
-
-                rpa_updateProgressBar(2);
+                rpa_updateProgressBar(5);
 
                 let usData;
-                const usRegionConfig = RPA_CONFIG.regions.find(r => r.cc === 'US');
-                if (!usRegionConfig) {
-                    rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Error: Configuration for US region not found.' : 'Ошибка: Конфигурация для региона США не найдена.', false);
-                    rpa_updateProgressBar(0);
-                    return;
-                }
-
                 try {
-                    rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Fetching US price...' : 'Запрос цены для США...', true);
-                    usData = await rpa_fetchItemData(rpa_currentAppId, usRegionConfig.cc, signal);
+                    rpa_updateModalStatus(isUSD ? 'Fetching Base US Price...' : 'Запрос базовой цены (США)...', true);
+                    usData = await rpa_fetchItemData(rpa_currentAppId, 'US', signal);
                     if (signal.aborted) throw new DOMException('Request aborted', 'AbortError');
-                    if (usData && usData.basic_info && usData.basic_info.name) {
-                        rpa_currentGameName = usData.basic_info.name;
-                        if (gameNameDisplay) gameNameDisplay.textContent = rpa_currentGameName;
-                    }
                 } catch (error) {
-                    if (error.name === 'AbortError') {
-                        rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Data fetch aborted.' : 'Сбор данных отменен.', false);
-                    } else {
-                        rpa_updateModalStatus((rpa_currentDisplayMode === 'USD' ? `Error fetching US price: ` : `Ошибка при запросе цены для США: `) + error.message, false);
-                    }
+                    if (error.name !== 'AbortError') rpa_updateModalStatus((isUSD ? 'Error fetching US price: ' : 'Ошибка при запросе цены для США: ') + error.message, false);
                     rpa_updateProgressBar(0);
                     return;
                 }
 
                 if (!usData || !usData.best_purchase_option || !usData.best_purchase_option.final_price_in_cents) {
-                    let msg = (rpa_currentDisplayMode === 'USD' ? `Game "${rpa_currentGameName}" ` : `Игра "${rpa_currentGameName}" `);
-                    const isFreeOrUnavailableUS = (usData && usData.success === 1 && (!usData.best_purchase_option || usData.best_purchase_option.final_price_in_cents === "0" || !usData.best_purchase_option.final_price_in_cents));
-                    msg += isFreeOrUnavailableUS ? (rpa_currentDisplayMode === 'USD' ? "is free or not available in the US." : "бесплатна или недоступна в США.") :
-                        (rpa_currentDisplayMode === 'USD' ? "is unavailable in the US or has no price." : "недоступна в США или не имеет цены.");
-                    msg += (rpa_currentDisplayMode === 'USD' ? " Analysis cannot proceed." : " Анализ невозможен.");
-                    rpa_updateModalStatus(msg, false);
+                    rpa_updateModalStatus(isUSD ? 'Game is free or unavailable in US.' : 'Игра бесплатна или недоступна в США (Анализ невозможен).', false);
                     rpa_updateProgressBar(0);
                     return;
                 }
 
-                const basePriceCents = rpa_getPriceInCents(usData.best_purchase_option);
-                if (!basePriceCents) {
-                    rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Could not determine base US price for calculation.' : 'Не удалось определить базовую цену в США для расчета.', false);
-                    rpa_updateProgressBar(0);
-                    return;
-                }
-                const baseUsdPrice = parseFloat(basePriceCents) / 100;
-                const baseUsdFormattedPrice = rpa_getDisplayFormattedPrice(usData.best_purchase_option);
+                const baseUsdCents = rpa_getPriceInCents(usData.best_purchase_option);
+                const gameUsdPriceNum = baseUsdCents / 100;
 
-                rpa_updateProgressBar(5);
-
-                if (rpa_currentDisplayMode === 'USD') {
-                    summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Base US Price:</span><span class="summary-value">${baseUsdPrice.toLocaleString('en-US', { style: 'currency', currency: 'USD' })}</span></div>`;
+                let baseRegionData = usData;
+                if (!isUSD) {
                     try {
-                        await rpa_fetchExchangeRates('usd', signal);
+                        rpa_updateModalStatus(`Запрос фактической цены (${baseCc})...`, true);
+                        baseRegionData = await rpa_fetchItemData(rpa_currentAppId, baseCc, signal);
                         if (signal.aborted) throw new DOMException('Request aborted', 'AbortError');
-                    } catch (e) {
-                        if (e.name === 'AbortError') {
-                            rpa_updateModalStatus('Data fetch aborted.', false);
-                        } else {
-                            rpa_updateModalStatus('Error fetching base USD exchange rates.', false);
-                        }
+                    } catch (error) {
+                        if (error.name !== 'AbortError') rpa_updateModalStatus(`Ошибка при запросе базовой цены: ` + error.message, false);
                         rpa_updateProgressBar(0);
                         return;
                     }
-                } else {
-                    summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Базовая цена в США (для расчета):</span><span class="summary-value">$${baseUsdPrice.toFixed(2)}</span></div>`;
-                    const recommendedRubPriceVal = calculateRecommendedRubPrice(baseUsdPrice);
-                    if (recommendedRubPriceVal === null || typeof recommendedRubPriceVal === 'string') {
-                        summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Рекомендуемая цена Steam в РФ:</span><span class="summary-value">${recommendedRubPriceVal || 'Не удалось рассчитать'}</span></div>`;
+                }
+
+                let gameBaseActualCents = null;
+                if (baseRegionData && baseRegionData.best_purchase_option && baseRegionData.best_purchase_option.final_price_in_cents) {
+                    gameBaseActualCents = rpa_getPriceInCents(baseRegionData.best_purchase_option);
+                }
+
+                const labelBaseUsd = isUSD ? 'Base US Price (for calculation):' : 'Базовая цена в США (для расчета):';
+                summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">${labelBaseUsd}</span><span class="summary-value">$${gameUsdPriceNum.toFixed(2)}</span></div>`;
+
+                if (!isUSD && gameBaseActualCents !== null) {
+                    const actualBaseNum = gameBaseActualCents / 100;
+                    const recNuancedCents = getRecommendedPriceCentsFromMatrix(rpa_steamPricingMatrix, baseUsdCents, baseRegionConfig.steamCurrencyId, 1);
+
+                    const regionNameLabel = baseCc === 'RU' ? 'в РФ' : `(${baseCc})`;
+
+                    if (recNuancedCents !== null) {
+                        const recNuancedNum = recNuancedCents / 100;
+                        const diff = actualBaseNum - recNuancedNum;
+                        const diffPercent = recNuancedNum !== 0 ? (diff / recNuancedNum) * 100 : 0;
+                        let subValueStr = '', subValueColor = '#c6d4df';
+
+                        const diffFormatted = formatSteamPrice(Math.round(Math.abs(diff) * 100), baseRegionConfig.steamCurrencyId);
+
+                        if (diff < -0.01) {
+                            subValueColor = 'lightgreen';
+                            subValueStr = `(на ${diffFormatted} / ${Math.abs(diffPercent).toFixed(1)}% ДЕШЕВЛЕ рекомендуемой)`;
+                        } else if (diff > 0.01) {
+                            subValueColor = 'salmon';
+                            subValueStr = `(на ${diffFormatted} / ${diffPercent.toFixed(1)}% ДОРОЖЕ рекомендуемой)`;
+                        } else {
+                            subValueStr = `(соответствует рекомендуемой)`;
+                        }
+
+                        summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Рекомендуемая цена Steam ${regionNameLabel}:</span><span class="summary-value">${formatSteamPrice(recNuancedCents, baseRegionConfig.steamCurrencyId)}</span></div>`;
+                        summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Фактическая цена ${regionNameLabel}:</span><span class="summary-value">${formatSteamPrice(gameBaseActualCents, baseRegionConfig.steamCurrencyId)}<br><span class="summary-sub-value" style="color:${subValueColor};">${subValueStr}</span></span></div>`;
                     } else {
-                        summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Рекомендуемая цена Steam в РФ:</span><span class="summary-value">${recommendedRubPriceVal.toLocaleString('ru-RU')} руб.</span></div>`;
-                    }
-                    try {
-                        await rpa_fetchExchangeRates('rub', signal);
-                        if (signal.aborted) throw new DOMException('Request aborted', 'AbortError');
-                    } catch (e) {
-                        if (e.name === 'AbortError') {
-                            rpa_updateModalStatus('Сбор данных отменен.', false);
-                        } else {
-                            rpa_updateModalStatus('Ошибка загрузки базовых курсов валют.', false);
-                        }
-                        rpa_updateProgressBar(0);
-                        return;
+                        summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Рекомендуемая цена Steam ${regionNameLabel}:</span><span class="summary-value">Не найдена в матрице</span></div>`;
                     }
                 }
 
-                const regionalPrices = [];
-                let ruActualPriceData = null;
-                let ruActualPriceInRub = null;
-
-                if (rpa_currentDisplayMode === 'USD') {
-                    regionalPrices.push({
-                        regionName: usRegionConfig.name,
-                        localPriceFormatted: baseUsdFormattedPrice,
-                        priceInUsd: baseUsdPrice,
-                        cc: usRegionConfig.cc
-                    });
+                rpa_updateModalStatus(isUSD ? 'Fetching Exchange Rates...' : 'Запрос курсов валют...', true);
+                let usdRates = null;
+                try {
+                    usdRates = await rpa_fetchExchangeRates(signal);
+                } catch(e) {
+                    console.warn("[RPA] Ошибка курсов валют, расчеты конвертации могут быть неточными.");
                 }
 
-                const otherRegions = RPA_CONFIG.regions.filter(r => rpa_currentDisplayMode === 'USD' ? r.cc !== usRegionConfig.cc : true);
-                const totalRegionsToProcess = otherRegions.length;
+                const allRegions = RPA_CONFIG.regions;
+                const totalRegionsToProcess = allRegions.length;
                 let regionsProcessedCount = 0;
+                let rawTableData = [];
 
                 for (let i = 0; i < totalRegionsToProcess; i += RPA_CONFIG.batchSize) {
                     if (signal.aborted) break;
-                    const batch = otherRegions.slice(i, i + RPA_CONFIG.batchSize);
-                    const batchProgressText = rpa_currentDisplayMode === 'USD' ?
-                        `Workspaceing prices: batch ${Math.floor(i/RPA_CONFIG.batchSize)+1}/${Math.ceil(totalRegionsToProcess/RPA_CONFIG.batchSize)}` :
-                        `Сбор цен: группа ${Math.floor(i/RPA_CONFIG.batchSize)+1}/${Math.ceil(totalRegionsToProcess/RPA_CONFIG.batchSize)}`;
-                    rpa_updateModalStatus(`${batchProgressText} (${batch.map(r=>r.cc).join(', ')})...`, true);
+                    const batch = allRegions.slice(i, i + RPA_CONFIG.batchSize);
+                    rpa_updateModalStatus(isUSD ? `Processing batch ${Math.floor(i/RPA_CONFIG.batchSize)+1}...` : `Сбор цен: группа ${Math.floor(i/RPA_CONFIG.batchSize)+1}...`, true);
 
-                    const batchPromises = batch.map(region =>
-                        rpa_fetchItemData(rpa_currentAppId, region.cc, signal)
-                        .then(data => ({
-                            region,
-                            data
-                        }))
-                        .catch(error => {
-                            if (error.name === 'AbortError') throw error;
-                            console.warn(`[RPA] Error for region ${region.name} (${region.cc}): ${error.message}`);
-                            return {
-                                region,
-                                error,
-                                data: null
-                            };
-                        })
-                    );
+                    const batchPromises = batch.map(region => {
+                        return rpa_fetchItemData(rpa_currentAppId, region.cc, signal)
+                        .then(data => ({ region, data }))
+                        .catch(error => ({ region, error, data: null }))
+                    });
 
                     try {
                         const batchResults = await Promise.allSettled(batchPromises);
@@ -6061,323 +5497,214 @@ if (headerCtn) {
 
                         for (const result of batchResults) {
                             regionsProcessedCount++;
-                            let currentProgress = 5 + Math.round(((regionsProcessedCount + 1) / (totalRegionsToProcess + 1)) * 85);
-                            rpa_updateProgressBar(currentProgress);
+                            rpa_updateProgressBar(5 + Math.round((regionsProcessedCount / totalRegionsToProcess) * 85));
 
                             if (result.status === 'fulfilled' && result.value.data) {
-                                const {
-                                    region,
-                                    data: regionData
-                                } = result.value;
-                                if (regionData && regionData.basic_info && regionData.best_purchase_option) {
+                                const { region, data: regionData } = result.value;
+                                if (regionData && regionData.best_purchase_option) {
                                     const purchaseOption = regionData.best_purchase_option;
                                     let priceInCents = rpa_getPriceInCents(purchaseOption);
                                     let displayFormattedPrice = rpa_getDisplayFormattedPrice(purchaseOption);
 
                                     if (priceInCents !== null && priceInCents >= 0) {
-                                        const localPrice = parseFloat(priceInCents) / 100;
+                                        const localPriceNum = priceInCents / 100;
 
-                                        if (rpa_currentDisplayMode === 'USD') {
-                                            let priceInUsd = null;
-                                            if (region.currencyApiCode.toLowerCase() === 'usd') {
-                                                priceInUsd = localPrice;
+                                        const recNuancedCents = getRecommendedPriceCentsFromMatrix(rpa_steamPricingMatrix, baseUsdCents, region.steamCurrencyId, 1);
+                                        const recParityCents = getRecommendedPriceCentsFromMatrix(rpa_steamPricingMatrix, baseUsdCents, region.steamCurrencyId, 2);
+                                        const recFxCents = getRecommendedPriceCentsFromMatrix(rpa_steamPricingMatrix, baseUsdCents, region.steamCurrencyId, 3);
+
+                                        let priceInBase = null, priceInUsd = null;
+                                        let recNuancedBase = null, recParityBase = null, recFxBase = null;
+
+                                        const regionIso = region.iso.toLowerCase();
+                                        const baseIsoLower = baseIso.toLowerCase();
+
+                                        if (usdRates) {
+                                            priceInUsd = regionIso === 'usd' ? localPriceNum : (usdRates[regionIso] ? localPriceNum / usdRates[regionIso] : null);
+                                            let rN_usd = recNuancedCents ? (regionIso === 'usd' ? recNuancedCents/100 : (usdRates[regionIso] ? (recNuancedCents/100) / usdRates[regionIso] : null)) : null;
+                                            let rP_usd = recParityCents ? (regionIso === 'usd' ? recParityCents/100 : (usdRates[regionIso] ? (recParityCents/100) / usdRates[regionIso] : null)) : null;
+                                            let rF_usd = recFxCents ? (regionIso === 'usd' ? recFxCents/100 : (usdRates[regionIso] ? (recFxCents/100) / usdRates[regionIso] : null)) : null;
+
+                                            if (baseIsoLower === 'usd') {
+                                                priceInBase = priceInUsd;
+                                                recNuancedBase = rN_usd;
+                                                recParityBase = rP_usd;
+                                                recFxBase = rF_usd;
                                             } else {
-                                                try {
-                                                    const rates = await rpa_fetchExchangeRates(region.currencyApiCode.toLowerCase(), signal);
-                                                    if (signal.aborted) throw new DOMException('Request aborted', 'AbortError');
-                                                    if (rates && typeof rates.usd === 'number') {
-                                                        priceInUsd = localPrice * rates.usd;
-                                                    } else {
-                                                        const usdBasedRates = await rpa_fetchExchangeRates('usd', signal);
-                                                        if (usdBasedRates && typeof usdBasedRates[region.currencyApiCode.toLowerCase()] === 'number' && usdBasedRates[region.currencyApiCode.toLowerCase()] !== 0) {
-                                                            priceInUsd = localPrice / usdBasedRates[region.currencyApiCode.toLowerCase()];
-                                                        } else {
-                                                            console.warn(`[RPA] USD rate not found for ${region.currencyApiCode}`);
-                                                        }
-                                                    }
-                                                } catch (rateError) {
-                                                    if (rateError.name === 'AbortError') throw rateError;
-                                                    console.warn(`[RPA] Rate error (USD) for ${region.currencyApiCode}: ${rateError.message}`);
-                                                }
-                                            }
-                                            if (priceInUsd !== null && region.cc !== 'US') {
-                                                regionalPrices.push({
-                                                    regionName: region.name,
-                                                    localPriceFormatted: displayFormattedPrice,
-                                                    priceInUsd: priceInUsd,
-                                                    cc: region.cc
-                                                });
-                                            }
-                                        } else {
-                                            let priceInRub = null;
-                                            if (region.currencyApiCode.toLowerCase() === 'rub') {
-                                                priceInRub = localPrice;
-                                            } else {
-                                                try {
-                                                    const rates = await rpa_fetchExchangeRates(region.currencyApiCode.toLowerCase(), signal);
-                                                    if (signal.aborted) throw new DOMException('Request aborted', 'AbortError');
-                                                    if (rates && typeof rates.rub === 'number') {
-                                                        priceInRub = localPrice * rates.rub;
-                                                    } else {
-                                                        console.warn(`[RPA] RUB rate not found for ${region.currencyApiCode}`);
-                                                    }
-                                                } catch (rateError) {
-                                                    if (rateError.name === 'AbortError') throw rateError;
-                                                    console.warn(`[RPA] Rate error (RUB) for ${region.currencyApiCode}: ${rateError.message}`);
-                                                }
-                                            }
-                                            if (priceInRub !== null) {
-                                                regionalPrices.push({
-                                                    regionName: region.name,
-                                                    localPriceFormatted: displayFormattedPrice,
-                                                    priceInRub: priceInRub,
-                                                    cc: region.cc
-                                                });
-                                            }
-                                            if (region.cc === 'RU') {
-                                                ruActualPriceData = {
-                                                    formatted: displayFormattedPrice,
-                                                    rub: priceInRub
-                                                };
-                                                ruActualPriceInRub = priceInRub;
-                                            }
-                                            if (region.cc === 'US' && rpa_currentDisplayMode === 'RUB' && !regionalPrices.find(p => p.cc === 'US')) {
-                                                regionalPrices.push({
-                                                    regionName: region.name,
-                                                    localPriceFormatted: displayFormattedPrice,
-                                                    priceInRub: priceInRub,
-                                                    cc: region.cc
-                                                });
+                                                const rateBase = usdRates[baseIsoLower];
+                                                if (rateBase && priceInUsd !== null) priceInBase = priceInUsd * rateBase;
+                                                if (rateBase && rN_usd !== null) recNuancedBase = rN_usd * rateBase;
+                                                if (rateBase && rP_usd !== null) recParityBase = rP_usd * rateBase;
+                                                if (rateBase && rF_usd !== null) recFxBase = rF_usd * rateBase;
                                             }
                                         }
+
+                                        rawTableData.push({
+                                            cc: region.cc,
+                                            regionName: isUSD ? region.nameEN : region.nameRU,
+                                            localFormat: displayFormattedPrice,
+                                            actualBase: priceInBase,
+                                            recNuancedBase: recNuancedBase,
+                                            recParityBase: recParityBase,
+                                            recFxBase: recFxBase,
+                                            actualLocalCents: priceInCents,
+                                            recNuancedLocalCents: recNuancedCents,
+                                            recParityLocalCents: recParityCents,
+                                            recFxLocalCents: recFxCents
+                                        });
                                     }
                                 }
                             }
                         }
                     } catch (batchError) {
-                        if (batchError.name === 'AbortError') {
-                            rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Data fetch aborted.' : 'Сбор данных отменен.', false);
-                            rpa_updateProgressBar(0);
-                            rpa_fetchController = null;
-                            return;
-                        }
-                        console.error("[RPA] Error processing batch:", batchError);
+                        if (batchError.name === 'AbortError') return;
                     }
                     if (i + RPA_CONFIG.batchSize < totalRegionsToProcess && !signal.aborted) {
                         await new Promise(resolve => setTimeout(resolve, RPA_CONFIG.delayBetweenBatches));
                     }
-                    if (signal.aborted) break;
-                }
-                if (signal.aborted) {
-                    rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Data fetch aborted.' : 'Сбор данных отменен.', false);
-                    rpa_updateProgressBar(0);
-                    rpa_fetchController = null;
-                    return;
                 }
 
                 rpa_updateProgressBar(98);
 
-                if (rpa_currentDisplayMode === 'USD') {
-                    if (regionalPrices.length > 0) {
-                        regionalPrices.sort((a, b) => a.priceInUsd - b.priceInUsd);
-                        const cheapestRegion = regionalPrices[0];
-                        const mostExpensiveRegion = regionalPrices[regionalPrices.length - 1];
-                        summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Cheapest (USD):</span><span class="summary-value">${cheapestRegion.priceInUsd.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} (${cheapestRegion.regionName})</span></div>`;
-                        summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Most Expensive (USD):</span><span class="summary-value">${mostExpensiveRegion.priceInUsd.toLocaleString('en-US', { style: 'currency', currency: 'USD' })} (${mostExpensiveRegion.regionName})</span></div>`;
-                        const usEntryIndex = regionalPrices.findIndex(r => r.cc === 'US');
-                        if (usEntryIndex !== -1) {
-                            summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">US Price Rank:</span><span class="summary-value">${usEntryIndex + 1} of ${regionalPrices.length}</span></div>`;
-                        }
-                        generatePriceTable(regionalPrices, baseUsdPrice, resultsDiv);
-                    } else {
-                        resultsDiv.innerHTML = `<p style="text-align:center; margin-top:20px; color: #8f98a0;">Could not retrieve regional prices for comparison.</p>`;
+                if (rawTableData.length > 0) {
+                    rawTableData.sort((a, b) => (a.actualBase || 0) - (b.actualBase || 0));
+
+                    const baseRowIndex = rawTableData.findIndex(r => r.cc === baseCc);
+                    const gameBasePriceBase = baseRowIndex !== -1 ? rawTableData[baseRowIndex].actualBase : null;
+
+                    if (!isUSD && baseRowIndex !== -1) {
+                        const placeLabel = baseCc === 'RU' ? 'РФ' : baseIso;
+                        summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Место ${placeLabel} в мировом рейтинге цен:</span><span class="summary-value">${baseRowIndex + 1} из ${rawTableData.length}</span></div>`;
+                    } else if (isUSD) {
+                        const cheapest = rawTableData[0];
+                        const mostExp = rawTableData[rawTableData.length - 1];
+                        if (cheapest.actualBase !== null) summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Cheapest (USD):</span><span class="summary-value">$${cheapest.actualBase.toFixed(2)} (${cheapest.regionName})</span></div>`;
+                        if (mostExp.actualBase !== null) summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Most Expensive (USD):</span><span class="summary-value">$${mostExp.actualBase.toFixed(2)} (${mostExp.regionName})</span></div>`;
+                        if (baseRowIndex !== -1) summaryDiv.innerHTML += `<div class="summary-item"><span class="summary-label">US Price Rank:</span><span class="summary-value">${baseRowIndex + 1} of ${rawTableData.length}</span></div>`;
                     }
+
+                    rpa_lastTableData = { data: rawTableData, gameBasePriceBase, isUSD, baseCc, baseIso };
+                    rpa_renderTable();
                 } else {
-                    const ruComparisonDiv = document.createElement('div');
-                    ruComparisonDiv.id = 'rpaRuComparison';
-                    ruComparisonDiv.style.cssText = "margin-top:10px; padding-top:10px; border-top: 1px solid #2a3f5a;";
-                    summaryDiv.appendChild(ruComparisonDiv);
-                    const recommendedRubPriceVal = calculateRecommendedRubPrice(baseUsdPrice);
-
-                    if (ruActualPriceData && typeof recommendedRubPriceVal === 'number') {
-                        const actualRu = ruActualPriceData.rub;
-                        let factPriceValue = "N/A",
-                            factPriceSubValue = "",
-                            subValueColor = "#c6d4df";
-                        if (actualRu !== null) {
-                            factPriceValue = `${actualRu.toLocaleString('ru-RU', {minimumFractionDigits: 2, maximumFractionDigits: 2})} руб.`;
-                            const diff = actualRu - recommendedRubPriceVal;
-                            const diffPercent = recommendedRubPriceVal !== 0 ? (diff / recommendedRubPriceVal) * 100 : (diff > 0 ? Infinity : (actualRu === 0 ? 0 : -Infinity));
-                            if (diff < -0.01) {
-                                subValueColor = 'lightgreen';
-                                factPriceSubValue = `(на ${Math.abs(diff).toLocaleString('ru-RU', {maximumFractionDigits: 2})} руб. / ${Math.abs(diffPercent).toFixed(1)}% ДЕШЕВЛЕ рекомендуемой)`;
-                            } else if (diff > 0.01) {
-                                subValueColor = 'salmon';
-                                factPriceSubValue = `(на ${diff.toLocaleString('ru-RU', {maximumFractionDigits: 2})} руб. / ${diffPercent.toFixed(1)}% ДОРОЖЕ рекомендуемой)`;
-                            } else {
-                                factPriceSubValue = `(соответствует рекомендуемой)`;
-                            }
-                        } else {
-                            factPriceValue = `<span style="color: orange;">Цена в РФ не найдена/неконвертируема.</span>`;
-                        }
-                        ruComparisonDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Фактическая цена в РФ:</span><span class="summary-value">${factPriceValue}${factPriceSubValue ? `<span class="summary-sub-value" style="color:${subValueColor};">${factPriceSubValue}</span>` : ''}</span></div>`;
-                    } else if (typeof recommendedRubPriceVal === 'number') {
-                        ruComparisonDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Фактическая цена в РФ:</span><span class="summary-value" style="color:orange;">Не найдена.</span></div>`;
-                    }
-
-                    if (regionalPrices.length > 0) {
-                        regionalPrices.sort((a, b) => a.priceInRub - b.priceInRub);
-                        let ruRank = -1;
-                        if (ruActualPriceInRub !== null) {
-                            ruRank = regionalPrices.findIndex(rp => rp.cc === 'RU' && Math.abs(rp.priceInRub - ruActualPriceInRub) < 0.01) + 1;
-                            if (ruRank === 0) {
-                                const ruEntry = regionalPrices.find(rp => rp.cc === 'RU');
-                                if (ruEntry) ruRank = regionalPrices.findIndex(rp => rp.priceInRub >= ruEntry.priceInRub) + 1;
-                                if (ruRank === 0 && regionalPrices.length > 0) ruRank = 1;
-                            }
-                        }
-                        let rankText = "Цена РФ отсутствует, мировой ранг не определен.";
-                        if (ruRank > 0) {
-                            rankText = `${ruRank} из ${regionalPrices.length}`;
-                        } else if (ruActualPriceInRub !== null) {
-                            rankText = `Не удалось точно определить ранг РФ.`;
-                        }
-                        ruComparisonDiv.innerHTML += `<div class="summary-item"><span class="summary-label">Место РФ в мировом рейтинге цен:</span><span class="summary-value">${rankText}</span></div>`;
-                        generatePriceTable(regionalPrices, ruActualPriceInRub, resultsDiv);
-                    } else {
-                        resultsDiv.innerHTML = `<p style="text-align:center; margin-top:20px; color: #8f98a0;">Не удалось получить региональные цены для сравнения.</p>`;
-                    }
+                    resultsDiv.innerHTML = `<p style="text-align:center; margin-top:20px; color: #8f98a0;">${isUSD ? 'Data unavailable.' : 'Не удалось получить цены.'}</p>`;
                 }
 
-                rpa_updateModalStatus(rpa_currentDisplayMode === 'USD' ? 'Analysis complete.' : 'Анализ завершен.', false);
+                rpa_updateModalStatus(isUSD ? 'Analysis complete.' : 'Анализ завершен.', false);
                 rpa_updateProgressBar(100);
                 setTimeout(() => rpa_updateProgressBar(0), 2000);
                 rpa_fetchController = null;
             }
 
-            function generatePriceTable(prices, comparisonPriceBase, container) {
-                container.innerHTML = '';
-                const table = document.createElement('table');
-                table.className = 'rpaSinglePriceTable';
-                const thead = table.createTHead();
-                const headerRow = thead.insertRow();
+            function calcDiff(actual, compare) {
+                if (actual === null || compare === null || compare === 0) return null;
+                return ((actual - compare) / compare) * 100;
+            }
 
-                const isUSDMode = rpa_currentDisplayMode === 'USD';
-                const headers = isUSDMode ? [{
-                        text: '#',
-                        class: 'col-rank-header'
-                    }, {
-                        text: 'Region (CC)',
-                        class: 'col-region-header'
-                    },
-                    {
-                        text: 'Local Price',
-                        class: 'col-local-price-header'
-                    }, {
-                        text: 'Price (USD)',
-                        class: 'col-usd-price-header'
-                    },
-                    {
-                        text: 'Diff. vs US (%)',
-                        class: 'col-diff-us-header'
-                    }
-                ] : [{
-                        text: '№',
-                        class: 'col-rank-header'
-                    }, {
-                        text: 'Регион (Код страны)',
-                        class: 'col-region-header'
-                    },
-                    {
-                        text: 'Цена (лок. вал.)',
-                        class: 'col-local-price-header'
-                    }, {
-                        text: 'Цена (RUB)',
-                        class: 'col-rub-price-header'
-                    },
-                    {
-                        text: 'Разница с РФ (%)',
-                        class: 'col-diff-ru-header'
-                    }
+            function rpa_renderTable() {
+                const { data, gameBasePriceBase, isUSD, baseCc, baseIso } = rpa_lastTableData;
+                const container = document.getElementById('rpaResultsDiv');
+                container.innerHTML = '';
+
+                const sortCol = rpa_currentSort.col;
+                const sortAsc = rpa_currentSort.asc;
+
+                data.sort((a, b) => {
+                    let valA, valB;
+                    if (sortCol === 'region') { valA = a.regionName; valB = b.regionName; }
+                    else if (sortCol === 'actualBase') { valA = a.actualBase; valB = b.actualBase; }
+                    else if (sortCol === 'diffBase') { valA = calcDiff(a.actualBase, gameBasePriceBase); valB = calcDiff(b.actualBase, gameBasePriceBase); }
+                    else if (sortCol === 'recN') { valA = a.recNuancedBase; valB = b.recNuancedBase; }
+                    else if (sortCol === 'diffN') { valA = calcDiff(a.actualLocalCents, a.recNuancedLocalCents); valB = calcDiff(b.actualLocalCents, b.recNuancedLocalCents); }
+                    else if (sortCol === 'recP') { valA = a.recParityBase; valB = b.recParityBase; }
+                    else if (sortCol === 'diffP') { valA = calcDiff(a.actualLocalCents, a.recParityLocalCents); valB = calcDiff(b.actualLocalCents, b.recParityLocalCents); }
+                    else if (sortCol === 'recF') { valA = a.recFxBase; valB = b.recFxBase; }
+                    else if (sortCol === 'diffF') { valA = calcDiff(a.actualLocalCents, a.recFxLocalCents); valB = calcDiff(b.actualLocalCents, b.recFxLocalCents); }
+
+                    if (valA === null) return 1;
+                    if (valB === null) return -1;
+                    if (valA < valB) return sortAsc ? -1 : 1;
+                    if (valA > valB) return sortAsc ? 1 : -1;
+                    return 0;
+                });
+
+                const table = document.createElement('table');
+                table.className = 'rpaTable';
+                const thead = table.createTHead();
+                const hr = thead.insertRow();
+
+                const hData = isUSD ? [
+                    { id: 'rank', t: '#' }, { id: 'region', t: 'Region (CC)' }, { id: 'local', t: 'Local Price' },
+                    { id: 'actualBase', t: `Price (USD)` }, { id: 'diffBase', t: `Diff vs US (%)` },
+                    { id: 'recN', t: `Nuanced (USD)` }, { id: 'diffN', t: `Diff N. (%)` },
+                    { id: 'recP', t: `Parity (USD)` }, { id: 'diffP', t: `Diff P. (%)` },
+                    { id: 'recF', t: `FX (USD)` }, { id: 'diffF', t: `Diff FX (%)` }
+                ] : [
+                    { id: 'rank', t: '№' }, { id: 'region', t: 'Регион (Код)' }, { id: 'local', t: 'Цена (Лок)' },
+                    { id: 'actualBase', t: `Цена (${baseIso})` }, { id: 'diffBase', t: `Разница с ${baseIso} (%)` },
+                    { id: 'recN', t: `Valve (${baseIso})` }, { id: 'diffN', t: `Разница Valve (%)` },
+                    { id: 'recP', t: `ППС (${baseIso})` }, { id: 'diffP', t: `Разница ППС (%)` },
+                    { id: 'recF', t: `Курс (${baseIso})` }, { id: 'diffF', t: `Разница Курс (%)` }
                 ];
 
-                headers.forEach(headerInfo => {
+                hData.forEach(h => {
                     const th = document.createElement('th');
-                    th.textContent = headerInfo.text;
-                    th.className = headerInfo.class;
-                    headerRow.appendChild(th);
+                    th.textContent = h.t + (rpa_currentSort.col === h.id ? (rpa_currentSort.asc ? ' ▲' : ' ▼') : '');
+                    if (h.id === 'region') th.className = 'col-region';
+                    th.onclick = () => {
+                        if (h.id === 'rank' || h.id === 'local') return;
+                        if (rpa_currentSort.col === h.id) rpa_currentSort.asc = !rpa_currentSort.asc;
+                        else { rpa_currentSort.col = h.id; rpa_currentSort.asc = true; }
+                        rpa_renderTable();
+                    };
+                    hr.appendChild(th);
                 });
 
                 const tbody = table.createTBody();
-                prices.forEach((rp, index) => {
-                    const row = tbody.insertRow();
-                    const highlightCC = isUSDMode ? 'US' : 'RU';
-                    const highlightClass = isUSDMode ? 'highlight-us' : 'highlight-ru';
-                    if (rp.cc === highlightCC) {
-                        row.classList.add(highlightClass);
-                    }
+                data.forEach((rp, i) => {
+                    const tr = tbody.insertRow();
+                    if (rp.cc === baseCc) tr.classList.add('highlight-base');
 
-                    row.insertCell().textContent = index + 1;
-                    row.cells[0].className = 'col-rank';
-                    row.insertCell().textContent = `${rp.regionName} (${rp.cc})`;
-                    row.cells[1].className = 'col-region';
+                    tr.insertCell().textContent = i + 1;
+                    const tdReg = tr.insertCell(); tdReg.textContent = `${rp.regionName} (${rp.cc})`; tdReg.className = 'col-region';
+                    tr.insertCell().textContent = rp.localFormat;
 
-                    const priceToDisplay = isUSDMode ? rp.priceInUsd : rp.priceInRub;
-                    row.insertCell().textContent = rp.localPriceFormatted || (priceToDisplay === 0 ? (isUSDMode ? 'Free' : 'Бесплатно') : 'N/A');
-                    row.cells[2].className = 'col-local-price';
+                    const formatBase = (val) => val !== null ? (isUSD ? `$${val.toFixed(2)}` : `${val.toFixed(2)} ₽`.replace('₽', baseIso)) : 'N/A';
+                    const formatDiff = (actual, compare, isSelf) => {
+                        if (isSelf) return { t: isUSD ? 'Base' : '-', c: 'neutral' };
+                        const diff = calcDiff(actual, compare);
+                        if (diff === null) return { t: 'N/A', c: 'neutral' };
+                        return { t: (diff > 0 ? '+' : '') + diff.toFixed(1) + '%', c: diff < -0.1 ? 'positive' : (diff > 0.1 ? 'negative' : 'neutral') };
+                    };
 
-                    const convertedPriceCell = row.insertCell();
-                    convertedPriceCell.className = isUSDMode ? 'col-usd-price' : 'col-rub-price';
-                    if (priceToDisplay !== null) {
-                        convertedPriceCell.textContent = isUSDMode ?
-                            priceToDisplay.toLocaleString('en-US', {
-                                style: 'currency',
-                                currency: 'USD'
-                            }) :
-                            priceToDisplay.toLocaleString('ru-RU', {
-                                maximumFractionDigits: 0
-                            }) + ' ₽';
-                    } else {
-                        convertedPriceCell.textContent = 'N/A';
-                    }
+                    tr.insertCell().textContent = formatBase(rp.actualBase);
 
-                    const diffCell = row.insertCell();
-                    diffCell.className = isUSDMode ? 'col-diff-us' : 'col-diff-ru';
-                    if (rp.cc === highlightCC) {
-                        diffCell.textContent = isUSDMode ? 'Base' : '-';
-                        diffCell.classList.add('neutral');
-                    } else if (comparisonPriceBase !== null && comparisonPriceBase > 0 && priceToDisplay !== null) {
-                        const diffPercent = ((priceToDisplay - comparisonPriceBase) / comparisonPriceBase) * 100;
-                        diffCell.textContent = (diffPercent >= 0 ? '+' : '') + diffPercent.toFixed(1) + '%';
-                        if (diffPercent < -0.1) diffCell.classList.add('positive');
-                        else if (diffPercent > 0.1) diffCell.classList.add('negative');
-                        else diffCell.classList.add('neutral');
-                    } else if (priceToDisplay === 0 && comparisonPriceBase === 0) {
-                        diffCell.textContent = '0%';
-                        diffCell.classList.add('neutral');
-                    } else {
-                        diffCell.textContent = 'N/A';
-                        diffCell.classList.add('neutral');
-                    }
+                    const dBase = formatDiff(rp.actualBase, gameBasePriceBase, rp.cc === baseCc);
+                    const tddBase = tr.insertCell(); tddBase.textContent = dBase.t; tddBase.className = dBase.c;
+
+                    tr.insertCell().textContent = formatBase(rp.recNuancedBase);
+                    const dN = formatDiff(rp.actualLocalCents, rp.recNuancedLocalCents, false);
+                    const tdN = tr.insertCell(); tdN.textContent = dN.t; tdN.className = dN.c;
+
+                    tr.insertCell().textContent = formatBase(rp.recParityBase);
+                    const dP = formatDiff(rp.actualLocalCents, rp.recParityLocalCents, false);
+                    const tdP = tr.insertCell(); tdP.textContent = dP.t; tdP.className = dP.c;
+
+                    tr.insertCell().textContent = formatBase(rp.recFxBase);
+                    const dF = formatDiff(rp.actualLocalCents, rp.recFxLocalCents, false);
+                    const tdF = tr.insertCell(); tdF.textContent = dF.t; tdF.className = dF.c;
                 });
                 container.appendChild(table);
             }
 
             function rpa_init() {
-                rpa_updateTextsAndRegionNames();
                 const initLoad = () => {
                     if (document.querySelector('.game_area_purchase_game_wrapper')) {
                         rpa_addPriorButton();
                         rpa_createModal();
-                    } else {
-                        setTimeout(initLoad, 500);
-                    }
+                    } else setTimeout(initLoad, 500);
                 };
-                if (document.readyState === 'complete' || document.readyState === 'interactive') {
-                    initLoad();
-                } else {
-                    window.addEventListener('DOMContentLoaded', initLoad);
-                }
+                if (document.readyState === 'complete' || document.readyState === 'interactive') initLoad();
+                else window.addEventListener('DOMContentLoaded', initLoad);
             }
             rpa_init();
         })();
@@ -12771,219 +12098,110 @@ if (headerCtn) {
             const WGH_REQUEST_TIMEOUT_MS = 20000;
             const WGH_GIFT_PRICE_DIFF_THRESHOLD = 0.15;
             const WGH_IMAGE_BASE_URL = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/';
-                        const WGH_COUNTRY_CURRENCY_MAP = {
-                'AU': {
-                    name: 'Австралийский доллар',
-                    code: 21,
-                    iso: 'aud'
-                },
-                'BR': {
-                    name: 'Бразильский реал',
-                    code: 7,
-                    iso: 'brl'
-                },
-                'GB': {
-                    name: 'Британский фунт',
-                    code: 2,
-                    iso: 'gbp'
-                },
-                'VN': {
-                    name: 'Вьетнамский донг',
-                    code: 15,
-                    iso: 'vnd'
-                },
-                'HK': {
-                    name: 'Гонконгский доллар',
-                    code: 29,
-                    iso: 'hkd'
-                },
-                'AE': {
-                    name: 'Дирхам ОАЭ',
-                    code: 32,
-                    iso: 'aed'
-                },
-                'US': {
-                    name: 'Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'DE': {
-                    name: 'Евро',
-                    code: 3,
-                    iso: 'eur'
-                },
-                'IL': {
-                    name: 'Израильский новый шекель',
-                    code: 35,
-                    iso: 'ils'
-                },
-                'IN': {
-                    name: 'Индийская рупия',
-                    code: 24,
-                    iso: 'inr'
-                },
-                'ID': {
-                    name: 'Индонезийская рупия',
-                    code: 10,
-                    iso: 'idr'
-                },
-                'KZ': {
-                    name: 'Казахстанский тенге',
-                    code: 37,
-                    iso: 'kzt'
-                },
-                'CA': {
-                    name: 'Канадский доллар',
-                    code: 20,
-                    iso: 'cad'
-                },
-                'QA': {
-                    name: 'Катарский риал',
-                    code: 39,
-                    iso: 'qar'
-                },
-                'CN': {
-                    name: 'Китайский юань',
-                    code: 23,
-                    iso: 'cny'
-                },
-                'CO': {
-                    name: 'Колумбийское песо',
-                    code: 27,
-                    iso: 'cop'
-                },
-                'CR': {
-                    name: 'Коста-риканский колон',
-                    code: 40,
-                    iso: 'crc'
-                },
-                'KW': {
-                    name: 'Кувейтский динар',
-                    code: 38,
-                    iso: 'kwd'
-                },
-                'AR': {
-                    name: 'Лат. Ам. - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'MY': {
-                    name: 'Малазийский ринггит',
-                    code: 11,
-                    iso: 'myr'
-                },
-                'TR': {
-                    name: 'MENA - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'MX': {
-                    name: 'Мексиканское песо',
-                    code: 19,
-                    iso: 'mxn'
-                },
-                'NZ': {
-                    name: 'Новозеландский доллар',
-                    code: 22,
-                    iso: 'nzd'
-                },
-                'NO': {
-                    name: 'Норвежская крона',
-                    code: 9,
-                    iso: 'nok'
-                },
-                'PE': {
-                    name: 'Перуанский соль',
-                    code: 26,
-                    iso: 'pen'
-                },
-                'PL': {
-                    name: 'Польский злотый',
-                    code: 6,
-                    iso: 'pln'
-                },
-                'RU': {
-                    name: 'Российский рубль',
-                    code: 5,
-                    iso: 'rub'
-                },
-                'SA': {
-                    name: 'Саудовский риал',
-                    code: 31,
-                    iso: 'sar'
-                },
-                'SG': {
-                    name: 'Сингапурский доллар',
-                    code: 13,
-                    iso: 'sgd'
-                },
-                'AZ': {
-                    name: 'СНГ - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'TW': {
-                    name: 'Тайваньский доллар',
-                    code: 30,
-                    iso: 'twd'
-                },
-                'TH': {
-                    name: 'Тайский бат',
-                    code: 14,
-                    iso: 'thb'
-                },
-                'UA': {
-                    name: 'Украинская гривна',
-                    code: 18,
-                    iso: 'uah'
-                },
-                'UY': {
-                    name: 'Уругвайское песо',
-                    code: 41,
-                    iso: 'uyu'
-                },
-                'PH': {
-                    name: 'Филиппинское песо',
-                    code: 12,
-                    iso: 'php'
-                },
-                'CL': {
-                    name: 'Чилийское песо',
-                    code: 25,
-                    iso: 'clp'
-                },
-                'CH': {
-                    name: 'Швейцарский франк',
-                    code: 4,
-                    iso: 'chf'
-                },
-                'PK': {
-                    name: 'Юж. Азия - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'ZA': {
-                    name: 'Южноафриканский рэнд',
-                    code: 28,
-                    iso: 'zar'
-                },
-                'KR': {
-                    name: 'Южнокорейская вона',
-                    code: 16,
-                    iso: 'krw'
-                },
-                'JP': {
-                    name: 'Японская иена',
-                    code: 8,
-                    iso: 'jpy'
-                }
+
+            const WGH_COUNTRY_CURRENCY_MAP = {
+                'AU': { name: 'Австралийский доллар', code: 21, iso: 'aud' },
+                'BR': { name: 'Бразильский реал', code: 7, iso: 'brl' },
+                'GB': { name: 'Британский фунт', code: 2, iso: 'gbp' },
+                'VN': { name: 'Вьетнамский донг', code: 15, iso: 'vnd' },
+                'HK': { name: 'Гонконгский доллар', code: 29, iso: 'hkd' },
+                'AE': { name: 'Дирхам ОАЭ', code: 32, iso: 'aed' },
+                'US': { name: 'Доллар США', code: 1, iso: 'usd' },
+                'DE': { name: 'Евро', code: 3, iso: 'eur' },
+                'IL': { name: 'Израильский новый шекель', code: 35, iso: 'ils' },
+                'IN': { name: 'Индийская рупия', code: 24, iso: 'inr' },
+                'ID': { name: 'Индонезийская рупия', code: 10, iso: 'idr' },
+                'KZ': { name: 'Казахстанский тенге', code: 37, iso: 'kzt' },
+                'CA': { name: 'Канадский доллар', code: 20, iso: 'cad' },
+                'QA': { name: 'Катарский риал', code: 39, iso: 'qar' },
+                'CN': { name: 'Китайский юань', code: 23, iso: 'cny' },
+                'CO': { name: 'Колумбийское песо', code: 27, iso: 'cop' },
+                'CR': { name: 'Коста-риканский колон', code: 40, iso: 'crc' },
+                'KW': { name: 'Кувейтский динар', code: 38, iso: 'kwd' },
+                'AR': { name: 'Лат. Ам. - Доллар США', code: 1, iso: 'usd' },
+                'MY': { name: 'Малазийский ринггит', code: 11, iso: 'myr' },
+                'TR': { name: 'MENA - Доллар США', code: 1, iso: 'usd' },
+                'MX': { name: 'Мексиканское песо', code: 19, iso: 'mxn' },
+                'NZ': { name: 'Новозеландский доллар', code: 22, iso: 'nzd' },
+                'NO': { name: 'Норвежская крона', code: 9, iso: 'nok' },
+                'PE': { name: 'Перуанский соль', code: 26, iso: 'pen' },
+                'PL': { name: 'Польский злотый', code: 6, iso: 'pln' },
+                'RU': { name: 'Российский рубль', code: 5, iso: 'rub' },
+                'SA': { name: 'Саудовский риал', code: 31, iso: 'sar' },
+                'SG': { name: 'Сингапурский доллар', code: 13, iso: 'sgd' },
+                'ZA': { name: 'Южноафриканский рэнд', code: 28, iso: 'zar' },
+                'PK': { name: 'Юж. Азия - Доллар США', code: 1, iso: 'usd' },
+                'KR': { name: 'Южнокорейская вона', code: 16, iso: 'krw' },
+                'CH': { name: 'Швейцарский франк', code: 4, iso: 'chf' },
+                'TW': { name: 'Тайваньский доллар', code: 30, iso: 'twd' },
+                'TH': { name: 'Тайский бат', code: 14, iso: 'thb' },
+                'UA': { name: 'Украинская гривна', code: 18, iso: 'uah' },
+                'UY': { name: 'Уругвайское песо', code: 41, iso: 'uyu' },
+                'PH': { name: 'Филиппинское песо', code: 12, iso: 'php' },
+                'CL': { name: 'Чилийское песо', code: 25, iso: 'clp' },
+                'JP': { name: 'Японская иена', code: 8, iso: 'jpy' }
             };
+
+            const SteamCurrencyRules = {
+                1: { strSymbol: "$" }, 2: { strSymbol: "£" }, 3: { strSymbol: "€" }, 4: { strSymbol: "CHF" },
+                5: { strSymbol: "руб.", bSuffixSymbol: true, bWholeUnitsOnly: true, bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: " " },
+                6: { strSymbol: "zł", bSuffixSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: " " },
+                7: { strSymbol: "R$", bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                8: { strSymbol: "¥", bWholeUnitsOnly: true, bSpaceForSymbol: true },
+                9: { strSymbol: "kr", bSuffixSymbol: true, bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                10: { strSymbol: "Rp", bWholeUnitsOnly: true, bSpaceForSymbol: true, strDecimalSymbol: ".", strThousandsSeparator: " " },
+                11: { strSymbol: "RM" }, 12: { strSymbol: "P" }, 13: { strSymbol: "S$" }, 14: { strSymbol: "฿" },
+                15: { strSymbol: "₫", bWholeUnitsOnly: true, bSuffixSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                16: { strSymbol: "₩", bWholeUnitsOnly: true, bSpaceForSymbol: true },
+                17: { strSymbol: "TL", bSuffixSymbol: true, bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                18: { strSymbol: "₴", bSuffixSymbol: true, bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: " " },
+                19: { strSymbol: "Mex$", bSpaceForSymbol: true }, 20: { strSymbol: "CDN$", bSpaceForSymbol: true },
+                21: { strSymbol: "A$", bSpaceForSymbol: true }, 22: { strSymbol: "NZ$", bSpaceForSymbol: true },
+                23: { strSymbol: "¥", bSpaceForSymbol: true }, 24: { strSymbol: "₹", bSpaceForSymbol: true, bWholeUnitsOnly: true },
+                25: { strSymbol: "CLP$", bSpaceForSymbol: true, bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                26: { strSymbol: "S/." }, 27: { strSymbol: "COL$", bSpaceForSymbol: true, bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                28: { strSymbol: "R", bSpaceForSymbol: true, strDecimalSymbol: ".", strThousandsSeparator: " " },
+                29: { strSymbol: "HK$", bSpaceForSymbol: true }, 30: { strSymbol: "NT$", bWholeUnitsOnly: true, bSpaceForSymbol: true },
+                31: { strSymbol: "SR", bSuffixSymbol: true, bSpaceForSymbol: true }, 32: { strSymbol: "AED", bSuffixSymbol: true, bSpaceForSymbol: true },
+                33: { strSymbol: "kr", bSpaceForSymbol: true, bSuffixSymbol: true }, 34: { strSymbol: "ARS$", bSpaceForSymbol: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                35: { strSymbol: "₪" }, 36: { strSymbol: "Br" }, 37: { strSymbol: "₸", bSuffixSymbol: true, bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: " " },
+                38: { strSymbol: "KD", bSuffixSymbol: true, bSpaceForSymbol: true }, 39: { strSymbol: "QR", bSuffixSymbol: true, bSpaceForSymbol: true },
+                40: { strSymbol: "₡", bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                41: { strSymbol: "$U", bWholeUnitsOnly: true, strDecimalSymbol: ",", strThousandsSeparator: "." },
+                42: { strSymbol: "лв", bSuffixSymbol: true, bSpaceForSymbol: true }, 43: { strSymbol: "kn", bSuffixSymbol: true, bSpaceForSymbol: true },
+                44: { strSymbol: "Kč", bSuffixSymbol: true, bSpaceForSymbol: true }, 45: { strSymbol: "kr.", bSuffixSymbol: true, bSpaceForSymbol: true },
+                46: { strSymbol: "Ft", bSuffixSymbol: true, bSpaceForSymbol: true }, 47: { strSymbol: "lei", bSuffixSymbol: true, bSpaceForSymbol: true }
+            };
+
+            function wgh_formatSteamPrice(priceInCents, currencyCode) {
+                const defaultRules = { strSymbol: "", bSuffixSymbol: false, bSpaceForSymbol: false, bWholeUnitsOnly: false, strDecimalSymbol: ".", strThousandsSeparator: "," };
+                const rules = { ...defaultRules, ...(SteamCurrencyRules[currencyCode] || {}) };
+                let price = priceInCents;
+                const isNegative = price < 0;
+                if (isNegative) price = -price;
+                const dropDecimals = rules.bWholeUnitsOnly && (price % 100 === 0);
+                let parts = [];
+                for (let i = 0; i < 2; i++) {
+                    if (!dropDecimals) parts.push(price % 10);
+                    price = Math.floor(price / 10);
+                }
+                if (!dropDecimals && rules.strDecimalSymbol) parts.push(rules.strDecimalSymbol);
+                let digitCount = 0;
+                do {
+                    if (digitCount > 0 && digitCount % 3 === 0 && rules.strThousandsSeparator) parts.push(rules.strThousandsSeparator);
+                    parts.push(price % 10);
+                    price = Math.floor(price / 10);
+                    digitCount++;
+                } while (price > 0);
+                const formattedNumber = parts.reverse().join("");
+                const space = rules.bSpaceForSymbol ? " " : "";
+                const minus = isNegative ? "-" : "";
+                return rules.bSuffixSymbol ? `${minus}${formattedNumber}${space}${rules.strSymbol}` : `${minus}${rules.strSymbol}${space}${formattedNumber}`;
+            }
+
             const WGH_CURRENCY_CODE_TO_COUNTRY = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([country, data]) => [data.code, country]));
             const WGH_CURRENCY_CODE_TO_ISO = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([_, data]) => [data.code, data.iso]));
-            const WGH_DEFAULT_SORT = {
-                field: 'price',
-                direction: 'asc'
-            };
+            const WGH_DEFAULT_SORT = { field: 'price', direction: 'asc' };
             const WGH_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v2_wgh';
             const WGH_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
             const WGH_FILTER_STORAGE_KEY = 'wgh_filters_v1';
@@ -12992,22 +12210,127 @@ if (headerCtn) {
             let wgh_allTags = {};
             let wgh_activeTagFilters = {};
             let wgh_hiddenTagFilters = {};
+            let wgh_allAppIds = [];
+            let wgh_gameDataStore = {};
+            let wgh_currentUserCountryCode = 'RU';
+            let wgh_currentUserCurrencyCode = 5;
+            let wgh_currentUserISOCurrencyCode = 'RUB';
+            let wgh_currentSort = { ...WGH_DEFAULT_SORT };
+            let wgh_currentFriendCountryCode = null;
+            let wgh_exchangeRates = null;
+            let wgh_giftModeActive = false;
+            let wgh_showGiftableOnly = false;
+            let wgh_steamPricingMatrices = null;
 
+            let wgh_modal, wgh_closeBtn, wgh_analyzeBtn;
+            let wgh_resultsContainer, wgh_resultsDiv, wgh_statusDiv, wgh_progressBar;
+            let wgh_sortButtonsContainer;
+            let wgh_giftModeContainer, wgh_giftIconBtn, wgh_friendRegionSelect, wgh_fetchFriendPricesBtn, wgh_giftProgressBar, wgh_giftableFilterCheckbox;
+            let wgh_myRegionDisplay;
+            let wgh_filterToggleBtn, wgh_filterAccordionContainer;
+            let wgh_currentFilters = GM_getValue(WGH_FILTER_STORAGE_KEY, {});
+
+            // ================== МАТРИЦА STEAM ==================
+            async function wgh_fetchSteamPricingMatrix() {
+                if (wgh_steamPricingMatrices) return wgh_steamPricingMatrices;
+                return new Promise((resolve, reject) => {
+                    GM_xmlhttpRequest({
+                        method: "GET",
+                        url: "https://partner.steamgames.com/pricing/explorer",
+                        timeout: 15000,
+                        onload: function(response) {
+                            try {
+                                const html = response.responseText;
+                                let matrices = [];
+                                let searchStr = html;
+                                for(let i = 0; i < 3; i++) {
+                                    searchStr = searchStr.replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+                                }
+                                let offset = 0;
+                                while (true) {
+                                    const startIdx = searchStr.indexOf('"data":[', offset);
+                                    if (startIdx === -1) break;
+                                    const arrayStart = startIdx + 7;
+                                    let openBrackets = 0;
+                                    let endIdx = -1;
+                                    let inString = false;
+                                    for (let i = arrayStart; i < searchStr.length; i++) {
+                                        const char = searchStr[i];
+                                        if (char === '"' && searchStr[i-1] !== '\\') inString = !inString;
+                                        if (!inString) {
+                                            if (char === '[') openBrackets++;
+                                            else if (char === ']') {
+                                                openBrackets--;
+                                                if (openBrackets === 0) { endIdx = i; break; }
+                                            }
+                                        }
+                                    }
+                                    if (endIdx !== -1) {
+                                        const jsonArrayStr = searchStr.substring(arrayStart, endIdx + 1);
+                                        try {
+                                            const arr = JSON.parse(jsonArrayStr);
+                                            if (arr.length > 0 && arr[0].usd_price !== undefined && arr[0].convert_method !== undefined) {
+                                                matrices = arr;
+                                                break;
+                                            }
+                                        } catch (e) {}
+                                    }
+                                    offset = startIdx + 8;
+                                }
+
+                                if (matrices.length > 0) {
+                                    wgh_steamPricingMatrices = {
+                                        valve: matrices.filter(m => m.convert_method === 1),
+                                        parity: matrices.filter(m => m.convert_method === 2),
+                                        fx: matrices.filter(m => m.convert_method === 3)
+                                    };
+                                    resolve(wgh_steamPricingMatrices);
+                                } else {
+                                    reject(new Error("Не удалось извлечь матрицы из кода (RSC)."));
+                                }
+                            } catch (e) { reject(new Error("Ошибка парсера: " + e.message)); }
+                        },
+                        onerror: () => reject(new Error("Сетевая ошибка (матрица Steam)")),
+                        ontimeout: () => reject(new Error("Таймаут (матрица Steam)"))
+                    });
+                });
+            }
+
+            function wgh_findClosestUsdTier(matrix, targetUsdCents) {
+                if (!matrix || matrix.length === 0) return null;
+                let closest = matrix[0];
+                let minDiff = Math.abs((matrix[0].usd_price || 0) - targetUsdCents);
+                for (let row of matrix) {
+                    let diff = Math.abs((row.usd_price || 0) - targetUsdCents);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closest = row;
+                    }
+                }
+                return closest;
+            }
+
+            function wgh_getRecommendedPriceCentsFromMatrix(matrix, baseUsdCents, currencyCode) {
+                if (currencyCode === 1) return baseUsdCents;
+                const closestRow = wgh_findClosestUsdTier(matrix, baseUsdCents);
+                if (closestRow && closestRow.currency_prices) {
+                    const cp = closestRow.currency_prices.find(c => c.currency_code === currencyCode);
+                    if (cp) return cp.price;
+                }
+                return null;
+            }
+
+            // ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
             function debounce(func, wait) {
                 let timeout;
                 return function executedFunction(...args) {
-                    const later = () => {
-                        clearTimeout(timeout);
-                        func(...args);
-                    };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
+                    const later = () => { clearTimeout(timeout); func(...args); };
+                    clearTimeout(timeout); timeout = setTimeout(later, wait);
                 };
             }
 
             function wgh_getCustomReviewDescription(percent, count) {
-                if (count === 0) return 'Нет обзоров';
-                if (percent === null || typeof percent === 'undefined') return 'Нет обзоров';
+                if (count === 0 || percent === null || typeof percent === 'undefined') return 'Нет обзоров';
                 if (percent >= 95) return 'Крайне положительные';
                 if (percent >= 80) return 'Очень положительные';
                 if (percent >= 70) return 'В основном положительные';
@@ -13017,117 +12340,33 @@ if (headerCtn) {
                 return 'Крайне отрицательные';
             }
 
-            function calculateRecommendedRubPrice(pUSD) {
-                if (typeof pUSD !== 'number' || isNaN(pUSD)) return null;
-                if (pUSD < 0.99) return 42;
-                if (pUSD >= 0.99 && pUSD < 1.99) return 42;
-                if (pUSD >= 1.99 && pUSD < 2.99) return 82;
-                if (pUSD >= 2.99 && pUSD < 3.99) return 125;
-                if (pUSD >= 3.99 && pUSD < 4.99) return 165;
-                if (pUSD >= 4.99 && pUSD < 5.99) return 200;
-                if (pUSD >= 5.99 && pUSD < 6.99) return 240;
-                if (pUSD >= 6.99 && pUSD < 7.99) return 280;
-                if (pUSD >= 7.99 && pUSD < 8.99) return 320;
-                if (pUSD >= 8.99 && pUSD < 9.99) return 350;
-                if (pUSD >= 9.99 && pUSD < 10.99) return 385;
-                if (pUSD >= 10.99 && pUSD < 11.99) return 420;
-                if (pUSD >= 11.99 && pUSD < 12.99) return 460;
-                if (pUSD >= 12.99 && pUSD < 13.99) return 490;
-                if (pUSD >= 13.99 && pUSD < 14.99) return 520;
-                if (pUSD >= 14.99 && pUSD < 15.99) return 550;
-                if (pUSD >= 15.99 && pUSD < 16.99) return 590;
-                if (pUSD >= 16.99 && pUSD < 17.99) return 620;
-                if (pUSD >= 17.99 && pUSD < 18.99) return 650;
-                if (pUSD >= 18.99 && pUSD < 19.99) return 680;
-                if (pUSD >= 19.99 && pUSD < 22.99) return 710;
-                if (pUSD >= 22.99 && pUSD < 27.99) return 880;
-                if (pUSD >= 27.99 && pUSD < 32.99) return 1100;
-                if (pUSD >= 32.99 && pUSD < 37.99) return 1200;
-                if (pUSD >= 37.99 && pUSD < 43.99) return 1300;
-                if (pUSD >= 43.99 && pUSD < 47.99) return 1500;
-                if (pUSD >= 47.99 && pUSD < 52.99) return 1600;
-                if (pUSD >= 52.99 && pUSD < 57.99) return 1750;
-                if (pUSD >= 57.99 && pUSD < 63.99) return 1900;
-                if (pUSD >= 63.99 && pUSD < 67.99) return 2100;
-                if (pUSD >= 67.99 && pUSD < 74.99) return 2250;
-                if (pUSD >= 74.99 && pUSD < 79.99) return 2400;
-                if (pUSD >= 79.99 && pUSD < 84.99) return 2600;
-                if (pUSD >= 84.99 && pUSD < 89.99) return 2700;
-                if (pUSD >= 89.99 && pUSD < 99.99) return 2900;
-                if (pUSD >= 99.99 && pUSD < 109.99) return 3200;
-                if (pUSD >= 109.99 && pUSD < 119.99) return 3550;
-                if (pUSD >= 119.99 && pUSD < 129.99) return 3900;
-                if (pUSD >= 129.99 && pUSD < 139.99) return 4200;
-                if (pUSD >= 139.99 && pUSD < 149.99) return 4500;
-                if (pUSD >= 149.99 && pUSD < 199.99) return 4800;
-                if (pUSD >= 199.99) return 6500;
-                return null;
-            }
-
-            let wgh_allAppIds = [];
-            let wgh_gameDataStore = {};
-            let wgh_currentResults = [];
-            let wgh_currentUserCountryCode = 'RU';
-            let wgh_currentUserCurrencyCode = 5;
-            let wgh_currentUserISOCurrencyCode = 'RUB';
-            let wgh_currentSort = {
-                ...WGH_DEFAULT_SORT
-            };
-            let wgh_currentFriendCountryCode = null;
-            let wgh_exchangeRates = null;
-            let wgh_giftModeActive = false;
-            let wgh_showGiftableOnly = false;
-            let wgh_modal, wgh_closeBtn, wgh_analyzeBtn;
-            let wgh_resultsContainer, wgh_resultsDiv, wgh_statusDiv, wgh_progressBar;
-            let wgh_sortButtonsContainer;
-            let wgh_giftModeContainer, wgh_giftIconBtn, wgh_friendRegionSelect, wgh_fetchFriendPricesBtn, wgh_giftProgressBar, wgh_giftableFilterCheckbox;
-            let wgh_myRegionDisplay;
-            let wgh_filterToggleBtn, wgh_filterAccordionContainer;
-            let wgh_currentFilters = GM_getValue(WGH_FILTER_STORAGE_KEY, {});
-
             async function wgh_loadSteamTags() {
-                const cached = GM_getValue(WGH_TAGS_CACHE_KEY, {
-                    data: null,
-                    timestamp: 0
-                });
+                const cached = GM_getValue(WGH_TAGS_CACHE_KEY, { data: null, timestamp: 0 });
                 const now = Date.now();
-                const CACHE_DURATION = 744 * 60 * 60 * 1000;
-                if (cached.data && (now - cached.timestamp) < CACHE_DURATION) return cached.data;
+                if (cached.data && (now - cached.timestamp) < 744 * 60 * 60 * 1000) return cached.data;
                 try {
                     const response = await new Promise((resolve, reject) => GM_xmlhttpRequest({
-                        method: "GET",
-                        url: WGH_TAGS_URL,
-                        onload: resolve,
-                        onerror: reject
+                        method: "GET", url: WGH_TAGS_URL, onload: resolve, onerror: reject
                     }));
                     if (response.status === 200) {
                         const data = JSON.parse(response.responseText);
-                        GM_setValue(WGH_TAGS_CACHE_KEY, {
-                            data: data,
-                            timestamp: now
-                        });
+                        GM_setValue(WGH_TAGS_CACHE_KEY, { data: data, timestamp: now });
                         return data;
                     }
-                } catch (e) {
-                    console.error('[WGH] Ошибка загрузки меток:', e);
-                    return cached.data || {};
-                }
-                return {};
+                } catch (e) { console.error('[WGH] Ошибка загрузки меток:', e); }
+                return cached.data || {};
             }
 
             function wgh_addAnalyzeButton() {
                 let titleBlock = document.querySelector('div.G-xGsXlx-Sw-');
-
                 if (!titleBlock) {
                     const allH2 = document.querySelectorAll('h2');
                     for (const h2 of allH2) {
                         if (h2.textContent && (h2.textContent.includes('WISHLIST') || h2.textContent.includes('СПИСОК ЖЕЛАЕМОГО'))) {
-                            titleBlock = h2.parentElement;
-                            break;
+                            titleBlock = h2.parentElement; break;
                         }
                     }
                 }
-
                 if (!titleBlock || document.getElementById('wghAnalyzeButton')) return;
 
                 wgh_analyzeBtn = document.createElement('button');
@@ -13135,24 +12374,12 @@ if (headerCtn) {
                 wgh_analyzeBtn.title = 'Помощник подарков';
                 wgh_analyzeBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>`;
                 Object.assign(wgh_analyzeBtn.style, {
-                    marginLeft: '15px',
-                    background: 'rgba(103, 193, 245, 0.1)',
-                    border: '1px solid rgba(103, 193, 245, 0.3)',
-                    color: '#67c1f5',
-                    borderRadius: '3px',
-                    cursor: 'pointer',
-                    padding: '5px 8px',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    verticalAlign: 'middle'
+                    marginLeft: '15px', background: 'rgba(103, 193, 245, 0.1)', border: '1px solid rgba(103, 193, 245, 0.3)',
+                    color: '#67c1f5', borderRadius: '3px', cursor: 'pointer', padding: '5px 8px',
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center', verticalAlign: 'middle'
                 });
-                wgh_analyzeBtn.onmouseover = () => {
-                    wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.2)';
-                };
-                wgh_analyzeBtn.onmouseout = () => {
-                    wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.1)';
-                };
+                wgh_analyzeBtn.onmouseover = () => wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.2)';
+                wgh_analyzeBtn.onmouseout = () => wgh_analyzeBtn.style.background = 'rgba(103, 193, 245, 0.1)';
                 wgh_analyzeBtn.onclick = wgh_showModal;
 
                 const h2Title = titleBlock.querySelector('h2');
@@ -13169,16 +12396,16 @@ if (headerCtn) {
                 wgh_filterAccordionContainer.id = 'wghFilterAccordionContainer';
                 wgh_filterAccordionContainer.className = 'wghAccordionContainer';
 
-                const rrcFilterHtml = wgh_currentUserCountryCode === 'RU' ? `
+                const rrcFilterHtml = `
                     <div class="wghFilterGroup">
-                        <label class="wghFilterLabel">Фильтр по РРЦ</label>
+                        <label class="wghFilterLabel">Фильтр по РРЦ (Valve)</label>
                         <div class="wghRadioGroup">
                             <label><input type="radio" name="wghRrcFilter" value="any" checked>Все</label>
                             <label><input type="radio" name="wghRrcFilter" value="lower">Дешевле РРЦ</label>
                             <label><input type="radio" name="wghRrcFilter" value="equal">Равно РРЦ</label>
                             <label><input type="radio" name="wghRrcFilter" value="higher">Дороже РРЦ</label>
                         </div>
-                    </div>` : '';
+                    </div>`;
 
                 wgh_filterAccordionContainer.innerHTML = `
                     <div class="wghFilterGrid">
@@ -13234,7 +12461,6 @@ if (headerCtn) {
 
             function wgh_createTagFilterModal() {
                 if (document.getElementById('wgh-tag-filter-modal')) return;
-
                 const modalOverlay = document.createElement('div');
                 modalOverlay.id = 'wgh-tag-filter-modal';
                 modalOverlay.className = 'tag-modal-overlay';
@@ -13266,96 +12492,62 @@ if (headerCtn) {
                     </div>
                 `;
                 document.body.appendChild(modalOverlay);
-
                 const searchInput = document.getElementById('wgh-tag-search-input');
                 const searchResultsContainer = document.getElementById('wgh-tag-search-results');
                 const activeFiltersContainer = document.getElementById('wgh-active-tag-filters-container');
                 const hiddenFiltersContainer = document.getElementById('wgh-hidden-tag-filters-container');
-
                 searchInput.addEventListener('input', () => {
                     const query = searchInput.value.toLowerCase().trim();
                     searchResultsContainer.innerHTML = '';
                     if (query.length < 2) return;
-
                     const filteredTags = Object.entries(wgh_allTags)
                         .filter(([tagid, name]) => name.toLowerCase().includes(query) && !wgh_activeTagFilters[tagid] && !wgh_hiddenTagFilters[tagid])
                         .slice(0, 50);
-
                     filteredTags.forEach(([tagid, name]) => {
                         const item = document.createElement('div');
-                        item.className = 'tag-search-result-item';
-                        item.textContent = name;
-                        item.dataset.tagid = tagid;
-                        item.dataset.tagname = name;
+                        item.className = 'tag-search-result-item'; item.textContent = name;
+                        item.dataset.tagid = tagid; item.dataset.tagname = name;
                         searchResultsContainer.appendChild(item);
                     });
                 });
-
                 searchResultsContainer.addEventListener('click', (e) => {
                     if (e.target.classList.contains('tag-search-result-item')) {
                         const tagId = e.target.dataset.tagid;
-                        wgh_activeTagFilters[tagId] = 20;
-                        e.target.remove();
-                        wgh_renderTagFilters();
-                        searchInput.value = '';
-                        searchResultsContainer.innerHTML = '';
+                        wgh_activeTagFilters[tagId] = 20; e.target.remove();
+                        wgh_renderTagFilters(); searchInput.value = ''; searchResultsContainer.innerHTML = '';
                     }
                 });
-
                 wgh_handleTagContainerEvents(activeFiltersContainer, wgh_activeTagFilters, false);
                 wgh_handleTagContainerEvents(hiddenFiltersContainer, wgh_hiddenTagFilters, true);
-
                 let draggedItem = null;
-
                 function setupDragAndDrop(container) {
-                    container.addEventListener('dragstart', (e) => {
-                        draggedItem = e.target;
-                        setTimeout(() => { e.target.style.opacity = '0.5'; }, 0);
-                    });
-                    container.addEventListener('dragend', (e) => {
-                        e.target.style.opacity = '1';
-                        draggedItem = null;
-                    });
+                    container.addEventListener('dragstart', (e) => { draggedItem = e.target; setTimeout(() => { e.target.style.opacity = '0.5'; }, 0); });
+                    container.addEventListener('dragend', (e) => { e.target.style.opacity = '1'; draggedItem = null; });
                 }
-
-                setupDragAndDrop(activeFiltersContainer);
-                setupDragAndDrop(hiddenFiltersContainer);
-
+                setupDragAndDrop(activeFiltersContainer); setupDragAndDrop(hiddenFiltersContainer);
                 function setupDropZone(zone, targetFilter, sourceFilter, isHiddenZone) {
                     zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('drag-over'); });
                     zone.addEventListener('dragleave', () => { zone.classList.remove('drag-over'); });
                     zone.addEventListener('drop', (e) => {
-                        e.preventDefault();
-                        zone.classList.remove('drag-over');
+                        e.preventDefault(); zone.classList.remove('drag-over');
                         if (draggedItem) {
                             const tagId = draggedItem.dataset.tagid;
                             if (!targetFilter[tagId]) {
-                                const value = sourceFilter[tagId];
-                                delete sourceFilter[tagId];
-                                targetFilter[tagId] = isHiddenZone ? true : (value || 20);
-                                wgh_renderTagFilters();
+                                const value = sourceFilter[tagId]; delete sourceFilter[tagId];
+                                targetFilter[tagId] = isHiddenZone ? true : (value || 20); wgh_renderTagFilters();
                             }
                         }
                     });
                 }
-
                 setupDropZone(document.getElementById('wgh-active-tags-section'), wgh_activeTagFilters, wgh_hiddenTagFilters, false);
                 setupDropZone(document.getElementById('wgh-hidden-tags-section'), wgh_hiddenTagFilters, wgh_activeTagFilters, true);
-
                 modalOverlay.addEventListener('click', (e) => {
                     const actionElement = e.target.closest('[data-action]');
-                    if (e.target === modalOverlay) {
-                         modalOverlay.style.display = 'none';
-                         return;
-                    }
+                    if (e.target === modalOverlay) { modalOverlay.style.display = 'none'; return; }
                     if (actionElement) {
                         const action = actionElement.dataset.action;
-                        if (action === 'close-tag-modal') {
-                            modalOverlay.style.display = 'none';
-                        } else if (action === 'apply-tags-and-close') {
-                            modalOverlay.style.display = 'none';
-                            wgh_applyFilters();
-                        }
+                        if (action === 'close-tag-modal') modalOverlay.style.display = 'none';
+                        else if (action === 'apply-tags-and-close') { modalOverlay.style.display = 'none'; wgh_applyFilters(); }
                     }
                 });
             }
@@ -13363,9 +12555,7 @@ if (headerCtn) {
             function wgh_handleTagContainerEvents(container, filterObject, isHiddenContainer) {
                 container.addEventListener('click', (e) => {
                     if (e.target.classList.contains('btn-remove-tag')) {
-                        const tagId = e.target.dataset.tagid;
-                        delete filterObject[tagId];
-                        wgh_renderTagFilters();
+                        const tagId = e.target.dataset.tagid; delete filterObject[tagId]; wgh_renderTagFilters();
                     }
                 });
                 if (!isHiddenContainer) {
@@ -13373,10 +12563,8 @@ if (headerCtn) {
                         if (e.target.classList.contains('tag-position-input')) {
                             const tagId = e.target.dataset.tagid;
                             let value = parseInt(e.target.value, 10);
-                            if (isNaN(value) || value < 1) value = 1;
-                            if (value > 20) value = 20;
-                            wgh_activeTagFilters[tagId] = value;
-                            e.target.value = value;
+                            if (isNaN(value) || value < 1) value = 1; if (value > 20) value = 20;
+                            wgh_activeTagFilters[tagId] = value; e.target.value = value;
                         }
                     });
                 }
@@ -13385,35 +12573,21 @@ if (headerCtn) {
             function wgh_renderTagFilters() {
                 const activeContainer = document.getElementById('wgh-active-tag-filters-container');
                 const hiddenContainer = document.getElementById('wgh-hidden-tag-filters-container');
-                activeContainer.innerHTML = '';
-                hiddenContainer.innerHTML = '';
-
+                activeContainer.innerHTML = ''; hiddenContainer.innerHTML = '';
                 for (const tagId in wgh_activeTagFilters) {
                     const tagName = wgh_allTags[tagId] || `TagID: ${tagId}`;
                     const position = wgh_activeTagFilters[tagId];
                     const row = document.createElement('div');
-                    row.className = 'active-tag-filter-row';
-                    row.draggable = true;
-                    row.dataset.tagid = tagId;
-                    row.innerHTML = `
-                        <span>${tagName}</span>
-                        <input type="number" class="tag-position-input" value="${position}" min="1" max="20" data-tagid="${tagId}">
-                        <button class="btn-remove-tag" data-tagid="${tagId}">X</button>
-                    `;
+                    row.className = 'active-tag-filter-row'; row.draggable = true; row.dataset.tagid = tagId;
+                    row.innerHTML = `<span>${tagName}</span><input type="number" class="tag-position-input" value="${position}" min="1" max="20" data-tagid="${tagId}"><button class="btn-remove-tag" data-tagid="${tagId}">X</button>`;
                     row.querySelector('.tag-position-input').addEventListener('mousedown', e => e.stopPropagation());
                     activeContainer.appendChild(row);
                 }
-
                 for (const tagId in wgh_hiddenTagFilters) {
                     const tagName = wgh_allTags[tagId] || `TagID: ${tagId}`;
                     const row = document.createElement('div');
-                    row.className = 'hidden-tag-filter-row';
-                    row.draggable = true;
-                    row.dataset.tagid = tagId;
-                    row.innerHTML = `
-                        <span>${tagName}</span>
-                        <button class="btn-remove-tag" data-tagid="${tagId}">X</button>
-                    `;
+                    row.className = 'hidden-tag-filter-row'; row.draggable = true; row.dataset.tagid = tagId;
+                    row.innerHTML = `<span>${tagName}</span><button class="btn-remove-tag" data-tagid="${tagId}">X</button>`;
                     hiddenContainer.appendChild(row);
                 }
             }
@@ -13445,9 +12619,7 @@ if (headerCtn) {
                 wgh_filterToggleBtn.className = 'wghBtn';
                 wgh_filterToggleBtn.title = 'Фильтры';
                 wgh_filterToggleBtn.innerHTML = '🛠️';
-                wgh_filterToggleBtn.onclick = () => {
-                    wgh_filterAccordionContainer.style.display = wgh_filterAccordionContainer.style.display === 'none' ? 'block' : 'none';
-                };
+                wgh_filterToggleBtn.onclick = () => { wgh_filterAccordionContainer.style.display = wgh_filterAccordionContainer.style.display === 'none' ? 'block' : 'none'; };
                 header.appendChild(wgh_filterToggleBtn);
 
                 wgh_sortButtonsContainer = document.createElement('div');
@@ -13490,14 +12662,8 @@ if (headerCtn) {
                 wgh_closeBtn.innerHTML = '&times;';
                 wgh_closeBtn.onclick = wgh_hideModal;
                 wgh_closeBtn.style.cssText = ` position: absolute; top: 10px; right: 15px; font-size: 30px; color: #aaa; background: none; border: none; cursor: pointer; line-height: 1; z-index: 10002; padding: 5px; transition: color 0.2s, transform 0.2s; `;
-                wgh_closeBtn.onmouseover = () => {
-                    wgh_closeBtn.style.color = '#fff';
-                    wgh_closeBtn.style.transform = 'scale(1.1)';
-                };
-                wgh_closeBtn.onmouseout = () => {
-                    wgh_closeBtn.style.color = '#aaa';
-                    wgh_closeBtn.style.transform = 'scale(1)';
-                };
+                wgh_closeBtn.onmouseover = () => { wgh_closeBtn.style.color = '#fff'; wgh_closeBtn.style.transform = 'scale(1.1)'; };
+                wgh_closeBtn.onmouseout = () => { wgh_closeBtn.style.color = '#aaa'; wgh_closeBtn.style.transform = 'scale(1)'; };
                 wgh_modal.appendChild(wgh_closeBtn);
                 wgh_modal.appendChild(container);
                 document.body.appendChild(wgh_modal);
@@ -13508,23 +12674,16 @@ if (headerCtn) {
                 wgh_createTagFilterModal();
                 document.getElementById('wghOpenTagModalBtn')?.addEventListener('click', () => {
                     const modal = document.getElementById('wgh-tag-filter-modal');
-                    if (modal) {
-                        modal.style.display = 'flex';
-                        wgh_renderTagFilters();
-                    }
+                    if (modal) { modal.style.display = 'flex'; wgh_renderTagFilters(); }
                 });
 
                 function handleEsc(event) {
                     if (event.key === 'Escape') {
                         const descModal = document.getElementById('wghDescriptionModal');
                         const tagModal = document.getElementById('wgh-tag-filter-modal');
-                        if (descModal) {
-                            descModal.remove();
-                        } else if (tagModal && tagModal.style.display !== 'none') {
-                            tagModal.style.display = 'none';
-                        } else {
-                            wgh_hideModal();
-                        }
+                        if (descModal) descModal.remove();
+                        else if (tagModal && tagModal.style.display !== 'none') tagModal.style.display = 'none';
+                        else wgh_hideModal();
                     }
                 }
                 document.addEventListener('keydown', handleEsc);
@@ -13556,9 +12715,7 @@ if (headerCtn) {
             }
 
             function wgh_updateStatus(message, isLoading = false) {
-                if (wgh_statusDiv) {
-                    wgh_statusDiv.innerHTML = message + (isLoading ? ' <span class="wghSpinner"></span>' : '');
-                }
+                if (wgh_statusDiv) wgh_statusDiv.innerHTML = message + (isLoading ? ' <span class="wghSpinner"></span>' : '');
                 const collectBtn = document.getElementById('wghCollectBtn');
                 if (collectBtn) collectBtn.disabled = isLoading;
                 if (wgh_fetchFriendPricesBtn) wgh_fetchFriendPricesBtn.disabled = isLoading;
@@ -13572,21 +12729,17 @@ if (headerCtn) {
             function wgh_setupFilterEventListeners() {
                 const inputs = ['wghFilterReviewCountMin', 'wghFilterReviewCountMax', 'wghFilterRatingMin', 'wghFilterRatingMax', 'wghFilterPriceMin', 'wghFilterPriceMax', 'wghFilterDiscountMin', 'wghFilterDiscountMax', 'wghFilterDateMin', 'wghFilterDateMax'];
                 inputs.forEach(id => document.getElementById(id)?.addEventListener('input', debouncedFilterApplication));
-
                 const checkboxes = ['wghFilterDiscounted', 'wghFilterNoPrice'];
                 checkboxes.forEach(id => document.getElementById(id)?.addEventListener('change', debouncedFilterApplication));
-
                 document.querySelectorAll('input[name="wghLangFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
                 document.querySelectorAll('input[name="wghEaFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
-
                 document.getElementById('wghResetFilters')?.addEventListener('click', () => {
                     document.querySelectorAll('#wghFilterAccordionContainer input').forEach(input => {
                         if (input.type === 'checkbox') input.checked = false;
                         if (input.type === 'number' || input.type === 'date') input.value = '';
                         if (input.type === 'radio' && input.value === 'any') input.checked = true;
                     });
-                    wgh_activeTagFilters = {};
-                    wgh_hiddenTagFilters = {};
+                    wgh_activeTagFilters = {}; wgh_hiddenTagFilters = {};
                     debouncedFilterApplication();
                 });
                 document.querySelectorAll('input[name="wghRrcFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
@@ -13594,31 +12747,20 @@ if (headerCtn) {
 
             function wgh_applyFilters() {
                 if (!wgh_resultsDiv) return;
-
                 const getVal = (id) => document.getElementById(id)?.value || null;
-                const getNum = (id) => {
-                    const v = getVal(id);
-                    return v ? parseFloat(v) : null;
-                };
+                const getNum = (id) => { const v = getVal(id); return v ? parseFloat(v) : null; };
                 const getChecked = (id) => document.getElementById(id)?.checked || false;
                 const getRadio = (name) => document.querySelector(`input[name="${name}"]:checked`)?.value || 'any';
 
                 const filters = {
-                    onlyDiscount: getChecked('wghFilterDiscounted'),
-                    hideNoPrice: getChecked('wghFilterNoPrice'),
-                    reviewCountMin: getNum('wghFilterReviewCountMin'),
-                    reviewCountMax: getNum('wghFilterReviewCountMax'),
-                    ratingMin: getNum('wghFilterRatingMin'),
-                    ratingMax: getNum('wghFilterRatingMax'),
-                    priceMin: getNum('wghFilterPriceMin'),
-                    priceMax: getNum('wghFilterPriceMax'),
-                    discountMin: getNum('wghFilterDiscountMin'),
-                    discountMax: getNum('wghFilterDiscountMax'),
+                    onlyDiscount: getChecked('wghFilterDiscounted'), hideNoPrice: getChecked('wghFilterNoPrice'),
+                    reviewCountMin: getNum('wghFilterReviewCountMin'), reviewCountMax: getNum('wghFilterReviewCountMax'),
+                    ratingMin: getNum('wghFilterRatingMin'), ratingMax: getNum('wghFilterRatingMax'),
+                    priceMin: getNum('wghFilterPriceMin'), priceMax: getNum('wghFilterPriceMax'),
+                    discountMin: getNum('wghFilterDiscountMin'), discountMax: getNum('wghFilterDiscountMax'),
                     dateMin: getVal('wghFilterDateMin') ? new Date(getVal('wghFilterDateMin')).getTime() : null,
                     dateMax: getVal('wghFilterDateMax') ? new Date(getVal('wghFilterDateMax')).getTime() : null,
-                    lang: getRadio('wghLangFilter'),
-                    ea: getRadio('wghEaFilter'),
-                    rrc: getRadio('wghRrcFilter')
+                    lang: getRadio('wghLangFilter'), ea: getRadio('wghEaFilter'), rrc: getRadio('wghRrcFilter')
                 };
 
                 GM_setValue(WGH_FILTER_STORAGE_KEY, filters);
@@ -13629,11 +12771,7 @@ if (headerCtn) {
                 cards.forEach(card => {
                     const appid = card.dataset.appid;
                     const gameData = wgh_gameDataStore[appid]?.myData;
-                    if (!gameData) {
-                        card.style.display = 'none';
-                        return;
-                    }
-
+                    if (!gameData) { card.style.display = 'none'; return; }
                     let isVisible = true;
 
                     if (filters.onlyDiscount && (!gameData.priceData || gameData.priceData.discountPercent <= 0)) isVisible = false;
@@ -13647,9 +12785,6 @@ if (headerCtn) {
                         const price = gameData.priceData.finalCents / 100;
                         if (filters.priceMin !== null && price < filters.priceMin) isVisible = false;
                         if (isVisible && filters.priceMax !== null && price > filters.priceMax) isVisible = false;
-                    }
-
-                    if (isVisible && gameData.priceData) {
                         const discount = gameData.priceData.discountPercent || 0;
                         if (filters.discountMin !== null && discount < filters.discountMin) isVisible = false;
                         if (isVisible && filters.discountMax !== null && discount > filters.discountMax) isVisible = false;
@@ -13676,10 +12811,8 @@ if (headerCtn) {
                     }
 
                     if (isVisible && filters.rrc !== 'any') {
-                        const rrcStatus = gameData.rrcInfo?.status;
-                        if (!rrcStatus || rrcStatus !== filters.rrc) {
-                            isVisible = false;
-                        }
+                        const rrcStatus = gameData.rrcInfo?.valve?.status;
+                        if (!rrcStatus || rrcStatus !== filters.rrc) isVisible = false;
                     }
 
                     if (isVisible) {
@@ -13688,20 +12821,14 @@ if (headerCtn) {
                                 if (Object.keys(wgh_activeTagFilters).length > 0) isVisible = false;
                             } else {
                                 for (const tagId in wgh_hiddenTagFilters) {
-                                    if (gameData.tagids.includes(parseInt(tagId, 10))) {
-                                        isVisible = false;
-                                        break;
-                                    }
+                                    if (gameData.tagids.includes(parseInt(tagId, 10))) { isVisible = false; break; }
                                 }
                                 if (isVisible) {
                                     for (const tagId in wgh_activeTagFilters) {
                                         const requiredPosition = wgh_activeTagFilters[tagId];
                                         const numericTagId = parseInt(tagId, 10);
                                         const actualPositionIndex = gameData.tagids.indexOf(numericTagId);
-                                        if (actualPositionIndex === -1 || actualPositionIndex >= requiredPosition) {
-                                            isVisible = false;
-                                            break;
-                                        }
+                                        if (actualPositionIndex === -1 || actualPositionIndex >= requiredPosition) { isVisible = false; break; }
                                     }
                                 }
                             }
@@ -13711,51 +12838,33 @@ if (headerCtn) {
                     if (isVisible && wgh_showGiftableOnly) {
                         const isGiftableByPrice = card.dataset.giftablePrice === 'true';
                         const canGiftByApi = card.dataset.canGiftApi === 'true';
-                        if (!isGiftableByPrice || !canGiftByApi) {
-                            isVisible = false;
-                        }
+                        if (!isGiftableByPrice || !canGiftByApi) isVisible = false;
                     }
 
                     card.style.display = isVisible ? 'flex' : 'none';
-                    if (isVisible) {
-                        visibleGamesData.push(gameData);
-                    }
+                    if (isVisible) visibleGamesData.push(gameData);
                 });
-
                 wgh_updateFilterPlaceholders(visibleGamesData);
             }
 
             function wgh_updateFilterPlaceholders() {
                 const filteredGames = Object.values(wgh_gameDataStore).filter(game => {
+                    if (!game || !game.myData) return false;
                     const card = document.querySelector(`.wghGameCard[data-appid="${game.myData.appid}"]`);
                     return card && card.style.display !== 'none';
                 }).map(game => game.myData);
 
                 if (filteredGames.length === 0) {
                     ['wghFilterReviewCountMin', 'wghFilterReviewCountMax', 'wghFilterRatingMin', 'wghFilterRatingMax', 'wghFilterPriceMin', 'wghFilterPriceMax', 'wghFilterDiscountMin', 'wghFilterDiscountMax'].forEach(id => {
-                        const el = document.getElementById(id);
-                        if (el) el.placeholder = 'N/A';
+                        const el = document.getElementById(id); if (el) el.placeholder = 'N/A';
                     });
                     return;
                 }
 
-                const stats = {
-                    minReviews: Infinity,
-                    maxReviews: 0,
-                    minRating: 101,
-                    maxRating: 0,
-                    minPrice: Infinity,
-                    maxPrice: 0,
-                    minDiscount: 101,
-                    maxDiscount: 0
-                };
-
+                const stats = { minReviews: Infinity, maxReviews: 0, minRating: 101, maxRating: 0, minPrice: Infinity, maxPrice: 0, minDiscount: 101, maxDiscount: 0 };
                 filteredGames.forEach(item => {
-                    if (item.reviewCount > 0) {
-                        stats.minReviews = Math.min(stats.minReviews, item.reviewCount);
-                    }
+                    if (item.reviewCount > 0) stats.minReviews = Math.min(stats.minReviews, item.reviewCount);
                     stats.maxReviews = Math.max(stats.maxReviews, item.reviewCount);
-
                     if (item.reviewCount > 0) {
                         stats.minRating = Math.min(stats.minRating, item.reviewPercent);
                         stats.maxRating = Math.max(stats.maxRating, item.reviewPercent);
@@ -13774,22 +12883,15 @@ if (headerCtn) {
                 const setPlaceholder = (id, prefix, value, fallback = 'N/A') => {
                     const el = document.getElementById(id);
                     if (el) {
-                        if (value !== Infinity && value !== -Infinity && value !== 101) {
-                            el.placeholder = `${prefix} ${Math.round(value)}`;
-                        } else {
-                            el.placeholder = fallback;
-                        }
+                        if (value !== Infinity && value !== -Infinity && value !== 101) el.placeholder = `${prefix} ${Math.round(value)}`;
+                        else el.placeholder = fallback;
                     }
                 };
 
-                setPlaceholder('wghFilterReviewCountMin', 'От', stats.minReviews);
-                setPlaceholder('wghFilterReviewCountMax', 'До', stats.maxReviews);
-                setPlaceholder('wghFilterRatingMin', 'От', stats.minRating === 101 ? 0 : stats.minRating);
-                setPlaceholder('wghFilterRatingMax', 'До', stats.maxRating);
-                setPlaceholder('wghFilterPriceMin', 'От', stats.minPrice);
-                setPlaceholder('wghFilterPriceMax', 'До', stats.maxPrice);
-                setPlaceholder('wghFilterDiscountMin', 'От', stats.minDiscount === 101 ? 0 : stats.minDiscount);
-                setPlaceholder('wghFilterDiscountMax', 'До', stats.maxDiscount);
+                setPlaceholder('wghFilterReviewCountMin', 'От', stats.minReviews); setPlaceholder('wghFilterReviewCountMax', 'До', stats.maxReviews);
+                setPlaceholder('wghFilterRatingMin', 'От', stats.minRating === 101 ? 0 : stats.minRating); setPlaceholder('wghFilterRatingMax', 'До', stats.maxRating);
+                setPlaceholder('wghFilterPriceMin', 'От', stats.minPrice); setPlaceholder('wghFilterPriceMax', 'До', stats.maxPrice);
+                setPlaceholder('wghFilterDiscountMin', 'От', stats.minDiscount === 101 ? 0 : stats.minDiscount); setPlaceholder('wghFilterDiscountMax', 'До', stats.maxDiscount);
             }
 
             async function wgh_collectData() {
@@ -13806,21 +12908,25 @@ if (headerCtn) {
                         wgh_hideProgressBar(wgh_progressBar);
                         return;
                     }
+
+                    wgh_updateStatus('Получение матрицы цен Steam...', true);
+                    await wgh_fetchSteamPricingMatrix();
+
                     const totalGames = wgh_allAppIds.length;
                     const totalBatches = Math.ceil(totalGames / WGH_BATCH_SIZE);
-                    wgh_updateStatus(`Найдено ${totalGames} игр. Запрос данных для вашего региона... (0/${totalBatches})`, true);
 
+                    wgh_updateStatus(`Запрос данных для вашего региона (${wgh_currentUserCountryCode})... (0/${totalBatches})`, true);
                     for (let i = 0; i < totalGames; i += WGH_BATCH_SIZE) {
                         const batch = wgh_allAppIds.slice(i, i + WGH_BATCH_SIZE);
                         const batchData = await wgh_fetchBatchGameData(batch, wgh_currentUserCountryCode);
                         wgh_processBatchData(batchData, 'myData');
-                        const progress = ((i + batch.length) / totalGames) * (wgh_currentUserCountryCode === 'RU' ? 50 : 100);
+                        const progress = ((i + batch.length) / totalGames) * 50;
                         wgh_updateProgressBar(wgh_progressBar, progress);
                         wgh_updateStatus(`Запрос данных для вашего региона... (${Math.ceil((i + batch.length)/WGH_BATCH_SIZE)}/${totalBatches})`, true);
                         await new Promise(res => setTimeout(res, 200));
                     }
 
-                    if (wgh_currentUserCountryCode === 'RU') {
+                    if (wgh_currentUserCountryCode !== 'US') {
                         wgh_updateStatus(`Запрос данных из US для анализа РРЦ... (0/${totalBatches})`, true);
                         for (let i = 0; i < totalGames; i += WGH_BATCH_SIZE) {
                             const batch = wgh_allAppIds.slice(i, i + WGH_BATCH_SIZE);
@@ -13831,8 +12937,15 @@ if (headerCtn) {
                             wgh_updateStatus(`Запрос данных из US... (${Math.ceil((i + batch.length)/WGH_BATCH_SIZE)}/${totalBatches})`, true);
                             await new Promise(res => setTimeout(res, 200));
                         }
-                        wgh_processRrcData();
+                    } else {
+                        for (const appid in wgh_gameDataStore) {
+                            if (wgh_gameDataStore[appid].myData) {
+                                wgh_gameDataStore[appid].usData = wgh_gameDataStore[appid].myData;
+                            }
+                        }
                     }
+
+                    wgh_processRrcData('myData', wgh_currentUserCountryCode);
 
                     wgh_updateStatus(`Данные для ${Object.keys(wgh_gameDataStore).length} игр получены.`);
                     wgh_applySort(wgh_currentSort.field, wgh_currentSort.direction);
@@ -13847,35 +12960,42 @@ if (headerCtn) {
                 }
             }
 
-            function wgh_processRrcData() {
-                if (wgh_currentUserCountryCode !== 'RU') return;
+            function wgh_processRrcData(targetDataField, targetCountryCode) {
+                const currencyInfo = WGH_COUNTRY_CURRENCY_MAP[targetCountryCode];
+                if (!currencyInfo || currencyInfo.code === 1) return;
+
+                const currencyCode = currencyInfo.code;
 
                 for (const appid in wgh_gameDataStore) {
                     const game = wgh_gameDataStore[appid];
-                    if (game.myData && game.usData && game.myData.priceData && game.usData.priceData) {
+                    const targetData = game[targetDataField];
+                    if (targetData && game.usData && targetData.priceData && game.usData.priceData) {
                         const usPriceCents = game.usData.priceData.originalCents ?? game.usData.priceData.finalCents;
-                        const ruPriceCents = game.myData.priceData.originalCents ?? game.myData.priceData.finalCents;
+                        const targetPriceCents = targetData.priceData.originalCents ?? targetData.priceData.finalCents;
 
-                        if (usPriceCents !== null && ruPriceCents !== null) {
-                            const pUSD = usPriceCents / 100;
-                            const actualRubPrice = ruPriceCents / 100;
-                            const recommendedRubPrice = calculateRecommendedRubPrice(pUSD);
+                        if (usPriceCents !== null && targetPriceCents !== null) {
+                            const actualPriceNum = targetPriceCents / 100;
 
-                            if (recommendedRubPrice !== null) {
-                                const diff = actualRubPrice - recommendedRubPrice;
-                                const diffPercent = recommendedRubPrice !== 0 ? (diff / recommendedRubPrice) * 100 : (diff > 0 ? Infinity : -Infinity);
+                            const recNuanced = wgh_getRecommendedPriceCentsFromMatrix(wgh_steamPricingMatrices.valve, usPriceCents, currencyCode);
+                            const recParity = wgh_getRecommendedPriceCentsFromMatrix(wgh_steamPricingMatrices.parity, usPriceCents, currencyCode);
+                            const recFx = wgh_getRecommendedPriceCentsFromMatrix(wgh_steamPricingMatrices.fx, usPriceCents, currencyCode);
 
+                            const calc = (recCents) => {
+                                if (recCents === null) return null;
+                                const recNum = recCents / 100;
+                                const diff = actualPriceNum - recNum;
+                                const diffPercent = recNum !== 0 ? (diff / recNum) * 100 : (diff > 0 ? Infinity : -Infinity);
                                 let status = 'equal';
                                 if (diffPercent > 1) status = 'higher';
                                 if (diffPercent < -1) status = 'lower';
+                                return { status, diff, diffPercent, recommendedCents: recCents, recommendedNum: recNum };
+                            };
 
-                                game.myData.rrcInfo = {
-                                    status: status,
-                                    diff: diff,
-                                    diffPercent: diffPercent,
-                                    recommended: recommendedRubPrice
-                                };
-                            }
+                            targetData.rrcInfo = {
+                                valve: calc(recNuanced),
+                                parity: calc(recParity),
+                                fx: calc(recFx)
+                            };
                         }
                     }
                 }
@@ -13887,24 +13007,17 @@ if (headerCtn) {
                     try {
                         const queryData = JSON.parse(unsafeWindow.SSR.renderContext.queryData);
                         if (queryData && Array.isArray(queryData.queries)) {
-                            const wishlistQuery = queryData.queries.find(q =>
-                                q && Array.isArray(q.queryKey) && q.queryKey[0] === 'WishlistSortedFiltered'
-                            );
+                            const wishlistQuery = queryData.queries.find(q => q && Array.isArray(q.queryKey) && q.queryKey[0] === 'WishlistSortedFiltered');
                             if (wishlistQuery && wishlistQuery.state && wishlistQuery.state.data && Array.isArray(wishlistQuery.state.data.items)) {
                                 appIds = wishlistQuery.state.data.items.map(item => item.appid);
                             }
                         }
-                    } catch (e) {
-                        console.error("[WGH] Ошибка при разборе данных SSR:", e);
-                    }
+                    } catch (e) { console.error("[WGH] Ошибка при разборе данных SSR:", e); }
                 }
                 if (appIds.length === 0 && typeof unsafeWindow.g_rgWishlistData !== 'undefined' && Array.isArray(unsafeWindow.g_rgWishlistData)) {
-                    console.warn("[WGH] Используется резервный метод g_rgWishlistData.");
                     appIds = unsafeWindow.g_rgWishlistData.map(item => item.appid).filter(id => id);
                 }
-                if (appIds.length === 0) {
-                    throw new Error("Не удалось извлечь AppID. Возможно, структура страницы изменилась или список желаемого пуст.");
-                }
+                if (appIds.length === 0) throw new Error("Не удалось извлечь AppID. Возможно, список желаемого пуст.");
                 return [...new Set(appIds)];
             }
 
@@ -13915,96 +13028,56 @@ if (headerCtn) {
                         const queryData = JSON.parse(unsafeWindow.SSR.renderContext.queryData);
                         const walletInfoQuery = queryData?.queries?.find(q => q?.queryKey?.[0] === 'CurrentUserWalletDetails');
                         const walletInfoInSSR = walletInfoQuery?.state?.data;
-
                         if (walletInfoInSSR?.has_wallet && walletInfoInSSR?.currency_code && walletInfoInSSR?.wallet_country_code) {
                             wgh_currentUserCurrencyCode = walletInfoInSSR.currency_code;
                             wgh_currentUserCountryCode = walletInfoInSSR.wallet_country_code;
                             wgh_currentUserISOCurrencyCode = WGH_CURRENCY_CODE_TO_ISO[wgh_currentUserCurrencyCode] || null;
-                            if (wgh_currentUserCountryCode && wgh_currentUserISOCurrencyCode) {
-                                found = true;
-                                console.log(`[WGH] Регион успешно определен через SSR/Wallet: ${wgh_currentUserCountryCode}`);
-                            }
+                            if (wgh_currentUserCountryCode && wgh_currentUserISOCurrencyCode) found = true;
                         }
-                    } catch (e) {
-                        console.error('[WGH] Ошибка при разборе SSR для определения региона:', e);
-                    }
+                    } catch (e) {}
                 }
                 if (!found && typeof unsafeWindow?.Config?.COUNTRY === 'string') {
                     const countryCode = unsafeWindow.Config.COUNTRY;
-                    const currencyInfo = Object.entries(WGH_COUNTRY_CURRENCY_MAP).find(([key, data]) => key === countryCode);
+                    const currencyInfo = Object.entries(WGH_COUNTRY_CURRENCY_MAP).find(([key]) => key === countryCode);
                     if (currencyInfo) {
                         wgh_currentUserCountryCode = currencyInfo[0];
                         wgh_currentUserCurrencyCode = currencyInfo[1].code;
                         wgh_currentUserISOCurrencyCode = currencyInfo[1].iso;
                         found = true;
-                        console.log(`[WGH] Регион определен через резервный метод window.Config: ${wgh_currentUserCountryCode}`);
                     }
                 }
                 if (!found && typeof unsafeWindow.g_rgWalletInfo !== 'undefined' && unsafeWindow.g_rgWalletInfo.wallet_currency) {
-                    console.warn("[WGH] Используется самый старый резервный метод g_rgWalletInfo.");
                     wgh_currentUserCurrencyCode = unsafeWindow.g_rgWalletInfo.wallet_currency;
                     wgh_currentUserCountryCode = WGH_CURRENCY_CODE_TO_COUNTRY[wgh_currentUserCurrencyCode] || null;
                     wgh_currentUserISOCurrencyCode = WGH_CURRENCY_CODE_TO_ISO[wgh_currentUserCurrencyCode] || null;
-                    if (wgh_currentUserCountryCode && wgh_currentUserISOCurrencyCode) {
-                        found = true;
-                    }
+                    if (wgh_currentUserCountryCode && wgh_currentUserISOCurrencyCode) found = true;
                 }
                 if (!found) {
-                    console.warn('[WGH] Не удалось определить регион пользователя, используется значение по умолчанию: RU/RUB.');
                     wgh_currentUserCountryCode = 'RU';
                     wgh_currentUserCurrencyCode = 5;
                     wgh_currentUserISOCurrencyCode = 'RUB';
                 }
-                if (wgh_myRegionDisplay) {
-                    wgh_myRegionDisplay.textContent = `${wgh_currentUserCountryCode || '??'} (${wgh_currentUserISOCurrencyCode || '???'})`;
-                }
+                if (wgh_myRegionDisplay) wgh_myRegionDisplay.textContent = `${wgh_currentUserCountryCode || '??'} (${wgh_currentUserISOCurrencyCode || '???'})`;
             }
 
             async function wgh_fetchBatchGameData(appIdsBatch, countryCode) {
                 const inputJson = {
-                    ids: appIdsBatch.map(appid => ({
-                        appid
-                    })),
-                    context: {
-                        language: "russian",
-                        country_code: countryCode || 'RU',
-                        steam_realm: 1
-                    },
+                    ids: appIdsBatch.map(appid => ({ appid })),
+                    context: { language: "russian", country_code: countryCode || 'RU', steam_realm: 1 },
                     data_request: {
-                        include_assets: true,
-                        include_release: true,
-                        include_platforms: true,
-                        include_all_purchase_options: true,
-                        include_screenshots: true,
-                        include_trailers: true,
-                        include_ratings: true,
-                        include_tag_count: true,
-                        include_reviews: true,
-                        include_basic_info: true,
-                        include_supported_languages: true,
-                        include_full_description: true,
+                        include_assets: true, include_release: true, include_platforms: true,
+                        include_all_purchase_options: true, include_screenshots: true, include_trailers: true,
+                        include_ratings: true, include_tag_count: true, include_reviews: true,
+                        include_basic_info: true, include_supported_languages: true, include_full_description: true,
                         include_included_items: true,
                         included_item_data_request: {
-                            include_assets: true,
-                            include_release: true,
-                            include_platforms: true,
-                            include_all_purchase_options: true,
-                            include_screenshots: true,
-                            include_trailers: true,
-                            include_ratings: true,
-                            include_tag_count: true,
-                            include_reviews: true,
-                            include_basic_info: true,
-                            include_supported_languages: true,
-                            include_full_description: true,
-                            include_included_items: true,
-                            include_assets_without_overrides: true,
-                            apply_user_filters: false,
-                            include_links: true
+                            include_assets: true, include_release: true, include_platforms: true,
+                            include_all_purchase_options: true, include_screenshots: true, include_trailers: true,
+                            include_ratings: true, include_tag_count: true, include_reviews: true,
+                            include_basic_info: true, include_supported_languages: true, include_full_description: true,
+                            include_included_items: true, include_assets_without_overrides: true, apply_user_filters: false, include_links: true
                         },
-                        include_assets_without_overrides: true,
-                        apply_user_filters: false,
-                        include_links: true
+                        include_assets_without_overrides: true, apply_user_filters: false, include_links: true
                     }
                 };
                 return new Promise((resolve, reject) => {
@@ -14016,18 +13089,10 @@ if (headerCtn) {
                             try {
                                 if (response.status >= 200 && response.status < 400) {
                                     const data = JSON.parse(response.responseText);
-                                    if (data?.response?.store_items) {
-                                        resolve(data.response.store_items);
-                                    } else {
-                                        console.warn(`[WGH] API вернул успех, но нет store_items для batch: ${appIdsBatch.join(',')}`, data);
-                                        resolve([]);
-                                    }
-                                } else {
-                                    reject(new Error(`HTTP статус ${response.status} для батча`));
-                                }
-                            } catch (e) {
-                                reject(new Error(`Ошибка парсинга JSON: ${e.message}`));
-                            }
+                                    if (data?.response?.store_items) resolve(data.response.store_items);
+                                    else resolve([]);
+                                } else reject(new Error(`HTTP статус ${response.status} для батча`));
+                            } catch (e) { reject(new Error(`Ошибка парсинга JSON: ${e.message}`)); }
                         },
                         onerror: (error) => reject(new Error(`Сетевая ошибка: ${error?.finalUrl || WGH_API_URL}`)),
                         ontimeout: () => reject(new Error('Таймаут запроса к Steam API'))
@@ -14041,36 +13106,22 @@ if (headerCtn) {
                     if (!item || !item.id || item.success !== 1) return;
                     const appid = item.id;
                     if (!wgh_gameDataStore[appid]) {
-                        wgh_gameDataStore[appid] = {
-                            myData: null,
-                            friendData: null
-                        };
+                        wgh_gameDataStore[appid] = { myData: null, friendData: null, usData: null };
                     }
                     const headerFileName = item.assets?.header;
                     const imageUrl = headerFileName ? `${WGH_IMAGE_BASE_URL}${item.id}/${headerFileName}` : `${WGH_IMAGE_BASE_URL}${item.id}/header.jpg`;
                     const extractedData = {
-                        appid: item.appid,
-                        name: item.name,
-                        type: item.type,
-                        imageUrl: imageUrl,
+                        appid: item.appid, name: item.name, type: item.type, imageUrl: imageUrl,
                         releaseDateTimestamp: item.release?.steam_release_date || null,
                         reviewScore: item.reviews?.summary_filtered?.review_score || 0,
                         reviewPercent: item.reviews?.summary_filtered?.percent_positive || 0,
                         reviewCount: item.reviews?.summary_filtered?.review_count || 0,
                         reviewDesc: item.reviews?.summary_filtered?.review_score_label || '',
-                        platforms: {
-                            windows: item.platforms?.windows || false,
-                            mac: item.platforms?.mac || false,
-                            linux: item.platforms?.steamos_linux || false,
-                        },
+                        platforms: { windows: item.platforms?.windows || false, mac: item.platforms?.mac || false, linux: item.platforms?.steamos_linux || false },
                         canGift: item.best_purchase_option?.user_can_purchase_as_gift || false,
-                        priceData: null,
-                        publishers: item.basic_info?.publishers?.map(p => p.name).join(", "),
-                        developers: item.basic_info?.developers?.map(d => d.name).join(", "),
-                        franchises: item.basic_info?.franchises?.map(f => f.name).join(", "),
-                        is_early_access: item.release?.is_early_access,
-                        tagids: item.tagids || [],
-                        short_description: item.basic_info?.short_description,
+                        priceData: null, publishers: item.basic_info?.publishers?.map(p => p.name).join(", "),
+                        developers: item.basic_info?.developers?.map(d => d.name).join(", "), franchises: item.basic_info?.franchises?.map(f => f.name).join(", "),
+                        is_early_access: item.release?.is_early_access, tagids: item.tagids || [], short_description: item.basic_info?.short_description,
                         language_support_russian: item.supported_languages?.find(lang => lang.elanguage === 8)
                     };
                     const purchaseOption = item.best_purchase_option;
@@ -14092,17 +13143,11 @@ if (headerCtn) {
                 wgh_resultsDiv.innerHTML = '';
                 const fragment = document.createDocumentFragment();
                 const sortedAppIds = Object.keys(wgh_gameDataStore);
-                sortedAppIds.sort((idA, idB) => {
-                    const a = wgh_gameDataStore[idA]?.myData;
-                    const b = wgh_gameDataStore[idB]?.myData;
-                    return wgh_compareItems(a, b, wgh_currentSort.field, wgh_currentSort.direction);
-                });
+                sortedAppIds.sort((idA, idB) => wgh_compareItems(wgh_gameDataStore[idA]?.myData, wgh_gameDataStore[idB]?.myData, wgh_currentSort.field, wgh_currentSort.direction));
                 const tagsData = await wgh_loadSteamTags();
                 sortedAppIds.forEach(appid => {
                     const game = wgh_gameDataStore[appid];
-                    if (game && game.myData) {
-                        fragment.appendChild(wgh_createGameCard(appid, game, tagsData));
-                    }
+                    if (game && game.myData) fragment.appendChild(wgh_createGameCard(appid, game, tagsData));
                 });
                 wgh_resultsDiv.appendChild(fragment);
                 wgh_applyFilters();
@@ -14112,49 +13157,22 @@ if (headerCtn) {
                 const modalId = 'wghDescriptionModal';
                 let modal = document.getElementById(modalId);
                 if (modal) modal.remove();
-
                 modal = document.createElement('div');
                 modal.id = modalId;
-                modal.style.cssText = `
-                    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-                    background-color: rgba(0,0,0,0.7); display: flex; align-items: center;
-                    justify-content: center; z-index: 10001;
-                `;
-
+                modal.style.cssText = `position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 10001;`;
                 const content = document.createElement('div');
-                content.style.cssText = `
-                    background-color: #1b2838; color: #c6d4df; padding: 25px;
-                    border-radius: 5px; max-width: 600px; width: 90%; max-height: 80vh;
-                    overflow-y: auto; border: 1px solid #4b6f9c; position: relative;
-                `;
-
+                content.style.cssText = `background-color: #1b2838; color: #c6d4df; padding: 25px; border-radius: 5px; max-width: 600px; width: 90%; max-height: 80vh; overflow-y: auto; border: 1px solid #4b6f9c; position: relative;`;
                 const closeBtn = document.createElement('button');
                 closeBtn.innerHTML = '&times;';
-                closeBtn.style.cssText = `
-                    position: absolute; top: 10px; right: 15px; background: none; border: none;
-                    color: #aaa; font-size: 28px; cursor: pointer;
-                `;
+                closeBtn.style.cssText = `position: absolute; top: 10px; right: 15px; background: none; border: none; color: #aaa; font-size: 28px; cursor: pointer;`;
                 closeBtn.onclick = () => modal.remove();
-
                 const titleEl = document.createElement('h3');
-                titleEl.textContent = title;
-                titleEl.style.cssText = `color: #67c1f5; margin-top: 0;`;
-
+                titleEl.textContent = title; titleEl.style.cssText = `color: #67c1f5; margin-top: 0;`;
                 const descEl = document.createElement('p');
-                descEl.innerHTML = description || 'Описание отсутствует.';
-                descEl.style.lineHeight = '1.6';
-
-                content.appendChild(closeBtn);
-                content.appendChild(titleEl);
-                content.appendChild(descEl);
-                modal.appendChild(content);
-                document.body.appendChild(modal);
-
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.remove();
-                    }
-                });
+                descEl.innerHTML = description || 'Описание отсутствует.'; descEl.style.lineHeight = '1.6';
+                content.appendChild(closeBtn); content.appendChild(titleEl); content.appendChild(descEl);
+                modal.appendChild(content); document.body.appendChild(modal);
+                modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
             }
 
             function wgh_createGameCard(appid, game, tagsData) {
@@ -14172,6 +13190,7 @@ if (headerCtn) {
                 let friendPriceStr = '';
                 let priceDiffStr = '';
                 let priceDiffClass = '';
+                let friendRrcHtml = '';
 
                 if (wgh_giftModeActive && friendData?.priceData && myData?.priceData && wgh_exchangeRates) {
                     const friendCents = friendData.priceData.finalCents;
@@ -14184,29 +13203,30 @@ if (headerCtn) {
                             const diffPercent = myPrice > 0 ? diff / myPrice : (diff > 0 ? Infinity : -Infinity);
                             friendPriceStr = `Цена друга: ${friendPriceInMyCurrency.toLocaleString('ru-RU', { style: 'currency', currency: wgh_currentUserISOCurrencyCode, minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
                             if (diffPercent <= WGH_GIFT_PRICE_DIFF_THRESHOLD) {
-                                priceDiffClass = 'wghPriceDiffGood';
-                                card.dataset.giftablePrice = 'true';
+                                priceDiffClass = 'wghPriceDiffGood'; card.dataset.giftablePrice = 'true';
                             } else {
-                                priceDiffClass = 'wghPriceDiffBad';
-                                card.dataset.giftablePrice = 'false';
+                                priceDiffClass = 'wghPriceDiffBad'; card.dataset.giftablePrice = 'false';
                             }
                             priceDiffStr = `Разница: ${diff > 0 ? '+' : ''}${diff.toLocaleString('ru-RU', { style: 'currency', currency: wgh_currentUserISOCurrencyCode, minimumFractionDigits: 0, maximumFractionDigits: 2 })} (${diffPercent === Infinity || diffPercent === -Infinity ? '∞' : (diffPercent * 100).toFixed(0)}%)`;
+
+                            // Рекомендации для друга (только Valve)
+                            if (friendData.rrcInfo && friendData.rrcInfo.valve) {
+                                const fv = friendData.rrcInfo.valve;
+                                const fCurrencyCode = WGH_COUNTRY_CURRENCY_MAP[wgh_currentFriendCountryCode].code;
+                                const tMap = { 'lower': '<', 'equal': '=', 'higher': '>' };
+                                friendRrcHtml = `<div style="font-size:11px; color:#8f98a0; margin-top:3px;">Рек. друга (Valve): ${wgh_formatSteamPrice(fv.recommendedCents, fCurrencyCode)} (${tMap[fv.status]} на ${Math.abs(fv.diffPercent).toFixed(0)}%)</div>`;
+                            }
                         } else {
-                            friendPriceStr = 'Цена друга: Ошибка конв.';
-                            card.dataset.giftablePrice = 'false';
+                            friendPriceStr = 'Цена друга: Ошибка конв.'; card.dataset.giftablePrice = 'false';
                         }
                     } else {
-                        friendPriceStr = 'Цена друга: N/A';
-                        card.dataset.giftablePrice = 'false';
+                        friendPriceStr = 'Цена друга: N/A'; card.dataset.giftablePrice = 'false';
                     }
                 } else if (wgh_giftModeActive) {
-                    friendPriceStr = 'Цена друга: ...';
-                    card.dataset.giftablePrice = 'false';
+                    friendPriceStr = 'Цена друга: ...'; card.dataset.giftablePrice = 'false';
                 }
 
-                const tagsHtml = myData.tagids.slice(0, 5).map(tagId =>
-                    `<div class="wghTag">${tagsData[tagId] || `Тег #${tagId}`}</div>`
-                ).join('');
+                const tagsHtml = myData.tagids.slice(0, 5).map(tagId => `<div class="wghTag">${tagsData[tagId] || `Тег #${tagId}`}</div>`).join('');
 
                 let languageSupportRussianText = "Отсутствует";
                 if (myData.language_support_russian) {
@@ -14214,41 +13234,29 @@ if (headerCtn) {
                     if (myData.language_support_russian.supported) tempLangText += "Интерфейс, ";
                     if (myData.language_support_russian.full_audio) tempLangText += "Озвучка, ";
                     if (myData.language_support_russian.subtitles) tempLangText += "Субтитры, ";
-                    if (tempLangText) {
-                        languageSupportRussianText = tempLangText.slice(0, -2);
-                    }
+                    if (tempLangText) languageSupportRussianText = tempLangText.slice(0, -2);
                 }
 
                 let rrcInfoHtml = '';
                 if (myData.rrcInfo) {
-                    const {
-                        status,
-                        diff,
-                        diffPercent,
-                        recommended
-                    } = myData.rrcInfo;
-                    const textMap = {
-                        'lower': '< РРЦ',
-                        'equal': '= РРЦ',
-                        'higher': '> РРЦ'
+                    const buildRow = (label, data) => {
+                        if (!data) return '';
+                        const textMap = { 'lower': '<', 'equal': '=', 'higher': '>' };
+                        const diffText = `${data.diff > 0 ? '+' : ''}${wgh_formatSteamPrice(Math.round(data.diff * 100), wgh_currentUserCurrencyCode)} (${data.diffPercent.toFixed(0)}%)`;
+                        const recText = ` | ${wgh_formatSteamPrice(data.recommendedCents, wgh_currentUserCurrencyCode)}`;
+                        return `<div class="wghRrcInfo wghRrc-${data.status}" style="padding: 2px 6px; margin-bottom: 4px;">
+                                    <span class="wghRrcStatus">${textMap[data.status]} ${label}${recText}</span>
+                                    <span class="wghRrcDiff">${diffText}</span>
+                                </div>`;
                     };
-                    const diffText = `${diff > 0 ? '+' : ''}${diff.toFixed(0)} ₽ (${diffPercent.toFixed(0)}%)`;
-                    const recommendedPriceText = ` | ${recommended.toLocaleString('ru-RU')} ₽`;
-
-                    rrcInfoHtml = `<div class="wghRrcInfo wghRrc-${status}">
-                        <span class="wghRrcStatus">${textMap[status]}${recommendedPriceText}</span>
-                        <span class="wghRrcDiff">${diffText}</span>
-                    </div>`;
+                    rrcInfoHtml += buildRow('Valve', myData.rrcInfo.valve);
+                    rrcInfoHtml += buildRow('ППС', myData.rrcInfo.parity);
+                    rrcInfoHtml += buildRow('Курс', myData.rrcInfo.fx);
                 }
 
                 const descButton = document.createElement('button');
-                descButton.textContent = 'Описание';
-                descButton.className = 'wghDescButton';
-                descButton.onclick = (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    wgh_showDescriptionModal(myData.name, myData.short_description);
-                };
+                descButton.textContent = 'Описание'; descButton.className = 'wghDescButton';
+                descButton.onclick = (e) => { e.preventDefault(); e.stopPropagation(); wgh_showDescriptionModal(myData.name, myData.short_description); };
 
                 card.innerHTML = `
                     <a href="https://store.steampowered.com/app/${appid}" target="_blank" class="wghCardLink">
@@ -14278,6 +13286,7 @@ if (headerCtn) {
                             ${myData.canGift ? '' : '<div class="wghCannotGift">Нельзя подарить</div>'}
                             ${friendPriceStr ? `<div class="wghFriendPrice">${friendPriceStr}</div>` : ''}
                             ${priceDiffStr ? `<div class="wghPriceDiff ${priceDiffClass}">${priceDiffStr}</div>` : ''}
+                            ${friendRrcHtml}
                         </div>
                     </div>`;
 
@@ -14297,47 +13306,22 @@ if (headerCtn) {
                 wgh_sortButtonsContainer.innerHTML = '';
                 const createBtn = (field, text) => {
                     const btn = document.createElement('button');
-                    btn.className = 'wghBtn sortBtn';
-                    btn.dataset.sort = field;
-                    btn.textContent = text;
+                    btn.className = 'wghBtn sortBtn'; btn.dataset.sort = field; btn.textContent = text;
                     btn.onclick = () => wgh_handleSort(field);
-                    wgh_sortButtonsContainer.appendChild(btn);
-                    return btn;
+                    wgh_sortButtonsContainer.appendChild(btn); return btn;
                 };
-                createBtn('price', 'Цена');
-                createBtn('discountPercent', '% Скидки');
-                createBtn('name', 'Название');
-                createBtn('releaseDateTimestamp', 'Дата выхода');
-                createBtn('reviewPercent', '% Отзывов');
+                createBtn('price', 'Цена'); createBtn('discountPercent', '% Скидки'); createBtn('name', 'Название');
+                createBtn('releaseDateTimestamp', 'Дата выхода'); createBtn('reviewPercent', '% Отзывов');
             }
 
             function wgh_handleSort(field) {
-                const defaultDirections = {
-                    price: 'asc',
-                    discountPercent: 'desc',
-                    name: 'asc',
-                    releaseDateTimestamp: 'desc',
-                    reviewPercent: 'desc'
-                };
-                let newDirection;
-                if (wgh_currentSort.field === field) {
-                    newDirection = wgh_currentSort.direction === 'asc' ? 'desc' : 'asc';
-                } else {
-                    newDirection = defaultDirections[field] || 'asc';
-                }
-                wgh_currentSort.field = field;
-                wgh_currentSort.direction = newDirection;
-                wgh_applySort(field, newDirection);
-                wgh_renderResults();
-                wgh_updateSortButtonsState();
+                const defaultDirections = { price: 'asc', discountPercent: 'desc', name: 'asc', releaseDateTimestamp: 'desc', reviewPercent: 'desc' };
+                let newDirection = wgh_currentSort.field === field ? (wgh_currentSort.direction === 'asc' ? 'desc' : 'asc') : (defaultDirections[field] || 'asc');
+                wgh_currentSort.field = field; wgh_currentSort.direction = newDirection;
+                wgh_applySort(field, newDirection); wgh_renderResults(); wgh_updateSortButtonsState();
             }
 
-            function wgh_applySort(field, direction) {
-                wgh_currentSort = {
-                    field,
-                    direction
-                };
-            }
+            function wgh_applySort(field, direction) { wgh_currentSort = { field, direction }; }
 
             function wgh_compareItems(a, b, field, direction) {
                 if (!a && !b) return 0;
@@ -14346,63 +13330,35 @@ if (headerCtn) {
                 const dirMultiplier = direction === 'asc' ? 1 : -1;
                 let valA, valB;
                 switch (field) {
-                    case 'price':
-                        valA = a.priceData?.finalCents ?? (direction === 'asc' ? Infinity : -Infinity);
-                        valB = b.priceData?.finalCents ?? (direction === 'asc' ? Infinity : -Infinity);
-                        break;
-                    case 'discountPercent':
-                        valA = a.priceData?.discountPercent ?? -1;
-                        valB = b.priceData?.discountPercent ?? -1;
-                        break;
-                    case 'name':
-                        valA = a.name?.toLowerCase() || '';
-                        valB = b.name?.toLowerCase() || '';
-                        return valA.localeCompare(valB) * dirMultiplier;
-                    case 'releaseDateTimestamp':
-                        valA = a.releaseDateTimestamp ?? (direction === 'asc' ? Infinity : 0);
-                        valB = b.releaseDateTimestamp ?? (direction === 'asc' ? Infinity : 0);
-                        break;
-                    case 'reviewPercent':
-                        valA = a.reviewPercent ?? -1;
-                        valB = b.reviewPercent ?? -1;
-                        break;
-                    default:
-                        return 0;
+                    case 'price': valA = a.priceData?.finalCents ?? (direction === 'asc' ? Infinity : -Infinity); valB = b.priceData?.finalCents ?? (direction === 'asc' ? Infinity : -Infinity); break;
+                    case 'discountPercent': valA = a.priceData?.discountPercent ?? -1; valB = b.priceData?.discountPercent ?? -1; break;
+                    case 'name': valA = a.name?.toLowerCase() || ''; valB = b.name?.toLowerCase() || ''; return valA.localeCompare(valB) * dirMultiplier;
+                    case 'releaseDateTimestamp': valA = a.releaseDateTimestamp ?? (direction === 'asc' ? Infinity : 0); valB = b.releaseDateTimestamp ?? (direction === 'asc' ? Infinity : 0); break;
+                    case 'reviewPercent': valA = a.reviewPercent ?? -1; valB = b.reviewPercent ?? -1; break;
+                    default: return 0;
                 }
                 let comparisonResult = 0;
-                const fallbackAsc = Infinity;
-                const fallbackDesc = -Infinity;
-                if (valA === null || valA === undefined || isNaN(valA) || valA === Infinity || valA === -Infinity) valA = direction === 'asc' ? fallbackAsc : fallbackDesc;
-                if (valB === null || valB === undefined || isNaN(valB) || valB === Infinity || valB === -Infinity) valB = direction === 'asc' ? fallbackAsc : fallbackDesc;
-                if (valA < valB) comparisonResult = -1;
-                else if (valA > valB) comparisonResult = 1;
-                else comparisonResult = 0;
+                if (valA === null || valA === undefined || isNaN(valA) || valA === Infinity || valA === -Infinity) valA = direction === 'asc' ? Infinity : -Infinity;
+                if (valB === null || valB === undefined || isNaN(valB) || valB === Infinity || valB === -Infinity) valB = direction === 'asc' ? Infinity : -Infinity;
+                if (valA < valB) comparisonResult = -1; else if (valA > valB) comparisonResult = 1; else comparisonResult = 0;
                 comparisonResult *= dirMultiplier;
                 if (comparisonResult === 0 && field !== 'price') {
-                    const priceA = a.priceData?.finalCents ?? Infinity;
-                    const priceB = b.priceData?.finalCents ?? Infinity;
-                    if (priceA < priceB) return -1;
-                    if (priceA > priceB) return 1;
+                    const priceA = a.priceData?.finalCents ?? Infinity; const priceB = b.priceData?.finalCents ?? Infinity;
+                    if (priceA < priceB) return -1; if (priceA > priceB) return 1;
                 }
-                if (comparisonResult === 0 && field !== 'name') {
-                    return (a.name?.toLowerCase() || '').localeCompare(b.name?.toLowerCase() || '');
-                }
+                if (comparisonResult === 0 && field !== 'name') return (a.name?.toLowerCase() || '').localeCompare(b.name?.toLowerCase() || '');
                 return comparisonResult;
             }
 
             function wgh_updateSortButtonsState() {
                 if (!wgh_sortButtonsContainer) return;
-                const buttons = wgh_sortButtonsContainer.querySelectorAll('.sortBtn');
-                buttons.forEach(btn => {
+                wgh_sortButtonsContainer.querySelectorAll('.sortBtn').forEach(btn => {
                     const btnField = btn.dataset.sort;
                     const baseText = btn.textContent.replace(/ [▲▼]$/, '');
                     if (btnField === wgh_currentSort.field) {
-                        const arrow = wgh_currentSort.direction === 'asc' ? ' ▲' : ' ▼';
-                        btn.classList.add('active');
-                        btn.textContent = baseText + arrow;
+                        btn.classList.add('active'); btn.textContent = baseText + (wgh_currentSort.direction === 'asc' ? ' ▲' : ' ▼');
                     } else {
-                        btn.classList.remove('active');
-                        btn.textContent = baseText;
+                        btn.classList.remove('active'); btn.textContent = baseText;
                     }
                 });
             }
@@ -14419,51 +13375,38 @@ if (headerCtn) {
                 accordionContent.appendChild(myRegionDiv);
                 wgh_myRegionDisplay = myRegionDiv.querySelector('strong');
                 const friendRegionLabel = document.createElement('label');
-                friendRegionLabel.textContent = 'Регион друга: ';
-                friendRegionLabel.style.marginRight = '5px';
+                friendRegionLabel.textContent = 'Регион друга: '; friendRegionLabel.style.marginRight = '5px';
                 accordionContent.appendChild(friendRegionLabel);
                 wgh_friendRegionSelect = document.createElement('select');
-                wgh_friendRegionSelect.id = 'wghFriendRegionSelect';
-                wgh_friendRegionSelect.className = 'wghSelect';
+                wgh_friendRegionSelect.id = 'wghFriendRegionSelect'; wgh_friendRegionSelect.className = 'wghSelect';
                 wgh_friendRegionSelect.innerHTML = '<option value="">-- Выберите --</option>';
                 Object.entries(WGH_COUNTRY_CURRENCY_MAP).sort(([, a], [, b]) => a.name.localeCompare(b.name)).forEach(([code, data]) => {
                     if (code !== wgh_currentUserCountryCode) {
-                        const option = document.createElement('option');
-                        option.value = code;
-                        option.textContent = `${data.name} (${code})`;
+                        const option = document.createElement('option'); option.value = code; option.textContent = `${data.name} (${code})`;
                         wgh_friendRegionSelect.appendChild(option);
                     }
                 });
                 accordionContent.appendChild(wgh_friendRegionSelect);
                 wgh_fetchFriendPricesBtn = document.createElement('button');
-                wgh_fetchFriendPricesBtn.id = 'wghFetchFriendPricesBtn';
-                wgh_fetchFriendPricesBtn.className = 'wghBtn wghPrimaryBtn';
-                wgh_fetchFriendPricesBtn.textContent = 'Узнать цены';
-                wgh_fetchFriendPricesBtn.onclick = wgh_fetchFriendData;
+                wgh_fetchFriendPricesBtn.id = 'wghFetchFriendPricesBtn'; wgh_fetchFriendPricesBtn.className = 'wghBtn wghPrimaryBtn';
+                wgh_fetchFriendPricesBtn.textContent = 'Узнать цены'; wgh_fetchFriendPricesBtn.onclick = wgh_fetchFriendData;
                 accordionContent.appendChild(wgh_fetchFriendPricesBtn);
-                const giftFilterDiv = document.createElement('div');
-                giftFilterDiv.style.marginLeft = 'auto';
+                const giftFilterDiv = document.createElement('div'); giftFilterDiv.style.marginLeft = 'auto';
                 giftFilterDiv.innerHTML = ` <label title="Показать только игры с разницей цен +/- ${WGH_GIFT_PRICE_DIFF_THRESHOLD * 100}% и возможностью покупки в подарок"> <input type="checkbox" id="wghGiftableFilterCheckbox"> Можно подарить </label> `;
-                wgh_giftableFilterCheckbox = giftFilterDiv.querySelector('input');
-                wgh_giftableFilterCheckbox.onchange = wgh_handleGiftableFilterChange;
-                accordionContent.appendChild(giftFilterDiv);
-                wgh_giftModeContainer.appendChild(accordionContent);
+                wgh_giftableFilterCheckbox = giftFilterDiv.querySelector('input'); wgh_giftableFilterCheckbox.onchange = wgh_handleGiftableFilterChange;
+                accordionContent.appendChild(giftFilterDiv); wgh_giftModeContainer.appendChild(accordionContent);
             }
 
             function wgh_toggleGiftMode() {
                 wgh_giftModeActive = !wgh_giftModeActive;
                 wgh_giftModeContainer.style.display = wgh_giftModeActive ? 'block' : 'none';
                 if (wgh_giftIconBtn) wgh_giftIconBtn.classList.toggle('active', wgh_giftModeActive);
-                if (!wgh_giftModeActive) {
-                    wgh_hideGiftMode(true);
-                }
+                if (!wgh_giftModeActive) wgh_hideGiftMode(true);
                 wgh_renderResults();
             }
 
             function wgh_hideGiftMode(resetSelection = false) {
-                wgh_giftModeActive = false;
-                wgh_currentFriendCountryCode = null;
-                wgh_showGiftableOnly = false;
+                wgh_giftModeActive = false; wgh_currentFriendCountryCode = null; wgh_showGiftableOnly = false;
                 if (wgh_giftModeContainer) wgh_giftModeContainer.style.display = 'none';
                 if (wgh_giftIconBtn) wgh_giftIconBtn.classList.remove('active');
                 if (resetSelection && wgh_friendRegionSelect) wgh_friendRegionSelect.value = '';
@@ -14475,14 +13418,8 @@ if (headerCtn) {
 
             async function wgh_fetchFriendData() {
                 wgh_currentFriendCountryCode = wgh_friendRegionSelect.value;
-                if (!wgh_currentFriendCountryCode) {
-                    wgh_updateStatus('Выберите регион друга.');
-                    return;
-                }
-                if (wgh_allAppIds.length === 0) {
-                    wgh_updateStatus('Сначала соберите данные для своего списка желаемого.');
-                    return;
-                }
+                if (!wgh_currentFriendCountryCode) { wgh_updateStatus('Выберите регион друга.'); return; }
+                if (wgh_allAppIds.length === 0) { wgh_updateStatus('Сначала соберите данные для своего списка желаемого.'); return; }
                 wgh_updateStatus(`Запрос цен для региона ${wgh_currentFriendCountryCode}... (0/${Math.ceil(wgh_allAppIds.length / WGH_BATCH_SIZE)})`, true);
                 wgh_showProgressBar(wgh_giftProgressBar, 0);
                 Object.values(wgh_gameDataStore).forEach(game => game.friendData = null);
@@ -14492,17 +13429,13 @@ if (headerCtn) {
                     const myCurrencyInfo = WGH_COUNTRY_CURRENCY_MAP[wgh_currentUserCountryCode];
                     if (friendCurrencyInfo && myCurrencyInfo && friendCurrencyInfo.code !== myCurrencyInfo.code) {
                         wgh_updateStatus(`Получение курса валют...`, true);
-                        try {
-                            wgh_exchangeRates = await wgh_fetchExchangeRates(friendCurrencyInfo.iso);
-                        } catch (rateError) {
-                            wgh_updateStatus(`Ошибка получения курса валют: ${rateError.message}. Сравнение цен будет неточным.`);
-                            console.error("[WGH] Ошибка курса валют:", rateError);
-                            await new Promise(res => setTimeout(res, 2000));
-                            wgh_exchangeRates = {};
+                        try { wgh_exchangeRates = await wgh_fetchExchangeRates(friendCurrencyInfo.iso); }
+                        catch (rateError) {
+                            wgh_updateStatus(`Ошибка получения курса валют: ${rateError.message}. Сравнение будет неточным.`);
+                            console.error("[WGH] Ошибка курса:", rateError); await new Promise(res => setTimeout(res, 2000)); wgh_exchangeRates = {};
                         }
-                    } else {
-                        wgh_exchangeRates = {};
-                    }
+                    } else wgh_exchangeRates = {};
+
                     const totalBatches = Math.ceil(wgh_allAppIds.length / WGH_BATCH_SIZE);
                     let processedBatches = 0;
                     wgh_updateStatus(`Запрос цен для региона ${wgh_currentFriendCountryCode}... (0/${totalBatches})`, true);
@@ -14511,814 +13444,160 @@ if (headerCtn) {
                         const batchData = await wgh_fetchBatchGameData(batch, wgh_currentFriendCountryCode);
                         wgh_processBatchData(batchData, 'friendData');
                         processedBatches++;
-                        const progress = (processedBatches / totalBatches) * 100;
-                        wgh_updateProgressBar(wgh_giftProgressBar, progress);
+                        wgh_updateProgressBar(wgh_giftProgressBar, (processedBatches / totalBatches) * 100);
                         wgh_updateStatus(`Запрос цен для региона ${wgh_currentFriendCountryCode}... (${processedBatches}/${totalBatches})`, true);
                         await new Promise(res => setTimeout(res, 200));
                     }
+
+                    wgh_processRrcData('friendData', wgh_currentFriendCountryCode);
+
                     wgh_updateStatus(`Цены для региона ${wgh_currentFriendCountryCode} получены.`);
-                    wgh_renderResults();
-                    wgh_hideProgressBar(wgh_giftProgressBar);
+                    wgh_renderResults(); wgh_hideProgressBar(wgh_giftProgressBar);
                 } catch (error) {
-                    wgh_updateStatus(`Ошибка при получении цен друга: ${error.message}`);
-                    console.error('[WGH] Ошибка получения цен друга:', error);
-                    wgh_hideProgressBar(wgh_giftProgressBar);
-                    wgh_renderResults();
+                    wgh_updateStatus(`Ошибка при получении цен друга: ${error.message}`); console.error('[WGH] Ошибка:', error);
+                    wgh_hideProgressBar(wgh_giftProgressBar); wgh_renderResults();
                 }
             }
 
             async function wgh_fetchExchangeRates(baseCurrencyIso) {
                 if (!baseCurrencyIso) throw new Error("Base currency ISO code not provided");
-                const apiUrl = `${WGH_CURRENCY_API_URL}${baseCurrencyIso.toLowerCase()}.json`;
                 return new Promise((resolve, reject) => {
                     GM_xmlhttpRequest({
-                        method: "GET",
-                        url: apiUrl,
-                        responseType: 'json',
-                        timeout: WGH_REQUEST_TIMEOUT_MS / 2,
+                        method: "GET", url: `${WGH_CURRENCY_API_URL}${baseCurrencyIso.toLowerCase()}.json`, responseType: 'json', timeout: WGH_REQUEST_TIMEOUT_MS / 2,
                         onload: (response) => {
                             if (response.status >= 200 && response.status < 400 && response.response) {
                                 const rates = response.response[baseCurrencyIso.toLowerCase()];
-                                if (rates && typeof rates === 'object') {
-                                    resolve(rates);
-                                } else {
-                                    reject(new Error(`Курсы для ${baseCurrencyIso} не найдены в ответе API`));
-                                }
-                            } else {
-                                reject(new Error(`Ошибка API валют: статус ${response.status}`));
-                            }
+                                if (rates && typeof rates === 'object') resolve(rates); else reject(new Error(`Курсы не найдены`));
+                            } else reject(new Error(`Ошибка API: статус ${response.status}`));
                         },
-                        onerror: (error) => reject(new Error('Сетевая ошибка API валют')),
-                        ontimeout: () => reject(new Error('Таймаут запроса API валют'))
+                        onerror: () => reject(new Error('Сетевая ошибка API')), ontimeout: () => reject(new Error('Таймаут запроса API'))
                     });
                 });
             }
 
             function wgh_convertCurrency(amount, fromCountryCode, toCountryCode) {
                 if (fromCountryCode === toCountryCode) return amount;
-                if (!wgh_exchangeRates) {
-                    console.warn('[WGH] Exchange rates not loaded for conversion');
-                    return null;
-                }
+                if (!wgh_exchangeRates) return null;
                 const fromCurrencyInfo = WGH_COUNTRY_CURRENCY_MAP[fromCountryCode];
                 const toCurrencyInfo = WGH_COUNTRY_CURRENCY_MAP[toCountryCode];
-                if (!fromCurrencyInfo || !toCurrencyInfo) {
-                    console.warn('[WGH] Unknown country code for conversion', fromCountryCode, toCountryCode);
-                    return null;
-                }
-                if (fromCurrencyInfo.code === toCurrencyInfo.code) {
-                    return amount;
-                }
+                if (!fromCurrencyInfo || !toCurrencyInfo) return null;
+                if (fromCurrencyInfo.code === toCurrencyInfo.code) return amount;
                 const toCurrencyKey = toCurrencyInfo.iso?.toLowerCase();
-                if (!toCurrencyKey) {
-                    console.warn('[WGH] Unknown target ISO currency code for conversion', toCountryCode);
-                    return null;
-                }
-                if (wgh_exchangeRates[toCurrencyKey] === undefined || wgh_exchangeRates[toCurrencyKey] === null) {
-                    console.warn(`[WGH] Exchange rate to ${toCurrencyKey} not available`);
-                    return null;
-                }
-                const rate = wgh_exchangeRates[toCurrencyKey];
-                return parseFloat((amount * rate).toFixed(2));
+                if (!toCurrencyKey || wgh_exchangeRates[toCurrencyKey] === undefined) return null;
+                return parseFloat((amount * wgh_exchangeRates[toCurrencyKey]).toFixed(2));
             }
 
-            function wgh_handleGiftableFilterChange() {
-                wgh_showGiftableOnly = wgh_giftableFilterCheckbox.checked;
-                wgh_applyFilters();
-            }
-
-            function wgh_applyGiftFilter() {
-                if (!wgh_giftModeActive) {
-                    document.querySelectorAll('.wghGameCard').forEach(card => {
-                        card.style.display = 'flex';
-                    });
-                    return;
-                }
-                const cards = document.querySelectorAll('.wghGameCard');
-                cards.forEach(card => {
-                    const isGiftableByPrice = card.dataset.giftablePrice === 'true';
-                    const canGiftByApi = card.dataset.canGiftApi === 'true';
-                    if (wgh_showGiftableOnly) {
-                        if (isGiftableByPrice && canGiftByApi) {
-                            card.style.display = 'flex';
-                        } else {
-                            card.style.display = 'none';
-                            card.classList.add('wgh-filtered-out');
-                        }
-                    } else {
-                        card.style.display = 'flex';
-                        card.classList.remove('wgh-filtered-out');
-                    }
-                });
-            }
+            function wgh_handleGiftableFilterChange() { wgh_showGiftableOnly = wgh_giftableFilterCheckbox.checked; wgh_applyFilters(); }
 
             function wgh_createProgressBar(id) {
-                const barContainer = document.createElement('div');
-                barContainer.id = id;
+                const barContainer = document.createElement('div'); barContainer.id = id;
                 barContainer.style.cssText = ` width: 80%; max-width: 600px; height: 10px; background-color: #3a4f6a; border-radius: 5px; overflow: hidden; margin: 10px auto; display: none; flex-shrink: 0; `;
-                const barFill = document.createElement('div');
-                barFill.className = 'wghProgressBarFill';
+                const barFill = document.createElement('div'); barFill.className = 'wghProgressBarFill';
                 barFill.style.cssText = ` width: 0%; height: 100%; background-color: #67c1f5; border-radius: 5px; transition: width 0.3s ease-out; `;
-                barContainer.appendChild(barFill);
-                return barContainer;
+                barContainer.appendChild(barFill); return barContainer;
             }
 
             function wgh_showProgressBar(barElement, initialProgress = 0) {
-                if (!barElement) return;
-                const fill = barElement.querySelector('.wghProgressBarFill');
-                fill.style.width = `${initialProgress}%`;
-                barElement.style.display = 'block';
+                if (!barElement) return; const fill = barElement.querySelector('.wghProgressBarFill');
+                fill.style.width = `${initialProgress}%`; barElement.style.display = 'block';
             }
 
             function wgh_updateProgressBar(barElement, progress) {
-                if (!barElement) return;
-                const fill = barElement.querySelector('.wghProgressBarFill');
+                if (!barElement) return; const fill = barElement.querySelector('.wghProgressBarFill');
                 fill.style.width = `${Math.min(100, Math.max(0, progress))}%`;
             }
 
-            function wgh_hideProgressBar(barElement) {
-                if (!barElement) return;
-                barElement.style.display = 'none';
-            }
+            function wgh_hideProgressBar(barElement) { if (barElement) barElement.style.display = 'none'; }
 
             function wgh_addStyles() {
                 GM_addStyle(`
-                        .wghBtn {
-                        	padding: 8px 14px;
-                        	font-size: 14px;
-                        	color: #c6d4df;
-                        	border: 1px solid #4b6f9c;
-                        	border-radius: 3px;
-                        	cursor: pointer;
-                        	white-space: nowrap;
-                        	height: 36px;
-                        	display: inline-flex;
-                        	align-items: center;
-                        	justify-content: center;
-                        	flex-shrink: 0;
-                        	background-color: rgba(42, 71, 94, 0.8);
-                        	transition: background-color 0.2s, border-color 0.2s;
-                        	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-                        }
-
-                        .wghBtn:hover:not(:disabled) {
-                        	background-color: rgba(67, 103, 133, 0.9);
-                        	border-color: #67c1f5;
-                        }
-
-                        .wghBtn:disabled {
-                        	opacity: 0.6;
-                        	cursor: default;
-                        }
-
-                        .wghPrimaryBtn {
-                        	background-color: rgba(77, 136, 255, 0.8);
-                        	border-color: #4D88FF;
-                        }
-
-                        .wghPrimaryBtn:hover:not(:disabled) {
-                        	background-color: rgba(51, 102, 204, 0.9);
-                        }
-
-                        .wghBtn.sortBtn.active {
-                        	background-color: rgba(0, 123, 255, 0.8);
-                        	border-color: #007bff;
-                        }
-
-                        .wghBtn.sortBtn.active:hover {
-                        	background-color: rgba(0, 86, 179, 0.9);
-                        }
-
-                        #wghGiftModeBtn.active,
-                        #wghFilterToggleBtn.active {
-                        	background-color: rgba(0, 123, 255, 0.8);
-                        	border-color: #007bff;
-                        }
-
-                        .wghSelect {
-                        	margin-left: 5px;
-                        	background-color: #333;
-                        	color: #eee;
-                        	border: 1px solid #555;
-                        	border-radius: 4px;
-                        	height: 36px;
-                        	padding: 0 8px;
-                        	font-size: 14px;
-                        	cursor: pointer;
-                        	flex-shrink: 0;
-                        	outline: none;
-                        	max-width: 200px;
-                        }
-
-                        .wghSelect:focus {
-                        	border-color: #67c1f5;
-                        }
-
-                        .wghGameCard {
-                        	background-color: rgba(42, 46, 51, 0.85);
-                        	border-radius: 6px;
-                        	padding: 10px;
-                        	display: flex;
-                        	flex-direction: column;
-                        	transition: transform 0.2s ease, box-shadow 0.2s ease;
-                        	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-                        	color: #c6d4df;
-                        	font-size: 13px;
-                        	border: 1px solid #333941;
-                        	min-height: 500px;
-                        }
-
-                        .wghGameCard:hover {
-                        	transform: translateY(-2px);
-                        	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-                        	border-color: #4b6f9c;
-                        }
-
-                        .wghCardLink {
-                        	text-decoration: none;
-                        	color: inherit;
-                        	display: block;
-                        }
-
-                        .wghCardImageWrapper {
-                        	position: relative;
-                        	width: 100%;
-                        	aspect-ratio: 292 / 136;
-                        	margin-bottom: 8px;
-                        	background-color: #111;
-                        	border-radius: 4px;
-                        	overflow: hidden;
-                        	display: flex;
-                        	align-items: center;
-                        	justify-content: center;
-                        	border: 1px solid #333941;
-                        }
-
-                        .wghCardImageWrapper img {
-                        	display: block;
-                        	max-width: 100%;
-                        	max-height: 100%;
-                        	width: 100%;
-                        	height: 100%;
-                        	object-fit: cover;
-                        	border-radius: 4px;
-                        }
-
-                        .wghCardDiscountBadge {
-                        	position: absolute;
-                        	bottom: 5px;
-                        	right: 5px;
-                        	background-color: #e2004b;
-                        	color: white;
-                        	padding: 2px 6px;
-                        	font-size: 12px;
-                        	border-radius: 3px;
-                        	font-weight: 600;
-                        	z-index: 1;
-                        }
-
-                        .wghCardContent {
-                        	flex-grow: 1;
-                        	display: flex;
-                        	flex-direction: column;
-                        }
-
-                        .wghCardTitle {
-                        	font-size: 16px;
-                        	font-weight: 500;
-                        	line-height: 1.3;
-                        	height: 2.6em;
-                        	overflow: hidden;
-                        	text-overflow: ellipsis;
-                        	margin-bottom: 5px;
-                        	color: #e5e5e5;
-                        	display: -webkit-box;
-                        	-webkit-line-clamp: 2;
-                        	-webkit-box-orient: vertical;
-                        	text-decoration: none;
-                        }
-
-                        .wghCardTitle:hover {
-                        	color: #fff;
-                        }
-
-                        .wghCardPrice {
-                        	display: flex;
-                        	align-items: baseline;
-                        	gap: 8px;
-                        	margin-bottom: 8px;
-                        	min-height: 22px;
-                        }
-
-                        .wghCurrentPrice {
-                        	font-size: 18px;
-                        	font-weight: 600;
-                        	color: #a4d007;
-                        }
-
-                        .wghOriginalPrice {
-                        	font-size: 14px;
-                        	color: #8f98a0;
-                        	text-decoration: line-through;
-                        }
-
-                        .wghCardReviews {
-                        	font-size: 13px;
-                        	margin-bottom: 8px;
-                        }
-
-                        .wghReviewPositive {
-                        	color: #66c0f4;
-                        }
-
-                        .wghReviewMixed {
-                        	color: #a38b51;
-                        }
-
-                        .wghReviewNegative {
-                        	color: #c44c2c;
-                        }
-
-                        .wghReviewNone {
-                        	color: #8f98a0;
-                        }
-
-                        .wghCardInfoGrid {
-                        	display: grid;
-                        	grid-template-columns: 1fr;
-                        	gap: 5px;
-                        	font-size: 12px;
-                        	color: #8f98a0;
-                        	margin-bottom: 8px;
-                        }
-
-                        .wghCardInfoItem {
-                        	white-space: nowrap;
-                        	overflow: hidden;
-                        	text-overflow: ellipsis;
-                        	line-height: 1.4;
-                        }
-
-                        .wghCardInfoItem span {
-                        	color: #c6d4df;
-                        }
-
-                        .wghTagsContainer {
-                        	display: flex;
-                        	flex-wrap: wrap;
-                        	gap: 5px;
-                        	margin-bottom: 10px;
-                        }
-
-                        .wghTag {
-                        	background-color: rgba(103, 193, 245, 0.15);
-                        	color: #8f98a0;
-                        	padding: 3px 7px;
-                        	border-radius: 3px;
-                        	font-size: 12px;
-                        }
-
-                        .wghDescButton {
-                        	background: #4b6f9c;
-                        	color: white;
-                        	border: none;
-                        	padding: 6px 12px;
-                        	border-radius: 3px;
-                        	cursor: pointer;
-                        	font-size: 13px;
-                        	margin-top: 10px;
-                        	width: 100%;
-                        }
-
-                        .wghDescButton:hover {
-                        	background: #67c1f5;
-                        }
-
-                        .wghCardFooter {
-                        	margin-top: auto;
-                        	padding-top: 10px;
-                        	border-top: 1px solid #3a4f6a;
-                        }
-
-                        .wghCannotGift {
-                        	font-size: 12px;
-                        	color: #ff8080;
-                        	font-style: italic;
-                        	margin-top: 5px;
-                        }
-
-                        .wghFriendPrice {
-                        	font-size: 13px;
-                        	color: #b0e0e6;
-                        	margin-top: 5px;
-                        }
-
-                        .wghPriceDiff {
-                        	font-size: 13px;
-                        	font-weight: bold;
-                        	margin-top: 2px;
-                        }
-
-                        .wghPriceDiffGood {
-                        	color: #77dd77;
-                        }
-
-                        .wghPriceDiffBad {
-                        	color: #ff6961;
-                        }
-
-                        @keyframes wghSpin {
-                        	0% {
-                        		transform: rotate(0deg);
-                        	}
-
-                        	100% {
-                        		transform: rotate(360deg);
-                        	}
-                        }
-
-                        .wghSpinner {
-                        	border: 2px solid rgba(255, 255, 255, 0.3);
-                        	border-radius: 50%;
-                        	border-top-color: #fff;
-                        	width: 1em;
-                        	height: 1em;
-                        	animation: wghSpin 1s linear infinite;
-                        	display: inline-block;
-                        	vertical-align: middle;
-                        	margin-left: 8px;
-                        }
-
-                        .wghAccordionContainer {
-                        	display: none;
-                        	padding: 10px 0;
-                        	border-bottom: 1px solid #3a4f6a;
-                        	margin-bottom: 10px;
-                        	flex-shrink: 0;
-                        }
-
-                        .wghAccordionContent,
-                        .wghFilterGrid {
-                        	padding: 10px;
-                        	border: 1px solid #3a4f6a;
-                        	border-radius: 4px;
-                        	background-color: rgba(42, 71, 94, 0.2);
-                        }
-
-                        .wghAccordionContent {
-                        	display: flex;
-                        	flex-wrap: wrap;
-                        	gap: 10px;
-                        	align-items: center;
-                        }
-
-                        .wghFilterGrid {
-                        	display: grid;
-                        	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                        	margin-bottom: 10px;
-                        }
-
-                        .wghFilterGroup {
-                        	display: flex;
-                        	flex-direction: column;
-                        	gap: 5px;
-                        }
-
-                        .wghFilterLabel {
-                        	font-size: 13px;
-                        	color: #c6d4df;
-                        	margin-bottom: 3px;
-                        }
-
-                        .wghRangeInput {
-                        	display: block;
-                        }
-
-                        .wghRangeInput input {
-                        	width: 100%;
-                        	margin-bottom: 5px;
-                        }
-
-                        .wghRangeInput input:last-child {
-                        	margin-bottom: 0;
-                        }
-
-                        .wghRangeInput input {
-                        	width: 50%;
-                        	padding: 5px;
-                        	background: #17202d;
-                        	border: 1px solid #3a4f6a;
-                        	color: #c6d4df;
-                        	border-radius: 3px;
-                        }
-
-                        .wghRadioGroup,
-                        .wghFilterCheckbox {
-                        	display: flex;
-                        	flex-direction: column;
-                        	gap: 3px;
-                        	font-size: 13px;
-                        }
-
-                        #wghResetFilters {
-                        	margin-top: 10px;
-                        }
-
-                        .wghGameCard.wgh-filtered-out {
-                        	display: none !important;
-                        }
-
-                        .wghRrcInfo {
-                        	display: flex;
-                        	justify-content: space-between;
-                        	align-items: center;
-                        	padding: 4px 8px;
-                        	border-radius: 3px;
-                        	margin-bottom: 8px;
-                        	font-size: 13px;
-                        }
-
-                        .wghRrcStatus {
-                        	font-weight: bold;
-                        }
-
-                        .wghRrcDiff {
-                        	font-size: 12px;
-                        }
-
-                        .wghRrc-lower {
-                        	background-color: rgba(102, 192, 244, 0.2);
-                        	border: 1px solid rgba(102, 192, 244, 0.4);
-                        	color: #c6d4df;
-                        }
-
-                        .wghRrc-equal {
-                        	background-color: rgba(92, 184, 92, 0.2);
-                        	border: 1px solid rgba(92, 184, 92, 0.4);
-                        	color: #dff0d8;
-                        }
-
-                        .wghRrc-higher {
-                        	background-color: rgba(217, 83, 79, 0.2);
-                        	border: 1px solid rgba(217, 83, 79, 0.4);
-                        	color: #f2dede;
-                        }
-
-                        .wghRrc-lower .wghRrcStatus {
-                        	color: #d1e5fa;
-                        }
-
-                        .wghRrc-equal .wghRrcStatus {
-                        	color: #c0ef15;
-                        }
-
-                        .wghRrc-higher .wghRrcStatus {
-                        	color: #f2dede;
-                        }
-
-                        .tag-modal-overlay {
-                        	position: fixed;
-                        	top: 0;
-                        	left: 0;
-                        	width: 100%;
-                        	height: 100%;
-                        	background: rgba(0, 0, 0, 0.8);
-                        	z-index: 10001;
-                        	display: none;
-                        	justify-content: center;
-                        	align-items: center;
-                        	font-family: "Motiva Sans", Sans-serif, Arial;
-                        }
-
-                        .tag-modal {
-                        	background: #1b2838;
-                        	color: #c6d4df;
-                        	padding: 20px;
-                        	border-radius: 6px;
-                        	width: 600px;
-                        	max-width: 90%;
-                        	box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-                        	border: 1px solid #30363d;
-                        }
-
-                        .tag-modal-header {
-                        	display: flex;
-                        	justify-content: space-between;
-                        	align-items: center;
-                        	margin-bottom: 15px;
-                        	border-bottom: 1px solid #2a3a4d;
-                        	padding-bottom: 10px;
-                        }
-
-                        .tag-modal-header h2 {
-                        	color: #66c0f4;
-                        	margin: 0;
-                        	font-size: 18px;
-                        }
-
-                        .tag-modal-close {
-                        	background: none;
-                        	border: none;
-                        	color: #c6d4df;
-                        	font-size: 24px;
-                        	cursor: pointer;
-                        	line-height: 1;
-                        	padding: 0 5px;
-                        }
-
-                        .tag-modal-close:hover {
-                        	color: #66c0f4;
-                        }
-
-                        .tag-search-input {
-                        	width: 100%;
-                        	background: #1a2635;
-                        	border: 1px solid #2a3a4d;
-                        	border-radius: 4px;
-                        	color: #c6d4df;
-                        	font-size: 14px;
-                        	padding: 8px;
-                        	margin-bottom: 10px;
-                        }
-
-                        .tag-search-results {
-                        	max-height: 150px;
-                        	overflow-y: auto;
-                        	border: 1px solid #2a3a4d;
-                        	border-radius: 4px;
-                        }
-
-                        .tag-search-result-item {
-                        	padding: 8px;
-                        	cursor: pointer;
-                        	border-bottom: 1px solid #2a3a4d;
-                        }
-
-                        .tag-search-result-item:last-child {
-                        	border-bottom: none;
-                        }
-
-                        .tag-search-result-item:hover {
-                        	background: #2a3a4d;
-                        }
-
-                        .tag-filters-sections {
-                        	display: flex;
-                        	gap: 20px;
-                        	margin-top: 15px;
-                        }
-
-                        .tag-filters-section {
-                        	flex: 1;
-                        	border: 1px solid #2a3a4d;
-                        	border-radius: 4px;
-                        	padding: 10px;
-                        	background: #16202d;
-                        	min-height: 150px;
-                        }
-
-                        .tag-filters-section-title {
-                        	color: #66c0f4;
-                        	font-size: 14px;
-                        	margin-bottom: 10px;
-                        	text-align: center;
-                        	border-bottom: 1px solid #2a3a4d;
-                        	padding-bottom: 5px;
-                        }
-
-                        .active-tag-filter-row,
-                        .hidden-tag-filter-row {
-                        	display: flex;
-                        	align-items: center;
-                        	gap: 10px;
-                        	background: #2a3a4d;
-                        	padding: 8px;
-                        	border-radius: 4px;
-                        	margin-bottom: 8px;
-                        	cursor: grab;
-                        }
-
-                        .active-tag-filter-row:active,
-                        .hidden-tag-filter-row:active {
-                        	cursor: grabbing;
-                        	background: #354658;
-                        }
-
-                        .active-tag-filter-row span,
-                        .hidden-tag-filter-row span {
-                        	flex-grow: 1;
-                        }
-
-                        .active-tag-filter-row input {
-                        	width: 60px;
-                        	text-align: center;
-                        	background: #1a2635;
-                        	border: 1px solid #2a3a4d;
-                        	color: #c6d4df;
-                        	border-radius: 3px;
-                        	padding: 4px;
-                        }
-
-                        .btn-remove-tag {
-                        	background-color: #a74343;
-                        	color: white;
-                        	font-size: 11px;
-                        	padding: 3px 8px;
-                        	border-radius: 3px;
-                        	border: none;
-                        	cursor: pointer;
-                        }
-
-                        .btn-remove-tag:hover {
-                        	background-color: #c45252;
-                        }
-
-                        .tag-modal-footer {
-                        	margin-top: 20px;
-                        	text-align: right;
-                        }
-
-                        .drag-over {
-                        	background-color: rgba(102, 192, 244, 0.1);
-                        	border-style: dashed;
-                        }
-
-                        @media (max-width: 1600px) {
-                        	#wghResults {
-                        		grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                        	}
-                        }
-
-                        @media (max-width: 1300px) {
-                        	#wghResults {
-                        		grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-                        	}
-                        }
-
-                        @media (max-width: 900px) {
-                        	#wghResults {
-                        		grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-                        	}
-                        }
-
+                        .wghBtn { padding: 8px 14px; font-size: 14px; color: #c6d4df; border: 1px solid #4b6f9c; border-radius: 3px; cursor: pointer; white-space: nowrap; height: 36px; display: inline-flex; align-items: center; justify-content: center; flex-shrink: 0; background-color: rgba(42, 71, 94, 0.8); transition: background-color 0.2s, border-color 0.2s; text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4); }
+                        .wghBtn:hover:not(:disabled) { background-color: rgba(67, 103, 133, 0.9); border-color: #67c1f5; }
+                        .wghBtn:disabled { opacity: 0.6; cursor: default; }
+                        .wghPrimaryBtn { background-color: rgba(77, 136, 255, 0.8); border-color: #4D88FF; }
+                        .wghPrimaryBtn:hover:not(:disabled) { background-color: rgba(51, 102, 204, 0.9); }
+                        .wghBtn.sortBtn.active { background-color: rgba(0, 123, 255, 0.8); border-color: #007bff; }
+                        .wghBtn.sortBtn.active:hover { background-color: rgba(0, 86, 179, 0.9); }
+                        #wghGiftModeBtn.active, #wghFilterToggleBtn.active { background-color: rgba(0, 123, 255, 0.8); border-color: #007bff; }
+                        .wghSelect { margin-left: 5px; background-color: #333; color: #eee; border: 1px solid #555; border-radius: 4px; height: 36px; padding: 0 8px; font-size: 14px; cursor: pointer; flex-shrink: 0; outline: none; max-width: 200px; }
+                        .wghSelect:focus { border-color: #67c1f5; }
+                        .wghGameCard { background-color: rgba(42, 46, 51, 0.85); border-radius: 6px; padding: 10px; display: flex; flex-direction: column; transition: transform 0.2s ease, box-shadow 0.2s ease; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); color: #c6d4df; font-size: 13px; border: 1px solid #333941; min-height: 520px; }
+                        .wghGameCard:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); border-color: #4b6f9c; }
+                        .wghCardLink { text-decoration: none; color: inherit; display: block; }
+                        .wghCardImageWrapper { position: relative; width: 100%; aspect-ratio: 292 / 136; margin-bottom: 8px; background-color: #111; border-radius: 4px; overflow: hidden; display: flex; align-items: center; justify-content: center; border: 1px solid #333941; }
+                        .wghCardImageWrapper img { display: block; max-width: 100%; max-height: 100%; width: 100%; height: 100%; object-fit: cover; border-radius: 4px; }
+                        .wghCardDiscountBadge { position: absolute; bottom: 5px; right: 5px; background-color: #e2004b; color: white; padding: 2px 6px; font-size: 12px; border-radius: 3px; font-weight: 600; z-index: 1; }
+                        .wghCardContent { flex-grow: 1; display: flex; flex-direction: column; }
+                        .wghCardTitle { font-size: 16px; font-weight: 500; line-height: 1.3; height: 2.6em; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; color: #e5e5e5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; text-decoration: none; }
+                        .wghCardTitle:hover { color: #fff; }
+                        .wghCardPrice { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; min-height: 22px; }
+                        .wghCurrentPrice { font-size: 18px; font-weight: 600; color: #a4d007; }
+                        .wghOriginalPrice { font-size: 14px; color: #8f98a0; text-decoration: line-through; }
+                        .wghCardReviews { font-size: 13px; margin-bottom: 8px; }
+                        .wghReviewPositive { color: #66c0f4; } .wghReviewMixed { color: #a38b51; } .wghReviewNegative { color: #c44c2c; } .wghReviewNone { color: #8f98a0; }
+                        .wghCardInfoGrid { display: grid; grid-template-columns: 1fr; gap: 5px; font-size: 12px; color: #8f98a0; margin-bottom: 8px; }
+                        .wghCardInfoItem { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4; }
+                        .wghCardInfoItem span { color: #c6d4df; }
+                        .wghTagsContainer { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+                        .wghTag { background-color: rgba(103, 193, 245, 0.15); color: #8f98a0; padding: 3px 7px; border-radius: 3px; font-size: 12px; }
+                        .wghDescButton { background: #4b6f9c; color: white; border: none; padding: 6px 12px; border-radius: 3px; cursor: pointer; font-size: 13px; margin-top: 10px; width: 100%; }
+                        .wghDescButton:hover { background: #67c1f5; }
+                        .wghCardFooter { margin-top: auto; padding-top: 10px; border-top: 1px solid #3a4f6a; }
+                        .wghCannotGift { font-size: 12px; color: #ff8080; font-style: italic; margin-top: 5px; }
+                        .wghFriendPrice { font-size: 13px; color: #b0e0e6; margin-top: 5px; }
+                        .wghPriceDiff { font-size: 13px; font-weight: bold; margin-top: 2px; }
+                        .wghPriceDiffGood { color: #77dd77; } .wghPriceDiffBad { color: #ff6961; }
+                        @keyframes wghSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+                        .wghSpinner { border: 2px solid rgba(255, 255, 255, 0.3); border-radius: 50%; border-top-color: #fff; width: 1em; height: 1em; animation: wghSpin 1s linear infinite; display: inline-block; vertical-align: middle; margin-left: 8px; }
+                        .wghAccordionContainer { display: none; padding: 10px 0; border-bottom: 1px solid #3a4f6a; margin-bottom: 10px; flex-shrink: 0; }
+                        .wghAccordionContent, .wghFilterGrid { padding: 10px; border: 1px solid #3a4f6a; border-radius: 4px; background-color: rgba(42, 71, 94, 0.2); }
+                        .wghAccordionContent { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+                        .wghFilterGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 10px; }
+                        .wghFilterGroup { display: flex; flex-direction: column; gap: 5px; }
+                        .wghFilterLabel { font-size: 13px; color: #c6d4df; margin-bottom: 3px; }
+                        .wghRangeInput { display: block; } .wghRangeInput input { width: 100%; margin-bottom: 5px; } .wghRangeInput input:last-child { margin-bottom: 0; }
+                        .wghRangeInput input { width: 50%; padding: 5px; background: #17202d; border: 1px solid #3a4f6a; color: #c6d4df; border-radius: 3px; }
+                        .wghRadioGroup, .wghFilterCheckbox { display: flex; flex-direction: column; gap: 3px; font-size: 13px; }
+                        #wghResetFilters { margin-top: 10px; }
+                        .wghGameCard.wgh-filtered-out { display: none !important; }
+                        .wghRrcInfo { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; border-radius: 3px; margin-bottom: 8px; font-size: 13px; }
+                        .wghRrcStatus { font-weight: bold; } .wghRrcDiff { font-size: 12px; }
+                        .wghRrc-lower { background-color: rgba(102, 192, 244, 0.2); border: 1px solid rgba(102, 192, 244, 0.4); color: #c6d4df; }
+                        .wghRrc-equal { background-color: rgba(92, 184, 92, 0.2); border: 1px solid rgba(92, 184, 92, 0.4); color: #dff0d8; }
+                        .wghRrc-higher { background-color: rgba(217, 83, 79, 0.2); border: 1px solid rgba(217, 83, 79, 0.4); color: #f2dede; }
+                        .wghRrc-lower .wghRrcStatus { color: #d1e5fa; } .wghRrc-equal .wghRrcStatus { color: #c0ef15; } .wghRrc-higher .wghRrcStatus { color: #f2dede; }
+                        .tag-modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.8); z-index: 10001; display: none; justify-content: center; align-items: center; font-family: "Motiva Sans", Sans-serif, Arial; }
+                        .tag-modal { background: #1b2838; color: #c6d4df; padding: 20px; border-radius: 6px; width: 600px; max-width: 90%; box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4); border: 1px solid #30363d; }
+                        .tag-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #2a3a4d; padding-bottom: 10px; }
+                        .tag-modal-header h2 { color: #66c0f4; margin: 0; font-size: 18px; }
+                        .tag-modal-close { background: none; border: none; color: #c6d4df; font-size: 24px; cursor: pointer; line-height: 1; padding: 0 5px; } .tag-modal-close:hover { color: #66c0f4; }
+                        .tag-search-input { width: 100%; background: #1a2635; border: 1px solid #2a3a4d; border-radius: 4px; color: #c6d4df; font-size: 14px; padding: 8px; margin-bottom: 10px; }
+                        .tag-search-results { max-height: 150px; overflow-y: auto; border: 1px solid #2a3a4d; border-radius: 4px; }
+                        .tag-search-result-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #2a3a4d; } .tag-search-result-item:last-child { border-bottom: none; } .tag-search-result-item:hover { background: #2a3a4d; }
+                        .tag-filters-sections { display: flex; gap: 20px; margin-top: 15px; }
+                        .tag-filters-section { flex: 1; border: 1px solid #2a3a4d; border-radius: 4px; padding: 10px; background: #16202d; min-height: 150px; }
+                        .tag-filters-section-title { color: #66c0f4; font-size: 14px; margin-bottom: 10px; text-align: center; border-bottom: 1px solid #2a3a4d; padding-bottom: 5px; }
+                        .active-tag-filter-row, .hidden-tag-filter-row { display: flex; align-items: center; gap: 10px; background: #2a3a4d; padding: 8px; border-radius: 4px; margin-bottom: 8px; cursor: grab; }
+                        .active-tag-filter-row:active, .hidden-tag-filter-row:active { cursor: grabbing; background: #354658; }
+                        .active-tag-filter-row span, .hidden-tag-filter-row span { flex-grow: 1; }
+                        .active-tag-filter-row input { width: 60px; text-align: center; background: #1a2635; border: 1px solid #2a3a4d; color: #c6d4df; border-radius: 3px; padding: 4px; }
+                        .btn-remove-tag { background-color: #a74343; color: white; font-size: 11px; padding: 3px 8px; border-radius: 3px; border: none; cursor: pointer; } .btn-remove-tag:hover { background-color: #c45252; }
+                        .tag-modal-footer { margin-top: 20px; text-align: right; }
+                        .drag-over { background-color: rgba(102, 192, 244, 0.1); border-style: dashed; }
+                        @media (max-width: 1600px) { #wghResults { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); } }
+                        @media (max-width: 1300px) { #wghResults { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); } }
+                        @media (max-width: 900px) { #wghResults { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); } }
                         @media (max-width: 700px) {
-                        	#wghResults {
-                        		grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-                        	}
-
-                        	#wghHeader {
-                        		flex-direction: column;
-                        		align-items: stretch;
-                        	}
-
-                        	#wghSortButtons {
-                        		justify-content: space-around;
-                        		margin-left: 0;
-                        		margin-top: 5px;
-                        		width: 100%;
-                        		order: 3;
-                        	}
-
-                        	#wghGiftAccordionContent {
-                        		flex-direction: column;
-                        		align-items: flex-start;
-                        	}
-
-                        	#wghGiftAccordionContent label {
-                        		margin-bottom: 5px;
-                        	}
-
-                        	#wghGiftAccordionContent #wghFriendRegionSelect,
-                        	#wghGiftAccordionContent #wghFetchFriendPricesBtn {
-                        		width: 100%;
-                        		margin-bottom: 10px;
-                        	}
-
-                        	#wghGiftAccordionContent div[style*='margin-left: auto'] {
-                        		width: 100%;
-                        		margin-left: 0 !important;
-                        		text-align: center;
-                        	}
-
-                        	#wghHeader>.wghBtn:first-child {
-                        		order: 1;
-                        		width: 100%;
-                        		margin-bottom: 5px;
-                        	}
-
-                        	#wghGiftModeBtn,
-                        	#wghFilterToggleBtn {
-                        		order: 2;
-                        		align-self: flex-end;
-                        		margin-bottom: 5px;
-                        	}
-
-                        	#wghStatus {
-                        		order: 0;
-                        		text-align: center;
-                        		justify-content: center;
-                        		margin-bottom: 5px;
-                        	}
+                            #wghResults { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+                            #wghHeader { flex-direction: column; align-items: stretch; }
+                            #wghSortButtons { justify-content: space-around; margin-left: 0; margin-top: 5px; width: 100%; order: 3; }
+                            #wghGiftAccordionContent { flex-direction: column; align-items: flex-start; }
+                            #wghGiftAccordionContent label { margin-bottom: 5px; }
+                            #wghGiftAccordionContent #wghFriendRegionSelect, #wghGiftAccordionContent #wghFetchFriendPricesBtn { width: 100%; margin-bottom: 10px; }
+                            #wghGiftAccordionContent div[style*='margin-left: auto'] { width: 100%; margin-left: 0 !important; text-align: center; }
+                            #wghHeader>.wghBtn:first-child { order: 1; width: 100%; margin-bottom: 5px; }
+                            #wghGiftModeBtn, #wghFilterToggleBtn { order: 2; align-self: flex-end; margin-bottom: 5px; }
+                            #wghStatus { order: 0; text-align: center; justify-content: center; margin-bottom: 5px; }
                         }
                 `);
             }
