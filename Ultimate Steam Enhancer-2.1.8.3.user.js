@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.8.1
+// @version      2.1.8.3
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -876,23 +876,31 @@
             label: "Рулетка Stelicas",
             title: "Рулетка Stelicas - Случайный выбор игры из ваших коллекций",
             details: `
-                <p><strong>Что делает:</strong> Добавляет блок "Рулетка Stelicas" на страницу вашей активности Steam (<a href="https://steamcommunity.com/my/home" target="_blank" style="color:#67c1f5;">steamcommunity.com/my/home</a>). Позволяет загрузить CSV-файл, сгенерированный приложением <a href="https://github.com/0wn3dg0d/Stelicas" target="_blank" style="color:#67c1f5;">Stelicas</a>, применить к нему разнообразные фильтры и случайным образом выбрать игру из вашей коллекции.</p>
+                <p><strong>Что делает:</strong> Добавляет блок "Рулетка Stelicas" на страницу вашей активности Steam (<a href="https://steamcommunity.com/my/home" target="_blank" style="color:#67c1f5;">steamcommunity.com/my/home</a>). Позволяет загрузить ваш локальный файл коллекций Steam, автоматически собирает актуальные данные об играх, применяет к ним разнообразные фильтры и случайным образом выбирает игру для прохождения.</p>
                 <p><strong>Возможности:</strong></p>
                 <ul style="margin-left: 20px; padding-left: 5px; list-style-type: disc;">
-                    <li style="margin-bottom: 0.5em;">Загрузка CSV-данных из Stelicas (содержащих информацию о ваших играх и коллекциях).</li>
-                    <li style="margin-bottom: 0.5em;"><strong>Система фильтрации:</strong> по категориям коллекций Stelicas, дате выхода, пользовательскима меткам, поддержке русского языка (интерфейс, субтитры, озвучка), а также по диапазонам количества отзывов и общего рейтинга игры.</li>
-                    <li style="margin-bottom: 0.5em;">Анимированная рулетка для выбора случайной игры из отфильтрованного списка.</li>
-                    <li style="margin-bottom: 0.5em;">Возможность включить приоритет по отзывам и рейтингу, чтобы игры с лучшими показателями имели больше шансов на выпадение.</li>
-                    <li style="margin-bottom: 0.5em;">Переключение в режим <strong>просмотра всей отфильтрованной подборки</strong> игр в виде удобных карточек (изображение и название).</li>
-                    <li style="margin-bottom: 0.5em;">Отображение подробной информации о выбранной (или просматриваемой в подборке) игре: постер, название, рейтинг и количество отзывов, краткое описание, основные метки, точная дата выхода, разработчики/издатели, информация о поддержке русского языка.</li>
-                    <li style="margin-bottom: 0.5em;">Прямые ссылки на страницу игры в сообществе Steam и для её запуска через протокол <code>steam://run/&lt;AppID&gt;</code>.</li>
+                    <li style="margin-bottom: 0.5em;">Чтение структуры ваших коллекций напрямую из системного файла Steam на вашем ПК (никаких сторонних программ и файлов не требуется).</li>
+                    <li style="margin-bottom: 0.5em;">Автоматический парсинг информации об играх через скрытое API Steam с умной докачкой данных для недоступных в вашем регионе игр.</li>
+                    <li style="margin-bottom: 0.5em;"><strong>Умная система фильтрации:</strong> по вашим категориям, дате выхода, меткам, поддержке русского языка (интерфейс, субтитры, озвучка), а также по количеству отзывов и рейтингу. Встроенный текстовый поиск по спискам фильтров.</li>
+                    <li style="margin-bottom: 0.5em;">Анимированная рулетка для честного случайного выбора игры из отфильтрованного списка.</li>
+                    <li style="margin-bottom: 0.5em;">Возможность включить приоритет по отзывам, чтобы признанные хиты имели больше шансов на выпадение.</li>
+                    <li style="margin-bottom: 0.5em;">Переключение в режим <strong>просмотра всей подборки</strong> с функциями сортировки: по имени, дате выхода или "умному" рейтингу (учитывающему процент и количество отзывов).</li>
+                    <li style="margin-bottom: 0.5em;">Отображение подробной информации о выбранной игре: постер, рейтинг, отзывы, описание, основные метки, дата выхода, поддержка языков и кнопка быстрого запуска через <code>steam://run/&lt;AppID&gt;</code>.</li>
                 </ul>
                 <p><strong>Как пользоваться:</strong></p>
                 <ul style="margin-left: 20px; padding-left: 5px; list-style-type: disc;">
-                    <li style="margin-bottom: 0.5em;">Подробная инструкция по подготовке CSV-файла и использованию всех функций рулетки доступна по нажатию на значок вопроса <strong>?</strong> в правом верхнем углу окна самой рулетки.</li>
+                    <li style="margin-bottom: 0.5em;">Подробная инструкция по поиску файла коллекций на вашем ПК и использованию всех функций доступна по нажатию на значок <strong>?</strong> в окне самой рулетки.</li>
                 </ul>
-                <p><em>Примечание: Качество работы и полнота информации в рулетке напрямую зависят от корректности и актуальности данных в предоставленном CSV-файле из Stelicas.</em></p>
-                <img src="https://i.imgur.com/KDfW10m.png" alt="Пример модального окна Рулетки Stelicas с фильтрами" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333; border-radius: 4px;">
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                    <div>
+                        <strong style="color:#8B949E; display:block; margin-bottom:8px; font-size: 14px;">Режим рулетки:</strong>
+                        <img src="https://i.imgur.com/bDVqBfP.png" alt="Режим рулетки" style="max-width: 90%; height: auto; display: block; margin: 0 auto; border: 1px solid #30363D; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                    </div>
+                    <div>
+                        <strong style="color:#8B949E; display:block; margin-bottom:8px; font-size: 14px;">Режим просмотра подборки (с сортировкой):</strong>
+                        <img src="https://i.imgur.com/RzjrIS9.png" alt="Режим подборки" style="max-width: 90%; height: auto; display: block; margin: 0 auto; border: 1px solid #30363D; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+                    </div>
+                </div>
             `
         },
         // --- Торговая площадка ---
@@ -3347,55 +3355,30 @@
         (async function() {
             let hltbBlock = document.createElement('div');
             Object.assign(hltbBlock.style, {
-                position: 'absolute',
-                top: '0',
-                left: 'calc(100% + 10px)',
-                width: '30px',
-                height: '30px',
-                background: 'rgba(27, 40, 56, 0.95)',
-                padding: '15px',
-                borderRadius: '4px',
-                border: '1px solid #3c3c3c',
-                boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)',
-                zIndex: '2',
-                fontFamily: 'Arial, sans-serif',
-                overflow: 'hidden',
-                opacity: '0',
+                position: 'absolute', top: '0', left: 'calc(100% + 10px)', width: '30px', height: '30px',
+                background: 'rgba(27, 40, 56, 0.95)', padding: '15px', borderRadius: '4px',
+                border: '1px solid #3c3c3c', boxShadow: '0 0 10px rgba(0, 0, 0, 0.5)', zIndex: '2',
+                fontFamily: 'Arial, sans-serif', overflow: 'hidden', opacity: '0',
                 transition: 'opacity 0.3s ease, width 0.3s ease, height 0.3s ease'
             });
 
             let triangle = document.createElement('div');
             triangle.className = 'triangle-down';
             Object.assign(triangle.style, {
-                position: 'absolute',
-                bottom: '5px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '0',
-                height: '0',
-                borderLeft: '5px solid transparent',
-                borderRight: '5px solid transparent',
-                borderTop: '5px solid #67c1f5',
-                cursor: 'pointer'
+                position: 'absolute', bottom: '5px', left: '50%', transform: 'translateX(-50%)',
+                width: '0', height: '0', borderLeft: '5px solid transparent',
+                borderRight: '5px solid transparent', borderTop: '5px solid #67c1f5', cursor: 'pointer'
             });
 
             let title = document.createElement('div');
             Object.assign(title.style, {
-                fontSize: '12px',
-                fontWeight: 'bold',
-                color: '#67c1f5',
-                marginBottom: '10px',
-                cursor: 'pointer'
+                fontSize: '12px', fontWeight: 'bold', color: '#67c1f5', marginBottom: '10px', cursor: 'pointer'
             });
             title.textContent = 'HLTB';
 
             let content = document.createElement('div');
             Object.assign(content.style, {
-                fontSize: '14px',
-                color: '#c6d4df',
-                display: 'none',
-                whiteSpace: 'auto',
-                padding: '0 0'
+                fontSize: '14px', color: '#c6d4df', display: 'none', whiteSpace: 'auto', padding: '0 0'
             });
 
             hltbBlock.append(triangle, title, content);
@@ -3406,12 +3389,9 @@
             let hltb_russianIndicatorsNode = null;
             let hltb_russianIndicatorsObserverInstance = null;
 
-
             const fadeInElement = (element) => {
                 element.style.opacity = '0';
-                requestAnimationFrame(() => {
-                    element.style.opacity = '1';
-                });
+                requestAnimationFrame(() => { element.style.opacity = '1'; });
             };
 
             const updateHltbPosition = () => {
@@ -3431,22 +3411,13 @@
 
             const hltb_manageRussianIndicatorsObserver = () => {
                 const currentRussianIndicators = document.querySelector('#gameHeaderImageCtn > div[style*="position: absolute; top: -10px; left: calc(100% + 10px);"]');
-
                 if (currentRussianIndicators) {
                     if (currentRussianIndicators !== hltb_russianIndicatorsNode || !hltb_russianIndicatorsObserverInstance) {
-                        if (hltb_russianIndicatorsObserverInstance) {
-                            hltb_russianIndicatorsObserverInstance.disconnect();
-                        }
+                        if (hltb_russianIndicatorsObserverInstance) hltb_russianIndicatorsObserverInstance.disconnect();
                         hltb_russianIndicatorsNode = currentRussianIndicators;
                         if (scriptsConfig.gamePage) {
-                            hltb_russianIndicatorsObserverInstance = new MutationObserver(() => {
-                                updateHltbPosition();
-                            });
-                            hltb_russianIndicatorsObserverInstance.observe(hltb_russianIndicatorsNode, {
-                                attributes: true,
-                                childList: true,
-                                subtree: true
-                            });
+                            hltb_russianIndicatorsObserverInstance = new MutationObserver(() => { updateHltbPosition(); });
+                            hltb_russianIndicatorsObserverInstance.observe(hltb_russianIndicatorsNode, { attributes: true, childList: true, subtree: true });
                         }
                     }
                 } else {
@@ -3460,19 +3431,11 @@
 
             const hltb_setupPageChangeObservers = () => {
                 hltb_gameHeaderImageCtnNode = document.querySelector('#gameHeaderImageCtn');
-                if (!hltb_gameHeaderImageCtnNode) {
-                    console.warn("HLTB: #gameHeaderImageCtn not found for main observer.");
-                    return;
-                }
-
-                if (hltb_gameHeaderImageCtnObserverInstance) {
-                    hltb_gameHeaderImageCtnObserverInstance.disconnect();
-                }
-
+                if (!hltb_gameHeaderImageCtnNode) return;
+                if (hltb_gameHeaderImageCtnObserverInstance) hltb_gameHeaderImageCtnObserverInstance.disconnect();
                 hltb_gameHeaderImageCtnObserverInstance = new MutationObserver((mutations) => {
                     let needsPosUpdateDueToContainerChange = false;
                     let russianIndicatorsPotentiallyChanged = false;
-
                     for (const mutation of mutations) {
                         if (mutation.type === 'childList') {
                             russianIndicatorsPotentiallyChanged = true;
@@ -3480,36 +3443,24 @@
                             break;
                         }
                     }
-
-                    if (russianIndicatorsPotentiallyChanged) {
-                        hltb_manageRussianIndicatorsObserver();
-                    }
-                    if (needsPosUpdateDueToContainerChange) {
-                        updateHltbPosition();
-                    }
+                    if (russianIndicatorsPotentiallyChanged) hltb_manageRussianIndicatorsObserver();
+                    if (needsPosUpdateDueToContainerChange) updateHltbPosition();
                 });
-
-                hltb_gameHeaderImageCtnObserverInstance.observe(hltb_gameHeaderImageCtnNode, {
-                    childList: true,
-                    subtree: true
-                });
+                hltb_gameHeaderImageCtnObserverInstance.observe(hltb_gameHeaderImageCtnNode, { childList: true, subtree: true });
                 hltb_manageRussianIndicatorsObserver();
             };
 
             updateHltbPosition();
             hltb_setupPageChangeObservers();
 
-
             const handleClick = async function() {
                 if (content.style.display === 'none') {
                     hltbBlock.style.transition = 'width 0.3s ease, height 0.3s ease';
                     updateHltbPosition();
                     await new Promise(resolve => setTimeout(resolve, 50));
-
                     hltbBlock.style.width = '200px';
                     hltbBlock.style.height = '40px';
                     await new Promise(resolve => setTimeout(resolve, 300));
-
                     content.textContent = 'Получение токена...';
                     content.style.display = 'block';
                     triangle.classList.remove('triangle-down');
@@ -3520,12 +3471,12 @@
                     let gameName = getGameName();
                     let searchName = gameName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace("’", "'").replace(/[^a-z _0-9`~!@#$%^&*()_=+|\\\]}[{;:',<.>/?]/gi, '').toLowerCase().split(/\s+/);
 
-                    let hltbToken = null;
+                    let hltbAuth = {};
                     try {
                         const tokenResponse = await new Promise((resolve, reject) => {
                             GM_xmlhttpRequest({
                                 method: "GET",
-                                url: "https://howlongtobeat.com/api/finder/init?t=" + Date.now(),
+                                url: "https://howlongtobeat.com/api/find/init?t=" + Date.now(),
                                 headers: {
                                     "Accept": "*/*",
                                     "User-Agent": navigator.userAgent,
@@ -3538,12 +3489,15 @@
 
                         if (tokenResponse.status === 200) {
                             const data = JSON.parse(tokenResponse.responseText);
-                            hltbToken = data.token;
+                            hltbAuth = {
+                                token: data.token,
+                                hpKey: data.hpKey,
+                                hpVal: data.hpVal
+                            };
                         } else {
                             throw new Error("Token status: " + tokenResponse.status);
                         }
                     } catch (e) {
-                        console.error("HLTB Token Error:", e);
                         content.textContent = 'Ошибка токена HLTB';
                         return;
                     }
@@ -3557,43 +3511,42 @@
                         "size": 20,
                         "searchOptions": {
                             "games": {
-                                "userId": 0,
-                                "platform": "",
-                                "sortCategory": "popular",
-                                "rangeCategory": "main",
-                                "rangeTime": { "min": null, "max": null },
-                                "gameplay": { "perspective": "", "flow": "", "genre": "", "difficulty": "" },
-                                "rangeYear": { "min": "", "max": "" },
-                                "modifier": ""
+                                "userId": 0, "platform": "", "sortCategory": "popular", "rangeCategory": "main",
+                                "rangeTime": { "min": null, "max": null }, "gameplay": { "perspective": "", "flow": "", "genre": "", "difficulty": "" },
+                                "rangeYear": { "min": "", "max": "" }, "modifier": ""
                             },
                             "users": { "sortCategory": "postcount" },
                             "lists": { "sortCategory": "follows" },
-                            "filter": "",
-                            "sort": 0,
-                            "randomizer": 0
+                            "filter": "", "sort": 0, "randomizer": 0
                         },
                         "useCache": true
                     };
 
+                    if (hltbAuth.hpKey && hltbAuth.hpVal) {
+                        searchPayload[hltbAuth.hpKey] = hltbAuth.hpVal;
+                    }
+
+                    const searchHeaders = {
+                        "Content-Type": "application/json",
+                        "Origin": "https://howlongtobeat.com",
+                        "Referer": "https://howlongtobeat.com/",
+                        "User-Agent": navigator.userAgent,
+                        "x-auth-token": hltbAuth.token
+                    };
+                    if (hltbAuth.hpKey) searchHeaders["x-hp-key"] = hltbAuth.hpKey;
+                    if (hltbAuth.hpVal) searchHeaders["x-hp-val"] = hltbAuth.hpVal;
+
                     GM_xmlhttpRequest({
                         method: "POST",
-                        url: "https://howlongtobeat.com/api/finder",
+                        url: "https://howlongtobeat.com/api/find",
                         data: JSON.stringify(searchPayload),
-                        headers: {
-                            "Content-Type": "application/json",
-                            "Origin": "https://howlongtobeat.com",
-                            "Referer": "https://howlongtobeat.com/",
-                            "User-Agent": navigator.userAgent,
-                            "x-auth-token": hltbToken
-                        },
+                        headers: searchHeaders,
                         onload: async function(response) {
                             let baboonData = { count: 0, data: [] };
-
                             if (response.responseText.includes("<!DOCTYPE html>")) {
                                 content.textContent = 'Ошибка: Cloudflare блок.';
                                 return;
                             }
-
                             try {
                                 baboonData = JSON.parse(response.responseText);
                             } catch (e) {
@@ -3613,19 +3566,12 @@
                                         const englishName = steamData.response.store_items[0]?.name;
                                         if (englishName) {
                                             searchPayload.searchTerms = englishName.toLowerCase().split(/\s+/);
-
                                             const secondResponse = await new Promise((resolve, reject) => {
                                                 GM_xmlhttpRequest({
                                                     method: "POST",
-                                                    url: "https://howlongtobeat.com/api/finder",
+                                                    url: "https://howlongtobeat.com/api/find",
                                                     data: JSON.stringify(searchPayload),
-                                                    headers: {
-                                                        "Content-Type": "application/json",
-                                                        "Origin": "https://howlongtobeat.com",
-                                                        "Referer": "https://howlongtobeat.com/",
-                                                        "User-Agent": navigator.userAgent,
-                                                        "x-auth-token": hltbToken
-                                                    },
+                                                    headers: searchHeaders,
                                                     onload: resolve, onerror: reject
                                                 });
                                             });
@@ -3634,9 +3580,7 @@
                                             }
                                         }
                                     }
-                                } catch (error) {
-                                    console.error('Ошибка при повторном поиске:', error);
-                                }
+                                } catch (error) {}
                             }
 
                             if (baboonData.count > 0) {
@@ -3654,7 +3598,7 @@
                             }
                             hltbBlock.style.height = `${content.scrollHeight + 30}px`;
                         },
-                        onerror: function(error) { content.textContent = 'Ошибка сети HLTB.'; },
+                        onerror: function() { content.textContent = 'Ошибка сети HLTB.'; },
                         ontimeout: function() { content.textContent = 'Тайм-аут HLTB.'; },
                         timeout: 10000
                     });
@@ -3673,10 +3617,7 @@
             triangle.onclick = handleClick;
             window.addEventListener('resize', updateHltbPosition);
 
-            function normalizeGameName(name) {
-                return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zа-яё0-9 _'\-!]/gi, '').toLowerCase().split(/\s+/).map(word => `"${word}"`).join(",");
-            }
-
+            function normalizeGameName(name) { return name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zа-яё0-9 _'\-!]/gi, '').toLowerCase().split(/\s+/).map(word => `"${word}"`).join(","); }
             function findPossibleMatches(gameName, data) {
                 const cleanGameName = gameName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zа-яё0-9 _'\-!]/gi, '').toLowerCase();
                 return data.map(item => {
@@ -3684,21 +3625,18 @@
                     const similarity = calculateSimilarity(cleanGameName, cleanItemName);
                     const startsWith = cleanItemName.startsWith(cleanGameName);
                     return { ...item, percentage: similarity, startsWith: startsWith };
-                }).filter(item => item.percentage > 50 || item.startsWith)
-                .sort((a, b) => {
+                }).filter(item => item.percentage > 50 || item.startsWith).sort((a, b) => {
                     if (a.startsWith && !b.startsWith) return -1;
                     if (!a.startsWith && b.startsWith) return 1;
                     return b.percentage - a.percentage;
                 }).slice(0, 5);
             }
-
             function calculateSimilarity(str1, str2) {
                 const len = Math.max(str1.length, str2.length);
                 if (len === 0) return 100;
                 const distance = levenshteinDistance(str1, str2);
                 return Math.round(((len - distance) / len) * 100);
             }
-
             function levenshteinDistance(str1, str2) {
                 const m = str1.length; const n = str2.length;
                 const dp = Array.from({ length: m + 1 }, () => Array(n + 1).fill(0));
@@ -3711,19 +3649,15 @@
                 }
                 return dp[m][n];
             }
-
             function getTextWidth(text, font) {
                 const canvas = document.createElement('canvas'); const context = canvas.getContext('2d');
-                context.font = font; const metrics = context.measureText(text); return metrics.width;
+                context.font = font; return context.measureText(text).width;
             }
-
             function renderPossibleMatches(matches) {
                 content.innerHTML = '';
-                const title = document.createElement('div');
-                title.textContent = 'Возможные совпадения:';
+                const title = document.createElement('div'); title.textContent = 'Возможные совпадения:';
                 title.style.color = '#67c1f5'; title.style.marginBottom = '10px'; content.appendChild(title);
-                const list = document.createElement('ul');
-                list.style.paddingLeft = '15px'; list.style.marginTop = '5px'; list.style.marginBottom = '0';
+                const list = document.createElement('ul'); list.style.paddingLeft = '15px'; list.style.marginTop = '5px'; list.style.marginBottom = '0';
                 matches.forEach(match => {
                     const li = document.createElement('li'); li.style.marginBottom = '8px';
                     const link = document.createElement('a'); link.href = '#';
@@ -3740,12 +3674,11 @@
                 noMatch.appendChild(noMatchLink); list.appendChild(noMatch); content.appendChild(list);
                 let maxWidth = 0;
                 content.querySelectorAll('a').forEach(link => {
-                    const text = link.textContent; const font = window.getComputedStyle(link).font;
-                    const width = getTextWidth(text, font); if (width > maxWidth) maxWidth = width;
+                    const width = getTextWidth(link.textContent, window.getComputedStyle(link).font);
+                    if (width > maxWidth) maxWidth = width;
                 });
                 hltbBlock.style.width = `${Math.max(maxWidth + 40, 250)}px`;
             }
-
             function renderContent(entry) {
                 content.innerHTML = '';
                 if (!entry) { content.textContent = 'Игра не найдена в базе HLTB'; return; }
@@ -3770,20 +3703,18 @@
                 content.appendChild(list);
                 let maxWidth = 0;
                 content.querySelectorAll('li').forEach(child => {
-                    const text = child.textContent; const font = window.getComputedStyle(child).font;
-                    const width = getTextWidth(text, font); if (width > maxWidth) maxWidth = width;
+                    const width = getTextWidth(child.textContent, window.getComputedStyle(child).font);
+                    if (width > maxWidth) maxWidth = width;
                 });
                 hltbBlock.style.width = `${Math.max(maxWidth + 30, 200)}px`;
                 hltbBlock.style.whiteSpace = 'nowrap';
             }
-
             function formatTime(seconds) {
                 const hours = Math.floor(seconds / 3600); const minutes = Math.round((seconds % 3600) / 60);
                 if (hours === 0) return `${minutes} м.`;
                 else if (hours + (minutes / 60) >= hours + 0.5) return `${hours + 1} ч.`;
                 else return `${hours} ч.`;
             }
-
             function getGameName() {
                 return document.querySelector('.apphub_AppName').textContent.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’]/g, "'").replace(/[^a-zA-Zа-яёА-ЯЁ0-9 _'\-!]/g, '').trim().toLowerCase();
             }
@@ -8304,7 +8235,7 @@ if (headerCtn) {
         })();
     }
 
-    //Скрипт для выбора случайной игры из ваших коллекций с помощью Stelicas и рулетки на странице вашей активности Steam | https://steamcommunity.com/my/
+    //Скрипт для выбора случайной игры из ваших коллекций с помощью данных Steam и рулетки на странице вашей активности Steam | https://steamcommunity.com/my/
     if (scriptsConfig.stelicasRoulette && unsafeWindow.location.href.includes('steamcommunity.com') && unsafeWindow.location.pathname.includes('/home')) {
         (function() {
             'use strict';
@@ -8322,6 +8253,18 @@ if (headerCtn) {
             let sr2_collectionSelectedGameAppId = null;
             let sr2_toggleViewBtn = null;
 
+            let tagsMap = new Map();
+            GM_xmlhttpRequest({
+                method: "GET",
+                url: "https://raw.githubusercontent.com/0wn3dg0d/Stelicas/refs/heads/main/data/tags.txt",
+                onload: function(response) {
+                    const lines = response.responseText.split('\n');
+                    lines.forEach(line => {
+                        const [id, name] = line.trim().split('\t');
+                        if (id && name) tagsMap.set(parseInt(id), name);
+                    });
+                }
+            });
 
             let sr2_activeFilters = {
                 categories: ["Все"],
@@ -8357,7 +8300,7 @@ if (headerCtn) {
                     rouletteButton.onclick = sr2_showRouletteModal;
 
                     const spanInsideButton = document.createElement('span');
-                    spanInsideButton.textContent = 'Рулетка Stelicas';
+                    spanInsideButton.textContent = 'Открыть';
                     rouletteButton.appendChild(spanInsideButton);
                     rouletteBlock.appendChild(rouletteButton);
 
@@ -8387,13 +8330,12 @@ if (headerCtn) {
                     <h2 id="sr2_modalTitle">Рулетка Stelicas</h2>
                     <div id="sr2_headerControls">
                         <button id="sr2_toggleViewBtn" class="sr2_btn sr2_btnIcon" title="Посмотреть подборку" disabled>Посмотреть подборку</button>
-                        <button id="sr2_helpBtn" class="sr2_btn sr2_btnIcon" title="Как пользоваться / Репозиторий">?</button>
+                        <button id="sr2_helpBtn" class="sr2_btn sr2_btnIcon" title="Инструкция">?</button>
                         <button id="sr2_closeBtn" class="sr2_btn sr2_btnIcon" title="Закрыть">&times;</button>
                     </div>
                 `;
                 sr2_modal.appendChild(headerPanel);
                 sr2_toggleViewBtn = headerPanel.querySelector('#sr2_toggleViewBtn');
-
 
                 const mainContainer = document.createElement('div');
                 mainContainer.id = 'sr2_mainContainer';
@@ -8402,32 +8344,17 @@ if (headerCtn) {
                 leftControlsPanel.id = 'sr2_leftControlsPanel';
                 leftControlsPanel.innerHTML = `
                     <div class="sr2_controlSection">
-                        <label for="sr2_csvFileTrigger" class="sr2_label">1. Загрузить данные:</label>
-                        <input type="file" id="sr2_csvFile" accept=".csv" style="display:none;">
-                        <button id="sr2_csvFileTrigger" class="sr2_btn sr2_btnBlock">Выбрать CSV от Stelicas</button>
+                        <label for="sr2_jsonFileTrigger" class="sr2_label" style="line-height: 1.4; margin-bottom: 10px;">
+                            1. Укажите файл категорий:<br>
+                            <span style="font-size: 11px; color: #58A6FF; word-break: break-all;">Steam\\userdata\\{id пользователя}\\config\\cloudstorage\\cloud-storage-namespace-1.json</span>
+                        </label>
+                        <input type="file" id="sr2_jsonFile" accept=".json" style="display:none;">
+                        <button id="sr2_jsonFileTrigger" class="sr2_btn sr2_btnBlock">Выбрать файл .json</button>
                         <span id="sr2_fileNameDisplay" class="sr2_fileName">Файл не выбран</span>
                     </div>
 
-                    <div class="sr2_controlSection">
-                        <label class="sr2_label">2. Фильтры:</label>
+                    <div class="sr2_controlSection" style="padding-top: 10px;">
                         <div class="sr2_filterBlock">
-                            <h5 class="sr2_filterTitle">Категории</h5>
-                            <div id="sr2_categoryList" class="sr2_filterList" style="max-height: 82px;"></div>
-                        </div>
-                        <div class="sr2_filterBlock">
-                            <h5 class="sr2_filterTitle">Дата выхода</h5>
-                            <div id="sr2_releaseYearList" class="sr2_filterList" style="max-height: 82px;"></div>
-                        </div>
-                        <div class="sr2_filterBlock">
-                            <h5 class="sr2_filterTitle">Тэги</h5>
-                            <input type="text" id="sr2_tagSearchInput" class="sr2_filterSearchInput" placeholder="Поиск тэга..." style="margin-bottom: 5px;">
-                            <div id="sr2_tagList" class="sr2_filterList" style="max-height: 82px;"></div>
-                        </div>
-                        <div class="sr2_filterBlock">
-                            <h5 class="sr2_filterTitle">Русский язык</h5>
-                            <div id="sr2_languageList" class="sr2_filterList" style="max-height: 82px;"></div>
-                        </div>
-                         <div class="sr2_filterBlock">
                             <h5 class="sr2_filterTitle">Количество отзывов</h5>
                             <div class="sr2_inputRange">
                                 <input type="number" id="sr2_reviewCountMin" class="sr2_filterInput" placeholder="От">
@@ -8443,6 +8370,14 @@ if (headerCtn) {
                                 <input type="number" id="sr2_ratingMax" class="sr2_filterInput" placeholder="До" min="0" max="100">
                             </div>
                         </div>
+                        <label for="sr2_priorityCheckbox" class="sr2_label sr2_priorityLabel" style="margin-bottom: 0;">
+                            <input type="checkbox" id="sr2_priorityCheckbox" class="sr2_checkbox">
+                            Приоритет по отзывам
+                        </label>
+                    </div>
+
+                    <div class="sr2_controlSection" style="padding-top: 10px;">
+                        <button id="sr2_spinBtn" class="sr2_btn sr2_btnPrimary sr2_btnBlock" style="padding: 12px; font-size: 14px;" disabled>КРУТИТЬ!</button>
                         <div class="sr2_actionButtonsContainer">
                             <button id="sr2_applyFiltersBtn" class="sr2_btn sr2_btnApplyFilters" disabled>Применить фильтры</button>
                             <button id="sr2_resetAllFiltersBtn" class="sr2_btn sr2_btnResetFilters" title="Сбросить фильтры" disabled>
@@ -8451,14 +8386,27 @@ if (headerCtn) {
                         </div>
                     </div>
 
-                    <div class="sr2_controlSection">
-                        <label for="sr2_priorityCheckbox" class="sr2_label sr2_priorityLabel">
-                            <input type="checkbox" id="sr2_priorityCheckbox" class="sr2_checkbox">
-                            Приоритет по отзывам
-                        </label>
-                    </div>
-                    <div class="sr2_controlSection">
-                        <button id="sr2_spinBtn" class="sr2_btn sr2_btnPrimary sr2_btnBlock" disabled>КРУТИТЬ!</button>
+                    <div class="sr2_controlSection" style="border-bottom: none;">
+                        <label class="sr2_label">2. Фильтры (Списки):</label>
+                        <div class="sr2_filterBlock">
+                            <h5 class="sr2_filterTitle">Категории</h5>
+                            <input type="text" id="sr2_categorySearchInput" class="sr2_filterSearchInput" placeholder="Поиск категории..." style="margin-bottom: 5px;">
+                            <div id="sr2_categoryList" class="sr2_filterList" style="max-height: 150px;"></div>
+                        </div>
+                        <div class="sr2_filterBlock">
+                            <h5 class="sr2_filterTitle">Дата выхода</h5>
+                            <input type="text" id="sr2_releaseYearSearchInput" class="sr2_filterSearchInput" placeholder="Поиск даты..." style="margin-bottom: 5px;">
+                            <div id="sr2_releaseYearList" class="sr2_filterList" style="max-height: 150px;"></div>
+                        </div>
+                        <div class="sr2_filterBlock">
+                            <h5 class="sr2_filterTitle">Тэги</h5>
+                            <input type="text" id="sr2_tagSearchInput" class="sr2_filterSearchInput" placeholder="Поиск тэга..." style="margin-bottom: 5px;">
+                            <div id="sr2_tagList" class="sr2_filterList" style="max-height: 150px;"></div>
+                        </div>
+                        <div class="sr2_filterBlock" style="margin-bottom: 0;">
+                            <h5 class="sr2_filterTitle">Русский язык</h5>
+                            <div id="sr2_languageList" class="sr2_filterList" style="max-height: 150px;"></div>
+                        </div>
                     </div>
                 `;
                 mainContainer.appendChild(leftControlsPanel);
@@ -8475,10 +8423,24 @@ if (headerCtn) {
                                 </div>
                             </div>
                             <div id="sr2_collectionViewWrapper" class="sr2_flipper_face">
+                                <div id="sr2_collectionControls" style="padding: 15px 15px 0 15px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                                    <label style="color: #8B949E; font-size: 13px;">Сортировка:</label>
+                                    <select id="sr2_sortSelect" class="sr2_filterSearchInput" style="width: auto; margin: 0; padding: 4px 8px; outline: none; cursor: pointer;">
+                                        <option value="default">По умолчанию</option>
+                                        <option value="name_asc">По имени (А-Я)</option>
+                                        <option value="name_desc">По имени (Я-А)</option>
+                                        <option value="date_desc">По дате (сначала новые)</option>
+                                        <option value="date_asc">По дате (сначала старые)</option>
+                                        <option value="rating_desc">Умный рейтинг (сначала лучшие)</option>
+                                        <option value="rating_asc">Умный рейтинг (сначала худшие)</option>
+                                    </select>
+                                </div>
+                                <div id="sr2_collectionGrid"></div>
                             </div>
                         </div>
                     </div>
                     <div id="sr2_result" class="sr2_result">
+                        <button id="sr2_closeResultBtn" class="sr2_closeResultBtn" title="Закрыть информацию">&times;</button>
                         <div class="sr2_resultHeader">
                             <div class="sr2_gamePoster"><img id="sr2_resultPoster" src="" alt="Постер"></div>
                             <div class="sr2_gameInfoMain">
@@ -8516,12 +8478,21 @@ if (headerCtn) {
                 document.getElementById('sr2_toggleViewBtn').onclick = sr2_toggleView;
                 document.getElementById('sr2_helpBtn').onclick = sr2_showHelpModal;
                 document.getElementById('sr2_closeBtn').onclick = sr2_hideRouletteModal;
-                document.getElementById('sr2_csvFileTrigger').onclick = () => document.getElementById('sr2_csvFile').click();
-                document.getElementById('sr2_csvFile').onchange = sr2_handleFileSelect;
+                document.getElementById('sr2_jsonFileTrigger').onclick = () => document.getElementById('sr2_jsonFile').click();
+                document.getElementById('sr2_jsonFile').onchange = sr2_handleFileSelect;
                 document.getElementById('sr2_applyFiltersBtn').onclick = sr2_applyAllFiltersAndRouletteUpdate;
                 document.getElementById('sr2_resetAllFiltersBtn').onclick = sr2_confirmResetAllFilters;
                 document.getElementById('sr2_spinBtn').onclick = sr2_spin;
-                document.getElementById('sr2_tagSearchInput').oninput = sr2_filterTagList;
+                document.getElementById('sr2_sortSelect').onchange = sr2_populateCollectionView;
+
+                document.getElementById('sr2_closeResultBtn').onclick = () => {
+                    document.getElementById('sr2_result').style.display = 'none';
+                    sr2_collectionSelectedGameAppId = null;
+                };
+
+                document.getElementById('sr2_categorySearchInput').oninput = () => sr2_filterGenericList('sr2_categorySearchInput', 'sr2_categoryList', ["Все"]);
+                document.getElementById('sr2_releaseYearSearchInput').oninput = () => sr2_filterGenericList('sr2_releaseYearSearchInput', 'sr2_releaseYearList', ["Все", "Без даты"]);
+                document.getElementById('sr2_tagSearchInput').oninput = () => sr2_filterGenericList('sr2_tagSearchInput', 'sr2_tagList', ["Все", "Без тэгов"]);
 
                 ['sr2_reviewCountMin', 'sr2_reviewCountMax', 'sr2_ratingMin', 'sr2_ratingMax'].forEach(id => {
                     const el = document.getElementById(id);
@@ -8546,6 +8517,182 @@ if (headerCtn) {
                     }
                 };
                 document.addEventListener('keydown', sr2_modal._escHandler);
+            }
+
+            function formatDate(timestamp) {
+                if (!timestamp) return '';
+                const date = new Date(parseInt(timestamp) * 1000);
+                return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+            }
+
+            function sr2_handleFileSelect(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                const fileNameDisplay = document.getElementById('sr2_fileNameDisplay');
+                if (fileNameDisplay) fileNameDisplay.textContent = "Идёт извлечение категорий...";
+
+                document.getElementById('sr2_applyFiltersBtn').disabled = true;
+                document.getElementById('sr2_resetAllFiltersBtn').disabled = true;
+                document.getElementById('sr2_spinBtn').disabled = true;
+
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    try {
+                        const collectionsData = JSON.parse(e.target.result);
+                        const gameCategories = new Map();
+
+                        for (const collectionArray of collectionsData) {
+                            const key = collectionArray[0];
+                            const data = collectionArray[1];
+                            if (key.startsWith('user-collections.') && !data.is_deleted) {
+                                try {
+                                    const collectionValue = JSON.parse(data.value);
+                                    const collectionName = collectionValue.name;
+                                    const gameIds = collectionValue.added;
+                                    if (collectionName && Array.isArray(gameIds)) {
+                                        for (const gameId of gameIds) {
+                                            if (!gameCategories.has(gameId)) {
+                                                gameCategories.set(gameId, new Set());
+                                            }
+                                            gameCategories.get(gameId).add(collectionName);
+                                        }
+                                    }
+                                } catch (err) {}
+                            }
+                        }
+
+                        const appIds = Array.from(gameCategories.keys());
+                        if (appIds.length === 0) {
+                            fileNameDisplay.textContent = "В файле не найдено категорий игр!";
+                            return;
+                        }
+
+                        fileNameDisplay.textContent = "Получение данных из Steam (Регион: US)...";
+
+                        const BATCH_SIZE = 200;
+                        const CONCURRENT_REQUESTS = 10;
+                        const DELAY_BETWEEN_CHUNKS = 1000;
+
+                        async function fetchBatches(ids, cc, progressPrefix) {
+                            let chunks = [];
+                            let results = [];
+                            for (let i = 0; i < ids.length; i += BATCH_SIZE) {
+                                chunks.push(ids.slice(i, i + BATCH_SIZE));
+                            }
+                            let processedChunks = 0;
+                            for (let i = 0; i < chunks.length; i += CONCURRENT_REQUESTS) {
+                                const currentBatch = chunks.slice(i, i + CONCURRENT_REQUESTS);
+                                const promises = currentBatch.map(chunk => new Promise((resolve) => {
+                                    const requestData = {
+                                        ids: chunk.map(id => ({ appid: id })),
+                                        context: { language: 'russian', country_code: cc, steam_realm: 1 },
+                                        data_request: {
+                                            include_assets: true, include_release: true, include_platforms: true,
+                                            include_all_purchase_options: true, include_screenshots: true,
+                                            include_trailers: true, include_ratings: true, include_tag_count: true,
+                                            include_reviews: true, include_basic_info: true, include_supported_languages: true,
+                                            include_full_description: true, include_included_items: true,
+                                        }
+                                    };
+                                    const url = `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json=${encodeURIComponent(JSON.stringify(requestData))}`;
+
+                                    GM_xmlhttpRequest({
+                                        method: 'GET',
+                                        url: url,
+                                        onload: (res) => {
+                                            try {
+                                                const data = JSON.parse(res.responseText);
+                                                resolve(data.response.store_items || []);
+                                            } catch(e) { resolve([]); }
+                                        },
+                                        onerror: () => resolve([])
+                                    });
+                                }));
+
+                                const batchResults = await Promise.all(promises);
+                                batchResults.forEach(res => results.push(...res));
+                                processedChunks += currentBatch.length;
+
+                                const percent = Math.floor((processedChunks / chunks.length) * 100);
+                                fileNameDisplay.textContent = `${progressPrefix} (${percent}%)...`;
+
+                                if (i + CONCURRENT_REQUESTS < chunks.length) {
+                                    await new Promise(r => setTimeout(r, DELAY_BETWEEN_CHUNKS));
+                                }
+                            }
+                            return results;
+                        }
+
+                        let gameDetails = await fetchBatches(appIds, 'US', 'Получение данных (Регион: US)');
+
+                        const foundIds = new Set(gameDetails.map(g => g.appid.toString()));
+                        const missingAppIds = appIds.filter(id => !foundIds.has(id.toString()));
+
+                        if (missingAppIds.length > 0) {
+                            fileNameDisplay.textContent = `Докачка недоступных игр (Регион: RU)...`;
+                            const ruDetails = await fetchBatches(missingAppIds, 'RU', 'Докачка недоступных игр (Регион: RU)');
+                            gameDetails.push(...ruDetails);
+                        }
+
+                        sr2_games = gameDetails.map(game => {
+                            const releaseDateTS = game.release?.original_release_date || game.release?.steam_release_date;
+                            const releaseDate = formatDate(releaseDateTS);
+
+                            const langInfo = (game.supported_languages || []).find(l => (l.name && l.name.toLowerCase() === 'russian') || l.elanguage === 21) || {};
+                            const parsedLang = {
+                                hasRussian: langInfo.supported || langInfo.subtitles || langInfo.full_audio || false,
+                                interface: langInfo.supported || false,
+                                subtitles: langInfo.subtitles || false,
+                                voice: langInfo.full_audio || false,
+                                noData: Object.keys(langInfo).length === 0
+                            };
+
+                            if(parsedLang.voice || parsedLang.subtitles) {
+                                parsedLang.hasRussian = true;
+                                parsedLang.interface = true;
+                            }
+
+                            const picUrl = game.assets?.header
+                                ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/${game.assets.header}`
+                                : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
+
+                            return {
+                                game_id: game.appid.toString(),
+                                name: game.name || '',
+                                categories: Array.from(gameCategories.get(game.appid) || []),
+                                type: typeof game.type === 'number' ? game.type.toString() : '',
+                                tags: (game.tagids || []).map(tagId => tagsMap.get(tagId) || tagId.toString()),
+                                release_date: releaseDate,
+                                release_timestamp: releaseDateTS ? parseInt(releaseDateTS) : 0,
+                                review_percentage: game.reviews?.summary_filtered?.percent_positive ?? 0,
+                                review_count: game.reviews?.summary_filtered?.review_count ?? 0,
+                                is_free: game.is_free === true,
+                                is_early_access: game.is_early_access === true,
+                                publishers: (game.basic_info?.publishers || []).map(p => p.name).join(';'),
+                                developers: (game.basic_info?.developers || []).map(d => d.name).join(';'),
+                                franchises: (game.basic_info?.franchises || []).map(f => f.name).join(';'),
+                                short_description: (game.basic_info?.short_description || '').replace(/\r?\n/g, ' '),
+                                'Steam-Link': `https://steamcommunity.com/app/${game.appid}`,
+                                Pic: picUrl,
+                                parsed_release_year: sr2_parseReleaseYear(releaseDate),
+                                parsed_language_support: parsedLang
+                            };
+                        }).filter(g => g.game_id && g.name);
+
+                        sr2_filteredGames = [...sr2_games];
+                        fileNameDisplay.textContent = `Успешно загружено игр: ${sr2_games.length}`;
+
+                        sr2_resetFiltersToDefaultStateAndUI();
+                        document.getElementById('sr2_applyFiltersBtn').disabled = false;
+                        document.getElementById('sr2_resetAllFiltersBtn').disabled = false;
+                        sr2_applyAllFiltersAndRouletteUpdate();
+
+                    } catch (err) {
+                        fileNameDisplay.textContent = "Ошибка чтения файла.";
+                        console.error("Рулетка Steam Ошибка:", err);
+                    }
+                };
+                reader.readAsText(file, 'UTF-8');
             }
 
             function sr2_toggleView() {
@@ -8573,16 +8720,36 @@ if (headerCtn) {
             }
 
             function sr2_populateCollectionView() {
-                const collectionViewWrapper = document.getElementById('sr2_collectionViewWrapper');
-                if (!collectionViewWrapper) return;
-                collectionViewWrapper.innerHTML = '';
+                const grid = document.getElementById('sr2_collectionGrid');
+                if (!grid) return;
+                grid.innerHTML = '';
 
                 if (sr2_filteredGames.length === 0) {
-                    collectionViewWrapper.innerHTML = '<div style="color: #8B949E; text-align: center; width: 100%; padding: 20px; align-self: center;">Нет игр по фильтрам для отображения в подборке.</div>';
+                    grid.innerHTML = '<div style="color: #8B949E; text-align: center; width: 100%; padding: 20px; grid-column: 1 / -1;">Нет игр по фильтрам для отображения в подборке.</div>';
                     return;
                 }
 
-                sr2_filteredGames.forEach(game => {
+                const sortSelect = document.getElementById('sr2_sortSelect');
+                const sortVal = sortSelect ? sortSelect.value : 'default';
+
+                let gamesToRender = [...sr2_filteredGames];
+                const getSmartRating = g => (g.review_percentage / 100) * g.review_count;
+
+                if (sortVal === 'name_asc') {
+                    gamesToRender.sort((a, b) => a.name.localeCompare(b.name));
+                } else if (sortVal === 'name_desc') {
+                    gamesToRender.sort((a, b) => b.name.localeCompare(a.name));
+                } else if (sortVal === 'date_desc') {
+                    gamesToRender.sort((a, b) => b.release_timestamp - a.release_timestamp);
+                } else if (sortVal === 'date_asc') {
+                    gamesToRender.sort((a, b) => a.release_timestamp - b.release_timestamp);
+                } else if (sortVal === 'rating_desc') {
+                    gamesToRender.sort((a, b) => getSmartRating(b) - getSmartRating(a));
+                } else if (sortVal === 'rating_asc') {
+                    gamesToRender.sort((a, b) => getSmartRating(a) - getSmartRating(b));
+                }
+
+                gamesToRender.forEach(game => {
                     const card = document.createElement('div');
                     card.className = 'sr2_collectionGameCard';
                     card.dataset.gameId = game.game_id;
@@ -8604,7 +8771,7 @@ if (headerCtn) {
                     card.appendChild(nameDiv);
 
                     card.onclick = () => sr2_handleCollectionGameClick(game);
-                    collectionViewWrapper.appendChild(card);
+                    grid.appendChild(card);
                 });
             }
 
@@ -8618,7 +8785,6 @@ if (headerCtn) {
                     sr2_collectionSelectedGameAppId = game.game_id;
                 }
             }
-
 
             function sr2_showHelpModal() {
                 const helpModalId = 'sr2_stelicasRouletteHelpModal';
@@ -8644,44 +8810,28 @@ if (headerCtn) {
                 `;
                 helpContent.innerHTML = `
                     <h3 style="color: #58A6FF; text-align: center; margin-top:0; margin-bottom: 20px; font-size: 18px;">Рулетка Stelicas - Инструкция</h3>
-                    <p>Этот модуль поможет вам случайным образом выбрать игру для прохождения из вашей библиотеки Steam, используя данные, экспортированные из приложения <strong>Stelicas</strong>.</p>
+                    <p>Этот модуль поможет вам случайным образом выбрать игру для прохождения из вашей библиотеки Steam, основываясь на созданных вами коллекциях.</p>
                     <h4>Порядок действий:</h4>
                     <ol style="line-height: 1.6; margin-left: 20px; padding-left: 5px;">
                         <li style="margin-bottom: 0.8em;">
-                            <strong>Подготовка CSV-файла:</strong>
-                            <ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: disc;">
-                                <li style="margin-bottom: 0.3em;">Запустите приложение <a href="https://github.com/0wn3dg0d/Stelicas" target="_blank" style="color:#58A6FF;">Stelicas</a>. <strong>Важно:</strong> клиент Steam должен быть закрыт во время работы Stelicas.</li>
-                                <li style="margin-bottom: 0.3em;">В Stelicas введите ваш AccountID (Steam3 ID) и выберите необходимые настройки языка и региона.</li>
-                                <li style="margin-bottom: 0.3em;">Нажмите "Start". Программа соберет данные о ваших играх и категориях.</li>
-                                <li style="margin-bottom: 0.3em;">После завершения, найдите файл <code>final_data.csv</code> в папке <code>output</code> (рядом с программой Stelicas). Этот файл понадобится для рулетки.</li>
-                            </ul>
+                            <strong>Загрузка файла категорий:</strong> Нажмите "Выбрать файл .json" и укажите путь, указанный в подсказке над кнопкой. Скрипт локально в браузере считает ваши категории, обратится к серверам Steam и загрузит всю нужную информацию.
                         </li>
-                        <li style="margin-bottom: 0.8em;"><strong>Загрузка CSV в рулетку:</strong> В левой панели текущего окна нажмите "Выбрать CSV от Stelicas" и укажите путь к файлу <code>final_data.csv</code>.</li>
                         <li style="margin-bottom: 0.8em;">
                             <strong>Выбор фильтров:</strong>
                             <ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: square;">
-                                <li><strong>Категории:</strong> Отметьте одну или несколько интересующих вас категорий. Опция "Все" (первая в списке) позволяет отметить или снять все галочки в секции "Категории" одновременно.</li>
-                                <li><strong>Дата выхода:</strong> Выберите конкретные годы, "Без даты" или "Все". Опция "Все" также управляет всеми галочками в этой секции. Годы упорядочены от новых к старым.</li>
-                                <li><strong>Тэги:</strong> Выберите тэги. Используйте поиск для быстрого нахождения нужного тэга. Тэги отсортированы по популярности. "Все" и "Без тэгов" также доступны, "Все" управляет всеми галочками тэгов.</li>
-                                <li><strong>Русский язык:</strong> Укажите требуемый уровень локализации ("Без русского языка", "Русские субтитры/интерфейс", "Русская озвучка") или "Все" (управляет всеми опциями языка).</li>
-                                <li><strong>Количество отзывов:</strong> Задайте диапазон (например, от 100 до 10000). Плейсхолдеры показывают доступные мин/макс значения с учётом других фильтров.</li>
-                                <li><strong>Рейтинг:</strong> Задайте диапазон в процентах (например, от 70 до 100). Плейсхолдеры также динамические.</li>
+                                <li><strong>Категории:</strong> Отметьте одну или несколько интересующих вас категорий.</li>
+                                <li><strong>Дата выхода и Тэги:</strong> Выберите нужные года и жанры. Используйте текстовый поиск для быстрого нахождения.</li>
+                                <li><strong>Русский язык:</strong> Укажите требуемый уровень локализации.</li>
+                                <li><strong>Отзывы и Рейтинг:</strong> Задайте диапазоны.</li>
                             </ul>
-                            После выбора всех фильтров нажмите кнопку "Применить фильтры". Счётчики у фильтров обновляются в реальном времени при изменении других фильтров. Для сброса всех фильтров к состоянию по умолчанию используйте кнопку со значком возврата рядом с "Применить фильтры".
+                            После выбора всех фильтров нажмите кнопку "Применить фильтры".
                         </li>
                         <li style="margin-bottom: 0.8em;"><strong>Настройка приоритетов (опционально):</strong> Если активировать опцию "Приоритет по отзывам", игры с более высоким рейтингом и большим количеством обзоров будут иметь больше шансов на выпадение (среди отфильтрованных).</li>
                         <li style="margin-bottom: 0.8em;"><strong>Запуск рулетки:</strong> Нажмите большую кнопку "КРУТИТЬ!".</li>
                         <li style="margin-bottom: 0.8em;">
-                            <strong>Просмотр подборки:</strong>
-                            <ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: disc;">
-                                <li style="margin-bottom: 0.3em;">Вы можете посмотреть игры из текущей подборки (с активным фильтром) с помощью кнопки "Посмотреть подборку" в заголовке модального окна.</li>
-                                <li style="margin-bottom: 0.3em;">Нажатие на неё переключит правую панель в режим отображения всех отфильтрованных игр в виде карточек (изображение и название). Кнопка "КРУТИТЬ!" будет неактивна в этом режиме.</li>
-                                <li style="margin-bottom: 0.3em;">Щелчок по карточке игры в подборке покажет подробную информацию о ней в блоке ниже (аналогично результату рулетки). Повторный щелчок по той же карточке скроет информацию.</li>
-                                <li style="margin-bottom: 0.3em;">Чтобы вернуться к рулетке, нажмите кнопку "Вернуться к рулетке" в заголовке модального окна.</li>
-                            </ul>
+                            <strong>Просмотр подборки:</strong> Вы можете посмотреть игры из текущей подборки с помощью кнопки "Посмотреть подборку" в заголовке окна. В этом режиме доступна сортировка игр по имени, дате выхода и "умному" рейтингу (учитывает % и количество отзывов).
                         </li>
                     </ol>
-                    <p>После остановки рулетки вы увидите подробную информацию о выбранной игре.</p>
                 `;
                 const closeHelpButton = document.createElement('button');
                 closeHelpButton.textContent = 'Понятно';
@@ -8731,9 +8881,16 @@ if (headerCtn) {
                 document.getElementById('sr2_reviewCountMax').value = '';
                 document.getElementById('sr2_ratingMin').value = '';
                 document.getElementById('sr2_ratingMax').value = '';
+                document.getElementById('sr2_categorySearchInput').value = '';
+                document.getElementById('sr2_releaseYearSearchInput').value = '';
                 document.getElementById('sr2_tagSearchInput').value = '';
-                sr2_filterTagList();
 
+                const sortSelect = document.getElementById('sr2_sortSelect');
+                if (sortSelect) sortSelect.value = 'default';
+
+                sr2_filterGenericList('sr2_categorySearchInput', 'sr2_categoryList', ["Все"]);
+                sr2_filterGenericList('sr2_releaseYearSearchInput', 'sr2_releaseYearList', ["Все", "Без даты"]);
+                sr2_filterGenericList('sr2_tagSearchInput', 'sr2_tagList', ["Все", "Без тэгов"]);
 
                 if (sr2_currentViewMode === 'collection') {
                     sr2_currentViewMode = 'roulette';
@@ -8750,85 +8907,10 @@ if (headerCtn) {
                 sr2_collectionSelectedGameAppId = null;
             }
 
-            function sr2_handleFileSelect(event) {
-                const file = event.target.files[0];
-                if (!file) return;
-                const fileNameDisplay = document.getElementById('sr2_fileNameDisplay');
-                if (fileNameDisplay) fileNameDisplay.textContent = file.name;
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    sr2_parseCSV(e.target.result);
-                    sr2_resetFiltersToDefaultStateAndUI();
-                    document.getElementById('sr2_applyFiltersBtn').disabled = false;
-                    document.getElementById('sr2_resetAllFiltersBtn').disabled = false;
-                    sr2_applyAllFiltersAndRouletteUpdate();
-                };
-                reader.readAsText(file, 'UTF-8');
-            }
-
-            function sr2_parseCSV(data) {
-                const rows = data.split(/\r?\n/).slice(1);
-                sr2_games = [];
-                rows.forEach(row => {
-                    if (!row.trim()) return;
-                    const fields = row.split('\t');
-                    if (fields.length < 17) return;
-
-                    const game = {
-                        game_id: fields[0]?.trim(),
-                        name: fields[1]?.trim(),
-                        categories: fields[2]?.trim().split(';').map(c => c.trim()).filter(c => c),
-                        type: fields[3]?.trim(),
-                        tags: fields[4]?.trim().split(';').map(t => t.trim()).filter(t => t),
-                        release_date: fields[5]?.trim(),
-                        review_percentage: parseInt(fields[6]) || 0,
-                        review_count: parseInt(fields[7]) || 0,
-                        is_free: fields[8]?.trim().toLowerCase() === 'true',
-                        is_early_access: fields[9]?.trim().toLowerCase() === 'true',
-                        publishers: fields[10]?.trim(),
-                        developers: fields[11]?.trim(),
-                        franchises: fields[12]?.trim(),
-                        short_description: fields[13]?.trim().replace(/^"|"$/g, '').replace(/""/g, '"'),
-                        supported_language: fields[14]?.trim(),
-                        'Steam-Link': fields[15]?.trim(),
-                        Pic: fields[16]?.trim(),
-                        parsed_release_year: sr2_parseReleaseYear(fields[5]?.trim()),
-                        parsed_language_support: sr2_parseGameLanguageSupport(fields[14]?.trim())
-                    };
-                    if (game.game_id && game.name) {
-                        sr2_games.push(game);
-                    }
-                });
-                sr2_filteredGames = [...sr2_games];
-            }
-
             function sr2_parseReleaseYear(dateStr) {
                 if (!dateStr || dateStr.toLowerCase() === 'unknown' || dateStr.toLowerCase() === 'tbd' || dateStr.trim() === '') return 'Без даты';
                 const yearMatch = dateStr.match(/\b(\d{4})\b/);
                 return yearMatch ? yearMatch[1] : 'Без даты';
-            }
-
-            function sr2_parseGameLanguageSupport(langStr) {
-                const support = { hasRussian: false, interface: false, subtitles: false, voice: false, raw: langStr, noData: false };
-                if (!langStr || typeof langStr !== 'string' || langStr.trim() === '') {
-                    support.noData = true; return support;
-                }
-                const cleaned = langStr.replace(/[{}]/g, '').trim().toLowerCase();
-                if (cleaned === 'true') {
-                    support.hasRussian = true; support.interface = true; support.subtitles = true; support.voice = true;
-                } else if (cleaned === 'false') {
-                } else {
-                    const parts = cleaned.split(';');
-                    if (parts.length === 3) {
-                        if (parts[0] === 'true') support.interface = true;
-                        if (parts[1] === 'true') support.voice = true;
-                        if (parts[2] === 'true') support.subtitles = true;
-                        support.hasRussian = support.interface || support.subtitles || support.voice;
-                    } else {
-                         support.noData = true;
-                    }
-                }
-                return support;
             }
 
             function sr2_populateFilterList(elementId, itemsMap, type) {
@@ -8882,12 +8964,13 @@ if (headerCtn) {
                 }
             }
 
-            function sr2_filterTagList() {
-                const searchTerm = document.getElementById('sr2_tagSearchInput').value.toLowerCase();
-                const tagListDiv = document.getElementById('sr2_tagList');
-                tagListDiv.querySelectorAll('.sr2_filterItem').forEach(item => {
+            function sr2_filterGenericList(inputId, listId, alwaysShowValues) {
+                const searchTerm = document.getElementById(inputId).value.toLowerCase();
+                const listDiv = document.getElementById(listId);
+                if (!listDiv) return;
+                listDiv.querySelectorAll('.sr2_filterItem').forEach(item => {
                     const checkbox = item.querySelector('input[type="checkbox"]');
-                    if (checkbox.value === "Все" || checkbox.value === "Без тэгов") {
+                    if (alwaysShowValues.includes(checkbox.value)) {
                         item.style.display = 'block'; return;
                     }
                     item.style.display = checkbox.value.toLowerCase().includes(searchTerm) ? 'block' : 'none';
@@ -9218,7 +9301,6 @@ if (headerCtn) {
                 resultDiv.style.display = 'none';
                 sr2_collectionSelectedGameAppId = null;
             }
-
 
             function sr2_updateRoulette() {
                 const roulette = document.getElementById('sr2_roulette');
@@ -9801,13 +9883,24 @@ if (headerCtn) {
 
                         #sr2_collectionViewWrapper {
                         	transform: rotateY(180deg);
+                        	display: flex;
+                        	flex-direction: column;
+                        }
+
+                        #sr2_collectionGrid {
                         	padding: 15px;
                         	overflow-y: auto;
                         	display: grid;
                         	grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
                         	gap: 15px;
                         	align-content: flex-start;
+                        	flex-grow: 1;
                         }
+
+                        #sr2_collectionGrid::-webkit-scrollbar { width: 8px; }
+                        #sr2_collectionGrid::-webkit-scrollbar-track { background: #0D1117; border-radius: 4px; }
+                        #sr2_collectionGrid::-webkit-scrollbar-thumb { background-color: #30363D; border-radius: 4px; border: 2px solid #0D1117; }
+                        #sr2_collectionGrid::-webkit-scrollbar-thumb:hover { background-color: #58A6FF; }
 
                         .sr2_collectionGameCard {
                         	background-color: #161B22;
@@ -9860,6 +9953,25 @@ if (headerCtn) {
                         	flex-shrink: 0;
                         	max-height: calc(100vh - 400px);
                         	overflow-y: auto;
+                        	position: relative;
+                        }
+
+                        .sr2_closeResultBtn {
+                        	position: absolute;
+                        	top: 10px;
+                        	right: 15px;
+                        	background: transparent;
+                        	border: none;
+                        	color: #8B949E;
+                        	font-size: 24px;
+                        	cursor: pointer;
+                        	line-height: 1;
+                        	padding: 5px;
+                        	transition: color 0.2s;
+                        }
+
+                        .sr2_closeResultBtn:hover {
+                        	color: #f85149;
                         }
 
                         .sr2_resultHeader {
