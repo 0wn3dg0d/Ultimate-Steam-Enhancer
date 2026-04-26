@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.8.3
+// @version      2.1.8.4
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -8638,7 +8638,7 @@ if (headerCtn) {
                             const releaseDateTS = game.release?.original_release_date || game.release?.steam_release_date;
                             const releaseDate = formatDate(releaseDateTS);
 
-                            const langInfo = (game.supported_languages || []).find(l => (l.name && l.name.toLowerCase() === 'russian') || l.elanguage === 21) || {};
+                            const langInfo = (game.supported_languages || []).find(l => (l.name && l.name.toLowerCase() === 'russian') || l.elanguage === 8) || {};
                             const parsedLang = {
                                 hasRussian: langInfo.supported || langInfo.subtitles || langInfo.full_audio || false,
                                 interface: langInfo.supported || false,
