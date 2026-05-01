@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.8.4
+// @version      2.1.8.5
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -7926,6 +7926,7 @@ if (headerCtn) {
             }
 
             function processGameData(data) {
+                if (!data || !data.response || !data.response.store_items) return;
                 const items = data.response.store_items;
                 items.forEach(item => {
                     const appId = item.id;
@@ -7940,10 +7941,23 @@ if (headerCtn) {
                         developers: item.basic_info?.developers?.map(d => d.name).join(", "),
                         franchises: item.basic_info?.franchises?.map(f => f.name).join(", "),
                         tagids: item.tagids || [],
-                        language_support_russian: item.supported_languages?.find(lang => lang.elanguage === 8),
-                        language_support_english: item.supported_languages?.find(lang => lang.elanguage === 0),
+                        language_support_russian: item.supported_languages?.find(lang => (lang.name && lang.name.toLowerCase() === 'russian') || lang.elanguage === 8),
+                        language_support_english: item.supported_languages?.find(lang => (lang.name && lang.name.toLowerCase() === 'english') || lang.elanguage === 0),
                         release_date: item.release?.steam_release_date ? new Date(item.release.steam_release_date * 1000).toLocaleDateString() : "Нет данных"
                     };
+
+                    const gameLinks = document.querySelectorAll(`a[href*='/app/${appId}'], a[data-appid="${appId}"]`);
+                    gameLinks.forEach(link => {
+                        const img = link.querySelector('img');
+                        if (img && (!img.getAttribute('src') || img.getAttribute('src') === '')) {
+                            const fallbackImg = item.assets?.small_capsule
+                                ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/${item.assets.small_capsule}`
+                                : (item.assets?.header
+                                    ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/${item.assets.header}`
+                                    : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg`);
+                            img.src = fallbackImg;
+                        }
+                    });
                 });
             }
 
@@ -8028,7 +8042,6 @@ if (headerCtn) {
                         return data;
                     }
                 } catch (e) {
-                    console.error('Ошибка загрузки меток:', e);
                     return cached.data || {};
                 }
 
@@ -8070,8 +8083,8 @@ if (headerCtn) {
                 const reviewClass = getReviewClassCatalog(data.percent_positive, data.review_count);
                 const earlyAccessClass = data.is_early_access ? 'mushroom-early-access-yes' : 'mushroom-early-access-no';
 
-                const headerUrl = data.assets?.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/${data.assets.header}` : '';
-                const imageHtml = headerUrl ? `<div style="margin-bottom: 10px;"><img src="${headerUrl}" alt="${data.name}" style="width: 50%; height: auto;"></div>` : '';
+                const headerUrl = data.assets?.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/${data.assets.header}` : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg`;
+                const imageHtml = `<div style="margin-bottom: 10px;"><img src="${headerUrl}" alt="${data.name || ''}" style="width: 50%; height: auto;"></div>`;
 
                 async function getTagNames(tagIds) {
                     const tagsData = await loadSteamTags();
