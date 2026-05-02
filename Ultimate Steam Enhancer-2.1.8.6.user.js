@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.8.5
+// @version      2.1.8.6
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -812,6 +812,15 @@
                         </ul>
                     </li>
                     <img src="https://i.imgur.com/MqjuXoD.png" alt="Пример Фильтра DLC" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                    <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+                    <li><strong>Ранний доступ:</strong>
+                        <ul>
+                            <li><em>Только ранний доступ:</em> Отображает игры, находящиеся в стадии раннего доступа.</li>
+                            <li><em>~ Бывший EA / Переиздание:</em> Отображает игры с двумя датами релиза (указывает на выход из раннего доступа или переиздание).</li>
+                            <li><em>Скрыть ранний доступ:</em> Исключает игры в раннем доступе из результатов поиска.</li>
+                        </ul>
+                    </li>
+                    <img src="https://i.imgur.com/Nz5vF0v.png" alt="Пример фильтра раннего доступа" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                     <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
                     <li><strong>Умные метки:</strong>
                         <ul>
@@ -5700,7 +5709,6 @@ if (headerCtn) {
                         return data;
                     }
                 } catch (e) {
-                    console.error('Ошибка загрузки меток:', e);
                     return cached.data || {};
                 }
 
@@ -5738,7 +5746,6 @@ if (headerCtn) {
                         return ownedApps;
                     }
                 } catch (e) {
-                    console.error('Ошибка загрузки списка игр:', e);
                     return cached.data || [];
                 }
 
@@ -5814,6 +5821,7 @@ if (headerCtn) {
                     if (gameElement) {
                         const gameData = {
                             is_early_access: item.is_early_access,
+                            has_original_release_date: !!(item.release?.original_release_date || item.release?.original_steam_release_date),
                             review_count: item.reviews?.summary_filtered?.review_count,
                             percent_positive: item.reviews?.summary_filtered?.percent_positive,
                             short_description: item.basic_info?.short_description,
@@ -6227,6 +6235,43 @@ if (headerCtn) {
                     </div>
                 `;
 
+                const earlyAccessFilterBlock = document.createElement('div');
+                earlyAccessFilterBlock.className = 'block search_collapse_block';
+                earlyAccessFilterBlock.innerHTML = `
+                    <div data-panel="{&quot;focusable&quot;:true,&quot;clickOnActivate&quot;:true}" class="block_header labs_block_header">
+                        <div>Ранний доступ</div>
+                    </div>
+                    <div class="block_content block_content_inner">
+                        <div class="tab_filter_control_row" data-param="ea_only" data-value="__toggle" data-loc="Только ранний доступ" data-clientside="0">
+                            <span data-panel="{&quot;focusable&quot;:true,&quot;clickOnActivate&quot;:true}" class="tab_filter_control tab_filter_control_include" data-param="ea_only" data-value="__toggle" data-loc="Только ранний доступ" data-clientside="0" data-gpfocus="item">
+                                <span>
+                                    <span class="tab_filter_control_checkbox"></span>
+                                    <span class="tab_filter_control_label">Только ранний доступ</span>
+                                    <span class="tab_filter_control_count" style="display: none;"></span>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="tab_filter_control_row" data-param="ea_was" data-value="__toggle" data-loc="Бывший EA / Переиздание" data-clientside="0">
+                            <span data-panel="{&quot;focusable&quot;:true,&quot;clickOnActivate&quot;:true}" class="tab_filter_control tab_filter_control_include" data-param="ea_was" data-value="__toggle" data-loc="Бывший EA / Переиздание" data-clientside="0" data-gpfocus="item">
+                                <span>
+                                    <span class="tab_filter_control_checkbox"></span>
+                                    <span class="tab_filter_control_label">Бывший EA / Переиздание</span>
+                                    <span class="tab_filter_control_count" style="display: none;"></span>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="tab_filter_control_row" data-param="ea_hide" data-value="__toggle" data-loc="Скрыть ранний доступ" data-clientside="0">
+                            <span data-panel="{&quot;focusable&quot;:true,&quot;clickOnActivate&quot;:true}" class="tab_filter_control tab_filter_control_include" data-param="ea_hide" data-value="__toggle" data-loc="Скрыть ранний доступ" data-clientside="0" data-gpfocus="item">
+                                <span>
+                                    <span class="tab_filter_control_checkbox"></span>
+                                    <span class="tab_filter_control_label">Скрыть ранний доступ</span>
+                                    <span class="tab_filter_control_count" style="display: none;"></span>
+                                </span>
+                            </span>
+                        </div>
+                    </div>
+                `;
+
                 const tagFilterBlock = document.createElement('div');
                 tagFilterBlock.className = 'block search_collapse_block';
                 tagFilterBlock.innerHTML = `
@@ -6243,7 +6288,8 @@ if (headerCtn) {
                 const priceBlock = document.querySelector('.block.search_collapse_block[data-collapse-name="price"]');
                 priceBlock.parentNode.insertBefore(filterBlock, priceBlock.nextSibling);
                 priceBlock.parentNode.insertBefore(dlcFilterBlock, filterBlock.nextSibling);
-                priceBlock.parentNode.insertBefore(tagFilterBlock, dlcFilterBlock.nextSibling);
+                priceBlock.parentNode.insertBefore(earlyAccessFilterBlock, dlcFilterBlock.nextSibling);
+                priceBlock.parentNode.insertBefore(tagFilterBlock, earlyAccessFilterBlock.nextSibling);
 
                 document.getElementById('open-tag-modal-btn-styled').addEventListener('click', () => {
                     const modal = document.getElementById('tag-filter-modal');
@@ -6290,6 +6336,31 @@ if (headerCtn) {
                         applyDlcFilter(gameElement, isChecked);
                     });
                 });
+
+                const eaOnlyRow = earlyAccessFilterBlock.querySelector('[data-param="ea_only"]');
+                const eaWasRow = earlyAccessFilterBlock.querySelector('[data-param="ea_was"]');
+                const eaHideRow = earlyAccessFilterBlock.querySelector('[data-param="ea_hide"]');
+
+                [eaOnlyRow, eaWasRow, eaHideRow].forEach(row => {
+                    row.addEventListener('click', () => {
+                        const control = row.querySelector('.tab_filter_control');
+                        const wasChecked = control.classList.contains('checked');
+
+                        [eaOnlyRow, eaWasRow, eaHideRow].forEach(r => {
+                            r.querySelector('.tab_filter_control').classList.remove('checked');
+                            r.classList.remove('checked');
+                        });
+
+                        if (!wasChecked) {
+                            control.classList.add('checked');
+                            row.classList.add('checked');
+                        }
+
+                        document.querySelectorAll(CAESAR_VISIBLE_ELEMENTS_SELECTOR).forEach(gameElement => {
+                            applyRussianLanguageFilter(gameElement);
+                        });
+                    });
+                });
             }
 
             function applyDlcFilter(gameElement, showOnlyDlc) {
@@ -6326,13 +6397,23 @@ if (headerCtn) {
                     const hasRussianVoice = gameData.language_support_russian?.full_audio;
                     const hasAnyRussian = hasRussianText || hasRussianVoice;
 
-                    const translationChecked = document.querySelector('[data-param="russian_translation"] .tab_filter_control').classList.contains('checked');
-                    const voiceChecked = document.querySelector('[data-param="russian_voice"] .tab_filter_control').classList.contains('checked');
-                    const noRussianChecked = document.querySelector('[data-param="no_russian"] .tab_filter_control').classList.contains('checked');
+                    const translationChecked = document.querySelector('[data-param="russian_translation"] .tab_filter_control')?.classList.contains('checked');
+                    const voiceChecked = document.querySelector('[data-param="russian_voice"] .tab_filter_control')?.classList.contains('checked');
+                    const noRussianChecked = document.querySelector('[data-param="no_russian"] .tab_filter_control')?.classList.contains('checked');
 
                     if (translationChecked && (!hasRussianText || hasRussianVoice)) isVisible = false;
                     else if (voiceChecked && !hasRussianVoice) isVisible = false;
                     else if (noRussianChecked && hasAnyRussian) isVisible = false;
+                }
+
+                if (isVisible) {
+                    const eaOnlyChecked = document.querySelector('[data-param="ea_only"] .tab_filter_control')?.classList.contains('checked');
+                    const eaWasChecked = document.querySelector('[data-param="ea_was"] .tab_filter_control')?.classList.contains('checked');
+                    const eaHideChecked = document.querySelector('[data-param="ea_hide"] .tab_filter_control')?.classList.contains('checked');
+
+                    if (eaOnlyChecked && !gameData.is_early_access) isVisible = false;
+                    else if (eaWasChecked && (gameData.is_early_access || !gameData.has_original_release_date)) isVisible = false;
+                    else if (eaHideChecked && gameData.is_early_access) isVisible = false;
                 }
 
                 if (isVisible) {
