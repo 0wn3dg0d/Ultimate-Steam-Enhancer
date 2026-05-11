@@ -485,6 +485,29 @@
                             <div class="text-center"><img src="https://i.imgur.com/jDdf4pR.png" alt="[Пример работы помощника подарков на странице игры]" class="feature-img inline-block"></div>
                         </div>
                     </details>
+
+                    <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
+                        <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Проверка строгих региональных ограничений (PICS)</summary>
+                        <div class="p-6 border-t border-dx-border space-y-4 details-content">
+                            <p><strong>Что делает:</strong><br>Выявляет скрытые жесткие региональные блокировки пакетов, которые накладывает издатель.</p>
+                            <p><strong>Как это работает:</strong></p>
+                            <ol class="space-y-2">
+                                <li>Скрипт делает предварительную проверку игры через открытое Web API Steam для региона, который вы выбрали в настройках.</li>
+                                <li>Если выясняется, что игра системно недоступна в этом регионе, скрипт связывается с вашим локальным микро-сервером (<strong>USEsteampics.exe</strong>), чтобы извлечь точные данные из скрытой базы Steam Network (PICS).</li>
+                                <li>При обнаружении блокировок над кнопкой «В корзину» выводится красная плашка <strong>"🚫 Строгие ограничения: [Список стран]"</strong>.</li>
+                            </ol>
+                            
+                            <div style="margin-top: 1rem; padding: 1rem; background-color: rgba(103, 193, 245, 0.05); border: 1px solid rgba(103, 193, 245, 0.3); border-radius: 0.5rem; line-height: 1.4;">
+                                <p style="margin: 0 0 0.5rem 0; color: #67c1f5; font-weight: 500;">⚠️ Важно:</p>
+                                <p style="margin: 0;">Для работы этой функции требуется запущенный в фоне сервер <a href="https://github.com/0wn3dg0d/USEsteampics/releases" target="_blank" class="hover:underline" style="color: #67c1f5;">USEsteampics</a>. Если сервер выключен, скрипт просто пропустит эту проверку, не мешая загрузке страницы.</p>
+                            </div>
+
+                            <div class="text-center mt-4">
+                                <img src="https://i.imgur.com/t4FCIh8.png" alt="[Пример строгих ограничений PICS]" class="feature-img inline-block">
+                            </div>
+                        </div>
+                    </details>
+					
                 </div>
             </section>
 
