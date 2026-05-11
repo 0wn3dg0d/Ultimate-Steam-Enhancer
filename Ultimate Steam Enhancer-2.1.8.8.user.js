@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.8.6
+// @version      2.1.8.8
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -79,6 +79,7 @@
 // @connect      cdn.jsdelivr.net
 // @connect      img.shields.io
 // @connect      partner.steamgames.com
+// @connect      localhost
 // ==/UserScript==
 
 
@@ -470,6 +471,8 @@
         Sledilka: true, // Скрипт для получения уведомлений об изменении дат/статуса игр (вишлист/библиотека) и показа календаря релизов | Глобально
         wishlistGiftHelper: true, // Скрипт для проверки возможности отправки подарка из списка желаемого друзьям в других странах | https://steamcommunity.com/my/wishlist/
         RuRegionalPriceAnalyzer: true, // Скрипт для страницы игры (Анализатор цен; цена РФ vs рекомендованная; рейтинг цен) | https://store.steampowered.com/app/*
+        picsRestrictionCheck: false, // Скрипт для проверки региональных ограничений (требует локальный сервер) | https://store.steampowered.com/app/*
+        picsTargetRegion: 'RU',
         // Дополнительные настройки
         autoExpandHltb: false, // Автоматически раскрывать спойлер HLTB
         autoLoadReviews: false, // Автоматически загружать дополнительные обзоры
@@ -483,7 +486,7 @@
     /* --- Код для настроек U.S.E. --- */
 	const useDefaultSettings = {
 	    gamePage: true, hltbData: true, friendsPlaytime: true, earlyaccdata: true, zogInfo: true, pageGiftHelper: true, ExternalLinksEnhancer: true,
-	    platiSales: true, salesMaster: true, catalogInfo: true, catalogHider: false, newsFilter: true,
+	    platiSales: true, salesMaster: true, picsRestrictionCheck: false, picsTargetRegion: 'RU', catalogInfo: true, catalogHider: false, newsFilter: true,
 	    Kaznachei: true, homeInfo: true, Sledilka: true, wishlistGiftHelper: true, stelicasRoulette: true, RuRegionalPriceAnalyzer: true,
 	    autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false,
         salesMasterAutoSearch: false, salesMasterAutoInsertTitle: true,
@@ -763,6 +766,24 @@
                 <p>Расчет времени динамический. Использует даты со страницы Steam, а также может подтягивать дату старта раннего доступа из собственной базы для вышедших игр, если Steam ее не показывает.</p>
             `
         },
+        picsRestrictionCheck: {
+            category: 'gamePage',
+            label: "Проверка региональных ограничений",
+            title: "Проверка строгих региональных ограничений (PICS)",
+            details: `
+                <p><strong>Что делает:</strong> Выявляет скрытые жесткие региональные блокировки пакетов, которые накладывает издатель.</p>
+                <p><strong>Как это работает:</strong></p>
+                <ol style="margin-left: 20px; padding-left: 5px; list-style-type: decimal;">
+                    <li style="margin-bottom: 0.5em;">Скрипт делает предварительную проверку игры через открытое Web API Steam для региона, который вы выбрали в настройке ниже.</li>
+                    <li style="margin-bottom: 0.5em;">Если выясняется, что игра системно недоступна в этом регионе, скрипт связывается с вашим локальным микро-серверу (<strong>USEsteampics.exe</strong>), чтобы извлечь точные данные из скрытой базы Steam Network (PICS).</li>
+                    <li style="margin-bottom: 0.5em;">При обнаружении блокировок над кнопкой «В корзину» выводится красная плашка <strong>"🚫 Строгие ограничения: [Список стран]"</strong>.</li>
+                </ol>
+                <div style="margin-top: 15px; padding: 10px; background-color: rgba(103, 193, 245, 0.1); border: 1px solid rgba(103, 193, 245, 0.35); border-radius: 4px; font-size: 0.95em; line-height: 1.4;">
+                    <p style="margin: 0; color: #c6d4df;"><strong>Важно:</strong> Для работы этой функции требуется запущенный в фоне сервер <a href="https://github.com/0wn3dg0d/USEsteampics/releases" target="_blank" style="color: #67c1f5; text-decoration: none;">USEsteampics</a>. Если сервер выключен, скрипт просто пропустит эту проверку, не мешая загрузке страницы.</p>
+                </div>
+                <img src="https://i.imgur.com/t4FCIh8.png" alt="Пример строгих ограничений PICS" style="max-width: 90%; height: auto; margin-top: 15px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333; border-radius: 3px; box-shadow: 0 4px 8px rgba(0,0,0,0.5);">
+            `
+        },
         ExternalLinksEnhancer: {
             category: 'gamePage',
             label: "Доп. ссылки (PCGW/SteamDB)",
@@ -780,6 +801,12 @@
                 <p>Скрипт проверяет наличие этих кнопок и добавляет только те, которых нет, избегая дублирования, если они уже были добавлены другим расширением (например, официальным расширением SteamDB).</p>
                  <img src="https://i.imgur.com/gJFasl5.png" alt="Пример добавленных ссылок" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
             `
+        },
+        picsTargetRegion: {
+            category: 'gamePage',
+            label: "Регион проверки",
+            title: "Регион проверки недоступности игры",
+            details: "<p>Выберите регион. Скрипт будет проверять строгие ограничения только для тех игр, страницы которых недоступны в выбранном регионе.</p>"
         },
 
         // --- Каталог ---
@@ -1418,12 +1445,13 @@
 	        select.appendChild(option);
 	    });
 
-	    select.value = GM_getValue('use_incognito_default_region', 'US');
+	    select.value = useCurrentSettings[key];
 
 	    select.addEventListener('change', function() {
 	        const selectedValue = this.value;
 	        useCurrentSettings[key] = selectedValue;
-	        GM_setValue('use_incognito_default_region', selectedValue);
+            scriptsConfig[key] = selectedValue;
+	        GM_setValue('useSettings', useCurrentSettings);
 	    });
 
 	    labelContainer.appendChild(select);
@@ -1576,7 +1604,7 @@
             if (settingData && settingData.category && categories[settingData.category]) {
                 if (useCurrentSettings.hasOwnProperty(key)) {
                     let settingRow;
-                    if (key === 'incognitoDefaultRegion') {
+                    if (key === 'incognitoDefaultRegion' || key === 'picsTargetRegion') {
                         settingRow = createSettingSelectRow(key, useIncognitoRegions);
                     } else {
                         settingRow = createSettingRow(key);
@@ -5647,6 +5675,141 @@ if (headerCtn) {
                 else window.addEventListener('DOMContentLoaded', initLoad);
             }
             rpa_init();
+        })();
+    }
+
+    // Скрипт для проверки ограничений PICS | https://store.steampowered.com/app/*
+    if (window.location.pathname.includes('/app/') && scriptsConfig.picsRestrictionCheck) {
+        (async function() {
+            try {
+                await makeGMRequest({ method: 'GET', url: 'http://localhost:8080/status' });
+            } catch (e) {
+                return;
+            }
+
+            if (!window.usePicsCache) window.usePicsCache = {};
+
+            const purchaseBlocks = document.querySelectorAll('.game_area_purchase_game, .game_area_purchase_game_wrapper');
+            let allSubIds = [];
+            let blockMapping = {};
+
+            for (const block of purchaseBlocks) {
+                let subIds = [];
+                const subIdInput = block.querySelector('input[name="subid"]');
+
+                if (subIdInput) {
+                    subIds.push(parseInt(subIdInput.value));
+                } else {
+                    const bundleWrapper = block.closest('.dynamic_bundle_description');
+                    if (bundleWrapper && bundleWrapper.dataset.dsBundleData) {
+                        try {
+                            const data = JSON.parse(bundleWrapper.dataset.dsBundleData);
+                            if (data.m_rgItems) {
+                                data.m_rgItems.forEach(item => {
+                                    if (item.m_nPackageID) subIds.push(item.m_nPackageID);
+                                });
+                            }
+                        } catch (e) {}
+                    }
+                }
+
+                if (subIds.length > 0) {
+                    allSubIds.push(...subIds);
+                    subIds.forEach(id => {
+                        if (!blockMapping[id]) blockMapping[id] = [];
+                        blockMapping[id].push(block);
+                    });
+                }
+            }
+
+            allSubIds = [...new Set(allSubIds)];
+            if (allSubIds.length === 0) return;
+
+            const targetRegion = scriptsConfig.picsTargetRegion || 'RU';
+            const inputJson = {
+                ids: allSubIds.map(id => ({ packageid: id })),
+                context: { language: "english", country_code: targetRegion, steam_realm: 1 }
+            };
+
+            const apiUrl = `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json=${encodeURIComponent(JSON.stringify(inputJson))}`;
+
+            try {
+                const apiRes = await makeGMRequest({ method: 'GET', url: apiUrl });
+                const apiData = JSON.parse(apiRes.responseText);
+                const storeItems = apiData.response?.store_items || [];
+
+                const restrictedPackageIds = storeItems
+                    .filter(item => item.success === 15 || item.visible === false || item.unvailable_for_country_restriction === true)
+                    .map(item => item.id);
+
+                const idsToFetch = restrictedPackageIds.filter(id => !window.usePicsCache[id]);
+
+                if (idsToFetch.length > 0) {
+                    try {
+                        const batchRes = await makeGMRequest({ method: 'GET', url: `http://localhost:8080/pics?subids=${idsToFetch.join(',')}` });
+                        const batchData = JSON.parse(batchRes.responseText);
+                        for (const id of idsToFetch) {
+                            if (batchData[id]) {
+                                window.usePicsCache[id] = batchData[id];
+                            }
+                        }
+                    } catch (e) {}
+                }
+
+                for (const subId of restrictedPackageIds) {
+                    const picsData = window.usePicsCache[subId];
+
+                    if (picsData && picsData.extended) {
+                        const extended = picsData.extended;
+                        const restrictedKey = Object.keys(extended).find(k => k.toLowerCase() === 'purchaserestrictedcountries');
+                        const restrictedCountriesStr = restrictedKey ? extended[restrictedKey] : '';
+                        const restrictedList = restrictedCountriesStr.split(' ').filter(c => c.trim() !== '');
+
+                        if (restrictedList.length > 0) {
+                            const blocksToUpdate = blockMapping[subId] || [];
+
+                            blocksToUpdate.forEach(block => {
+                                const priceBlock = block.querySelector('.game_purchase_price, .discount_block');
+                                if (!priceBlock) return;
+
+                                const actionBg = priceBlock.closest('.game_purchase_action_bg');
+                                if (!actionBg || actionBg.querySelector('.use-pics-warning')) return;
+
+                                const warning = document.createElement('div');
+                                warning.className = 'use-pics-warning';
+
+                                warning.style.cssText = `
+                                    color: #ff6961;
+                                    font-weight: bold;
+                                    font-size: 13px;
+                                    float: right;
+                                    margin-left: 13px;
+                                    margin-right: 15px;
+                                    display: inline-block;
+                                    line-height: 32px;
+                                    cursor: ${restrictedList.length > 2 ? 'help' : 'default'}
+                                `;
+
+                                const warningSpan = document.createElement('span');
+                                if (restrictedList.length <= 2) {
+                                    warningSpan.textContent = `🚫 Строгие ограничения: ${restrictedList.join(', ')}`;
+                                } else {
+                                    warningSpan.textContent = `🚫 Строгие ограничения: ${restrictedList.length} стран(ы)`;
+                                    warningSpan.setAttribute('data-tooltip-text', restrictedList.join(', '));
+                                }
+
+                                warning.appendChild(warningSpan);
+
+                                actionBg.insertBefore(warning, actionBg.firstChild);
+
+                                if (restrictedList.length > 2 && typeof window.BindTooltipForElement === 'function') {
+                                    window.BindTooltipForElement(warningSpan);
+                                }
+                            });
+                        }
+                    }
+                }
+            } catch (e) {}
         })();
     }
 
