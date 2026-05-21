@@ -267,6 +267,9 @@
                 <a href="#news-wishlist" class="nav-block">
                     <span class="nav-block-title">Новости и желаемое</span>
                 </a>
+                <a href="#account-features" class="nav-block">
+                    <span class="nav-block-title">Для аккаунта</span>
+                </a>
                 <a href="#general-functions" class="nav-block">
                     <span class="nav-block-title">Общие функции</span>
                 </a>
@@ -511,20 +514,24 @@
                 </div>
             </section>
 
-            <!-- Секция: Улучшения каталога Steam --><section id="catalog-improvements">
+            <!-- Секция: Улучшения каталога Steam -->
+            <section id="catalog-improvements">
                 <h2 class="text-3xl font-semibold text-dx-gold mb-6 border-b-2 border-dx-border pb-2 mt-12 text-center">Каталог Steam</h2>
                 <div class="space-y-4">
                     <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
-                        <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Доп. инфо / Фильтры</summary>
+                        <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Доп. инфо, фильтры и управление скрытием</summary>
                         <div class="p-6 border-t border-dx-border space-y-4 details-content">
-                            <p><strong>Что делает:</strong><br>Расширяет функционал страницы поиска по каталогу Steam (<a href="https://store.steampowered.com/search/" class="text-dx-gold-light hover:underline">store.steampowered.com/search/</a>).</p>
+                            <p><strong>Что делает:</strong><br>Расширяет функционал страницы поиска по каталогу Steam (<a href="https://store.steampowered.com/search/" target="_blank" class="text-dx-gold-light hover:underline">store.steampowered.com/search/</a>).</p>
+                            
                             <p><strong>При наведении:</strong></p>
                             <ul>
                                 <li>Появляется всплывающая подсказка слева от строки игры с подробной информацией:<br>издатели, разработчики, серия, отзывы (% и кол-во), статус раннего доступа, поддержка языков, первые 5 меток, краткое описание.</li>
                             </ul>
-                            <div class="text-center"><img src="https://i.imgur.com/U7DYIvJ.png" alt="[Пример дополнительной информации об игре в каталоге]" class="feature-img inline-block"></div>
-                            <hr class="border-dx-border my-4">
-                            <p><strong>Фильтры (панель справа):</strong></p>
+                            <div class="text-center my-2"><img src="https://i.imgur.com/U7DYIvJ.png" alt="[Пример дополнительной информации об игре в каталоге]" class="feature-img inline-block"></div>
+                            
+                            <hr class="border-dx-border my-6">
+                            
+                            <p><strong>Фильтры и инструменты (панель справа):</strong></p>
                             <ul>
                                 <li><strong>Русский перевод:</strong>
                                     <ul>
@@ -559,29 +566,20 @@
                                         <img src="https://i.imgur.com/dwYXJka.png" alt="[Пример фильтра по меткам 2]" class="feature-img inline-block">
                                     </div>
                                 </li>
+                                <li><strong>Скрытие (Игнор-лист):</strong>
+                                    <ul>
+                                        <li>Добавляет в панель блок с расширенными инструментами управления скрытыми играми.</li>
+                                        <div class="text-center my-2"><img src="https://i.imgur.com/VNQMppe.png" alt="[Блок инструментов скрытия]" class="feature-img inline-block"></div>
+                                        
+                                        <li class="mt-4"><em>Раскрытие:</em> Модальное окно для извлечения игр из вашего списка «Не интересно». Содержит фильтры по количеству обзоров и проценту рейтинга. Позволяет проанализировать скрытые игры на текущей странице поиска и автоматически вернуть в каталог только качественные проекты.</li>
+                                        <div class="text-center my-2"><img src="https://i.imgur.com/zCuFLbW.png" alt="[Окно Раскрывателя]" class="feature-img inline-block"></div>
+                                        
+                                        <li class="mt-4"><em>Массовое скрытие:</em> Инструмент для быстрой расчистки выдачи. Активирует режим чекбоксов слева от каждой игры на странице. Выделите весь визуальный мусор и скройте десятки игр из магазина Steam нажатием одной кнопки.</li>
+                                        <div class="text-center my-2"><img src="https://i.imgur.com/qbWPzD0.png" alt="[Окно Массового скрытия]" class="feature-img inline-block"></div>
+                                    </ul>
+                                </li>
                             </ul>
-                            <p>Фильтры применяются динамически по мере получения данных от API.</p>
-                        </div>
-                    </details>
-                    <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
-                        <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Скрытие игр</summary>
-                        <div class="p-6 border-t border-dx-border space-y-4 details-content">
-                            <p><strong>Что делает:</strong><br>Добавляет инструменты для массового скрытия неинтересующих игр прямо со страницы поиска по каталогу.</p>
-                            <p><strong>Элементы интерфейса:</strong></p>
-                            <ul>
-                                <li>Счетчик отображаемых игр (слева вверху).</li>
-                                <li>Чекбокс слева от каждой игры (кроме уже купленных/скрытых/в желаемом) для отметки на скрытие.</li>
-                                <li>Кнопка "Скрыть выбранное" (слева вверху).</li>
-                            </ul>
-                            <p><strong>Принцип работы:</strong></p>
-                            <ol class="space-y-2">
-                                <li>Отмечаете чекбоксами игры, которые хотите скрыть.</li>
-                                <li>Нажимаете "Скрыть выбранное".</li>
-                                <li>Скрипт добавляет эти игры в ваш официальный список игнорируемых в Steam и удаляет их элементы со страницы.</li>
-                            </ol>
-                            <p>В отличие от стандартного механизма Steam, элементы полностью удаляются из DOM, что улучшает производительность при работе с большим количеством результатов.</p>
-                            <p><strong>Внимание:</strong> Рекомендуется использовать только при необходимости массового скрытия.<br>Для обычного просмотра каталога лучше отключать эту опцию.</p>
-                            <div class="text-center"><img src="https://i.imgur.com/uCA8x2P.png" alt="[Пример системы скрытия игр в каталоге]" class="feature-img inline-block"></div>
+                            <p class="mt-4">Фильтры применяются динамически по мере получения данных от API.</p>
                         </div>
                     </details>
                 </div>
@@ -811,6 +809,28 @@
                                 </li>
                                 <center><img src="https://i.imgur.com/T5pUb9a.png" alt="Пример интерфейса хранилища" class="feature-img inline-block"></center>
                             </ol>
+                        </div>
+                    </details>
+                </div>
+            </section>
+
+            <!-- Секция: Аккаунт -->
+            <section id="account-features">
+                <h2 class="text-3xl font-semibold text-dx-gold mb-6 border-b-2 border-dx-border pb-2 mt-12 text-center">Аккаунт</h2>
+                <div class="space-y-4">
+                    <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
+                        <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Умная очистка игнор-листа</summary>
+                        <div class="p-6 border-t border-dx-border space-y-4 details-content">
+                            <p><strong>Что делает:</strong><br>Добавляет кнопку «Управление очисткой» на странице списка скрытых продуктов (<a href="https://store.steampowered.com/account/notinterested/" target="_blank" class="text-dx-gold-light hover:underline">store.steampowered.com/account/notinterested/</a>).</p>
+                            <p>Этот инструмент позволяет массово извлекать игры из списка «Не интересно», фильтруя их по качеству.</p>
+                            <ol class="space-y-2">
+                                <li><strong>Сбор данных:</strong> Скрипт анализирует весь ваш игнор-лист и загружает актуальные данные (отзывы и рейтинги) для скрытых игр через официальное API Steam.</li>
+                                <li><strong>Фильтрация:</strong> Вы задаете критерии (например, вернуть игры, у которых больше 500 обзоров и рейтинг выше 80%).</li>
+                                <li><strong>Раскрытие:</strong> Нажимаете кнопку, и скрипт аккуратно, обходя лимиты Steam (ошибка 429), удаляет подходящие игры из игнор-листа, возвращая их в рекомендации магазина.</li>
+                            </ol>
+                            <div class="text-center mt-4">
+                                <img src="https://i.imgur.com/hsJ9Tvw.jpeg" alt="[Окно очистки игнор-листа]" class="feature-img inline-block">
+                            </div>
                         </div>
                     </details>
                 </div>
