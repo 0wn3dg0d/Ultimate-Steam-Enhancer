@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.8.9
+// @version      2.1.9.0
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -463,7 +463,6 @@
         salesMaster: true, // Скрипт для страницы игры (%; агрегатор цен из разных магазинов) | https://store.steampowered.com/app/*
         pageGiftHelper: true, // Скрипт для страницы игры, для проверки возможности отправки подарка друзьям в других странах | https://store.steampowered.com/app/*
         catalogInfo: true, // Скрипт для получения дополнительной информации об игре при наведении на неё на странице поиска по каталогу | https://store.steampowered.com/search/
-        catalogHider: false, // Скрипт скрытия игр на странице поиска по каталогу | https://store.steampowered.com/search/
         newsFilter: true, // Скрипт для скрытия новостей в новостном центре: | https://store.steampowered.com/news/
         Kaznachei: true, // Скрипт для показа годовых и исторических продаж предмета на торговой площадке Steam | https://steamcommunity.com/market/listings/*
         homeInfo: true, // Скрипт для получения дополнительной информации об игре при наведении на неё на странице вашей активности Steam | https://steamcommunity.com/my/
@@ -473,6 +472,7 @@
         RuRegionalPriceAnalyzer: true, // Скрипт для страницы игры (Анализатор цен; цена РФ vs рекомендованная; рейтинг цен) | https://store.steampowered.com/app/*
         picsRestrictionCheck: false, // Скрипт для проверки региональных ограничений (требует локальный сервер) | https://store.steampowered.com/app/*
         picsTargetRegion: 'RU',
+        accountIgnoredCleaner: true, // Скрипт для умной очистки списка игнорируемых продуктов | https://store.steampowered.com/account/notinterested/
         // Дополнительные настройки
         autoExpandHltb: false, // Автоматически раскрывать спойлер HLTB
         autoLoadReviews: false, // Автоматически загружать дополнительные обзоры
@@ -486,9 +486,9 @@
     /* --- Код для настроек U.S.E. --- */
 	const useDefaultSettings = {
 	    gamePage: true, hltbData: true, friendsPlaytime: true, earlyaccdata: true, zogInfo: true, pageGiftHelper: true, ExternalLinksEnhancer: true,
-	    platiSales: true, salesMaster: true, picsRestrictionCheck: false, picsTargetRegion: 'RU', catalogInfo: true, catalogHider: false, newsFilter: true,
+	    platiSales: true, salesMaster: true, picsRestrictionCheck: false, picsTargetRegion: 'RU', catalogInfo: true, newsFilter: true,
 	    Kaznachei: true, homeInfo: true, Sledilka: true, wishlistGiftHelper: true, stelicasRoulette: true, RuRegionalPriceAnalyzer: true,
-	    autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false,
+	    autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false, accountIgnoredCleaner: true,
         salesMasterAutoSearch: false, salesMasterAutoInsertTitle: true,
         incognitoModeEnabled: true, showIncognitoButton: false, incognitoDefaultRegion: 'US', WidgetFixer: true
 	};
@@ -858,31 +858,19 @@
                     </li>
                      <img src="https://i.imgur.com/FoV5Ftb.png" alt="Пример Фильтра по меткам" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                      <img src="https://i.imgur.com/dwYXJka.png" alt="Пример Фильтра по меткам 2" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                     <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+                     <li><strong>Скрытие (Игнор-лист):</strong>
+                        <ul>
+                            <li>Добавляет в панель блок с расширенными инструментами управления скрытыми играми.</li>
+                            <img src="https://i.imgur.com/VNQMppe.png" alt="Блок инструментов скрытия" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                            <li style="margin-top: 10px;"><em>Раскрытие:</em> Модальное окно для извлечения игр из вашего списка «Не интересно». Содержит фильтры по количеству обзоров и проценту рейтинга. Позволяет проанализировать скрытые игры на текущей странице поиска и автоматически вернуть в каталог только качественные проекты.</li>
+                            <img src="https://i.imgur.com/zCuFLbW.png" alt="Окно Раскрывателя" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                            <li style="margin-top: 10px;"><em>Массовое скрытие:</em> Инструмент для быстрой расчистки выдачи. Активирует режим чекбоксов слева от каждой игры на странице. Выделите весь визуальный мусор и скройте десятки игр из магазина Steam нажатием одной кнопки.</li>
+                            <img src="https://i.imgur.com/qbWPzD0.png" alt="Окно Массового скрытия" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                        </ul>
+                    </li>
                 </ul>
                  <p>Фильтры применяются динамически по мере получения данных от API.</p>
-            `
-        },
-        catalogHider: {
-            category: 'catalog',
-            label: "Скрытие игр",
-            title: "Система скрытия игр в каталоге поиска",
-            details: `
-                <p><strong>Что делает:</strong> Добавляет инструменты для массового скрытия неинтересующих игр прямо со страницы поиска по каталогу.</p>
-                <p><strong>Элементы интерфейса:</strong></p>
-                <ul>
-                    <li>Счетчик отображаемых игр (слева вверху).</li>
-                    <li>Чекбокс слева от каждой игры (кроме уже купленных/скрытых/в желаемом) для отметки на скрытие.</li>
-                    <li>Кнопка "Скрыть выбранное" (слева вверху).</li>
-                </ul>
-                <p><strong>Принцип работы:</strong></p>
-                <ol>
-                    <li>Отмечаете чекбоксами игры, которые хотите скрыть.</li>
-                    <li>Нажимаете "Скрыть выбранное".</li>
-                    <li>Скрипт добавляет эти игры в ваш официальный список игнорируемых в Steam и удаляет их элементы со страницы.</li>
-                </ol>
-                <p>В отличие от стандартного механизма Steam, элементы полностью удаляются из DOM, что улучшает производительность при работе с большим количеством результатов.</p>
-                <p><strong>Внимание:</strong> Рекомендуется использовать только при необходимости массового скрытия. Для обычного просмотра каталога лучше отключать эту опцию.</p>
-                <img src="https://i.imgur.com/uCA8x2P.png" alt="Пример Скрытия Игр" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
             `
         },
          // --- Сообщество / Активность ---
@@ -1089,6 +1077,22 @@
                  <p>Это помогает легко находить выгодные предложения, оценивать адекватность ценообразования издателя и подбирать экономически целесообразные подарки для друзей за границей.</p>
                  <p><i><small>*Примечание: Скорость загрузки данных зависит от размера списка желаемого.</small></i></p>
                  <img src="https://i.imgur.com/X8zPj0M.png" alt="Пример WishlistGiftHelper" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
+        },
+        // --- Аккаунт ---
+        accountIgnoredCleaner: {
+            category: 'account',
+            label: "Очистка игнор-листа",
+            title: "Умная очистка списка скрытых продуктов",
+            details: `
+                <p><strong>Что делает:</strong> Добавляет кнопку «Управление очисткой» на странице списка скрытых продуктов (<a href="https://store.steampowered.com/account/notinterested/" target="_blank" style="color:#67c1f5;">store.steampowered.com/account/notinterested/</a>).</p>
+                <p>Этот инструмент позволяет массово извлекать игры из списка «Не интересно», фильтруя их по качеству.</p>
+                <ol style="margin-left: 20px; padding-left: 5px; list-style-type: decimal;">
+                    <li style="margin-bottom: 0.5em;"><strong>Сбор данных:</strong> Скрипт анализирует весь ваш игнор-лист и загружает актуальные данные (отзывы и рейтинги) для скрытых игр через официальное API Steam.</li>
+                    <li style="margin-bottom: 0.5em;"><strong>Фильтрация:</strong> Вы задаете критерии (например, вернуть игры, у которых больше 500 обзоров и рейтинг выше 80%).</li>
+                    <li style="margin-bottom: 0.5em;"><strong>Раскрытие:</strong> Нажимаете кнопку, и скрипт аккуратно, обходя лимиты Steam (ошибка 429), удаляет подходящие игры из игнор-листа, возвращая их в рекомендации магазина.</li>
+                </ol>
+                <img src="https://i.imgur.com/hsJ9Tvw.jpeg" alt="Окно очистки игнор-листа" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+            `
         },
         // --- Дополнительные ---
         autoExpandHltb: {
@@ -1582,6 +1586,7 @@
             community: { title: 'Для ленты активности', container: document.createElement('div') },
             market: { title: 'Для торговой площадки', container: document.createElement('div') },
             news_wishlist: { title: 'Для списка желаемого / Новостей', container: document.createElement('div') },
+            account: { title: 'Для аккаунта', container: document.createElement('div') },
             additional: { title: 'Дополнительные настройки', container: document.createElement('div') },
             incognitoMode: { title: 'Виртуальный режим «Инкогнито»', container: document.createElement('div') }
         };
@@ -5831,7 +5836,7 @@ if (headerCtn) {
             let RUSSIAN_TRANSLATION_CHECKBOX = null;
             let RUSSIAN_VOICE_CHECKBOX = null;
             let NO_RUSSIAN_CHECKBOX = null;
-            const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v2';
+            const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v3';
             const STEAM_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
             const OWNED_APPS_CACHE_KEY = 'SteamEnhancer_OwnedApps';
             const USERDATA_URL = 'https://store.steampowered.com/dynamicstore/userdata/';
@@ -5840,6 +5845,38 @@ if (headerCtn) {
             let allTags = {};
             let activeTagFilters = {};
             let hiddenTagFilters = {};
+
+            const orb_Config = {
+                action_delay: 2500,
+                error_wait: 180
+            };
+
+            const orb_State = {
+                collectedApps: new Map(),
+                ignoredApps: new Set(),
+                queueToUnhide: [],
+                isProcessing: false,
+                isPaused: false,
+                processedCount: 0,
+                pauseInterval: null,
+                sessionID: '',
+                totalToProcess: 0
+            };
+
+            const HADRIAN_hiderConfig = {
+                action_delay: 2500,
+                error_wait: 180
+            };
+
+            const TITUS_hiderState = {
+                isActive: false,
+                isProcessing: false,
+                isPaused: false,
+                queue: [],
+                processedCount: 0,
+                totalToProcess: 0,
+                pauseInterval: null
+            };
 
             async function loadSteamTags() {
                 const cached = GM_getValue(STEAM_TAGS_CACHE_KEY, {
@@ -5980,6 +6017,13 @@ if (headerCtn) {
 
                 items.forEach(item => {
                     const appId = item.id;
+
+                    orb_State.collectedApps.set(appId, {
+                        reviews: item.reviews?.summary_filtered?.review_count || 0,
+                        rating: item.reviews?.summary_filtered?.percent_positive || 0,
+                        fetched: true
+                    });
+
                     const gameElement = document.querySelector(`a.search_result_row[data-ds-appid="${appId}"]`);
                     if (gameElement) {
                         const gameData = {
@@ -6010,6 +6054,9 @@ if (headerCtn) {
                         }
                     }
                 });
+
+                if (typeof updateStatsUI === 'function') updateStatsUI();
+                if (typeof updateMatchingCount === 'function') updateMatchingCount();
             }
 
             function collectAndFetchAppIds() {
@@ -6448,17 +6495,51 @@ if (headerCtn) {
                     </div>
                 `;
 
+                const unhideBlock = document.createElement('div');
+                unhideBlock.className = 'block search_collapse_block';
+                unhideBlock.innerHTML = `
+                    <div data-panel="{&quot;focusable&quot;:true,&quot;clickOnActivate&quot;:true}" class="block_header labs_block_header">
+                        <div>Скрытие</div>
+                    </div>
+                    <div class="block_content block_content_inner">
+                        <div class="tab_filter_control_row" style="margin-bottom: 5px;">
+                             <span id="open-unhider-modal-btn" class="tab_filter_control_label">Раскрытие</span>
+                        </div>
+                        <div class="tab_filter_control_row">
+                             <span id="open-hider-modal-btn" class="tab_filter_control_label">Массовое скрытие</span>
+                        </div>
+                    </div>
+                `;
+
                 const priceBlock = document.querySelector('.block.search_collapse_block[data-collapse-name="price"]');
                 priceBlock.parentNode.insertBefore(filterBlock, priceBlock.nextSibling);
                 priceBlock.parentNode.insertBefore(dlcFilterBlock, filterBlock.nextSibling);
                 priceBlock.parentNode.insertBefore(earlyAccessFilterBlock, dlcFilterBlock.nextSibling);
                 priceBlock.parentNode.insertBefore(tagFilterBlock, earlyAccessFilterBlock.nextSibling);
+                priceBlock.parentNode.insertBefore(unhideBlock, tagFilterBlock.nextSibling);
 
                 document.getElementById('open-tag-modal-btn-styled').addEventListener('click', () => {
                     const modal = document.getElementById('tag-filter-modal');
                     if (modal) {
                         modal.style.display = 'flex';
                         renderTagFilters();
+                    }
+                });
+
+                document.getElementById('open-unhider-modal-btn').addEventListener('click', () => {
+                    const modal = document.getElementById('orb-modal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        updateStatsUI();
+                        updateMatchingCount();
+                    }
+                });
+
+                document.getElementById('open-hider-modal-btn').addEventListener('click', () => {
+                    const modal = document.getElementById('sth-modal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        AUGUSTUS_updateHiderStats();
                     }
                 });
 
@@ -6641,12 +6722,51 @@ if (headerCtn) {
             }
 
             function observeNewElements() {
+                let VESPASIAN_updateTimeout = null;
+
                 const observer = new MutationObserver((mutations) => {
-                    mutations.forEach(mutation => {
+                    let hasRelevantChanges = false;
+
+                    for (let i = 0; i < mutations.length; i++) {
+                        const mutation = mutations[i];
                         if (mutation.type === 'childList') {
-                            collectAndFetchAppIds();
+                            for (let j = 0; j < mutation.addedNodes.length; j++) {
+                                const node = mutation.addedNodes[j];
+
+                                if (node.nodeType === 1) {
+                                    if (node.classList && (
+                                        node.classList.contains('steam-hider-checkbox') ||
+                                        node.classList.contains('sth-log-msg') ||
+                                        node.classList.contains('orb-log-msg')
+                                    )) {
+                                        continue;
+                                    }
+                                    if (node.id && (node.id.startsWith('sth-') || node.id.startsWith('orb-'))) {
+                                        continue;
+                                    }
+                                } else if (node.nodeType === 3) {
+                                    if (mutation.target && mutation.target.id && (mutation.target.id.startsWith('sth-') || mutation.target.id.startsWith('orb-'))) {
+                                        continue;
+                                    }
+                                }
+
+                                hasRelevantChanges = true;
+                                break;
+                            }
                         }
-                    });
+                        if (hasRelevantChanges) break;
+                    }
+
+                    if (hasRelevantChanges) {
+                        clearTimeout(VESPASIAN_updateTimeout);
+                        VESPASIAN_updateTimeout = setTimeout(() => {
+                            collectAndFetchAppIds();
+                            if (typeof TITUS_hiderState !== 'undefined' && TITUS_hiderState.isActive) {
+                                COMMODUS_injectCheckboxes();
+                                AUGUSTUS_updateHiderStats();
+                            }
+                        }, 250);
+                    }
                 });
 
                 observer.observe(document.body, {
@@ -6655,13 +6775,700 @@ if (headerCtn) {
                 });
             }
 
+            function orbLog(message, type = 'info') {
+                const consoleEl = document.getElementById('orb-console');
+                if (!consoleEl) return;
+                const time = new Date().toLocaleTimeString('ru-RU', { hour12: false });
+                const line = document.createElement('div');
+                line.className = `orb-log-msg orb-log-${type}`;
+                line.innerHTML = `[${time}] ${message}`;
+                consoleEl.appendChild(line);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
+
+            async function initOrbDataGathering() {
+                orb_State.sessionID = typeof unsafeWindow !== 'undefined' ? unsafeWindow.g_sessionID : window.g_sessionID;
+                orbLog('Запрашиваем данные аккаунта (userdata)...', 'info');
+                try {
+                    const resp = await new Promise((resolve, reject) => {
+                        GM_xmlhttpRequest({
+                            method: 'GET',
+                            url: 'https://store.steampowered.com/dynamicstore/userdata/',
+                            onload: resolve,
+                            onerror: reject
+                        });
+                    });
+                    const data = JSON.parse(resp.responseText);
+                    if (data && data.rgIgnoredApps) {
+                        orb_State.ignoredApps = new Set(Object.keys(data.rgIgnoredApps).map(Number));
+                        orbLog(`Найдено ${orb_State.ignoredApps.size} игр в игнор-листе.`, 'success');
+                    }
+                } catch (e) {
+                    orbLog('Не удалось получить userdata.', 'error');
+                }
+            }
+
+            function updateStatsUI() {
+                const statTotal = document.getElementById('orb-stat-total');
+                const statIgnored = document.getElementById('orb-stat-ignored');
+                if (!statTotal || !statIgnored) return;
+
+                let total = 0;
+                let ignoredOnPage = 0;
+
+                for (const [id, data] of orb_State.collectedApps.entries()) {
+                    if (data.fetched) {
+                        total++;
+                        const gameRow = document.querySelector(`a.search_result_row[data-ds-appid="${id}"]`);
+                        if (orb_State.ignoredApps.has(id) || (gameRow && gameRow.classList.contains('ds_ignored'))) {
+                            ignoredOnPage++;
+                        }
+                    }
+                }
+
+                statTotal.textContent = total;
+                statIgnored.textContent = ignoredOnPage;
+            }
+
+            function updateMatchingCount() {
+                if (orb_State.isProcessing) return;
+
+                const minRevInput = document.getElementById('orb-min-rev').value;
+                const maxRevInput = document.getElementById('orb-max-rev').value;
+                const minRatInput = document.getElementById('orb-min-rat').value;
+                const maxRatInput = document.getElementById('orb-max-rat').value;
+
+                const minRev = minRevInput !== "" ? parseInt(minRevInput, 10) : 0;
+                const maxRev = maxRevInput !== "" ? parseInt(maxRevInput, 10) : Infinity;
+                const minRat = minRatInput !== "" ? parseInt(minRatInput, 10) : 0;
+                const maxRat = maxRatInput !== "" ? parseInt(maxRatInput, 10) : 100;
+
+                let matchedIds = [];
+
+                for (const [id, data] of orb_State.collectedApps.entries()) {
+                    if (!data.fetched) continue;
+
+                    const gameRow = document.querySelector(`a.search_result_row[data-ds-appid="${id}"]`);
+                    const isIgnored = orb_State.ignoredApps.has(id) || (gameRow && gameRow.classList.contains('ds_ignored'));
+
+                    if (!isIgnored) continue;
+
+                    if (data.reviews >= minRev && data.reviews <= maxRev &&
+                        data.rating >= minRat && data.rating <= maxRat) {
+                        matchedIds.push(id);
+                    }
+                }
+
+                orb_State.queueToUnhide = matchedIds;
+                const matchedStat = document.getElementById('orb-stat-matched');
+                if (matchedStat) matchedStat.textContent = matchedIds.length;
+
+                const actionBtn = document.getElementById('orb-action-btn');
+                if (actionBtn) actionBtn.disabled = matchedIds.length === 0;
+            }
+
+            async function startUnhidingProcess() {
+                if (orb_State.queueToUnhide.length === 0) return;
+
+                orb_State.isProcessing = true;
+                orb_State.processedCount = 0;
+                orb_State.totalToProcess = orb_State.queueToUnhide.length;
+
+                document.getElementById('orb-action-btn').disabled = true;
+                document.getElementById('orb-progress-wrap').style.display = 'flex';
+                ['orb-min-rev', 'orb-max-rev', 'orb-min-rat', 'orb-max-rat'].forEach(id => {
+                    document.getElementById(id).disabled = true;
+                });
+
+                orbLog(`Начинаем раскрытие ${orb_State.totalToProcess} игр...`, 'info');
+                processQueue();
+            }
+
+            async function processQueue() {
+                if (orb_State.queueToUnhide.length === 0) {
+                    finishProcess();
+                    return;
+                }
+
+                if (orb_State.isPaused) return;
+
+                const appId = orb_State.queueToUnhide.shift();
+                updateProgressUI(appId);
+
+                try {
+                    await unhideRequest(appId);
+
+                    orb_State.processedCount++;
+                    orb_State.ignoredApps.delete(appId);
+
+                    const gameRow = document.querySelector(`a.search_result_row[data-ds-appid="${appId}"]`);
+                    if (gameRow) {
+                        gameRow.classList.remove('ds_ignored', 'ds_flagged');
+
+                        const flag = gameRow.querySelector('.ds_ignored_flag');
+                        if (flag) flag.remove();
+
+                        const asTags = gameRow.querySelectorAll('.as-tags span');
+                        asTags.forEach(tag => {
+                            if (tag.textContent.trim() === 'Не интересно') {
+                                const parent = tag.closest('.as-tags');
+                                tag.remove();
+                                if (parent && parent.children.length === 0) parent.remove();
+                            }
+                        });
+                    }
+
+                    orbLog(`Игра ID ${appId} успешно раскрыта.`, 'success');
+                    setTimeout(processQueue, orb_Config.action_delay);
+
+                } catch (error) {
+                    if (error.status === 429) {
+                        orbLog(`Ошибка 429: Лимит запросов. Пауза ${orb_Config.error_wait} сек.`, 'error');
+                        orb_State.queueToUnhide.unshift(appId);
+                        initiatePause(orb_Config.error_wait);
+                    } else {
+                        orbLog(`Неизвестная ошибка при ID ${appId}. Пропускаем.`, 'error');
+                        orb_State.processedCount++;
+                        setTimeout(processQueue, orb_Config.action_delay);
+                    }
+                }
+            }
+
+            function unhideRequest(appId) {
+                return new Promise((resolve, reject) => {
+                    GM_xmlhttpRequest({
+                        method: "POST",
+                        url: "https://store.steampowered.com/recommended/ignorerecommendation/",
+                        data: `sessionid=${orb_State.sessionID}&appid=${appId}&remove=1&snr=1_account_notinterested_`,
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        onload: function(res) {
+                            if (res.status === 200) resolve();
+                            else reject({ status: res.status });
+                        },
+                        onerror: function() {
+                            reject({ status: 0 });
+                        }
+                    });
+                });
+            }
+
+            function initiatePause(seconds) {
+                orb_State.isPaused = true;
+                let currentWait = seconds;
+                const resumeBtn = document.getElementById('orb-resume-btn');
+                resumeBtn.style.display = 'inline-block';
+
+                const tick = () => {
+                    if (!orb_State.isPaused) return;
+
+                    document.getElementById('orb-progress-text').textContent = `Пауза (Лимит запросов)`;
+                    document.getElementById('orb-progress-time').textContent = `Ждем ${currentWait} сек`;
+
+                    if (currentWait <= 0) {
+                        orb_State.isPaused = false;
+                        resumeBtn.style.display = 'none';
+                        orbLog('Пауза окончена. Продолжаем...', 'info');
+                        processQueue();
+                    } else {
+                        currentWait--;
+                        orb_State.pauseInterval = setTimeout(tick, 1000);
+                    }
+                };
+                tick();
+            }
+
+            function updateProgressUI(currentAppId) {
+                const total = orb_State.totalToProcess;
+                const done = orb_State.processedCount;
+                const remainingItems = total - done;
+
+                const secondsLeft = Math.ceil((remainingItems * orb_Config.action_delay) / 1000);
+                const mins = Math.floor(secondsLeft / 60);
+                const secs = secondsLeft % 60;
+                const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+                const pct = Math.round((done / total) * 100);
+
+                document.getElementById('orb-progress-text').innerHTML = `Игра: <b>${currentAppId}</b> (${done}/${total})`;
+                document.getElementById('orb-progress-time').innerHTML = `~${timeStr}`;
+                document.getElementById('orb-progress-fill').style.width = `${pct}%`;
+            }
+
+            function finishProcess() {
+                orb_State.isProcessing = false;
+                orbLog('✅ Все подходящие игры успешно раскрыты!', 'success');
+
+                document.getElementById('orb-progress-text').textContent = "Завершено";
+                document.getElementById('orb-progress-time').textContent = "";
+                document.getElementById('orb-progress-fill').style.width = `100%`;
+
+                ['orb-min-rev', 'orb-max-rev', 'orb-min-rat', 'orb-max-rat'].forEach(id => {
+                    document.getElementById(id).disabled = false;
+                });
+
+                if (typeof unsafeWindow !== 'undefined' && unsafeWindow.GDynamicStore) {
+                    unsafeWindow.GDynamicStore.InvalidateCache();
+                }
+
+                updateStatsUI();
+                updateMatchingCount();
+            }
+
+            function buildOrbUI() {
+                const modal = document.createElement('div');
+                modal.id = 'orb-modal';
+                modal.innerHTML = `
+                    <div id="orb-modal-header">
+                        <span class="orb-header-title">Управление каталогом (Раскрыватель)</span>
+                        <div class="orb-header-controls">
+                            <button id="orb-minimize-btn">_</button>
+                            <button id="orb-close-btn">✖</button>
+                        </div>
+                    </div>
+                    <div id="orb-modal-body">
+                        <button id="orb-all-ignored-btn" class="orb-action-btn" style="background: linear-gradient(to bottom, #2a475e 5%, #1b2838 95%); margin-bottom: 5px;">Все игнорируемые</button>
+                        <div class="orb-stats-box">
+                            <div>Обработано игр со страницы: <b id="orb-stat-total" style="color:#fff;">0</b></div>
+                            <div>Из них находятся в игноре: <b id="orb-stat-ignored" style="color:#ffc107;">0</b></div>
+                        </div>
+
+                        <div class="orb-filters-grid">
+                            <div class="orb-input-group">
+                                <label>Мин. обзоров</label>
+                                <input type="number" id="orb-min-rev" placeholder="Например: 100">
+                            </div>
+                            <div class="orb-input-group">
+                                <label>Макс. обзоров</label>
+                                <input type="number" id="orb-max-rev" placeholder="Без лимита">
+                            </div>
+                            <div class="orb-input-group">
+                                <label>Мин. рейтинг (%)</label>
+                                <input type="number" id="orb-min-rat" placeholder="Например: 70">
+                            </div>
+                            <div class="orb-input-group">
+                                <label>Макс. рейтинг (%)</label>
+                                <input type="number" id="orb-max-rat" placeholder="Например: 100">
+                            </div>
+                        </div>
+
+                        <div class="orb-stats-box" style="text-align: center; font-size: 14px;">
+                            Игр, подходящих под критерии: <b id="orb-stat-matched" style="color:#8cc540; font-size: 16px;">0</b>
+                        </div>
+
+                        <button id="orb-action-btn" class="orb-action-btn">Начать раскрытие игр</button>
+
+                        <div id="orb-progress-wrap" class="orb-progress-container">
+                            <div class="orb-progress-info">
+                                <span id="orb-progress-text">Ожидание...</span>
+                                <span id="orb-progress-time">--:--</span>
+                            </div>
+                            <div class="orb-progress-bar-bg"><div id="orb-progress-fill" class="orb-progress-bar-fill"></div></div>
+                            <div style="text-align: right;"><button id="orb-resume-btn" class="orb-resume-btn">Продолжить вручную</button></div>
+                        </div>
+
+                        <div id="orb-console"></div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const restoreBtn = document.createElement('button');
+                restoreBtn.id = 'orb-restore-btn';
+                restoreBtn.textContent = 'Раскрыватель 🛠';
+                document.body.appendChild(restoreBtn);
+
+                restoreBtn.addEventListener('click', () => {
+                    modal.style.display = 'flex';
+                    restoreBtn.style.display = 'none';
+                });
+
+                document.getElementById('orb-close-btn').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                });
+
+                document.getElementById('orb-all-ignored-btn').addEventListener('click', () => {
+                    window.open('https://store.steampowered.com/account/notinterested/', '_blank');
+                });
+
+                const body = document.getElementById('orb-modal-body');
+                document.getElementById('orb-minimize-btn').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    restoreBtn.style.display = 'block';
+                });
+
+                const header = document.getElementById('orb-modal-header');
+                let isDragging = false, startX, startY, initialX, initialY;
+
+                header.addEventListener('mousedown', (e) => {
+                    if(e.target.tagName === 'BUTTON') return;
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initialX = modal.offsetLeft;
+                    initialY = modal.offsetTop;
+                });
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    modal.style.left = `${initialX + e.clientX - startX}px`;
+                    modal.style.top = `${initialY + e.clientY - startY}px`;
+                    modal.style.right = 'auto';
+                });
+                document.addEventListener('mouseup', () => { isDragging = false; });
+
+                ['orb-min-rev', 'orb-max-rev', 'orb-min-rat', 'orb-max-rat'].forEach(id => {
+                    document.getElementById(id).addEventListener('input', updateMatchingCount);
+                });
+
+                document.getElementById('orb-action-btn').addEventListener('click', startUnhidingProcess);
+
+                document.getElementById('orb-resume-btn').addEventListener('click', () => {
+                    if(orb_State.isPaused) {
+                        clearTimeout(orb_State.pauseInterval);
+                        orb_State.isPaused = false;
+                        orbLog('Продолжено вручную.', 'info');
+                        document.getElementById('orb-resume-btn').style.display = 'none';
+                        document.getElementById('orb-progress-text').textContent = "Возобновление...";
+                        processQueue();
+                    }
+                });
+            }
+
+            function CONSTANTINE_hiderLog(message, type = 'info') {
+                const consoleEl = document.getElementById('sth-console');
+                if (!consoleEl) return;
+                const time = new Date().toLocaleTimeString('ru-RU', { hour12: false });
+                const line = document.createElement('div');
+                line.className = `sth-log-msg sth-log-${type}`;
+                line.innerHTML = `[${time}] ${message}`;
+                consoleEl.appendChild(line);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
+
+            function AUGUSTUS_updateHiderStats() {
+                const totalAvailableEl = document.getElementById('sth-stat-available');
+                const totalCheckedEl = document.getElementById('sth-stat-checked');
+                if (!totalAvailableEl || !totalCheckedEl) return;
+
+                const targetRows = document.querySelectorAll("a.search_result_row:not(.ds_ignored):not(.ds_excluded_by_preferences):not(.ds_owned)");
+                const checkedBoxes = document.querySelectorAll(".steam-hider-checkbox:checked");
+
+                totalAvailableEl.textContent = targetRows.length;
+                totalCheckedEl.textContent = checkedBoxes.length;
+                document.getElementById('sth-action-btn').disabled = checkedBoxes.length === 0 || TITUS_hiderState.isProcessing;
+            }
+
+            function COMMODUS_injectCheckboxes() {
+                const container = document.getElementById('search_resultsRows');
+                if (!container) return;
+
+                const targets = container.querySelectorAll("a.search_result_row:not(.ds_ignored):not(.ds_excluded_by_preferences):not(.ds_owned)");
+                targets.forEach(link => {
+                    if (link.querySelector(".steam-hider-checkbox")) return;
+                    if (!link.dataset.dsAppid) return;
+
+                    const checkbox = document.createElement("input");
+                    checkbox.type = "checkbox";
+                    checkbox.className = "steam-hider-checkbox";
+                    checkbox.dataset.appid = link.dataset.dsAppid;
+
+                    link.insertBefore(checkbox, link.firstChild);
+
+                    checkbox.addEventListener("change", function(e) {
+                        e.stopPropagation();
+                        link.classList.toggle('steam-hider-row-selected', this.checked);
+                        AUGUSTUS_updateHiderStats();
+                    });
+
+                    checkbox.addEventListener("click", function(e) {
+                        e.stopPropagation();
+                    });
+                });
+            }
+
+            function DOMITIAN_clearCheckboxes() {
+                document.querySelectorAll(".steam-hider-checkbox").forEach(el => el.remove());
+                document.querySelectorAll(".steam-hider-row-selected").forEach(el => el.classList.remove("steam-hider-row-selected"));
+            }
+
+            function NERVA_toggleHiderMode(enable) {
+                TITUS_hiderState.isActive = enable;
+                const toggle = document.getElementById('sth-mode-toggle');
+                if (toggle) toggle.checked = enable;
+
+                if (enable) {
+                    COMMODUS_injectCheckboxes();
+                    AUGUSTUS_updateHiderStats();
+                } else {
+                    DOMITIAN_clearCheckboxes();
+                    const statChecked = document.getElementById('sth-stat-checked');
+                    if (statChecked) statChecked.textContent = '0';
+                    const actBtn = document.getElementById('sth-action-btn');
+                    if (actBtn) actBtn.disabled = true;
+                }
+            }
+
+            async function VESPASIAN_startHidingProcess() {
+                const checkedBoxes = document.querySelectorAll(".steam-hider-checkbox:checked");
+                if (checkedBoxes.length === 0) return;
+
+                TITUS_hiderState.isProcessing = true;
+                TITUS_hiderState.processedCount = 0;
+                TITUS_hiderState.queue = Array.from(checkedBoxes).map(cb => parseInt(cb.dataset.appid, 10));
+                TITUS_hiderState.totalToProcess = TITUS_hiderState.queue.length;
+
+                document.getElementById('sth-action-btn').disabled = true;
+                document.getElementById('sth-mode-toggle').disabled = true;
+                document.getElementById('sth-progress-wrap').style.display = 'flex';
+
+                CONSTANTINE_hiderLog(`Начинаем скрытие ${TITUS_hiderState.totalToProcess} игр...`, 'info');
+                TIBERIUS_processHiderQueue();
+            }
+
+            async function TIBERIUS_processHiderQueue() {
+                if (TITUS_hiderState.queue.length === 0) {
+                    CALIGULA_finishHiderProcess();
+                    return;
+                }
+
+                if (TITUS_hiderState.isPaused) return;
+
+                const appId = TITUS_hiderState.queue.shift();
+                CLAUDIUS_updateHiderProgressUI(appId);
+
+                try {
+                    await new Promise((resolve, reject) => {
+                        GM_xmlhttpRequest({
+                            method: "POST",
+                            url: "https://store.steampowered.com/recommended/ignorerecommendation/",
+                            data: `sessionid=${orb_State.sessionID}&appid=${appId}&remove=0&snr=1_account_notinterested_`,
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            onload: function(res) {
+                                if (res.status === 200) resolve();
+                                else reject({ status: res.status });
+                            },
+                            onerror: function() { reject({ status: 0 }); }
+                        });
+                    });
+
+                    TITUS_hiderState.processedCount++;
+                    if (typeof orb_State !== 'undefined' && orb_State.ignoredApps) {
+                        orb_State.ignoredApps.add(appId);
+                    }
+
+                    const gameRow = document.querySelector(`a.search_result_row[data-ds-appid="${appId}"]`);
+                    if (gameRow) {
+                        gameRow.classList.add('ds_ignored', 'ds_flagged');
+
+                        if (!gameRow.querySelector('.ds_ignored_flag')) {
+                            const flag = document.createElement('div');
+                            flag.className = 'ds_flag ds_ignored_flag';
+                            flag.innerHTML = 'СКРЫТО&nbsp;&nbsp;';
+                            gameRow.appendChild(flag);
+                        }
+
+                        const searchNameDiv = gameRow.querySelector('.search_name');
+                        if (searchNameDiv && !searchNameDiv.querySelector('.as-tags')) {
+                            const tagContainer = document.createElement('div');
+                            tagContainer.className = 'as-tags svelte-1qwz029';
+                            tagContainer.innerHTML = '<span class="svelte-1qwz029" style="background-color: rgb(79, 79, 79);">Не интересно</span>';
+                            searchNameDiv.appendChild(tagContainer);
+                        }
+
+                        const cb = gameRow.querySelector('.steam-hider-checkbox');
+                        if (cb) cb.remove();
+
+                        gameRow.classList.remove('steam-hider-row-selected');
+                    }
+
+                    CONSTANTINE_hiderLog(`Игра ID ${appId} добавлена в игнорируемые.`, 'success');
+                    setTimeout(TIBERIUS_processHiderQueue, HADRIAN_hiderConfig.action_delay);
+
+                } catch (error) {
+                    if (error.status === 429) {
+                        CONSTANTINE_hiderLog(`Ошибка 429: Лимит запросов. Пауза ${HADRIAN_hiderConfig.error_wait} сек.`, 'error');
+                        TITUS_hiderState.queue.unshift(appId);
+                        ANTONINUS_initiateHiderPause(HADRIAN_hiderConfig.error_wait);
+                    } else {
+                        CONSTANTINE_hiderLog(`Неизвестная ошибка при ID ${appId}. Пропускаем.`, 'error');
+                        TITUS_hiderState.processedCount++;
+                        setTimeout(TIBERIUS_processHiderQueue, HADRIAN_hiderConfig.action_delay);
+                    }
+                }
+            }
+
+            function ANTONINUS_initiateHiderPause(seconds) {
+                TITUS_hiderState.isPaused = true;
+                let currentWait = seconds;
+                const resumeBtn = document.getElementById('sth-resume-btn');
+                if (resumeBtn) resumeBtn.style.display = 'inline-block';
+
+                const tick = () => {
+                    if (!TITUS_hiderState.isPaused) return;
+
+                    document.getElementById('sth-progress-text').textContent = `Пауза (Лимит запросов)`;
+                    document.getElementById('sth-progress-time').textContent = `Ждем ${currentWait} сек`;
+
+                    if (currentWait <= 0) {
+                        TITUS_hiderState.isPaused = false;
+                        if (resumeBtn) resumeBtn.style.display = 'none';
+                        CONSTANTINE_hiderLog('Пауза окончена. Продолжаем...', 'info');
+                        TIBERIUS_processHiderQueue();
+                    } else {
+                        currentWait--;
+                        TITUS_hiderState.pauseInterval = setTimeout(tick, 1000);
+                    }
+                };
+                tick();
+            }
+
+            function CLAUDIUS_updateHiderProgressUI(currentAppId) {
+                const total = TITUS_hiderState.totalToProcess;
+                const done = TITUS_hiderState.processedCount;
+                const remainingItems = total - done;
+
+                const secondsLeft = Math.ceil((remainingItems * HADRIAN_hiderConfig.action_delay) / 1000);
+                const mins = Math.floor(secondsLeft / 60);
+                const secs = secondsLeft % 60;
+                const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+                const pct = Math.round((done / total) * 100);
+
+                document.getElementById('sth-progress-text').innerHTML = `Скрытие: <b>${currentAppId}</b> (${done}/${total})`;
+                document.getElementById('sth-progress-time').innerHTML = `~${timeStr}`;
+                document.getElementById('sth-progress-fill').style.width = `${pct}%`;
+            }
+
+            function CALIGULA_finishHiderProcess() {
+                TITUS_hiderState.isProcessing = false;
+                CONSTANTINE_hiderLog('✅ Скрытие выбранных игр успешно завершено!', 'success');
+
+                document.getElementById('sth-progress-text').textContent = "Завершено";
+                document.getElementById('sth-progress-time').textContent = "";
+                document.getElementById('sth-progress-fill').style.width = `100%`;
+
+                document.getElementById('sth-mode-toggle').disabled = false;
+
+                if (typeof unsafeWindow !== 'undefined' && unsafeWindow.GDynamicStore) {
+                    unsafeWindow.GDynamicStore.InvalidateCache();
+                }
+
+                NERVA_toggleHiderMode(false);
+            }
+
+            function MARCUS_buildHiderUI() {
+                const modal = document.createElement('div');
+                modal.id = 'sth-modal';
+                modal.innerHTML = `
+                    <div id="sth-modal-header">
+                        <span class="sth-header-title">Массовое скрытие игр</span>
+                        <div class="sth-header-controls">
+                            <button id="sth-minimize-btn">_</button>
+                            <button id="sth-close-btn">✖</button>
+                        </div>
+                    </div>
+                    <div id="sth-modal-body">
+                        <button id="sth-all-ignored-btn" class="sth-action-btn" style="background: linear-gradient(to bottom, #2a475e 5%, #1b2838 95%); margin-bottom: 5px;">Все игнорируемые</button>
+
+                        <div class="sth-stats-box" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 15px;">
+                            <span style="font-weight: bold; font-size: 14px;">Режим выделения чекбоксов</span>
+                            <label class="sth-switch">
+                                <input type="checkbox" id="sth-mode-toggle">
+                                <span class="sth-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="sth-stats-box">
+                            <div>Доступно для скрытия на странице: <b id="sth-stat-available" style="color:#fff;">0</b></div>
+                            <div>Выбрано вами игр: <b id="sth-stat-checked" style="color:#ffc107;">0</b></div>
+                        </div>
+
+                        <button id="sth-action-btn" class="sth-action-btn" disabled>Скрыть выбранное</button>
+
+                        <div id="sth-progress-wrap" class="sth-progress-container">
+                            <div class="sth-progress-info">
+                                <span id="sth-progress-text">Ожидание...</span>
+                                <span id="sth-progress-time">--:--</span>
+                            </div>
+                            <div class="sth-progress-bar-bg"><div id="sth-progress-fill" class="sth-progress-bar-fill"></div></div>
+                            <div style="text-align: right;"><button id="sth-resume-btn" class="sth-resume-btn">Продолжить вручную</button></div>
+                        </div>
+
+                        <div id="sth-console"></div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+
+                const restoreBtn = document.createElement('button');
+                restoreBtn.id = 'sth-restore-btn';
+                restoreBtn.textContent = 'Скрыватель ❌';
+                document.body.appendChild(restoreBtn);
+
+                restoreBtn.addEventListener('click', () => {
+                    modal.style.display = 'flex';
+                    restoreBtn.style.display = 'none';
+                    AUGUSTUS_updateHiderStats();
+                });
+
+                document.getElementById('sth-close-btn').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    NERVA_toggleHiderMode(false);
+                });
+
+                document.getElementById('sth-minimize-btn').addEventListener('click', () => {
+                    modal.style.display = 'none';
+                    restoreBtn.style.display = 'block';
+                });
+
+                document.getElementById('sth-all-ignored-btn').addEventListener('click', () => {
+                    window.open('https://store.steampowered.com/account/notinterested/', '_blank');
+                });
+
+                document.getElementById('sth-mode-toggle').addEventListener('change', function() {
+                    NERVA_toggleHiderMode(this.checked);
+                });
+
+                document.getElementById('sth-action-btn').addEventListener('click', VESPASIAN_startHidingProcess);
+
+                document.getElementById('sth-resume-btn').addEventListener('click', () => {
+                    if (TITUS_hiderState.isPaused) {
+                        clearTimeout(TITUS_hiderState.pauseInterval);
+                        TITUS_hiderState.isPaused = false;
+                        CONSTANTINE_hiderLog('Продолжено вручную.', 'info');
+                        document.getElementById('sth-resume-btn').style.display = 'none';
+                        document.getElementById('sth-progress-text').textContent = "Возобновление...";
+                        TIBERIUS_processHiderQueue();
+                    }
+                });
+
+                const header = document.getElementById('sth-modal-header');
+                let isDragging = false, startX, startY, initialX, initialY;
+
+                header.addEventListener('mousedown', (e) => {
+                    if (e.target.tagName === 'BUTTON') return;
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                    initialX = modal.offsetLeft;
+                    initialY = modal.offsetTop;
+                });
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    modal.style.left = `${initialX + e.clientX - startX}px`;
+                    modal.style.top = `${initialY + e.clientY - startY}px`;
+                    modal.style.right = 'auto';
+                });
+                document.addEventListener('mouseup', () => { isDragging = false; });
+            }
+
             async function initialize() {
                 await loadSteamTags().then(data => { allTags = data; });
                 createTagFilterModal();
+                buildOrbUI();
+                MARCUS_buildHiderUI();
 
                 setTimeout(() => {
                     collectAndFetchAppIds();
                     observeNewElements();
+                    initOrbDataGathering();
                     document.addEventListener('mouseover', handleHover);
                     createRussianLanguageFilterBlock();
                 }, HANNIBAL_WAIT_TIME);
@@ -6695,56 +7502,23 @@ if (headerCtn) {
                     border-bottom: 10px solid transparent;
                     border-left: 10px solid #E1E8ED;
                 }
-                .catalog-positive {
-                    color: #2B80E9;
-                }
-                .catalog-mixed {
-                    color: #997a00;
-                }
-                .catalog-negative {
-                    color: #E53E3E;
-                }
-                .catalog-no-reviews {
-                    color: #929396;
-                }
-                .catalog-language-yes {
-                    color: #2B80E9;
-                }
-                .catalog-language-no {
-                    color: #E53E3E;
-                }
-                .catalog-early-access-yes {
-                    color: #2B80E9;
-                }
-                .catalog-early-access-no {
-                    color: #929396;
-                }
-                .search_result_row {
-                    transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-                }
-                .custom-tags-container {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 3px;
-                    margin-top: 6px;
-                }
+                .catalog-positive { color: #2B80E9; }
+                .catalog-mixed { color: #997a00; }
+                .catalog-negative { color: #E53E3E; }
+                .catalog-no-reviews { color: #929396; }
+                .catalog-language-yes { color: #2B80E9; }
+                .catalog-language-no { color: #E53E3E; }
+                .catalog-early-access-yes { color: #2B80E9; }
+                .catalog-early-access-no { color: #929396; }
+                .search_result_row { transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out; }
+                .custom-tags-container { display: flex; flex-wrap: wrap; gap: 3px; margin-top: 6px; }
                 .custom-tag {
-                    background-color: #96a3ae;
-                    color: #e3eaef;
-                    padding: 0 4px;
-                    border-radius: 2px;
-                    font-size: 11px;
-                    line-height: 19px;
-                    white-space: nowrap;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    max-width: 200px;
-                    box-shadow: none;
-                    margin-bottom: 3px;
+                    background-color: #96a3ae; color: #e3eaef; padding: 0 4px;
+                    border-radius: 2px; font-size: 11px; line-height: 19px;
+                    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+                    max-width: 200px; box-shadow: none; margin-bottom: 3px;
                 }
-                .es_highlighted_dlcforya {
-                    background: #822dbf linear-gradient(135deg, rgba(0, 0, 0, 0.70) 10%, rgba(0, 0, 0, 0) 100%) !important;
-                }
+                .es_highlighted_dlcforya { background: #822dbf linear-gradient(135deg, rgba(0, 0, 0, 0.70) 10%, rgba(0, 0, 0, 0) 100%) !important; }
                 .tag-modal-overlay {
                     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
                     background: rgba(0,0,0,0.8); z-index: 10001; display: none;
@@ -6760,37 +7534,24 @@ if (headerCtn) {
                     display: flex; justify-content: space-between; align-items: center;
                     margin-bottom: 15px; border-bottom: 1px solid #2a3a4d; padding-bottom: 10px;
                 }
-                .tag-modal-header h2 {
-                    color: #66c0f4; margin: 0; font-size: 18px;
-                }
+                .tag-modal-header h2 { color: #66c0f4; margin: 0; font-size: 18px; }
                 .tag-modal-close {
                     background: none; border: none; color: #c6d4df; font-size: 24px;
                     cursor: pointer; line-height: 1; padding: 0 5px;
                 }
-                .tag-modal-close:hover {
-                    color: #66c0f4;
-                }
+                .tag-modal-close:hover { color: #66c0f4; }
                 .tag-search-input {
                     width: 100%; background: #1a2635; border: 1px solid #2a3a4d;
                     border-radius: 4px; color: #c6d4df; font-size: 14px;
                     padding: 8px; margin-bottom: 10px;
                 }
-                .tag-search-results {
-                    max-height: 150px; overflow-y: auto; border: 1px solid #2a3a4d;
-                    border-radius: 4px;
-                }
-                .tag-search-result-item {
-                    padding: 8px; cursor: pointer; border-bottom: 1px solid #2a3a4d;
-                }
-                .tag-search-result-item:last-child {
-                    border-bottom: none;
-                }
-                .tag-search-result-item:hover {
-                    background: #2a3a4d;
-                }
-                .tag-filters-sections {
-                    display: flex; gap: 20px; margin-top: 15px;
-                }
+                .tag-search-results { max-height: 150px; overflow-y: auto; border: 1px solid #2a3a4d; border-radius: 4px; }
+                .tag-search-result-item { padding: 8px; cursor: pointer; border-bottom: 1px solid #2a3a4d; }
+                .tag-search-result-item:last-child { border-bottom: none; }
+                .tag-search-result-item:hover { background: #2a3a4d; }
+                .tag-search-results::-webkit-scrollbar, .tag-modal-body::-webkit-scrollbar, #orb-console::-webkit-scrollbar, #sth-console::-webkit-scrollbar { width: 6px; }
+                .tag-search-results::-webkit-scrollbar-thumb, .tag-modal-body::-webkit-scrollbar-thumb, #orb-console::-webkit-scrollbar-thumb, #sth-console::-webkit-scrollbar-thumb { background: #233c51; border-radius: 3px; }
+                .tag-filters-sections { display: flex; gap: 20px; margin-top: 15px; }
                 .tag-filters-section {
                     flex: 1; border: 1px solid #2a3a4d; border-radius: 4px; padding: 10px;
                     background: #16202d; min-height: 150px;
@@ -6803,274 +7564,132 @@ if (headerCtn) {
                     display: flex; align-items: center; gap: 10px; background: #2a3a4d;
                     padding: 8px; border-radius: 4px; margin-bottom: 8px; cursor: grab;
                 }
-                .active-tag-filter-row:active, .hidden-tag-filter-row:active {
-                    cursor: grabbing; background: #354658;
-                }
-                .active-tag-filter-row span, .hidden-tag-filter-row span {
-                    flex-grow: 1;
-                }
+                .active-tag-filter-row:active, .hidden-tag-filter-row:active { cursor: grabbing; background: #354658; }
+                .active-tag-filter-row span, .hidden-tag-filter-row span { flex-grow: 1; }
                 .active-tag-filter-row input {
                     width: 60px; text-align: center; background: #1a2635;
-                    border: 1px solid #2a3a4d; color: #c6d4df; border-radius: 3px;
-                    padding: 4px;
+                    border: 1px solid #2a3a4d; color: #c6d4df; border-radius: 3px; padding: 4px;
                 }
                 .btn-remove-tag {
                     background-color: #a74343; color: white; font-size: 11px;
                     padding: 3px 8px; border-radius: 3px; border: none; cursor: pointer;
                 }
-                .btn-remove-tag:hover {
-                    background-color: #c45252;
-                }
-                .tag-modal-footer {
-                    margin-top: 20px; text-align: right;
-                }
-                .drag-over {
-                    background-color: rgba(102, 192, 244, 0.1);
-                    border-style: dashed;
-                }
-                #open-tag-modal-btn-styled {
-                    display: block;
-                    width: 100%;
-                    text-align: center;
-                    padding: 5px 0;
-                    border-radius: 2px;
-                    background-color: rgba(103, 193, 245, 0.1);
-                    border: 1px solid rgba(103, 193, 245, 0.2);
-                    cursor: pointer;
+                .btn-remove-tag:hover { background-color: #c45252; }
+                .tag-modal-footer { margin-top: 20px; text-align: right; }
+                .drag-over { background-color: rgba(102, 192, 244, 0.1); border-style: dashed; }
+
+                #open-tag-modal-btn-styled, #open-unhider-modal-btn, #open-hider-modal-btn {
+                    display: block; width: 100%; text-align: center; padding: 5px 0;
+                    border-radius: 2px; background-color: rgba(103, 193, 245, 0.1);
+                    border: 1px solid rgba(103, 193, 245, 0.2); cursor: pointer;
                     transition: background-color 0.2s, border-color 0.2s;
                 }
-                #open-tag-modal-btn-styled:hover {
-                    background-color: rgba(103, 193, 245, 0.2);
-                    border-color: rgba(103, 193, 245, 0.4);
+                #open-tag-modal-btn-styled:hover, #open-unhider-modal-btn:hover, #open-hider-modal-btn:hover {
+                    background-color: rgba(103, 193, 245, 0.2); border-color: rgba(103, 193, 245, 0.4);
                 }
 
+                #orb-restore-btn, #sth-restore-btn {
+                    position: fixed; bottom: 30px; right: 30px; z-index: 10000;
+                    background: linear-gradient(to right, #16202D, #1B2838);
+                    border: 1px solid #66c0f4; border-radius: 5px; padding: 12px 20px;
+                    color: #66c0f4; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+                    transition: 0.2s; font-family: sans-serif; display: none;
+                }
+                #sth-restore-btn { right: 230px; }
+                #orb-restore-btn:hover, #sth-restore-btn:hover { background: linear-gradient(to right, #1b2838, #2a3f5a); color: #fff; }
+
+                #orb-modal, #sth-modal {
+                    position: fixed; top: 50px; right: 50px; width: 420px; background: #1b2838;
+                    border: 1px solid #30363d; border-radius: 6px; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+                    z-index: 10001; display: none; flex-direction: column; color: #c6d4df; font-family: "Motiva Sans", sans-serif;
+                }
+                #sth-modal { right: 500px; }
+                #orb-modal-header, #sth-modal-header {
+                    background: #101822; padding: 10px 15px; cursor: grab; display: flex;
+                    justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d;
+                    border-radius: 6px 6px 0 0; user-select: none;
+                }
+                #orb-modal-header:active, #sth-modal-header:active { cursor: grabbing; }
+                .orb-header-title, .sth-header-title { color: #66c0f4; font-weight: bold; font-size: 15px; }
+                .orb-header-controls button, .sth-header-controls button { background: none; border: none; color: #8f98a0; cursor: pointer; font-size: 16px; margin-left: 10px;}
+                .orb-header-controls button:hover, .sth-header-controls button:hover { color: #fff; }
+
+                #orb-modal-body, #sth-modal-body { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+                .orb-stats-box, .sth-stats-box { background: #101822; padding: 10px; border-radius: 4px; font-size: 13px; line-height: 1.5; border: 1px solid #2a3a4c; }
+
+                .orb-filters-grid, .sth-filters-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+                .orb-input-group, .sth-input-group { display: flex; flex-direction: column; font-size: 12px; color: #8f98a0;}
+                .orb-input-group input, .sth-input-group input {
+                    background: #223143; border: 1px solid #30363d; color: #fff; padding: 6px;
+                    border-radius: 3px; margin-top: 4px; outline: none; font-family: inherit;
+                }
+
+                .orb-action-btn, .sth-action-btn {
+                    background: linear-gradient(to bottom, #799905 5%, #536904 95%);
+                    border: none; border-radius: 3px; color: #fff; padding: 10px; font-weight: bold;
+                    cursor: pointer; text-align: center; font-size: 14px; width: 100%;
+                }
+                .orb-action-btn:hover, .sth-action-btn:hover { background: linear-gradient(to bottom, #8cb306 5%, #637d05 95%); }
+                .orb-action-btn:disabled, .sth-action-btn:disabled { background: #4a4a4a; color: #888; cursor: not-allowed; }
+
+                .orb-progress-container, .sth-progress-container { display: none; flex-direction: column; gap: 5px; background: #101822; padding: 10px; border-radius: 4px; border: 1px solid #2a3a4c;}
+                .orb-progress-bar-bg, .sth-progress-bar-bg { background: #000; height: 10px; border-radius: 5px; overflow: hidden; width: 100%;}
+                .orb-progress-bar-fill, .sth-progress-bar-fill { background: #66c0f4; height: 100%; width: 0%; transition: width 0.3s; }
+                .orb-progress-info, .sth-progress-info { font-size: 12px; display: flex; justify-content: space-between; }
+                .orb-resume-btn, .sth-resume-btn { background: #c13c37; border: none; color: white; padding: 5px 10px; border-radius: 3px; cursor: pointer; display: none; font-size: 11px;}
+
+                #orb-console, #sth-console {
+                    background: #000; border: 1px solid #30363d; border-radius: 4px; padding: 8px;
+                    height: 120px; overflow-y: auto; font-family: monospace; font-size: 11px;
+                    color: #a3b0bb; display: flex; flex-direction: column; gap: 4px;
+                }
+                .orb-log-msg, .sth-log-msg { border-bottom: 1px dashed #222; padding-bottom: 2px; }
+                .orb-log-success, .sth-log-success { color: #8cc540; }
+                .orb-log-error, .sth-log-error { color: #ff5252; }
+                .orb-log-info, .sth-log-info { color: #66c0f4; }
+
+                /* --- Стилизация чекбоксов --- */
+                input[type=checkbox].steam-hider-checkbox {
+                    -webkit-appearance: none; -moz-appearance: none; appearance: none;
+                    border: 6px inset rgba(102, 192, 244, 0.8); border-radius: 50%;
+                    width: 42px; height: 42px; outline: none; transition: .15s ease-in-out;
+                    position: absolute; left: 0px; top: 50%; transform: translateY(-50%);
+                    background-color: rgba(0, 0, 0, 0.0);
+                    box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0.5);
+                    cursor: pointer; z-index: 999; margin: 0;
+                }
+                input[type=checkbox].steam-hider-checkbox:checked {
+                    background-color: rgba(0, 0, 0, 0.5); border-color: #2a475e;
+                    box-shadow: inset 0 0 0 12px rgba(102, 192, 244, 0.5);
+                }
+                input[type=checkbox].steam-hider-checkbox:after {
+                    content: ""; display: block; position: absolute; left: 50%; top: 50%;
+                    transform: translate(-50%, -50%) scale(0); width: 25px; height: 25px;
+                    border-radius: 50%; background-color: rgba(0, 0, 0, 0.9); opacity: 0.9;
+                    box-shadow: 0 0 0 0 #66c0f4; transition: transform .15s ease-in-out, box-shadow .15s ease-in-out;
+                }
+                input[type=checkbox].steam-hider-checkbox:checked:after {
+                    transform: translate(-50%, -50%) scale(1); box-shadow: 0 0 0 4px #66c0f4;
+                }
+                .steam-hider-row-selected {
+                    background: rgba(102, 192, 244, 0.08) !important;
+                }
+
+                .sth-switch { position: relative; display: inline-block; width: 44px; height: 22px; flex-shrink: 0; }
+                .sth-switch input { opacity: 0; width: 0; height: 0; }
+                .sth-slider {
+                    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+                    background-color: #233c51; transition: .3s; border-radius: 22px;
+                    border: 1px solid #3d5a75;
+                }
+                .sth-slider:before {
+                    position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px;
+                    background-color: #93b3ce; transition: .3s; border-radius: 50%;
+                }
+                .sth-switch input:checked + .sth-slider { background-color: #66c0f4; border-color: #66c0f4; }
+                .sth-switch input:checked + .sth-slider:before { transform: translateX(22px); background-color: #1b2838; }
             `;
             document.head.appendChild(style);
-        })();
-    }
-
-    // Скрипт скрытия игр на странице поиска по каталогу | https://store.steampowered.com/search/
-    if (scriptsConfig.catalogHider && unsafeWindow.location.pathname.includes('/search')) {
-        (function() {
-            "use strict";
-
-            GM_addStyle(`
-            input[type=checkbox].my-checkbox {
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                border: 6px inset rgba(255, 0, 0, 0.8);
-                border-radius: 50%;
-                width: 42px;
-                height: 42px;
-                outline: none;
-                transition: .15s ease-in-out;
-                vertical-align: middle;
-                position: absolute;
-                left: 0px;
-                top: 50%;
-                transform: translateY(-50%);
-                background-color: rgba(0, 0, 0, 0.0);
-                box-shadow: inset 0 0 0 0 rgba(255, 255, 255, 0.5);
-                cursor: pointer;
-                z-index: 999;
-            }
-
-            input[type=checkbox].my-checkbox:checked {
-                background-color: rgba(0, 0, 0, 0.5);
-                border-color: #b71c1c;
-                box-shadow: inset 0 0 0 12px rgba(255, 0, 0, 0.5);
-            }
-
-            input[type=checkbox].my-checkbox:after {
-                content: "";
-                display: block;
-                position: absolute;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%) scale(0);
-                width: 25px;
-                height: 25px;
-                border-radius: 50%;
-                background-color: rgba(0, 0, 0, 0.9);
-                opacity: 0.9;
-                box-shadow: 0 0 0 0 #b71c1c;
-                transition: transform .15s ease-in-out, box-shadow .15s ease-in-out;
-            }
-
-            input[type=checkbox].my-checkbox:checked:after {
-                transform: translate(-50%, -50%) scale(1);
-                box-shadow: 0 0 0 4px #b71c1c;
-            }
-
-            .my-button {
-                margin-right: 10px;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 50px;
-                font-size: 16px;
-                font-weight: 700;
-                color: #fff;
-                background: linear-gradient(to right, #16202D, #1B2838);
-                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-                cursor: pointer;
-                font-family: "Roboto", sans-serif;
-                margin-top: 245px;
-            }
-
-            .my-button:hover {
-                background: linear-gradient(to right, #0072ff, #00c6ff);
-                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.3);
-            }
-
-            .floating-button {
-                position: fixed;
-                top: -189px;
-                left: 240px;
-                z-index: 1000;
-            }
-
-            .game-counter {
-                margin-right: 10px;
-                padding: 10px 20px;
-                border: none;
-                border-radius: 50px;
-                font-size: 16px;
-                font-weight: 700;
-                color: #fff;
-                background: linear-gradient(to right, #16202D, #1B2838);
-                box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
-                font-family: "Roboto", sans-serif;
-                margin-top: 195px;
-            }
-            `);
-
-            function addBeetles() {
-                const container = document.getElementById('search_resultsRows');
-                if (!container) return;
-
-                const scarabLinks = container.querySelectorAll("a.search_result_row:not(.ds_ignored):not(.ds_excluded_by_preferences):not(.ds_wishlist):not(.ds_owned)");
-
-                scarabLinks.forEach(link => {
-                    if (link.querySelector(".my-checkbox")) return;
-
-                    if (!link.dataset.dsAppid) return;
-
-                    const ladybug = document.createElement("input");
-                    ladybug.type = "checkbox";
-                    ladybug.className = "my-checkbox";
-                    ladybug.dataset.aphid = link.dataset.dsAppid;
-
-                    link.insertBefore(ladybug, link.firstChild);
-
-                    ladybug.addEventListener("change", function(e) {
-                        e.stopPropagation();
-                        link.style.background = this.checked ? "linear-gradient(to bottom, #381616, #5d1414)" : "";
-                    });
-
-                    ladybug.addEventListener("click", function(e) {
-                         e.stopPropagation();
-                    });
-                });
-            }
-
-            function hideSelectedCrickets() {
-                const checkedLadybugs = document.querySelectorAll(".my-checkbox:checked");
-                const sessionID = typeof unsafeWindow !== 'undefined' ? unsafeWindow.g_sessionID : window.g_sessionID;
-
-                if (!sessionID) {
-                    console.error('[CatalogHider] Не удалось получить g_sessionID!');
-                    alert('Не удалось получить ID сессии. Убедитесь, что вы авторизованы.');
-                    return;
-                }
-
-                checkedLadybugs.forEach(ladybug => {
-                    const aphid = ladybug.dataset.aphid;
-                    const link = document.querySelector(`a.search_result_row[data-ds-appid="${aphid}"]`);
-
-                    if (link) {
-                        link.classList.add("ds_ignored", "ds_flagged");
-                        link.style.display = "none";
-
-                        ladybug.remove();
-
-                        GM_xmlhttpRequest({
-                            method: "POST",
-                            url: "https://store.steampowered.com/recommended/ignorerecommendation/",
-                            data: `sessionid=${sessionID}&appid=${aphid}&remove=0&snr=1_account_notinterested_`,
-                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-                            onload: function(response) {
-                                console.log(`[CatalogHider] Игра ${aphid} скрыта.`);
-                                if (typeof unsafeWindow !== 'undefined' && unsafeWindow.GDynamicStore) {
-                                    unsafeWindow.GDynamicStore.InvalidateCache();
-                                }
-                            },
-                            onerror: function(error) {
-                                console.error(`[CatalogHider] Ошибка скрытия ${aphid}:`, error);
-                            }
-                        });
-                    }
-                });
-                setTimeout(updateAntCounter, 200);
-            }
-
-            function removeIgnoredDragonflies() {
-                const ignoredGames = document.querySelectorAll("a.search_result_row.ds_ignored, a.search_result_row.ds_excluded_by_preferences, a.search_result_row.ds_wishlist");
-                ignoredGames.forEach(game => game.remove());
-                updateAntCounter();
-            }
-
-            function updateAntCounter() {
-                const scarabLinks = document.querySelectorAll("a.search_result_row:not(.ds_ignored):not(.ds_excluded_by_preferences):not(.ds_wishlist):not(.ds_owned)");
-                const termiteElement = document.querySelector(".game-counter");
-                if (termiteElement) {
-                    termiteElement.textContent = `Игр осталось: ${scarabLinks.length}`;
-                }
-            }
-
-            const grasshopperButton = document.createElement("button");
-            grasshopperButton.textContent = "Скрыть выбранное";
-            grasshopperButton.addEventListener("click", function(e) {
-                e.preventDefault();
-                hideSelectedCrickets();
-            });
-            grasshopperButton.classList.add("my-button", "floating-button");
-            document.body.appendChild(grasshopperButton);
-
-            const cockroach = document.createElement("div");
-            cockroach.textContent = "Игр осталось: 0";
-            cockroach.classList.add("game-counter", "floating-button");
-            document.body.appendChild(cockroach);
-
-            const resultsContainer = document.getElementById('search_resultsRows');
-
-            if (resultsContainer) {
-                const butterflyObserver = new MutationObserver(mutations => {
-                    let shouldUpdate = false;
-                    mutations.forEach(mutation => {
-                        if (mutation.type === "childList" && mutation.addedNodes.length > 0) {
-                            shouldUpdate = true;
-                        }
-                    });
-
-                    if (shouldUpdate) {
-                        addBeetles();
-                        removeIgnoredDragonflies();
-                        updateAntCounter();
-                    }
-                });
-
-                butterflyObserver.observe(resultsContainer, {
-                    childList: true,
-                    subtree: false
-                });
-            } else {
-                console.warn("[CatalogHider] Контейнер search_resultsRows не найден. Скрипт может не работать при бесконечной прокрутке.");
-            }
-
-            addBeetles();
-            removeIgnoredDragonflies();
-            updateAntCounter();
         })();
     }
 
@@ -8108,7 +8727,7 @@ if (headerCtn) {
 
             const MUSHROOM_GAME_DATA = {};
 
-            const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v2';
+            const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v3';
             const STEAM_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
 
             function fetchGameData(appIds) {
@@ -12571,7 +13190,7 @@ if (headerCtn) {
             const WGH_CURRENCY_CODE_TO_COUNTRY = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([country, data]) => [data.code, country]));
             const WGH_CURRENCY_CODE_TO_ISO = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([_, data]) => [data.code, data.iso]));
             const WGH_DEFAULT_SORT = { field: 'price', direction: 'asc' };
-            const WGH_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v2_wgh';
+            const WGH_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v3_wgh';
             const WGH_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
             const WGH_FILTER_STORAGE_KEY = 'wgh_filters_v1';
             const WGH_FILTER_DEBOUNCE_MS = 400;
@@ -16613,7 +17232,7 @@ if (headerCtn) {
 
                     if (!shouldHide && keywords.length > 0) {
                         let textToSearch = itemTitle;
-                        if (itemData.storeId === 'platimarket' && itemData.sellerName) {
+                        if (itemData.sellerName) {
                             textToSearch += ' ' + itemData.sellerName.toLowerCase();
                         }
                         if (keywords.some(keyword => textToSearch.includes(keyword))) {
@@ -23157,6 +23776,441 @@ if (headerCtn) {
             });
 
             setTimeout(addLinks, 2500);
+        })();
+    }
+
+    // Скрипт для умной очистки списка игнорируемых продуктов | https://store.steampowered.com/account/notinterested/
+    if (scriptsConfig.accountIgnoredCleaner && unsafeWindow.location.pathname.includes('/account/notinterested')) {
+        (function() {
+            'use strict';
+
+            const aic_Config = {
+                batchSize: 200,
+                apiDelay: 500,
+                actionDelay: 2500,
+                errorWait: 180
+            };
+
+            const aic_State = {
+                ignoredAppIds: [],
+                gameData: new Map(),
+                matchedIds: [],
+                sessionID: '',
+                isFetching: false,
+                isProcessing: false,
+                isPaused: false,
+                processedCount: 0,
+                pauseInterval: null
+            };
+
+            function aic_log(message, type = 'info') {
+                const consoleEl = document.getElementById('aic-console');
+                if (!consoleEl) return;
+                const time = new Date().toLocaleTimeString('ru-RU', { hour12: false });
+                const line = document.createElement('div');
+                line.className = `aic-log-msg aic-log-${type}`;
+                line.innerHTML = `[${time}] ${message}`;
+                consoleEl.appendChild(line);
+                consoleEl.scrollTop = consoleEl.scrollHeight;
+            }
+
+            function aic_injectButton() {
+                const header = document.querySelector('.account_header_line.noicon');
+                if (!header || document.getElementById('aic-open-btn')) return;
+
+                header.style.display = 'flex';
+                header.style.justifyContent = 'space-between';
+                header.style.alignItems = 'center';
+
+                const btn = document.createElement('button');
+                btn.id = 'aic-open-btn';
+                btn.className = 'btnv6_blue_hoverfade btn_medium';
+                btn.innerHTML = '<span>Управление очисткой</span>';
+                btn.style.padding = '0 15px';
+                btn.style.height = '32px';
+                btn.style.lineHeight = '32px';
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    aic_openModal();
+                });
+
+                header.appendChild(btn);
+            }
+
+            function aic_openModal() {
+                let modal = document.getElementById('aic-modal');
+                if (!modal) {
+                    modal = document.createElement('div');
+                    modal.id = 'aic-modal';
+                    modal.innerHTML = `
+                        <div id="aic-modal-header">
+                            <span class="aic-header-title">Умная очистка игнор-листа</span>
+                            <div class="aic-header-controls">
+                                <button id="aic-close-btn">✖</button>
+                            </div>
+                        </div>
+                        <div id="aic-modal-body">
+                            <button id="aic-fetch-btn" class="aic-action-btn" style="background: linear-gradient(to bottom, #2a475e 5%, #1b2838 95%); margin-bottom: 5px;">Собрать данные о скрытых играх</button>
+
+                            <div class="aic-stats-box">
+                                <div>Всего игр в игноре: <b id="aic-stat-total" style="color:#fff;">0</b></div>
+                                <div>Данные успешно получены для: <b id="aic-stat-fetched" style="color:#66c0f4;">0</b></div>
+                            </div>
+
+                            <div class="aic-filters-grid">
+                                <div class="aic-input-group">
+                                    <label>Мин. обзоров</label>
+                                    <input type="number" id="aic-min-rev" placeholder="Например: 500" disabled>
+                                </div>
+                                <div class="aic-input-group">
+                                    <label>Макс. обзоров</label>
+                                    <input type="number" id="aic-max-rev" placeholder="Без лимита" disabled>
+                                </div>
+                                <div class="aic-input-group">
+                                    <label>Мин. рейтинг (%)</label>
+                                    <input type="number" id="aic-min-rat" placeholder="Например: 80" disabled>
+                                </div>
+                                <div class="aic-input-group">
+                                    <label>Макс. рейтинг (%)</label>
+                                    <input type="number" id="aic-max-rat" placeholder="Например: 100" disabled>
+                                </div>
+                            </div>
+
+                            <div class="aic-stats-box" style="text-align: center; font-size: 14px;">
+                                Подходит под критерии: <b id="aic-stat-matched" style="color:#8cc540; font-size: 16px;">0</b>
+                            </div>
+
+                            <button id="aic-process-btn" class="aic-action-btn" disabled>Извлечь подходящие из игнора</button>
+
+                            <div id="aic-progress-wrap" class="aic-progress-container">
+                                <div class="aic-progress-info">
+                                    <span id="aic-progress-text">Ожидание...</span>
+                                    <span id="aic-progress-time">--:--</span>
+                                </div>
+                                <div class="aic-progress-bar-bg"><div id="aic-progress-fill" class="aic-progress-bar-fill"></div></div>
+                                <div style="text-align: right;"><button id="aic-resume-btn" class="aic-resume-btn">Продолжить вручную</button></div>
+                            </div>
+
+                            <div id="aic-console"></div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+
+                    GM_addStyle(`
+                        #aic-modal {
+                            position: fixed; top: 100px; left: 50%; transform: translateX(-50%);
+                            width: 450px; background: #1b2838; border: 1px solid #30363d;
+                            border-radius: 6px; box-shadow: 0 10px 40px rgba(0,0,0,0.9);
+                            z-index: 10001; display: none; flex-direction: column;
+                            color: #c6d4df; font-family: "Motiva Sans", sans-serif;
+                        }
+                        #aic-modal-header {
+                            background: #101822; padding: 12px 15px; cursor: grab; display: flex;
+                            justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d;
+                            border-radius: 6px 6px 0 0; user-select: none;
+                        }
+                        #aic-modal-header:active { cursor: grabbing; }
+                        .aic-header-title { color: #66c0f4; font-weight: bold; font-size: 16px; }
+                        .aic-header-controls button { background: none; border: none; color: #8f98a0; cursor: pointer; font-size: 18px;}
+                        .aic-header-controls button:hover { color: #fff; }
+                        #aic-modal-body { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+                        .aic-stats-box { background: #101822; padding: 12px; border-radius: 4px; font-size: 13px; line-height: 1.6; border: 1px solid #2a3a4c; }
+                        .aic-filters-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+                        .aic-input-group { display: flex; flex-direction: column; font-size: 12px; color: #8f98a0; }
+                        .aic-input-group input { background: #223143; border: 1px solid #30363d; color: #fff; padding: 8px; border-radius: 3px; margin-top: 5px; outline: none; }
+                        .aic-input-group input:disabled { opacity: 0.5; cursor: not-allowed; }
+                        .aic-action-btn { background: linear-gradient(to bottom, #799905 5%, #536904 95%); border: none; border-radius: 3px; color: #fff; padding: 12px; font-weight: bold; cursor: pointer; text-align: center; font-size: 14px; width: 100%; transition: 0.2s;}
+                        .aic-action-btn:hover:not(:disabled) { background: linear-gradient(to bottom, #8cb306 5%, #637d05 95%); }
+                        .aic-action-btn:disabled { background: #4a4a4a; color: #888; cursor: not-allowed; }
+                        .aic-progress-container { display: none; flex-direction: column; gap: 5px; background: #101822; padding: 10px; border-radius: 4px; border: 1px solid #2a3a4c;}
+                        .aic-progress-bar-bg { background: #000; height: 10px; border-radius: 5px; overflow: hidden; width: 100%;}
+                        .aic-progress-bar-fill { background: #66c0f4; height: 100%; width: 0%; transition: width 0.3s; }
+                        .aic-progress-info { font-size: 12px; display: flex; justify-content: space-between; }
+                        .aic-resume-btn { background: #c13c37; border: none; color: white; padding: 5px 10px; border-radius: 3px; cursor: pointer; display: none; font-size: 11px; margin-top: 5px;}
+                        #aic-console { background: #000; border: 1px solid #30363d; border-radius: 4px; padding: 8px; height: 130px; overflow-y: auto; font-family: monospace; font-size: 11px; color: #a3b0bb; display: flex; flex-direction: column; gap: 4px; }
+                        .aic-log-msg { border-bottom: 1px dashed #222; padding-bottom: 2px; }
+                        .aic-log-success { color: #8cc540; }
+                        .aic-log-error { color: #ff5252; }
+                        .aic-log-info { color: #66c0f4; }
+                    `);
+
+                    const header = document.getElementById('aic-modal-header');
+                    let isDragging = false, startX, startY, initialX, initialY;
+
+                    header.addEventListener('mousedown', (e) => {
+                        if(e.target.tagName === 'BUTTON') return;
+                        isDragging = true;
+                        startX = e.clientX;
+                        startY = e.clientY;
+                        initialX = modal.offsetLeft;
+                        initialY = modal.offsetTop;
+                        modal.style.transform = 'none';
+                    });
+                    document.addEventListener('mousemove', (e) => {
+                        if (!isDragging) return;
+                        modal.style.left = `${initialX + e.clientX - startX}px`;
+                        modal.style.top = `${initialY + e.clientY - startY}px`;
+                    });
+                    document.addEventListener('mouseup', () => { isDragging = false; });
+
+                    document.getElementById('aic-close-btn').addEventListener('click', () => modal.style.display = 'none');
+                    document.getElementById('aic-fetch-btn').addEventListener('click', aic_fetchIgnoredData);
+                    document.getElementById('aic-process-btn').addEventListener('click', aic_startProcessing);
+                    document.getElementById('aic-resume-btn').addEventListener('click', () => {
+                        if (aic_State.isPaused) {
+                            clearTimeout(aic_State.pauseInterval);
+                            aic_State.isPaused = false;
+                            aic_log('Продолжено вручную.', 'info');
+                            document.getElementById('aic-resume-btn').style.display = 'none';
+                            document.getElementById('aic-progress-text').textContent = "Возобновление...";
+                            aic_processQueue();
+                        }
+                    });
+
+                    ['aic-min-rev', 'aic-max-rev', 'aic-min-rat', 'aic-max-rat'].forEach(id => {
+                        document.getElementById(id).addEventListener('input', aic_updateMatchedCount);
+                    });
+                }
+
+                aic_State.sessionID = typeof unsafeWindow !== 'undefined' ? unsafeWindow.g_sessionID : window.g_sessionID;
+                modal.style.display = 'flex';
+            }
+
+            async function aic_fetchIgnoredData() {
+                if (aic_State.isFetching) return;
+                aic_State.isFetching = true;
+                document.getElementById('aic-fetch-btn').disabled = true;
+
+                aic_log('Запрашиваем данные аккаунта (userdata)...', 'info');
+
+                try {
+                    const resp = await new Promise((resolve, reject) => {
+                        GM_xmlhttpRequest({
+                            method: 'GET',
+                            url: 'https://store.steampowered.com/dynamicstore/userdata/',
+                            onload: resolve,
+                            onerror: reject
+                        });
+                    });
+
+                    const data = JSON.parse(resp.responseText);
+                    if (data && data.rgIgnoredApps) {
+                        aic_State.ignoredAppIds = Object.keys(data.rgIgnoredApps).map(Number);
+                        document.getElementById('aic-stat-total').textContent = aic_State.ignoredAppIds.length;
+                        aic_log(`Найдено ${aic_State.ignoredAppIds.length} скрытых игр. Начинаем сбор статистики...`, 'info');
+
+                        await aic_fetchGameStats();
+                    } else {
+                        aic_log('Скрытых игр не найдено.', 'error');
+                    }
+                } catch (e) {
+                    aic_log('Ошибка при получении userdata.', 'error');
+                }
+
+                aic_State.isFetching = false;
+                document.getElementById('aic-fetch-btn').disabled = false;
+            }
+
+            async function aic_fetchGameStats() {
+                aic_State.gameData.clear();
+                const ids = aic_State.ignoredAppIds;
+
+                for (let i = 0; i < ids.length; i += aic_Config.batchSize) {
+                    const batch = ids.slice(i, i + aic_Config.batchSize);
+                    aic_log(`Запрос данных: ${i} - ${Math.min(i + aic_Config.batchSize, ids.length)} из ${ids.length}...`);
+
+                    const inputJson = {
+                        ids: batch.map(id => ({ appid: id })),
+                        context: { language: "english", country_code: "US", steam_realm: 1 },
+                        data_request: { include_reviews: true }
+                    };
+
+                    try {
+                        const response = await new Promise((resolve, reject) => {
+                            GM_xmlhttpRequest({
+                                method: 'GET',
+                                url: `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json=${encodeURIComponent(JSON.stringify(inputJson))}`,
+                                onload: resolve,
+                                onerror: reject
+                            });
+                        });
+
+                        const data = JSON.parse(response.responseText);
+                        if (data.response && data.response.store_items) {
+                            data.response.store_items.forEach(item => {
+                                aic_State.gameData.set(item.id, {
+                                    reviews: item.reviews?.summary_filtered?.review_count || 0,
+                                    rating: item.reviews?.summary_filtered?.percent_positive || 0
+                                });
+                            });
+                        }
+
+                        document.getElementById('aic-stat-fetched').textContent = aic_State.gameData.size;
+                    } catch (e) {
+                        aic_log('Ошибка при обработке пачки ID.', 'error');
+                    }
+
+                    await new Promise(r => setTimeout(r, aic_Config.apiDelay));
+                }
+
+                aic_log('Сбор данных успешно завершен! Укажите критерии фильтрации.', 'success');
+
+                ['aic-min-rev', 'aic-max-rev', 'aic-min-rat', 'aic-max-rat'].forEach(id => {
+                    document.getElementById(id).disabled = false;
+                });
+
+                aic_updateMatchedCount();
+            }
+
+            function aic_updateMatchedCount() {
+                if (aic_State.isProcessing) return;
+
+                const minRev = parseInt(document.getElementById('aic-min-rev').value) || 0;
+                const maxRev = parseInt(document.getElementById('aic-max-rev').value) || Infinity;
+                const minRat = parseInt(document.getElementById('aic-min-rat').value) || 0;
+                const maxRat = parseInt(document.getElementById('aic-max-rat').value) || 100;
+
+                aic_State.matchedIds = [];
+
+                for (const [id, data] of aic_State.gameData.entries()) {
+                    if (data.reviews >= minRev && data.reviews <= maxRev &&
+                        data.rating >= minRat && data.rating <= maxRat) {
+                        aic_State.matchedIds.push(id);
+                    }
+                }
+
+                document.getElementById('aic-stat-matched').textContent = aic_State.matchedIds.length;
+                document.getElementById('aic-process-btn').disabled = aic_State.matchedIds.length === 0;
+            }
+
+            function aic_startProcessing() {
+                if (aic_State.matchedIds.length === 0) return;
+
+                aic_State.isProcessing = true;
+                aic_State.processedCount = 0;
+
+                document.getElementById('aic-process-btn').disabled = true;
+                ['aic-min-rev', 'aic-max-rev', 'aic-min-rat', 'aic-max-rat', 'aic-fetch-btn'].forEach(id => {
+                    document.getElementById(id).disabled = true;
+                });
+
+                document.getElementById('aic-progress-wrap').style.display = 'flex';
+                aic_log(`Начинаем извлечение ${aic_State.matchedIds.length} игр из игнора...`, 'info');
+
+                aic_processQueue();
+            }
+
+            async function aic_processQueue() {
+                if (aic_State.matchedIds.length === 0) {
+                    aic_finishProcessing();
+                    return;
+                }
+
+                if (aic_State.isPaused) return;
+
+                const appId = aic_State.matchedIds.shift();
+                aic_updateProgressUI(appId);
+
+                try {
+                    await new Promise((resolve, reject) => {
+                        GM_xmlhttpRequest({
+                            method: "POST",
+                            url: "https://store.steampowered.com/recommended/ignorerecommendation/",
+                            data: `sessionid=${aic_State.sessionID}&appid=${appId}&remove=1&snr=1_account_notinterested_`,
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            onload: function(res) {
+                                if (res.status === 200) resolve();
+                                else reject({ status: res.status });
+                            },
+                            onerror: () => reject({ status: 0 })
+                        });
+                    });
+
+                    aic_State.processedCount++;
+
+                    const gameRow = document.getElementById(`ignored_app_${appId}`);
+                    if (gameRow) {
+                        gameRow.style.transition = 'opacity 0.5s';
+                        gameRow.style.opacity = '0';
+                        setTimeout(() => gameRow.remove(), 500);
+                    }
+
+                    aic_log(`Игра ID ${appId} успешно раскрыта.`, 'success');
+                    setTimeout(aic_processQueue, aic_Config.actionDelay);
+
+                } catch (error) {
+                    if (error.status === 429) {
+                        aic_log(`Ошибка 429: Лимит запросов. Пауза ${aic_Config.errorWait} сек.`, 'error');
+                        aic_State.matchedIds.unshift(appId);
+                        aic_initiatePause();
+                    } else {
+                        aic_log(`Неизвестная ошибка при ID ${appId}. Пропускаем.`, 'error');
+                        aic_State.processedCount++;
+                        setTimeout(aic_processQueue, aic_Config.actionDelay);
+                    }
+                }
+            }
+
+            function aic_initiatePause() {
+                aic_State.isPaused = true;
+                let currentWait = aic_Config.errorWait;
+                document.getElementById('aic-resume-btn').style.display = 'inline-block';
+
+                const tick = () => {
+                    if (!aic_State.isPaused) return;
+
+                    document.getElementById('aic-progress-text').textContent = `Пауза (Лимит запросов)`;
+                    document.getElementById('aic-progress-time').textContent = `Ждем ${currentWait} сек`;
+
+                    if (currentWait <= 0) {
+                        aic_State.isPaused = false;
+                        document.getElementById('aic-resume-btn').style.display = 'none';
+                        aic_log('Пауза окончена. Продолжаем...', 'info');
+                        aic_processQueue();
+                    } else {
+                        currentWait--;
+                        aic_State.pauseInterval = setTimeout(tick, 1000);
+                    }
+                };
+                tick();
+            }
+
+            function aic_updateProgressUI(currentAppId) {
+                const total = aic_State.processedCount + aic_State.matchedIds.length + 1;
+                const done = aic_State.processedCount;
+                const remainingItems = total - done;
+
+                const secondsLeft = Math.ceil((remainingItems * aic_Config.actionDelay) / 1000);
+                const mins = Math.floor(secondsLeft / 60);
+                const secs = secondsLeft % 60;
+                const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+                const pct = Math.round((done / total) * 100);
+
+                document.getElementById('aic-progress-text').innerHTML = `Обработка: <b>${currentAppId}</b> (${done}/${total})`;
+                document.getElementById('aic-progress-time').innerHTML = `~${timeStr}`;
+                document.getElementById('aic-progress-fill').style.width = `${pct}%`;
+            }
+
+            function aic_finishProcessing() {
+                aic_State.isProcessing = false;
+                aic_log('✅ Все подходящие игры успешно раскрыты!', 'success');
+
+                document.getElementById('aic-progress-text').textContent = "Завершено";
+                document.getElementById('aic-progress-time').textContent = "";
+                document.getElementById('aic-progress-fill').style.width = `100%`;
+
+                ['aic-min-rev', 'aic-max-rev', 'aic-min-rat', 'aic-max-rat', 'aic-fetch-btn'].forEach(id => {
+                    document.getElementById(id).disabled = false;
+                });
+
+                if (typeof unsafeWindow !== 'undefined' && unsafeWindow.GDynamicStore) {
+                    unsafeWindow.GDynamicStore.InvalidateCache();
+                }
+            }
+
+            setTimeout(aic_injectButton, 1000);
+
         })();
     }
 
