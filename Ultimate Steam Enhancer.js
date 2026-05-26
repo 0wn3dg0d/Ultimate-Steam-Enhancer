@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.9.0
+// @version      2.1.9.1
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -80,6 +80,7 @@
 // @connect      img.shields.io
 // @connect      partner.steamgames.com
 // @connect      localhost
+// @connect      external-content.duckduckgo.com
 // ==/UserScript==
 
 
@@ -459,7 +460,6 @@
         friendsPlaytime: true, // Скрипт для страницы игры (Время друзей & Достижения) | https://store.steampowered.com/app/*
         earlyaccdata: true, // Скрипт для страницы игры (Ранний доступ) | https://store.steampowered.com/app/*
         zogInfo: true, // Скрипт для страницы игры (ZOG; получение сведение о наличии русификаторов) | https://store.steampowered.com/app/*
-        platiSales: true, // Скрипт для страницы игры (Plati; отображение цен с Plati.Market) | https://store.steampowered.com/app/*
         salesMaster: true, // Скрипт для страницы игры (%; агрегатор цен из разных магазинов) | https://store.steampowered.com/app/*
         pageGiftHelper: true, // Скрипт для страницы игры, для проверки возможности отправки подарка друзьям в других странах | https://store.steampowered.com/app/*
         catalogInfo: true, // Скрипт для получения дополнительной информации об игре при наведении на неё на странице поиска по каталогу | https://store.steampowered.com/search/
@@ -473,6 +473,7 @@
         picsRestrictionCheck: false, // Скрипт для проверки региональных ограничений (требует локальный сервер) | https://store.steampowered.com/app/*
         picsTargetRegion: 'RU',
         accountIgnoredCleaner: true, // Скрипт для умной очистки списка игнорируемых продуктов | https://store.steampowered.com/account/notinterested/
+        gameNotes: true, // Скрипт для создания личных заметок и выставления оценок играм | https://store.steampowered.com/app/*
         // Дополнительные настройки
         autoExpandHltb: false, // Автоматически раскрывать спойлер HLTB
         autoLoadReviews: false, // Автоматически загружать дополнительные обзоры
@@ -486,9 +487,9 @@
     /* --- Код для настроек U.S.E. --- */
 	const useDefaultSettings = {
 	    gamePage: true, hltbData: true, friendsPlaytime: true, earlyaccdata: true, zogInfo: true, pageGiftHelper: true, ExternalLinksEnhancer: true,
-	    platiSales: true, salesMaster: true, picsRestrictionCheck: false, picsTargetRegion: 'RU', catalogInfo: true, newsFilter: true,
+	    salesMaster: true, picsRestrictionCheck: false, picsTargetRegion: 'RU', catalogInfo: true, newsFilter: true,
 	    Kaznachei: true, homeInfo: true, Sledilka: true, wishlistGiftHelper: true, stelicasRoulette: true, RuRegionalPriceAnalyzer: true,
-	    autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false, accountIgnoredCleaner: true,
+	    autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false, accountIgnoredCleaner: true, gameNotes: true,
         salesMasterAutoSearch: false, salesMasterAutoInsertTitle: true,
         incognitoModeEnabled: true, showIncognitoButton: false, incognitoDefaultRegion: 'US', WidgetFixer: true
 	};
@@ -609,28 +610,6 @@
                 <img src="https://i.imgur.com/uAZ55Qf.png" alt="Пример интерфейса анализатора цен" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
             `
         },
-        platiSales: {
-            category: 'gamePage',
-            label: "Поиск цен Plati.Market",
-            title: "Поиск цен на Plati.Market",
-            details: `
-                <p><strong>Что делает:</strong> Добавляет кнопку "Plati" в секцию с кнопкой "В желаемое" на странице игры. Нажатие открывает полноэкранное окно для поиска предложений по этой игре на торговой площадке Plati.Market.</p>
-                <p><strong>Возможности окна поиска:</strong></p>
-                <ul>
-                    <li>Автозаполнение поиска названием текущей игры.</li>
-                    <li>Ручной ввод и поиск.</li>
-                    <li>Подсказки при вводе (API Plati).</li>
-                    <li>Сортировка по цене, продажам, релевантности, названию, дате, рейтингу продавца и др.</li>
-                    <li>Фильтрация по цене (RUR, USD, EUR, UAH), продажам, рейтингу, наличию плохих отзывов/возвратов, участию в скидках, дате добавления.</li>
-                    <li>Исключение товаров по ключевым словам (панель справа).</li>
-                    <li>Сохранение фильтров, сортировки, валюты и исключений.</li>
-                    <li>Возможность экспортировать и импортировать список исключений.</li>
-                </ul>
-                 <p>Используются официальные API Plati.Market.</p>
-               <img src="https://i.imgur.com/lyL8i5g.png" alt="Кнопка Plati" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
-                <img src="https://i.imgur.com/X5NDh6D.png" alt="Окно Plati" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
-            `
-        },
         zogInfo: {
             category: 'gamePage',
             label: "Русификаторы (ZOG)",
@@ -653,7 +632,7 @@
             title: "Агрегатор цен (%)",
             details: `
                 <p><strong>Что делает:</strong> Добавляет кнопку "%" в секцию с кнопкой "В желаемое" на странице игры. Нажатие открывает модальное окно с ценами на эту игру из различных цифровых магазинов.</p>
-                <img src="https://i.imgur.com/PsrocCt.png" alt="Пример Агрегатора 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                <img src="https://i.imgur.com/xqwaWXZ.png" alt="Пример Агрегатора 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                 <br><p><strong>Возможности окна агрегатора:</strong></p>
                 <ul>
                     <li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market, Rushbe и текущей страницы Steam.</li>
@@ -747,7 +726,7 @@
                     <li>Увидеть цену друга (сконвертированную в вашу валюту), процент разницы и вердикт (<span style="color:#77dd77; font-weight:bold;">Можно подарить</span> / <span style="color:#ff6961; font-weight:bold;">Нельзя подарить</span>), основанный на правилах Steam о разнице цен.</li>
                 </ul>
                 <p>Использует те же механизмы получения цен и курсов валют, что и помощник для списка желаемого.</p>
-                 <img src="https://i.imgur.com/jDdf4pR.png" alt="Пример PageGiftHelper 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                 <img src="https://i.imgur.com/28SdqlH.png" alt="Пример PageGiftHelper 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                 `
         },
         earlyaccdata: {
@@ -764,6 +743,41 @@
                     <img src="https://i.imgur.com/SPzJrpi.png" alt="Пример Раннего Доступа 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                 </ul>
                 <p>Расчет времени динамический. Использует даты со страницы Steam, а также может подтягивать дату старта раннего доступа из собственной базы для вышедших игр, если Steam ее не показывает.</p>
+            `
+        },
+        gameNotes: {
+            category: 'gamePage',
+            label: "Личные заметки",
+            title: "Личные заметки и система оценок",
+            details: `
+                <p><strong>Что делает:</strong> Добавляет кнопку со значком карандаша в панель действий на странице игры.</p>
+                <img src="https://i.imgur.com/wXhNfnb.png" alt="Кнопка заметок" style="max-width: 90%; height: auto; margin-top: 10px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+
+                <p>Нажатие открывает окно редактора, где можно:</p>
+                <ul>
+                    <li>Написать личный текстовый обзор или заметку об игре.</li>
+                    <li>Оценить игру по пяти критериям (Графика, Сюжет, Геймплей, Звук, Атмосфера) по 10-звёздочной шкале, на основе которых автоматически высчитывается средний балл.</li>
+                    <li>Выставить общую личную оценку от 0 до 100 баллов.</li>
+                </ul>
+                <img src="https://i.imgur.com/5ORUzer.png" alt="Окно редактора заметок" style="max-width: 90%; height: auto; margin-top: 10px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+
+                <p>В окне редактора также доступна кнопка <strong>«Все заметки»</strong>, открывающая сводную панель. В ней можно:</p>
+                <ul>
+                    <li>Просматривать все сохранённые записи в виде информативных карточек.</li>
+                    <li>Сортировать список по дате изменения, названию, среднему баллу, личной оценке, а также по каждому из пяти критериев по отдельности.</li>
+                    <li>Щёлкнуть по любой карточке для мгновенного перехода к редактированию заметки для выбранной игры.</li>
+                </ul>
+                <img src="https://i.imgur.com/GvE56Qs.png" alt="Окно Все заметки" style="max-width: 90%; height: auto; margin-top: 10px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+
+                <p>Для управления данными предусмотрена система очистки и резервного копирования:</p>
+                <ul>
+                    <li>Кнопка <strong>«Очистить»</strong> удаляет все заметки об играх.</li>
+                    <li>Кнопка <strong>«Экспорт»</strong> формирует и скачивает вашу базу заметок в виде <code>.json</code> файла.</li>
+                    <li>Кнопка <strong>«Импорт»</strong> открывает модальное окно, в которое можно вставить содержимое сохранённого файла для восстановления или объединения баз данных.</li>
+                </ul>
+                <img src="https://i.imgur.com/EqrqzLS.png" alt="Окно импорта" style="max-width: 90%; height: auto; margin-top: 10px; margin-bottom: 20px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+
+                <p><em>Примечание: Вся информация хранится исключительно локально в памяти вашего браузера (GM Storage) и не отправляется на сторонние серверы.</em></p>
             `
         },
         picsRestrictionCheck: {
@@ -1309,6 +1323,126 @@
         document.body.appendChild(infoModal);
     }
 
+    function showAuthorModal() {
+        const existingModal = document.getElementById('useAuthorModal');
+        if (existingModal) existingModal.remove();
+
+        const authorModal = document.createElement('div');
+        authorModal.id = 'useAuthorModal';
+
+        // CSS стили специально для окна автора
+        const style = document.createElement('style');
+        style.textContent = `
+            #useAuthorModal {
+                position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                background-color: #1b2838; color: #c6d4df; padding: 35px 40px;
+                border-radius: 8px; border: 1px solid #67c1f5;
+                box-shadow: 0 10px 40px rgba(0, 0, 0, 0.9); z-index: 10003;
+                width: 650px; max-width: 90vw; max-height: 90vh; overflow-y: auto;
+                font-family: "Motiva Sans", Sans-serif, Arial; font-size: 14px;
+            }
+            #useAuthorModal::-webkit-scrollbar { width: 8px; }
+            #useAuthorModal::-webkit-scrollbar-track { background: #171a21; border-radius: 4px; }
+            #useAuthorModal::-webkit-scrollbar-thumb { background-color: #4b6f9c; border-radius: 4px; border: 2px solid #171a21; }
+            #useAuthorModal::-webkit-scrollbar-thumb:hover { background-color: #67c1f5; }
+
+            .use-auth-header { border-bottom: 2px solid #2a475e; padding-bottom: 20px; margin-bottom: 25px; text-align: center; }
+            .use-auth-title { color: #ffffff; font-size: 24px; margin: 0 0 15px 0; font-weight: 700; letter-spacing: 0.5px; }
+
+            .use-auth-aliases { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+            .use-auth-alias { background: rgba(102, 192, 244, 0.15); color: #66c0f4; border: 1px solid rgba(102, 192, 244, 0.3); padding: 6px 14px; font-size: 14px; font-weight: 500; border-radius: 3px; }
+
+            .use-auth-divider { height: 1px; background: linear-gradient(90deg, transparent, #4b6f9c, transparent); margin: 25px 0; opacity: 0.4; }
+
+            .use-auth-section { margin-bottom: 25px; }
+            .use-auth-section-title { color: #67c1f5; font-size: 17px; margin: 0 0 15px 0; text-transform: uppercase; letter-spacing: 1px; text-align: center; font-weight: bold; }
+            .use-auth-text { margin: 0 0 10px 0; text-align: center; line-height: 1.6; }
+            .use-auth-text a { color: #ffffff; text-decoration: none; border-bottom: 1px dotted #67c1f5; transition: color 0.2s; font-weight: bold; }
+            .use-auth-text a:hover { color: #67c1f5; }
+
+            .use-auth-socials { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+            .use-social-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; background-color: #212b3b; border: 1px solid #36485e; color: #c6d4df; border-radius: 4px; text-decoration: none; font-size: 13px; font-weight: bold; transition: all 0.2s; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+            .use-social-btn:hover { background-color: #2a3f5a; border-color: #67c1f5; color: #ffffff; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.4); }
+
+            .use-auth-wallet { text-align: center; background: rgba(0, 0, 0, 0.2); border: 1px solid #36485e; border-radius: 6px; padding: 15px; margin: 0 auto; max-width: 400px; }
+            .use-auth-wallet code { display: inline-block; background: #111822; color: #a5d3f2; padding: 6px 12px; border-radius: 4px; font-family: monospace; font-size: 14px; margin-top: 10px; border: 1px solid #212b3b; }
+
+            .use-auth-close { display: block; margin: 30px auto 0; padding: 10px 35px; background-color: #36485e; color: #ffffff; border: none; border-radius: 4px; cursor: pointer; font-size: 15px; font-weight: bold; transition: all 0.2s; }
+            .use-auth-close:hover { background-color: #4b6f9c; }
+            .use-auth-close:active { transform: scale(0.97); }
+        `;
+
+        const contentDiv = document.createElement('div');
+        contentDiv.innerHTML = `
+            <div class="use-auth-header">
+                <h1 class="use-auth-title">0wn3df1x</h1>
+                <div class="use-auth-aliases">
+                    <span class="use-auth-alias">Egor</span>
+                    <span class="use-auth-alias">Egarchik</span>
+                    <span class="use-auth-alias">Egar Popor</span>
+                    <span class="use-auth-alias">0wn3dg0d</span>
+                </div>
+            </div>
+
+            <div class="use-auth-section">
+                <h3 class="use-auth-section-title">💼 Профессиональная деятельность</h3>
+                <p class="use-auth-text">
+                    <b style="color: #ffffff; font-size: 15px;">Инженер по локализации, переводчик, редактор</b><br>
+                    <span style="color: #8f98a0; font-size: 13px;">12 лет в индустрии, 400+ проектов</span>
+                </p>
+                <p class="use-auth-text" style="margin-top: 15px;">
+                    ⚙️ <a href="https://vk.com/tolma4team" target="_blank">Tolma4 Team</a> <span style="color: #8f98a0; font-weight: normal;">(Техлид)</span> &nbsp;&nbsp;|&nbsp;&nbsp; 🛡️ <a href="https://www.zoneofgames.ru" target="_blank">ZoneOfGames</a> <span style="color: #8f98a0; font-weight: normal;">(Участник администрации)</span>
+                </p>
+                <div style="text-align: center; margin-top: 20px;">
+                    <a href="https://0wn3dg0d.github.io/egar-portfolio/" target="_blank" class="use-social-btn" style="border-color: #67c1f5; background: rgba(103, 193, 245, 0.1);">🌐 Смотреть Портфолио</a>
+                </div>
+            </div>
+
+            <div class="use-auth-divider"></div>
+
+            <div class="use-auth-section">
+                <h3 class="use-auth-section-title">🎭 Творческие проекты</h3>
+                <p class="use-auth-text">
+                    📼 <a href="https://www.youtube.com/@CHIPaev13/" target="_blank">Ретро-канал CHIPaev'a</a> <span style="color: #8f98a0; font-weight: normal;">(Превью, мемы, песни)</span>
+                </p>
+                <p class="use-auth-text">
+                    🗃️ <a href="https://t.me/EgarArchive" target="_blank">Архив Egar'а</a> <span style="color: #8f98a0; font-weight: normal;">(Песни, стихи, код, тексты)</span>
+                </p>
+            </div>
+
+            <div class="use-auth-divider"></div>
+
+            <div class="use-auth-section">
+                <h3 class="use-auth-section-title">📫 Связь и поддержка</h3>
+                <div class="use-auth-socials">
+                    <a href="https://t.me/Egarchik" target="_blank" class="use-social-btn">✈️ Telegram</a>
+                    <a href="https://steamcommunity.com/id/0wn3df1x/" target="_blank" class="use-social-btn">⚙️ Steam</a>
+                    <a href="mailto:egarchik@tmail.ae" class="use-social-btn">📧 Web2 Email</a>
+                    <a href="mailto:egarchik@tmail.ton" class="use-social-btn">💎 Web3 Email</a>
+                </div>
+
+                <div class="use-auth-wallet">
+                    <p style="margin: 0 0 12px 0; color: #ffffff; font-weight: bold;">Поддержать мою работу (TON/USDT)</p>
+                    <a href="https://tonviewer.com/egarchik.ton" target="_blank" class="use-social-btn" style="background: rgba(0, 136, 204, 0.2); border-color: #0088CC; color: #67c1f5;">💎 Отправить через TON</a><br>
+                    <code>egarchik.ton</code>
+                </div>
+            </div>
+        `;
+
+        authorModal.appendChild(style);
+        authorModal.appendChild(contentDiv);
+
+        const closeButton = document.createElement('button');
+        closeButton.className = 'use-auth-close';
+        closeButton.textContent = 'Закрыть';
+        closeButton.addEventListener('click', function() {
+            authorModal.remove();
+        });
+        authorModal.appendChild(closeButton);
+
+        document.body.appendChild(authorModal);
+    }
+
     function createSettingRow(key) {
          const settingData = settingInfo[key];
          if (!settingData) return null;
@@ -1555,28 +1689,35 @@
 
             #useOfficialPageFooter {
                 position: absolute;
-                bottom: 7px;
+                bottom: 5px;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
                 line-height: 1;
                 z-index: 1;
             }
             #useOfficialPageFooter a {
                 display: inline-block;
                 text-decoration: none;
-                transition: opacity 0.2s;
+                transition: opacity 0.2s, transform 0.1s;
             }
             #useOfficialPageFooter a:hover {
                 opacity: 0.85;
             }
+            #useOfficialPageFooter a:active {
+                transform: scale(0.97);
+            }
             #useOfficialPageFooter img {
                 display: block;
                 border: none;
-                width: 171px;
                 height: 24px;
             }
         `);
 
         const mainTitleHeader = document.createElement('h2');
-        mainTitleHeader.textContent = 'Настройки Ultimate Steam Enhancer';
+        const scriptVersion = (typeof GM_info !== 'undefined' && GM_info.script && GM_info.script.version) ? GM_info.script.version : '2.1.9.1';
+        mainTitleHeader.innerHTML = `Настройки Ultimate Steam Enhancer <span style="color: #8f98a0; font-size: 14px; font-weight: normal;">(v${scriptVersion})</span>`;
         mainTitleHeader.style.cssText = 'margin-top: 0; margin-bottom: 25px; color: #67c1f5; text-align: center; font-weight: 500; font-size: 18px;';
         modal.appendChild(mainTitleHeader);
 
@@ -1635,8 +1776,13 @@
 
         const authorLine = document.createElement('div');
         authorLine.className = 'author-line';
-        authorLine.textContent = 'by 0wn3df1x';
+        authorLine.innerHTML = 'by <a href="#" id="useAuthorLink" style="font-weight: bold; color: #67c1f5;">0wn3df1x</a>';
         creditsFooter.appendChild(authorLine);
+
+        authorLine.querySelector('#useAuthorLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            showAuthorModal();
+        });
 
         const zogLine = document.createElement('div');
         zogLine.appendChild(document.createTextNode('и '));
@@ -1657,13 +1803,22 @@
         pageLink.href = 'https://greasyfork.org/ru/scripts/526180-ultimate-steam-enhancer';
         pageLink.target = '_blank';
         pageLink.title = 'Страница на Greasy Fork';
-
         const badgeImage = document.createElement('img');
         badgeImage.src = 'https://img.shields.io/badge/Страница_на-GreasyFork-blue.svg';
         badgeImage.alt = 'Страница на Greasy Fork';
-
         pageLink.appendChild(badgeImage);
+
+        const githubLink = document.createElement('a');
+        githubLink.href = 'https://github.com/0wn3dg0d/Ultimate-Steam-Enhancer';
+        githubLink.target = '_blank';
+        githubLink.title = 'Страница на GitHub';
+        const githubBadgeImage = document.createElement('img');
+        githubBadgeImage.src = 'https://img.shields.io/badge/Страница_на-GitHub-181717.svg?logo=github';
+        githubBadgeImage.alt = 'Страница на GitHub';
+        githubLink.appendChild(githubBadgeImage);
+
         officialPageFooter.appendChild(pageLink);
+        officialPageFooter.appendChild(githubLink);
         bottomActionsWrapper.appendChild(officialPageFooter);
 
         const closeButton = document.createElement('button');
@@ -3431,6 +3586,9 @@
             let hltb_russianIndicatorsNode = null;
             let hltb_russianIndicatorsObserverInstance = null;
 
+            const HLTB_ENDPOINT_KEY = 'use_hltb_api_endpoint';
+            let currentEndpoint = GM_getValue(HLTB_ENDPOINT_KEY, "/api/find");
+
             const fadeInElement = (element) => {
                 element.style.opacity = '0';
                 requestAnimationFrame(() => { element.style.opacity = '1'; });
@@ -3495,6 +3653,66 @@
             updateHltbPosition();
             hltb_setupPageChangeObservers();
 
+            const fetchFallbackEndpoint = async () => {
+                try {
+                    const htmlResponse = await new Promise((resolve, reject) => {
+                        GM_xmlhttpRequest({ method: "GET", url: "https://howlongtobeat.com/", onload: resolve, onerror: reject });
+                    });
+
+                    const scripts = [...htmlResponse.responseText.matchAll(/src="(\/_next\/static\/chunks\/[^"]+\.js)"/g)].map(m => m[1]);
+                    const fetchPromises = scripts.map(script =>
+                        new Promise(resolve => GM_xmlhttpRequest({
+                            method: "GET",
+                            url: "https://howlongtobeat.com" + script,
+                            onload: resolve,
+                            onerror: () => resolve({ responseText: '' })
+                        }))
+                    );
+
+                    const responses = await Promise.all(fetchPromises);
+                    for (let i = 0; i < responses.length; i++) {
+                        const js = responses[i].responseText;
+                        if (!js) continue;
+
+                        const matchConcat = js.match(/"\/api\/"\s*\.?\s*concat\("([a-zA-Z0-9_]+)"\)/);
+                        if (matchConcat && matchConcat[1]) return `/api/${matchConcat[1]}`;
+
+                        const matches = [...js.matchAll(/"\/api\/([a-zA-Z0-9_]+)(?:\/init)?"/g)];
+                        for (const m of matches) {
+                            if (m[1] && !['auth', 'login', 'user', 'build'].includes(m[1])) {
+                                return `/api/${m[1]}`;
+                            }
+                        }
+                    }
+                    throw new Error("Endpoint not found in chunks");
+                } catch (e) {
+                    throw e;
+                }
+            };
+
+            const getHltbToken = async (endpoint) => {
+                return new Promise((resolve, reject) => {
+                    const initUrl = `https://howlongtobeat.com${endpoint}/init?t=${Date.now()}`;
+                    GM_xmlhttpRequest({
+                        method: "GET",
+                        url: initUrl,
+                        headers: {
+                            "Accept": "*/*",
+                            "User-Agent": navigator.userAgent,
+                            "Referer": "https://howlongtobeat.com/"
+                        },
+                        onload: (response) => {
+                            if (response.status === 200) {
+                                resolve(JSON.parse(response.responseText));
+                            } else {
+                                reject(response.status);
+                            }
+                        },
+                        onerror: () => reject(0)
+                    });
+                });
+            };
+
             const handleClick = async function() {
                 if (content.style.display === 'none') {
                     hltbBlock.style.transition = 'width 0.3s ease, height 0.3s ease';
@@ -3511,33 +3729,19 @@
                     triangle.style.borderBottom = '5px solid #67c1f5';
 
                     let gameName = getGameName();
-                    let searchName = gameName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace("’", "'").replace(/[^a-z _0-9`~!@#$%^&*()_=+|\\\]}[{;:',<.>/?]/gi, '').toLowerCase().split(/\s+/);
+                    let searchName = gameName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’]/g, "'").replace(/[^a-zA-Zа-яёА-ЯЁ _0-9`~!@#$%^&*()_\-=+|\\\]}[{;:',<.>/?]/g, '').toLowerCase().split(/\s+/);
 
                     let hltbAuth = {};
                     try {
-                        const tokenResponse = await new Promise((resolve, reject) => {
-                            GM_xmlhttpRequest({
-                                method: "GET",
-                                url: "https://howlongtobeat.com/api/find/init?t=" + Date.now(),
-                                headers: {
-                                    "Accept": "*/*",
-                                    "User-Agent": navigator.userAgent,
-                                    "Referer": "https://howlongtobeat.com/"
-                                },
-                                onload: resolve,
-                                onerror: reject
-                            });
-                        });
-
-                        if (tokenResponse.status === 200) {
-                            const data = JSON.parse(tokenResponse.responseText);
-                            hltbAuth = {
-                                token: data.token,
-                                hpKey: data.hpKey,
-                                hpVal: data.hpVal
-                            };
-                        } else {
-                            throw new Error("Token status: " + tokenResponse.status);
+                        try {
+                            const data = await getHltbToken(currentEndpoint);
+                            hltbAuth = { token: data.token, hpKey: data.hpKey, hpVal: data.hpVal };
+                        } catch (status) {
+                            content.textContent = 'Обновление API HLTB...';
+                            currentEndpoint = await fetchFallbackEndpoint();
+                            const data = await getHltbToken(currentEndpoint);
+                            hltbAuth = { token: data.token, hpKey: data.hpKey, hpVal: data.hpVal };
+                            GM_setValue(HLTB_ENDPOINT_KEY, currentEndpoint);
                         }
                     } catch (e) {
                         content.textContent = 'Ошибка токена HLTB';
@@ -3578,72 +3782,76 @@
                     if (hltbAuth.hpKey) searchHeaders["x-hp-key"] = hltbAuth.hpKey;
                     if (hltbAuth.hpVal) searchHeaders["x-hp-val"] = hltbAuth.hpVal;
 
-                    GM_xmlhttpRequest({
-                        method: "POST",
-                        url: "https://howlongtobeat.com/api/find",
-                        data: JSON.stringify(searchPayload),
-                        headers: searchHeaders,
-                        onload: async function(response) {
-                            let baboonData = { count: 0, data: [] };
-                            if (response.responseText.includes("<!DOCTYPE html>")) {
-                                content.textContent = 'Ошибка: Cloudflare блок.';
-                                return;
-                            }
-                            try {
-                                baboonData = JSON.parse(response.responseText);
-                            } catch (e) {
-                                content.textContent = 'Ошибка парсинга данных.';
-                                return;
-                            }
+                    const performSearch = (payload) => {
+                        return new Promise((resolve, reject) => {
+                            GM_xmlhttpRequest({
+                                method: "POST",
+                                url: `https://howlongtobeat.com${currentEndpoint}`,
+                                data: JSON.stringify(payload),
+                                headers: searchHeaders,
+                                onload: resolve,
+                                onerror: reject,
+                                timeout: 10000,
+                                ontimeout: () => reject(new Error("Timeout"))
+                            });
+                        });
+                    };
 
-                            if (baboonData.count === 0 && /[а-яё]/i.test(gameName)) {
-                                const appId = unsafeWindow.location.pathname.split('/')[2];
-                                const steamApiUrl = `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json={"ids": [{"appid": ${appId}}], "context": {"language": "english", "country_code": "US", "steam_realm": 1}, "data_request": {"include_assets": true}}`;
-                                try {
-                                    const steamResponse = await new Promise((resolve, reject) => {
-                                        GM_xmlhttpRequest({ method: "GET", url: steamApiUrl, onload: resolve, onerror: reject });
-                                    });
-                                    if (steamResponse.status === 200) {
-                                        const steamData = JSON.parse(steamResponse.responseText);
-                                        const englishName = steamData.response.store_items[0]?.name;
-                                        if (englishName) {
-                                            searchPayload.searchTerms = englishName.toLowerCase().split(/\s+/);
-                                            const secondResponse = await new Promise((resolve, reject) => {
-                                                GM_xmlhttpRequest({
-                                                    method: "POST",
-                                                    url: "https://howlongtobeat.com/api/find",
-                                                    data: JSON.stringify(searchPayload),
-                                                    headers: searchHeaders,
-                                                    onload: resolve, onerror: reject
-                                                });
-                                            });
-                                            if (secondResponse.status === 200) {
-                                                baboonData = JSON.parse(secondResponse.responseText);
-                                            }
+                    try {
+                        const response = await performSearch(searchPayload);
+
+                        let baboonData = { count: 0, data: [] };
+                        if (response.responseText.includes("<!DOCTYPE html>")) {
+                            content.textContent = 'Ошибка: Cloudflare блок.';
+                            return;
+                        }
+                        try {
+                            baboonData = JSON.parse(response.responseText);
+                        } catch (e) {
+                            content.textContent = 'Ошибка парсинга данных.';
+                            return;
+                        }
+
+                        if (baboonData.count === 0 && /[а-яё]/i.test(gameName)) {
+                            const appId = unsafeWindow.location.pathname.split('/')[2];
+                            const steamApiUrl = `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json={"ids": [{"appid": ${appId}}], "context": {"language": "english", "country_code": "US", "steam_realm": 1}, "data_request": {"include_assets": true}}`;
+                            try {
+                                const steamResponse = await new Promise((resolve, reject) => {
+                                    GM_xmlhttpRequest({ method: "GET", url: steamApiUrl, onload: resolve, onerror: reject });
+                                });
+                                if (steamResponse.status === 200) {
+                                    const steamData = JSON.parse(steamResponse.responseText);
+                                    const englishName = steamData.response.store_items[0]?.name;
+                                    if (englishName) {
+                                        searchPayload.searchTerms = englishName.toLowerCase().split(/\s+/);
+                                        const secondResponse = await performSearch(searchPayload);
+                                        if (secondResponse.status === 200) {
+                                            baboonData = JSON.parse(secondResponse.responseText);
                                         }
                                     }
-                                } catch (error) {}
-                            }
-
-                            if (baboonData.count > 0) {
-                                const matches = findPossibleMatches(gameName, baboonData.data);
-                                if (matches.length > 0) {
-                                    renderPossibleMatches(matches);
-                                    hltbBlock.style.height = `${content.scrollHeight + 30}px`;
-                                    return;
                                 }
+                            } catch (error) {}
+                        }
+
+                        if (baboonData.count > 0) {
+                            const matches = findPossibleMatches(gameName, baboonData.data);
+                            if (matches.length > 0) {
+                                renderPossibleMatches(matches);
+                                hltbBlock.style.height = `${content.scrollHeight + 30}px`;
+                                return;
                             }
-                            if (baboonData.data && baboonData.data.length > 0) {
-                                renderContent(baboonData.data[0]);
-                            } else {
-                                renderContent(null);
-                            }
-                            hltbBlock.style.height = `${content.scrollHeight + 30}px`;
-                        },
-                        onerror: function() { content.textContent = 'Ошибка сети HLTB.'; },
-                        ontimeout: function() { content.textContent = 'Тайм-аут HLTB.'; },
-                        timeout: 10000
-                    });
+                        }
+
+                        if (baboonData.data && baboonData.data.length > 0) {
+                            renderContent(baboonData.data[0]);
+                        } else {
+                            renderContent(null);
+                        }
+                        hltbBlock.style.height = `${content.scrollHeight + 30}px`;
+
+                    } catch (e) {
+                        content.textContent = 'Ошибка сети HLTB.';
+                    }
                 } else {
                     content.style.display = 'none';
                     hltbBlock.style.height = '30px';
@@ -3758,7 +3966,7 @@
                 else return `${hours} ч.`;
             }
             function getGameName() {
-                return document.querySelector('.apphub_AppName').textContent.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[’]/g, "'").replace(/[^a-zA-Zа-яёА-ЯЁ0-9 _'\-!]/g, '').trim().toLowerCase();
+                return document.querySelector('.apphub_AppName').textContent.trim();
             }
 
             if (scriptsConfig.autoExpandHltb) {
@@ -5836,8 +6044,8 @@ if (headerCtn) {
             let RUSSIAN_TRANSLATION_CHECKBOX = null;
             let RUSSIAN_VOICE_CHECKBOX = null;
             let NO_RUSSIAN_CHECKBOX = null;
-            const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v3';
-            const STEAM_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
+            const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v4';
+            const STEAM_SEARCH_URL = "https://store.steampowered.com/search/?l=russian";
             const OWNED_APPS_CACHE_KEY = 'SteamEnhancer_OwnedApps';
             const USERDATA_URL = 'https://store.steampowered.com/dynamicstore/userdata/';
             const CACHE_DURATION = 24 * 60 * 60 * 1000;
@@ -5894,25 +6102,34 @@ if (headerCtn) {
                     const response = await new Promise((resolve, reject) => {
                         GM_xmlhttpRequest({
                             method: "GET",
-                            url: STEAM_TAGS_URL,
+                            url: STEAM_SEARCH_URL,
                             onload: resolve,
                             onerror: reject
                         });
                     });
 
                     if (response.status === 200) {
-                        const data = JSON.parse(response.responseText);
-                        GM_setValue(STEAM_TAGS_CACHE_KEY, {
-                            data: data,
-                            timestamp: now
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(response.responseText, "text/html");
+                        const tags = {};
+
+                        doc.querySelectorAll('[data-param="tags"][data-value][data-loc]').forEach(el => {
+                            tags[el.getAttribute('data-value')] = el.getAttribute('data-loc');
                         });
-                        return data;
+
+                        if (Object.keys(tags).length > 0) {
+                            GM_setValue(STEAM_TAGS_CACHE_KEY, {
+                                data: tags,
+                                timestamp: now
+                            });
+                            return tags;
+                        }
                     }
                 } catch (e) {
-                    return cached.data || {};
+                    console.error("SteamEnhancer Error: Не удалось загрузить теги напрямую со страницы поиска Steam", e);
                 }
 
-                return {};
+                return cached.data || {};
             }
 
             async function fetchOwnedApps() {
@@ -8717,24 +8934,50 @@ if (headerCtn) {
 
             const MOREL_API_URL = "https://api.steampowered.com/IStoreBrowseService/GetItems/v1";
             const CHANTERELLE_WAIT_TIME = 2000;
-            const PORCINI_VISIBLE_ELEMENTS_SELECTOR = "a[href*='/app/'], a[data-appid]";
-            const TRUFFLE_HOVER_ELEMENT_SELECTOR = "a[href*='/app/'], a[data-appid]";
+            const PORCINI_VISIBLE_ELEMENTS_SELECTOR = "a[href*='/app/'], a[href*='/sub/'], a[data-appid]";
+            const TRUFFLE_HOVER_ELEMENT_SELECTOR = "a[href*='/app/'], a[href*='/sub/'], a[data-appid]";
+            const IMG_PROXY = 'https://external-content.duckduckgo.com/iu/?u=https://img.youtube.com/vi/';
+            const BLANK_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
-            let SHIITAKE_collectedAppIds = new Set();
+            let SHIITAKE_collectedIds = new Set();
             let ENOKI_tooltip = null;
             let MAITAKE_hoverTimer = null;
             let HEN_OF_THE_WOODS_hideTimer = null;
 
             const MUSHROOM_GAME_DATA = {};
 
-            const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v3';
-            const STEAM_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
+            const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v4';
+            const STEAM_SEARCH_URL = "https://store.steampowered.com/search/?l=russian";
 
-            function fetchGameData(appIds) {
+            function extractIdAndType(element) {
+                if (element.dataset.appid) return { type: 'app', id: element.dataset.appid };
+                const appMatch = element.href.match(/\/app\/(\d+)/);
+                if (appMatch) return { type: 'app', id: appMatch[1] };
+                const subMatch = element.href.match(/\/sub\/(\d+)/);
+                if (subMatch) return { type: 'sub', id: subMatch[1] };
+                return null;
+            }
+
+            function cleanupSpinners(loadingElements) {
+                loadingElements.forEach(item => {
+                    if (item.element.classList.contains('use-img-loading')) {
+                        const dir = item.info.type === 'sub' ? 'subs' : 'apps';
+                        item.element.classList.remove('use-img-loading');
+                        item.img.src = `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/${dir}/${item.info.id}/capsule_231x87.jpg`;
+                        item.img.style.opacity = '1';
+                        item.img.onerror = () => {
+                            if (!item.img.dataset.retriedFallback) {
+                                item.img.dataset.retriedFallback = 'true';
+                                item.img.src = `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/${dir}/${item.info.id}/header.jpg`;
+                            }
+                        };
+                    }
+                });
+            }
+
+            function fetchGameData(items, loadingElements) {
                 const inputJson = {
-                    ids: Array.from(appIds).map(appid => ({
-                        appid
-                    })),
+                    ids: items.map(info => info.type === 'sub' ? { packageid: parseInt(info.id, 10) } : { appid: parseInt(info.id, 10) }),
                     context: {
                         language: "russian",
                         country_code: "US",
@@ -8782,92 +9025,230 @@ if (headerCtn) {
                     method: "GET",
                     url: `${MOREL_API_URL}?input_json=${encodeURIComponent(JSON.stringify(inputJson))}`,
                     onload: function(response) {
-                        const data = JSON.parse(response.responseText);
-                        processGameData(data);
+                        try {
+                            const data = JSON.parse(response.responseText);
+                            processGameData(data, loadingElements);
+                        } catch(e) {
+                            console.error("SteamEnhancer Error: Parse failed", e);
+                            cleanupSpinners(loadingElements);
+                        }
+                    },
+                    onerror: function(err) {
+                        console.error("SteamEnhancer Error: Network fetch failed", err);
+                        cleanupSpinners(loadingElements);
+                    },
+                    ontimeout: function() {
+                        cleanupSpinners(loadingElements);
                     }
                 });
             }
 
-            function processGameData(data) {
-                if (!data || !data.response || !data.response.store_items) return;
-                const items = data.response.store_items;
-                items.forEach(item => {
-                    const appId = item.id;
-                    MUSHROOM_GAME_DATA[appId] = {
-                        name: item.name,
-                        assets: item.assets,
-                        is_early_access: item.is_early_access,
-                        review_count: item.reviews?.summary_filtered?.review_count,
-                        percent_positive: item.reviews?.summary_filtered?.percent_positive,
-                        short_description: item.basic_info?.short_description,
-                        publishers: item.basic_info?.publishers?.map(p => p.name).join(", "),
-                        developers: item.basic_info?.developers?.map(d => d.name).join(", "),
-                        franchises: item.basic_info?.franchises?.map(f => f.name).join(", "),
-                        tagids: item.tagids || [],
-                        language_support_russian: item.supported_languages?.find(lang => (lang.name && lang.name.toLowerCase() === 'russian') || lang.elanguage === 8),
-                        language_support_english: item.supported_languages?.find(lang => (lang.name && lang.name.toLowerCase() === 'english') || lang.elanguage === 0),
-                        release_date: item.release?.steam_release_date ? new Date(item.release.steam_release_date * 1000).toLocaleDateString() : "Нет данных"
-                    };
+            function processGameData(data, loadingElements) {
+                let processedKeys = new Set();
 
-                    const gameLinks = document.querySelectorAll(`a[href*='/app/${appId}'], a[data-appid="${appId}"]`);
-                    gameLinks.forEach(link => {
-                        const img = link.querySelector('img');
-                        if (img && (!img.getAttribute('src') || img.getAttribute('src') === '')) {
-                            const fallbackImg = item.assets?.small_capsule
-                                ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/${item.assets.small_capsule}`
-                                : (item.assets?.header
-                                    ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/${item.assets.header}`
-                                    : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg`);
-                            img.src = fallbackImg;
-                        }
+                if (data && data.response && data.response.store_items) {
+                    const items = data.response.store_items;
+                    items.forEach(item => {
+                        const type = item.item_type === 1 ? 'sub' : 'app';
+                        const id = item.id;
+                        const key = `${type}_${id}`;
+                        processedKeys.add(key);
+
+                        MUSHROOM_GAME_DATA[key] = {
+                            type: type,
+                            id: id,
+                            name: item.name,
+                            assets: item.assets,
+                            is_early_access: item.is_early_access,
+                            review_count: item.reviews?.summary_filtered?.review_count,
+                            percent_positive: item.reviews?.summary_filtered?.percent_positive,
+                            short_description: item.basic_info?.short_description,
+                            publishers: item.basic_info?.publishers?.map(p => p.name).join(", "),
+                            developers: item.basic_info?.developers?.map(d => d.name).join(", "),
+                            franchises: item.basic_info?.franchises?.map(f => f.name).join(", "),
+                            tagids: item.tagids || [],
+                            language_support_russian: item.supported_languages?.find(lang => (lang.name && lang.name.toLowerCase() === 'russian') || lang.elanguage === 8),
+                            language_support_english: item.supported_languages?.find(lang => (lang.name && lang.name.toLowerCase() === 'english') || lang.elanguage === 0),
+                            release_date: item.release?.steam_release_date ? new Date(item.release.steam_release_date * 1000).toLocaleDateString() : "Нет данных"
+                        };
+
+                        const selector = type === 'app' ? `a[href*='/app/${id}'], a[data-appid="${id}"]` : `a[href*='/sub/${id}']`;
+                        const gameLinks = document.querySelectorAll(selector);
+                        const dir = type === 'sub' ? 'subs' : 'apps';
+
+                        gameLinks.forEach(link => {
+                            const img = link.querySelector('img');
+                            if (img && (link.classList.contains('use-img-loading') || !img.getAttribute('src') || img.getAttribute('src') === BLANK_GIF)) {
+                                const fallbackImg = item.assets?.small_capsule
+                                    ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/${dir}/${id}/${item.assets.small_capsule}`
+                                    : (item.assets?.header
+                                        ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/${dir}/${id}/${item.assets.header}`
+                                        : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/${dir}/${id}/header.jpg`);
+
+                                img.onload = () => {
+                                    link.classList.remove('use-img-loading');
+                                    img.style.opacity = '1';
+                                };
+                                img.onerror = () => {
+                                    link.classList.remove('use-img-loading');
+                                    img.style.opacity = '1';
+                                };
+
+                                img.src = fallbackImg;
+
+                                setTimeout(() => {
+                                    link.classList.remove('use-img-loading');
+                                    img.style.opacity = '1';
+                                }, 2000);
+                            }
+                        });
                     });
+                }
+
+                loadingElements.forEach(item => {
+                    const key = `${item.info.type}_${item.info.id}`;
+                    if (!processedKeys.has(key)) {
+                        cleanupSpinners([item]);
+                    }
                 });
             }
 
             function collectAndFetchAppIds() {
                 const visibleElements = document.querySelectorAll(PORCINI_VISIBLE_ELEMENTS_SELECTOR);
-                const newAppIds = new Set();
+                const newItems = [];
+                const loadingElements = [];
 
                 visibleElements.forEach(element => {
-                    const appId = element.dataset.appid || element.href.match(/app\/(\d+)/)?.[1];
-                    if (appId && !SHIITAKE_collectedAppIds.has(appId)) {
-                        newAppIds.add(parseInt(appId, 10));
-                        SHIITAKE_collectedAppIds.add(appId);
+                    const info = extractIdAndType(element);
+                    if (info) {
+                        const key = `${info.type}_${info.id}`;
+                        const img = element.querySelector('img');
+
+                        if (!SHIITAKE_collectedIds.has(key)) {
+                            newItems.push(info);
+                            SHIITAKE_collectedIds.add(key);
+                        }
+
+                        if (img && (!img.getAttribute('src') || img.getAttribute('src') === '' || img.getAttribute('src') === BLANK_GIF) && !element.classList.contains('use-img-loading')) {
+                            element.classList.add('use-img-loading');
+                            img.src = BLANK_GIF;
+                            img.style.opacity = '0';
+                            img.style.transition = 'opacity 0.3s ease';
+
+                            loadingElements.push({ element: element, info: info, img: img });
+                        }
                     }
                 });
 
-                if (newAppIds.size > 0) {
-                    fetchGameData(newAppIds);
+                if (newItems.length > 0) {
+                    fetchGameData(newItems, loadingElements);
+                } else if (loadingElements.length > 0) {
+                    cleanupSpinners(loadingElements);
                 }
+            }
+
+            function fixYoutubeEmbeds() {
+                const videoBlocks = document.querySelectorAll('.blotter_video_player_sizing_ctn:not(.yt-fixed):not(.yt-processing)');
+
+                videoBlocks.forEach(block => {
+                    block.classList.add('yt-processing');
+                    block.style.position = 'relative';
+
+                    const iframe = block.querySelector('iframe.movieFrame');
+                    const placeholderImg = block.querySelector('img[src*="youtube_16x9_placeholder.gif"]');
+
+                    if (iframe && iframe.src) {
+                        const match = iframe.src.match(/embed\/([a-zA-Z0-9_-]{11})/);
+
+                        if (match && match[1]) {
+                            const videoId = match[1];
+                            const targetImageUrl = `${IMG_PROXY}${videoId}/hqdefault.jpg`;
+
+                            const spinner = document.createElement('div');
+                            spinner.className = 'use-yt-spinner';
+                            block.appendChild(spinner);
+
+                            iframe.style.opacity = '0';
+
+                            setTimeout(() => {
+                                spinner.remove();
+                                block.classList.remove('yt-processing');
+                                block.classList.add('yt-fixed');
+                                iframe.style.display = 'none';
+
+                                if (placeholderImg) {
+                                    placeholderImg.style.cursor = 'pointer';
+                                    placeholderImg.title = 'Смотреть видео на YouTube';
+
+                                    placeholderImg.addEventListener('click', (e) => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
+                                        window.open(`https://www.youtube.com/watch?v=${videoId}`, '_blank');
+                                    });
+
+                                    GM_xmlhttpRequest({
+                                        method: 'GET',
+                                        url: targetImageUrl,
+                                        responseType: 'blob',
+                                        onload: function(response) {
+                                            if (response.status === 200) {
+                                                const urlCreator = window.URL || window.webkitURL;
+                                                const imageUrl = urlCreator.createObjectURL(response.response);
+                                                placeholderImg.src = imageUrl;
+                                                placeholderImg.style.display = 'block';
+
+                                                if (!block.querySelector('.use-yt-play')) {
+                                                    const playIcon = document.createElement('div');
+                                                    playIcon.className = 'use-yt-play';
+                                                    playIcon.innerHTML = `<svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+                                                    block.appendChild(playIcon);
+                                                }
+                                            }
+                                        }
+                                    });
+                                }
+                            }, 2000);
+                        } else {
+                            block.classList.remove('yt-processing');
+                            block.classList.add('yt-fixed');
+                        }
+                    } else {
+                        block.classList.remove('yt-processing');
+                        block.classList.add('yt-fixed');
+                    }
+                });
             }
 
             function handleHover(event) {
                 const gameElement = event.target.closest(TRUFFLE_HOVER_ELEMENT_SELECTOR);
 
                 if (gameElement) {
-                    const appId = gameElement.dataset.appid || gameElement.href.match(/app\/(\d+)/)?.[1];
-                    if (appId && MUSHROOM_GAME_DATA[appId]) {
-                        clearTimeout(MAITAKE_hoverTimer);
-                        clearTimeout(HEN_OF_THE_WOODS_hideTimer);
+                    const info = extractIdAndType(gameElement);
+                    if (info) {
+                        const key = `${info.type}_${info.id}`;
+                        if (MUSHROOM_GAME_DATA[key]) {
+                            clearTimeout(MAITAKE_hoverTimer);
+                            clearTimeout(HEN_OF_THE_WOODS_hideTimer);
 
-                        MAITAKE_hoverTimer = setTimeout(() => {
-                            displayGameInfo(gameElement, MUSHROOM_GAME_DATA[appId], appId);
-                        }, 300);
-                    } else {
-                        clearTimeout(MAITAKE_hoverTimer);
-                        clearTimeout(HEN_OF_THE_WOODS_hideTimer);
-                        if (ENOKI_tooltip) {
-                            ENOKI_tooltip.style.opacity = 0;
-                            setTimeout(() => {
-                                ENOKI_tooltip.style.display = 'none';
+                            MAITAKE_hoverTimer = setTimeout(() => {
+                                displayGameInfo(gameElement, MUSHROOM_GAME_DATA[key]);
                             }, 300);
+                        } else {
+                            clearTimeout(MAITAKE_hoverTimer);
+                            clearTimeout(HEN_OF_THE_WOODS_hideTimer);
+                            if (ENOKI_tooltip) {
+                                ENOKI_tooltip.style.opacity = 0;
+                                setTimeout(() => {
+                                    ENOKI_tooltip.style.display = 'none';
+                                }, 300);
+                            }
                         }
                     }
                 }
             }
 
             function getReviewClassCatalog(percent, totalReviews) {
-                if (totalReviews === 0) return 'mushroom-no-reviews';
+                if (totalReviews === 0 || !totalReviews) return 'mushroom-no-reviews';
                 if (percent >= 70) return 'mushroom-positive';
                 if (percent >= 40) return 'mushroom-mixed';
                 if (percent >= 1) return 'mushroom-negative';
@@ -8890,28 +9271,37 @@ if (headerCtn) {
                     const response = await new Promise((resolve, reject) => {
                         GM_xmlhttpRequest({
                             method: "GET",
-                            url: STEAM_TAGS_URL,
+                            url: STEAM_SEARCH_URL,
                             onload: resolve,
                             onerror: reject
                         });
                     });
 
                     if (response.status === 200) {
-                        const data = JSON.parse(response.responseText);
-                        GM_setValue(STEAM_TAGS_CACHE_KEY, {
-                            data: data,
-                            timestamp: now
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(response.responseText, "text/html");
+                        const tags = {};
+
+                        doc.querySelectorAll('[data-param="tags"][data-value][data-loc]').forEach(el => {
+                            tags[el.getAttribute('data-value')] = el.getAttribute('data-loc');
                         });
-                        return data;
+
+                        if (Object.keys(tags).length > 0) {
+                            GM_setValue(STEAM_TAGS_CACHE_KEY, {
+                                data: tags,
+                                timestamp: now
+                            });
+                            return tags;
+                        }
                     }
                 } catch (e) {
-                    return cached.data || {};
+                    console.error("SteamEnhancer Error: Не удалось загрузить теги напрямую со страницы поиска Steam", e);
                 }
 
-                return {};
+                return cached.data || {};
             }
 
-            async function displayGameInfo(element, data, appId) {
+            async function displayGameInfo(element, data) {
                 if (!ENOKI_tooltip) {
                     ENOKI_tooltip = document.createElement('div');
                     ENOKI_tooltip.className = 'mushroom-tooltip';
@@ -8946,7 +9336,8 @@ if (headerCtn) {
                 const reviewClass = getReviewClassCatalog(data.percent_positive, data.review_count);
                 const earlyAccessClass = data.is_early_access ? 'mushroom-early-access-yes' : 'mushroom-early-access-no';
 
-                const headerUrl = data.assets?.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/${data.assets.header}` : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg`;
+                const dir = data.type === 'sub' ? 'subs' : 'apps';
+                const headerUrl = data.assets?.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/${dir}/${data.id}/${data.assets.header}` : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/${dir}/${data.id}/header.jpg`;
                 const imageHtml = `<div style="margin-bottom: 10px;"><img src="${headerUrl}" alt="${data.name || ''}" style="width: 50%; height: auto;"></div>`;
 
                 async function getTagNames(tagIds) {
@@ -9013,11 +9404,17 @@ if (headerCtn) {
 
             function observeNewElements() {
                 const observer = new MutationObserver((mutations) => {
+                    let hasNewElements = false;
                     mutations.forEach(mutation => {
-                        if (mutation.type === 'childList') {
-                            collectAndFetchAppIds();
+                        if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+                            hasNewElements = true;
                         }
                     });
+
+                    if (hasNewElements) {
+                        collectAndFetchAppIds();
+                        fixYoutubeEmbeds();
+                    }
                 });
 
                 observer.observe(document.body, {
@@ -9029,6 +9426,7 @@ if (headerCtn) {
             function initialize() {
                 setTimeout(() => {
                     collectAndFetchAppIds();
+                    fixYoutubeEmbeds();
                     observeNewElements();
                     document.addEventListener('mouseover', handleHover);
                 }, CHANTERELLE_WAIT_TIME);
@@ -9062,50 +9460,80 @@ if (headerCtn) {
                     border-bottom: 10px solid transparent;
                     border-left: 10px solid #E1E8ED;
                 }
-                .mushroom-positive {
-                    color: #2B80E9;
+                .mushroom-positive { color: #2B80E9; }
+                .mushroom-mixed { color: #997a00; }
+                .mushroom-negative { color: #E53E3E; }
+                .mushroom-no-reviews { color: #929396; }
+                .mushroom-language-yes { color: #2B80E9; }
+                .mushroom-language-no { color: #E53E3E; }
+                .mushroom-early-access-yes { color: #2B80E9; }
+                .mushroom-early-access-no { color: #929396; }
+                .mushroom-tags-container {
+                    display: flex;
+                    flex-wrap: wrap;
+                    gap: 3px;
+                    margin-top: 6px;
                 }
-                .mushroom-mixed {
-                    color: #997a00;
+                .mushroom-tag {
+                    background-color: #96a3ae;
+                    color: #e3eaef;
+                    padding: 0 4px;
+                    border-radius: 2px;
+                    font-size: 11px;
+                    line-height: 19px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    max-width: 200px;
+                    box-shadow: none;
+                    margin-bottom: 3px;
                 }
-                .mushroom-negative {
-                    color: #E53E3E;
+                .use-yt-spinner {
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 40px;
+                    height: 40px;
+                    border: 4px solid rgba(255, 255, 255, 0.3);
+                    border-top: 4px solid #67c1f5;
+                    border-radius: 50%;
+                    animation: use-yt-spin 1s linear infinite;
+                    z-index: 5;
                 }
-                .mushroom-no-reviews {
-                    color: #929396;
+                .use-img-loading {
+                    position: relative;
+                    display: inline-block;
+                    min-width: 120px;
+                    min-height: 45px;
+                    background-color: rgba(0, 0, 0, 0.2);
+                    border-radius: 3px;
                 }
-                .mushroom-language-yes {
-                    color: #2B80E9;
+                .use-img-loading::after {
+                    content: '';
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid rgba(255, 255, 255, 0.2);
+                    border-top: 2px solid #67c1f5;
+                    border-radius: 50%;
+                    animation: use-yt-spin 1s linear infinite;
                 }
-                .mushroom-language-no {
-                    color: #E53E3E;
+                @keyframes use-yt-spin {
+                    0% { transform: translate(-50%, -50%) rotate(0deg); }
+                    100% { transform: translate(-50%, -50%) rotate(360deg); }
                 }
-                .mushroom-early-access-yes {
-                    color: #2B80E9;
+                .use-yt-play {
+                    position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+                    width: 50px; height: 50px; background: rgba(0, 0, 0, 0.7); border-radius: 50%;
+                    display: flex; align-items: center; justify-content: center; cursor: pointer;
+                    pointer-events: none; transition: background 0.2s, transform 0.2s; z-index: 2;
                 }
-                .mushroom-early-access-no {
-                    color: #929396;
-                }
-               .mushroom-tags-container {
-                   display: flex;
-                   flex-wrap: wrap;
-                   gap: 3px;
-                   margin-top: 6px;
-               }
-               .mushroom-tag {
-                   background-color: #96a3ae;
-                   color: #e3eaef;
-                   padding: 0 4px;
-                   border-radius: 2px;
-                   font-size: 11px;
-                   line-height: 19px;
-                   white-space: nowrap;
-                   overflow: hidden;
-                   text-overflow: ellipsis;
-                   max-width: 200px;
-                   box-shadow: none;
-                   margin-bottom: 3px;
-               }
+                .use-yt-play svg { width: 24px; height: 24px; fill: #fff; margin-left: 4px; }
+                .blotter_video_player_sizing_ctn:hover .use-yt-play { background: rgba(255, 0, 0, 0.9); transform: translate(-50%, -50%) scale(1.1); }
             `;
             document.head.appendChild(style);
         })();
@@ -9130,17 +9558,50 @@ if (headerCtn) {
             let sr2_toggleViewBtn = null;
 
             let tagsMap = new Map();
-            GM_xmlhttpRequest({
-                method: "GET",
-                url: "https://raw.githubusercontent.com/0wn3dg0d/Stelicas/refs/heads/main/data/tags.txt",
-                onload: function(response) {
-                    const lines = response.responseText.split('\n');
-                    lines.forEach(line => {
-                        const [id, name] = line.trim().split('\t');
-                        if (id && name) tagsMap.set(parseInt(id), name);
-                    });
+            const SR2_TAGS_CACHE_KEY = 'SteamEnhancer_RouletteTags_v4';
+            const SR2_SEARCH_URL = "https://store.steampowered.com/search/?l=russian";
+
+            async function sr2_loadTags() {
+                const cached = GM_getValue(SR2_TAGS_CACHE_KEY, { data: null, timestamp: 0 });
+                const now = Date.now();
+                const CACHE_DURATION = 744 * 60 * 60 * 1000;
+
+                if (cached.data && (now - cached.timestamp) < CACHE_DURATION) {
+                    Object.entries(cached.data).forEach(([id, name]) => tagsMap.set(parseInt(id), name));
+                    return;
                 }
-            });
+
+                try {
+                    const response = await new Promise((resolve, reject) => GM_xmlhttpRequest({
+                        method: "GET", url: SR2_SEARCH_URL, onload: resolve, onerror: reject
+                    }));
+
+                    if (response.status === 200) {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(response.responseText, "text/html");
+                        const tagsObj = {};
+
+                        doc.querySelectorAll('[data-param="tags"][data-value][data-loc]').forEach(el => {
+                            const id = el.getAttribute('data-value');
+                            const name = el.getAttribute('data-loc');
+                            if (id && name) {
+                                tagsObj[id] = name;
+                                tagsMap.set(parseInt(id), name);
+                            }
+                        });
+
+                        if (Object.keys(tagsObj).length > 0) {
+                            GM_setValue(SR2_TAGS_CACHE_KEY, { data: tagsObj, timestamp: now });
+                        }
+                    }
+                } catch (e) {
+                    console.error('[Roulette] Ошибка загрузки меток из Steam:', e);
+                    if (cached.data) {
+                        Object.entries(cached.data).forEach(([id, name]) => tagsMap.set(parseInt(id), name));
+                    }
+                }
+            }
+            sr2_loadTags();
 
             let sr2_activeFilters = {
                 categories: ["Все"],
@@ -13190,8 +13651,8 @@ if (headerCtn) {
             const WGH_CURRENCY_CODE_TO_COUNTRY = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([country, data]) => [data.code, country]));
             const WGH_CURRENCY_CODE_TO_ISO = Object.fromEntries(Object.entries(WGH_COUNTRY_CURRENCY_MAP).map(([_, data]) => [data.code, data.iso]));
             const WGH_DEFAULT_SORT = { field: 'price', direction: 'asc' };
-            const WGH_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v3_wgh';
-            const WGH_TAGS_URL = "https://gist.githubusercontent.com/0wn3dg0d/22a351ff4c65e50a9a8af6da360defad/raw/steamrutagsownd.json";
+            const WGH_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v4_wgh';
+            const WGH_SEARCH_URL = "https://store.steampowered.com/search/?l=russian";
             const WGH_FILTER_STORAGE_KEY = 'wgh_filters_v1';
             const WGH_FILTER_DEBOUNCE_MS = 400;
 
@@ -13332,16 +13793,30 @@ if (headerCtn) {
                 const cached = GM_getValue(WGH_TAGS_CACHE_KEY, { data: null, timestamp: 0 });
                 const now = Date.now();
                 if (cached.data && (now - cached.timestamp) < 744 * 60 * 60 * 1000) return cached.data;
+
                 try {
                     const response = await new Promise((resolve, reject) => GM_xmlhttpRequest({
-                        method: "GET", url: WGH_TAGS_URL, onload: resolve, onerror: reject
+                        method: "GET", url: WGH_SEARCH_URL, onload: resolve, onerror: reject
                     }));
+
                     if (response.status === 200) {
-                        const data = JSON.parse(response.responseText);
-                        GM_setValue(WGH_TAGS_CACHE_KEY, { data: data, timestamp: now });
-                        return data;
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(response.responseText, "text/html");
+                        const tags = {};
+
+                        doc.querySelectorAll('[data-param="tags"][data-value][data-loc]').forEach(el => {
+                            tags[el.getAttribute('data-value')] = el.getAttribute('data-loc');
+                        });
+
+                        if (Object.keys(tags).length > 0) {
+                            GM_setValue(WGH_TAGS_CACHE_KEY, { data: tags, timestamp: now });
+                            return tags;
+                        }
                     }
-                } catch (e) { console.error('[WGH] Ошибка загрузки меток:', e); }
+                } catch (e) {
+                    console.error('[WGH] Ошибка загрузки меток:', e);
+                }
+
                 return cached.data || {};
             }
 
@@ -14613,207 +15088,207 @@ if (headerCtn) {
             const PGH_GIFT_PRICE_DIFF_THRESHOLD = 0.15;
             const PGH_COUNTRY_CURRENCY_MAP = {
                 'US': {
-                    name: 'U.S. Dollar',
+                    name: 'Доллар США',
                     code: 1,
                     iso: 'usd'
                 },
                 'DE': {
-                    name: 'Euro',
+                    name: 'Евро',
                     code: 3,
                     iso: 'eur'
                 },
                 'AR': {
-                    name: 'LATAM - U.S. Dollar',
+                    name: 'Лат. Ам. - Доллар США',
                     code: 1,
                     iso: 'usd'
                 },
                 'AU': {
-                    name: 'Australian Dollar',
+                    name: 'Австралийский доллар',
                     code: 21,
                     iso: 'aud'
                 },
                 'BR': {
-                    name: 'Brazilian Real',
+                    name: 'Бразильский реал',
                     code: 7,
                     iso: 'brl'
                 },
                 'GB': {
-                    name: 'British Pound',
+                    name: 'Британский фунт',
                     code: 2,
                     iso: 'gbp'
                 },
                 'CA': {
-                    name: 'Canadian Dollar',
+                    name: 'Канадский доллар',
                     code: 20,
                     iso: 'cad'
                 },
                 'CL': {
-                    name: 'Chilean Peso',
+                    name: 'Чилийское песо',
                     code: 25,
                     iso: 'clp'
                 },
                 'CN': {
-                    name: 'Chinese Yuan',
+                    name: 'Китайский юань',
                     code: 23,
                     iso: 'cny'
                 },
                 'AZ': {
-                    name: 'CIS - U.S. Dollar',
+                    name: 'СНГ - Доллар США',
                     code: 1,
                     iso: 'usd'
                 },
                 'CO': {
-                    name: 'Colombian Peso',
+                    name: 'Колумбийское песо',
                     code: 27,
                     iso: 'cop'
                 },
                 'CR': {
-                    name: 'Costa Rican Colon',
+                    name: 'Коста-риканский колон',
                     code: 40,
                     iso: 'crc'
                 },
                 'HK': {
-                    name: 'Hong Kong Dollar',
+                    name: 'Гонконгский доллар',
                     code: 29,
                     iso: 'hkd'
                 },
                 'IN': {
-                    name: 'Indian Rupee',
+                    name: 'Индийская рупия',
                     code: 24,
                     iso: 'inr'
                 },
                 'ID': {
-                    name: 'Indonesian Rupiah',
+                    name: 'Индонезийская рупия',
                     code: 10,
                     iso: 'idr'
                 },
                 'IL': {
-                    name: 'Israeli New Shekel',
+                    name: 'Израильский новый шекель',
                     code: 35,
                     iso: 'ils'
                 },
                 'JP': {
-                    name: 'Japanese Yen',
+                    name: 'Японская иена',
                     code: 8,
                     iso: 'jpy'
                 },
                 'KZ': {
-                    name: 'Kazakhstani Tenge',
+                    name: 'Казахстанский тенге',
                     code: 37,
                     iso: 'kzt'
                 },
                 'KW': {
-                    name: 'Kuwaiti Dinar',
+                    name: 'Кувейтский динар',
                     code: 38,
                     iso: 'kwd'
                 },
                 'MY': {
-                    name: 'Malaysian Ringgit',
+                    name: 'Малазийский ринггит',
                     code: 11,
                     iso: 'myr'
                 },
                 'MX': {
-                    name: 'Mexican Peso',
+                    name: 'Мексиканское песо',
                     code: 19,
                     iso: 'mxn'
                 },
                 'NZ': {
-                    name: 'New Zealand Dollar',
+                    name: 'Новозеландский доллар',
                     code: 22,
                     iso: 'nzd'
                 },
                 'NO': {
-                    name: 'Norwegian Krone',
+                    name: 'Норвежская крона',
                     code: 9,
                     iso: 'nok'
                 },
                 'PE': {
-                    name: 'Peruvian Sol',
+                    name: 'Перуанский соль',
                     code: 26,
                     iso: 'pen'
                 },
                 'PH': {
-                    name: 'Philippine Peso',
+                    name: 'Филиппинское песо',
                     code: 12,
                     iso: 'php'
                 },
                 'PL': {
-                    name: 'Polish Zloty',
+                    name: 'Польский злотый',
                     code: 6,
                     iso: 'pln'
                 },
                 'QA': {
-                    name: 'Qatari Riyal',
+                    name: 'Катарский риал',
                     code: 39,
                     iso: 'qar'
                 },
                 'RU': {
-                    name: 'Russian Ruble',
+                    name: 'Российский рубль',
                     code: 5,
                     iso: 'rub'
                 },
                 'SA': {
-                    name: 'Saudi Riyal',
+                    name: 'Саудовский риал',
                     code: 31,
                     iso: 'sar'
                 },
                 'SG': {
-                    name: 'Singapore Dollar',
+                    name: 'Сингапурский доллар',
                     code: 13,
                     iso: 'sgd'
                 },
                 'ZA': {
-                    name: 'South African Rand',
+                    name: 'Южноафриканский рэнд',
                     code: 28,
                     iso: 'zar'
                 },
                 'PK': {
-                    name: 'South Asia - USD',
+                    name: 'Юж. Азия - Доллар США',
                     code: 1,
                     iso: 'usd'
                 },
                 'KR': {
-                    name: 'South Korean Won',
+                    name: 'Южнокорейская вона',
                     code: 16,
                     iso: 'krw'
                 },
                 'CH': {
-                    name: 'Swiss Franc',
+                    name: 'Швейцарский франк',
                     code: 4,
                     iso: 'chf'
                 },
                 'TW': {
-                    name: 'Taiwan Dollar',
+                    name: 'Тайваньский доллар',
                     code: 30,
                     iso: 'twd'
                 },
                 'TH': {
-                    name: 'Thai Baht',
+                    name: 'Тайский бат',
                     code: 14,
                     iso: 'thb'
                 },
                 'TR': {
-                    name: 'MENA - U.S. Dollar',
+                    name: 'MENA - Доллар США',
                     code: 1,
                     iso: 'usd'
                 },
                 'AE': {
-                    name: 'U.A.E. Dirham',
+                    name: 'Дирхам ОАЭ',
                     code: 32,
                     iso: 'aed'
                 },
                 'UA': {
-                    name: 'Ukrainian Hryvnia',
+                    name: 'Украинская гривна',
                     code: 18,
                     iso: 'uah'
                 },
                 'UY': {
-                    name: 'Uruguayan Peso',
+                    name: 'Уругвайское песо',
                     code: 41,
                     iso: 'uyu'
                 },
                 'VN': {
-                    name: 'Vietnamese Dong',
+                    name: 'Вьетнамский донг',
                     code: 15,
                     iso: 'vnd'
                 }
@@ -15241,28 +15716,24 @@ if (headerCtn) {
 
             function pgh_addGiftButton() {
                 const targetArea = document.querySelector('.game_area_purchase_section .game_area_purchase_game_wrapper .game_purchase_action, #add_to_cart > .btn_addtocart > span');
-                const referenceButtonContainer = targetArea?.closest('.game_purchase_action') || document.getElementById('add_to_cart');
+                const primaryContainer = targetArea?.closest('.game_purchase_action') || document.getElementById('add_to_cart');
+                const smButton = document.querySelector('.salesMaster_button');
 
-                 if (!referenceButtonContainer) {
-                    console.warn('[PGH] Не найден контейнер для кнопки подарка.');
-                    const smButton = document.querySelector('.salesMaster_button');
-                    if (smButton) {
-                        if (smButton.parentElement.querySelector('.pgh_button')) return;
-                         const giftButton = pgh_createButtonElement();
-                         smButton.insertAdjacentElement('afterend', giftButton);
-                         console.log('[PGH] Кнопка подарка добавлена после SalesMaster.');
-                    } else {
-                          console.warn('[PGH] SalesMaster кнопка тоже не найдена.');
-                     }
+                if (!primaryContainer && !smButton) {
+                    console.warn('[PGH] Не найден ни основной контейнер для кнопки подарка, ни SalesMaster.');
                     return;
-                 }
+                }
 
-                if (referenceButtonContainer.parentElement.querySelector('.pgh_button')) return;
+                if (primaryContainer && primaryContainer.parentElement.querySelector('.pgh_button')) return;
+                if (smButton && smButton.parentElement.querySelector('.pgh_button')) return;
 
                 const giftButton = pgh_createButtonElement();
 
-                referenceButtonContainer.parentNode.insertBefore(giftButton, referenceButtonContainer);
-                 console.log('[PGH] Кнопка подарка добавлена.');
+                if (primaryContainer) {
+                    primaryContainer.parentNode.insertBefore(giftButton, primaryContainer);
+                } else if (smButton) {
+                    smButton.insertAdjacentElement('afterend', giftButton);
+                }
             }
 
             function pgh_createButtonElement() {
@@ -17569,7 +18040,7 @@ if (headerCtn) {
                     storeInfoContainer.appendChild(storeDiv);
 
                     if (item.storeId === 'platimarket' && item.sellerId && item.sellerName) {
-                        const sellerLink = document.createElement('span'); // Меняем 'a' на 'span'
+                        const sellerLink = document.createElement('span');
                         sellerLink.className = 'sm-seller-link';
                         sellerLink.textContent = `Продавец: ${item.sellerName}`;
                         sellerLink.title = `Перейти к продавцу: ${item.sellerName}`;
@@ -17620,12 +18091,12 @@ if (headerCtn) {
             // --- Добавление кнопки SalesMaster ---
             function sm_addSalesMasterButton() {
                 const actionsContainer = document.querySelector('#queueActionsCtn');
-                // Ищем кнопку Plati как ориентир
-                const referenceButton = actionsContainer?.querySelector('.plati_price_button, .vgt_price_button');
+                // Ищем кнопку Share как ориентир
+                const referenceButton = actionsContainer?.querySelector('#shareBtn');
                 const ignoreButtonContainer = actionsContainer?.querySelector('#ignoreBtn');
 
                 if (!actionsContainer || (!referenceButton && !ignoreButtonContainer)) {
-                    // Если нет ни Plati ни Ignore, попробуем вставить просто в actionsContainer
+                    // Если нет ни Share, ни Ignore, попробуем вставить просто в actionsContainer
                     if (!actionsContainer) {
                         console.warn('SalesMaster Button: Could not find actions container.');
                         return;
@@ -17645,7 +18116,7 @@ if (headerCtn) {
                     sm_showModal();
                 });
 
-                // Логика вставки: после Plati, или после Ignore, или в конец actionsContainer
+                // Логика вставки: после Share, или после Ignore, или в конец actionsContainer
                 if (referenceButton) {
                     referenceButton.insertAdjacentElement('afterend', smContainer);
                 } else if (ignoreButtonContainer) {
@@ -21309,2208 +21780,6 @@ if (headerCtn) {
         })();
     }
 
-    // Скрипт для страницы игры (Plati; отображение цен с Plati.Market) | https://store.steampowered.com/app/*
-    if (scriptsConfig.platiSales && unsafeWindow.location.pathname.includes('/app/')) {
-        (function() {
-            'use strict';
-
-            // --- Конфигурация PlatiSearch (PS) ---
-            const PS_API_BASE_URL = 'https://api.digiseller.com/api/products/search2';
-            const PS_SUGGEST_API_URL = 'https://plati.market/api/suggest.ashx';
-            const PS_IMAGE_DOMAIN = 'digiseller.mycdn.ink';
-            const PS_RESULTS_PER_PAGE_CHECK = 1;
-            const PS_DEFAULT_SORT_MODE = 2;
-            const PS_SUGGEST_DEBOUNCE_MS = 300;
-            const PS_FILTER_DEBOUNCE_MS = 500;
-            const PS_FILTER_STORAGE_PREFIX = 'platiSalesFilter_v1_';
-            const PS_EXCLUSION_STORAGE_KEY = 'platiSalesExclusions_v1_';
-            const PS_LAST_SORT_STORAGE_KEY = 'platiSalesLastSort_v1_';
-            const PS_CURRENCY_STORAGE_KEY = 'platiSalesCurrency_v1_';
-            const PS_FILTER_PANEL_WIDTH = 230;
-            const PS_EXCLUSION_PANEL_WIDTH = 250;
-            const PS_SIDE_PANEL_HORIZONTAL_PADDING = 20;
-            const PS_CONTENT_PADDING_BUFFER = 15;
-            const PS_CONTENT_PADDING_LEFT = PS_FILTER_PANEL_WIDTH + PS_SIDE_PANEL_HORIZONTAL_PADDING + PS_CONTENT_PADDING_BUFFER;
-            const PS_CONTENT_PADDING_RIGHT = PS_EXCLUSION_PANEL_WIDTH + PS_SIDE_PANEL_HORIZONTAL_PADDING + PS_CONTENT_PADDING_BUFFER;
-            const PS_HEADER_APPROX_HEIGHT = 65;
-            const PS_TOP_OFFSET_FOR_SIDE_PANELS = PS_HEADER_APPROX_HEIGHT + 25;
-            const PS_BOTTOM_OFFSET_FOR_SIDE_PANELS = 20;
-            const PS_ADV_SORT_CONTAINER_WIDTH = 230;
-            const NEW_ITEM_THRESHOLD_DAYS = 7;
-
-            // --- Глобальные переменные ---
-            let ps_currentResults = [];
-            let ps_currentSort = GM_getValue(PS_LAST_SORT_STORAGE_KEY, { field: 'relevance', direction: 'asc' });
-            let ps_currentCurrency = GM_getValue(PS_CURRENCY_STORAGE_KEY, 'RUR');
-            let ps_firstSortClick = {};
-            ['price', 'sales', 'relevance', 'name', 'date_create', 'discount', 'seller_rating', 'review_ratio', 'good_reviews', 'bad_reviews', 'returns'].forEach(field => {
-                ps_firstSortClick[field] = ps_currentSort.field !== field;
-            });
-            let ps_exclusionKeywords = GM_getValue(PS_EXCLUSION_STORAGE_KEY, []);
-            let ps_currentFilters = ps_loadFilters();
-            let ps_suggestDebounceTimeout;
-            let ps_filterDebounceTimeout;
-            let ps_advSortMenuTimeout;
-
-            // --- DOM Элементы ---
-            let ps_modal, ps_closeBtn, ps_searchInput, ps_searchBtn, ps_sortPriceBtn, ps_sortSalesBtn, ps_advSortBtnContainer, ps_advSortBtn, ps_advSortMenu, ps_currencySelect, ps_resetSortBtn;
-            let ps_resultsContainer, ps_resultsDiv, ps_statusDiv, ps_excludeInput, ps_addExcludeBtn, ps_exclusionTagsDiv;
-            let ps_suggestionsDiv;
-            let ps_filtersPanel;
-            let ps_filterPriceMin, ps_filterPriceMax, ps_filterSalesMin, ps_filterSalesMax, ps_filterRatingMin, ps_filterRatingMax;
-            let ps_filterHideBadReviews, ps_filterHideReturns, ps_filterOnlyDiscount;
-            let ps_filterDateSelect;
-            let ps_resetAllFiltersBtn;
-            let ps_exclusionTagsListDiv;
-
-            // --- Описания сортировок ---
-             const ps_advancedSorts = {
-                 'price':        { name: 'По цене',          defaultDir: 'asc' },
-                 'sales':        { name: 'По продажам',      defaultDir: 'desc'},
-                 'relevance':    { name: 'По релевантности', defaultDir: 'asc' },
-                 'name':         { name: 'По названию',      defaultDir: 'asc'  },
-                 'date_create':  { name: 'По дате добавления', defaultDir: 'desc' },
-                 'discount':     { name: 'По % в скид. системе', defaultDir: 'desc' },
-                 'seller_rating':{ name: 'По рейтингу продавца', defaultDir: 'desc' },
-                 'review_ratio': { name: 'По соотношению отзывов', defaultDir: 'desc' },
-                 'good_reviews': { name: 'По кол-ву хор. отзывов', defaultDir: 'desc' },
-                 'bad_reviews':  { name: 'По кол-ву плох. отзывов', defaultDir: 'asc'  },
-                 'returns':      { name: 'По кол-ву возвратов', defaultDir: 'asc'  }
-            };
-            const ps_advSortOrder = ['name', 'date_create', 'discount', 'seller_rating', 'review_ratio', 'good_reviews', 'bad_reviews', 'returns'];
-            const ps_dateFilterOptions = {
-                 'all': 'За все время', '1d': 'За сутки', '2d': 'За 2 дня', '1w': 'За неделю', '1m': 'За месяц', '6m': 'За полгода', '1y': 'За год', '5y': 'За 5 лет', '10y': 'За 10 лет',
-            };
-
-            // --- Вспомогательные функции ---
-            function formatPrice(priceStr) {
-                if (!priceStr) return 0;
-                return parseFloat(String(priceStr).replace(/[^\d,.]/g, '').replace(',', '.')) || 0;
-            }
-            function formatSales(salesStr) {
-                if (!salesStr) return 0;
-                return parseInt(String(salesStr).replace(/\D/g, ''), 10) || 0;
-            }
-             function parseSellerRating(ratingStr) {
-                 if (!ratingStr) return 0;
-                 return parseFloat(String(ratingStr).replace(',', '.')) || 0;
-             }
-             function calculateReviewRatio(item) {
-                 const good = parseInt(item.cnt_good_responses || '0', 10);
-                 const bad = parseInt(item.cnt_bad_responses || '0', 10);
-                 const total = good + bad;
-                 return total > 0 ? (good / total) : -1;
-             }
-             function parseDate(dateStr) {
-                 if (!dateStr) return 0;
-                 const parts = dateStr.split(' ');
-                 if (parts.length !== 2) return 0;
-                 const dateParts = parts[0].split('.');
-                 const timeParts = parts[1].split(':');
-                 if (dateParts.length !== 3 || timeParts.length !== 3) return 0;
-                 try { return new Date(Date.UTC(dateParts[2], dateParts[1] - 1, dateParts[0], timeParts[0], timeParts[1], timeParts[2])).getTime(); }
-                 catch (e) { return 0; }
-             }
-            function formatDateString(timestamp) {
-                if (!timestamp || timestamp === 0) return 'N/A';
-                try {
-                    const date = new Date(timestamp);
-                    const day = String(date.getUTCDate()).padStart(2, '0');
-                    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-                    const year = String(date.getUTCFullYear()).slice(-2);
-                    return `${day}.${month}.${year}`;
-                } catch (e) { return 'N/A'; }
-            }
-             function getPriceInSelectedCurrency(item, currency) {
-                 let price = 0;
-                 switch (currency) {
-                     case 'USD': price = formatPrice(item.price_usd); break;
-                     case 'EUR': price = formatPrice(item.price_eur); break;
-                     case 'UAH': price = formatPrice(item.price_uah); break;
-                     case 'RUR': default: price = formatPrice(item.price_rur); break;
-                 }
-                 if (price <= 0 && currency !== 'RUR') price = formatPrice(item.price_rur);
-                 if (price <= 0 && currency !== 'USD') price = formatPrice(item.price_usd);
-                 if (price <= 0 && currency !== 'EUR') price = formatPrice(item.price_eur);
-                 return price > 0 ? price : Infinity;
-             }
-            function debounce(func, wait) {
-                let timeout;
-                return function executedFunction(...args) {
-                    const later = () => { clearTimeout(timeout); func(...args); };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            }
-            function getSteamGameName() {
-                 const appNameElement = document.querySelector('#appHubAppName');
-                 return appNameElement ? appNameElement.textContent.trim() : '';
-            }
-
-            function ps_exportExclusions() {
-                const keywordsString = ps_exclusionKeywords.join(',');
-                if (!keywordsString) {
-                    alert('Список исключений пуст.');
-                    return;
-                }
-                try {
-                    navigator.clipboard.writeText(keywordsString).then(() => {
-                        const exportBtn = document.getElementById('psExportExclusionsBtn');
-                        if (exportBtn) {
-                            const originalContent = exportBtn.innerHTML;
-                            exportBtn.innerHTML = 'Скопировано!';
-                            exportBtn.disabled = true;
-                            setTimeout(() => {
-                                exportBtn.innerHTML = originalContent;
-                                exportBtn.disabled = false;
-                            }, 1500);
-                        }
-                    }, (err) => {
-                        console.error('[PlatiSearch] Не удалось скопировать в буфер обмена:', err);
-                        prompt('Не удалось скопировать автоматически. Скопируйте вручную:', keywordsString);
-                    });
-                } catch (err) {
-                    console.error('[PlatiSearch] Ошибка доступа к буферу обмена:', err);
-                    prompt('Не удалось скопировать автоматически. Скопируйте вручную:', keywordsString);
-                }
-            }
-
-            function ps_showImportModal() {
-                const existingModal = document.getElementById('psImportModal');
-                if (existingModal) existingModal.remove();
-
-                const importModal = document.createElement('div');
-                importModal.id = 'psImportModal';
-                importModal.innerHTML = `
-                    <div class="psImportModalContent">
-                        <h4>Импорт списка исключений</h4>
-                        <p>Вставьте список слов, разделенных запятыми:</p>
-                        <textarea id="psImportTextarea" rows="6"></textarea>
-                        <div class="psImportModalActions">
-                            <button id="psImportAcceptBtn" class="platiSearchBtn">Принять</button>
-                            <button id="psImportCancelBtn" class="platiSearchBtn">Отмена</button>
-                        </div>
-                    </div>
-                `;
-                document.body.appendChild(importModal);
-
-                document.getElementById('psImportAcceptBtn').onclick = ps_handleImport;
-                document.getElementById('psImportCancelBtn').onclick = () => importModal.remove();
-                document.getElementById('psImportTextarea').focus();
-            }
-
-            function ps_handleImport() {
-                const textarea = document.getElementById('psImportTextarea');
-                const importModal = document.getElementById('psImportModal');
-                if (!textarea || !importModal) return;
-
-                const text = textarea.value.trim();
-                if (text) {
-                    const importedKeywords = text.split(',')
-                                               .map(k => k.trim().toLowerCase())
-                                               .filter(k => k.length > 0);
-                    ps_exclusionKeywords = [...new Set(importedKeywords)];
-                    GM_setValue(PS_EXCLUSION_STORAGE_KEY, ps_exclusionKeywords);
-                    ps_renderExclusionTags();
-                    ps_applyFilters();
-                    console.log('[PlatiSearch] Список исключений импортирован.');
-                } else {
-                    alert("Поле ввода пустое. Импорт не выполнен.");
-                }
-                importModal.remove();
-            }
-
-            // --- Создание UI ---
-            function createPlatiModal() {
-                 const existingModal = document.querySelector('#platiSearchModal');
-                 if (existingModal) existingModal.remove();
-
-                 ps_modal = document.createElement('div');
-                 ps_modal.id = 'platiSearchModal';
-
-                 const container = document.createElement('div');
-                 container.id = 'platiSearchContainer';
-
-                 const header = document.createElement('div');
-                 header.id = 'platiSearchHeader';
-
-                 const searchInputContainer = document.createElement('div');
-                 searchInputContainer.className = 'platiSearchInputContainer';
-                 ps_searchInput = document.createElement('input');
-                 ps_searchInput.id = 'platiSearchInput';
-                 ps_searchInput.type = 'text';
-                 ps_searchInput.placeholder = 'Введите название игры или товара...';
-                 ps_searchInput.autocomplete = 'off';
-                 ps_searchInput.onkeydown = (e) => { if (e.key === 'Enter') ps_triggerSearch(); };
-                 ps_searchInput.oninput = () => {
-                     clearTimeout(ps_suggestDebounceTimeout);
-                     ps_suggestDebounceTimeout = setTimeout(() => ps_fetchSuggestions(ps_searchInput.value), PS_SUGGEST_DEBOUNCE_MS);
-                 };
-                 ps_searchInput.onblur = () => { setTimeout(() => { if (ps_suggestionsDiv) ps_suggestionsDiv.style.display = 'none'; }, 150); };
-
-                 ps_suggestionsDiv = document.createElement('div');
-                 ps_suggestionsDiv.id = 'platiSearchSuggestions';
-                 searchInputContainer.appendChild(ps_searchInput);
-                 searchInputContainer.appendChild(ps_suggestionsDiv);
-                 header.appendChild(searchInputContainer);
-
-                 ps_searchBtn = document.createElement('button');
-                 ps_searchBtn.textContent = 'Найти';
-                 ps_searchBtn.id = 'platiSearchGoBtn';
-                 ps_searchBtn.className = 'platiSearchBtn';
-                 ps_searchBtn.onclick = ps_triggerSearch;
-                 header.appendChild(ps_searchBtn);
-
-                 ps_resetSortBtn = document.createElement('button');
-                 ps_resetSortBtn.id = 'platiResetSortBtn';
-                 ps_resetSortBtn.className = 'platiSearchBtn';
-                 ps_resetSortBtn.title = 'Сбросить сортировку (Релевантность)';
-                 ps_resetSortBtn.innerHTML = `<svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6s-2.69 6-6 6s-6-2.69-6-6H4c0 4.42 3.58 8 8 8s8-3.58 8-8s-3.58-8-8-8Z"/></svg>`;
-                 ps_resetSortBtn.onclick = () => ps_resetSort(true);
-                 header.appendChild(ps_resetSortBtn);
-
-                 ps_sortPriceBtn = document.createElement('button');
-                 ps_sortPriceBtn.className = 'platiSearchBtn sortBtn';
-                 ps_sortPriceBtn.dataset.sort = 'price';
-                 ps_sortPriceBtn.onclick = () => ps_handleSort('price');
-                 header.appendChild(ps_sortPriceBtn);
-
-                 ps_sortSalesBtn = document.createElement('button');
-                 ps_sortSalesBtn.className = 'platiSearchBtn sortBtn';
-                 ps_sortSalesBtn.dataset.sort = 'sales';
-                 ps_sortSalesBtn.onclick = () => ps_handleSort('sales');
-                 header.appendChild(ps_sortSalesBtn);
-
-                 ps_advSortBtnContainer = document.createElement('div');
-                 ps_advSortBtnContainer.id = 'platiSearchAdvSortBtnContainer';
-                 ps_advSortBtn = document.createElement('button');
-                 ps_advSortBtn.id = 'platiSearchAdvSortBtn';
-                 ps_advSortBtn.className = 'platiSearchBtn sortBtn';
-                 ps_advSortBtnContainer.appendChild(ps_advSortBtn);
-                 ps_advSortMenu = document.createElement('div');
-                 ps_advSortMenu.id = 'platiSearchAdvSortMenu';
-                 ps_advSortOrder.forEach(key => {
-                     const sortInfo = ps_advancedSorts[key];
-                     const menuItem = document.createElement('div');
-                     menuItem.className = 'platiSearchSortMenuItem';
-                     menuItem.dataset.sort = key;
-                     menuItem.innerHTML = `${sortInfo.name} <span class="sortArrow"></span>`;
-                     menuItem.onclick = () => ps_handleSort(key);
-                     ps_advSortMenu.appendChild(menuItem);
-                 });
-                 ps_advSortBtnContainer.appendChild(ps_advSortMenu);
-                 header.appendChild(ps_advSortBtnContainer);
-
-                 ps_currencySelect = document.createElement('select');
-                 ps_currencySelect.id = 'platiSearchCurrencySelect';
-                 ['RUR', 'USD', 'EUR', 'UAH'].forEach(curr => {
-                     const option = document.createElement('option');
-                     option.value = curr; option.textContent = curr;
-                     if (curr === ps_currentCurrency) option.selected = true;
-                     ps_currencySelect.appendChild(option);
-                 });
-                 ps_currencySelect.onchange = ps_handleCurrencyChange;
-                 header.appendChild(ps_currencySelect);
-
-                 container.appendChild(header);
-
-                 ps_resultsContainer = document.createElement('div');
-                 ps_resultsContainer.id = 'platiSearchResultsContainer';
-                 ps_statusDiv = document.createElement('div');
-                 ps_statusDiv.id = 'platiSearchResultsStatus';
-                 ps_resultsDiv = document.createElement('div');
-                 ps_resultsDiv.id = 'platiSearchResults';
-                 ps_resultsContainer.appendChild(ps_statusDiv);
-                 ps_resultsContainer.appendChild(ps_resultsDiv);
-                 container.appendChild(ps_resultsContainer);
-                 ps_modal.appendChild(container);
-
-                 ps_filtersPanel = document.createElement('div');
-                 ps_filtersPanel.id = 'platiSearchFiltersPanel';
-                 ps_filtersPanel.innerHTML = `
-                    <div class="filterGroup"> <h4>Цена (${ps_currentCurrency}) ${ps_createResetButtonHTML('price')}</h4> <div class="filterRangeInputs"> <input type="number" id="psFilterPriceMin" placeholder="от" min="0"> <input type="number" id="psFilterPriceMax" placeholder="до" min="0"> </div> </div>
-                    <div class="filterGroup"> <h4>Продажи ${ps_createResetButtonHTML('sales')}</h4> <div class="filterRangeInputs"> <input type="number" id="psFilterSalesMin" placeholder="от" min="0"> <input type="number" id="psFilterSalesMax" placeholder="до" min="0"> </div> </div>
-                    <div class="filterGroup"> <h4>Рейтинг продавца ${ps_createResetButtonHTML('rating')}</h4> <div class="filterRangeInputs"> <input type="number" id="psFilterRatingMin" placeholder="от" step="0.1" min="0"> <input type="number" id="psFilterRatingMax" placeholder="до" step="0.1" min="0"> </div> </div>
-                    <div class="filterGroup"> <h4>Опции ${ps_createResetButtonHTML('options')}</h4> <div class="filterCheckbox"> <label><input type="checkbox" id="psFilterHideBadReviews"> Скрыть с плох. отзывами</label> </div> <div class="filterCheckbox"> <label><input type="checkbox" id="psFilterHideReturns"> Скрыть с возвратами</label> </div> <div class="filterCheckbox"> <label><input type="checkbox" id="psFilterOnlyDiscount"> Участие в скидках</label> </div> </div>
-                    <div class="filterGroup"> <h4>Дата добавления ${ps_createResetButtonHTML('date')}</h4> <div class="filterSelect"> <select id="psFilterDateSelect"> ${Object.entries(ps_dateFilterOptions).map(([key, text]) => `<option value="${key}">${text}</option>`).join('')} </select> </div> </div>
-                    <button id="psResetAllFiltersBtn" class="platiSearchBtn">Сбросить все фильтры</button>
-                 `;
-                 ps_modal.appendChild(ps_filtersPanel);
-
-                 ps_exclusionTagsDiv = document.createElement('div');
-                 ps_exclusionTagsDiv.id = 'platiSearchExclusionTags';
-                 const exclusionInputGroup = document.createElement('div');
-                 exclusionInputGroup.className = 'exclusionInputGroup';
-                 ps_excludeInput = document.createElement('input');
-                 ps_excludeInput.type = 'text';
-                 ps_excludeInput.id = 'platiSearchExcludeInput';
-                 ps_excludeInput.placeholder = 'Исключить слово';
-                 ps_excludeInput.onkeydown = (e) => { if (e.key === 'Enter') ps_addFilterKeyword(); };
-                 ps_addExcludeBtn = document.createElement('button');
-                 ps_addExcludeBtn.id = 'platiSearchAddExcludeBtn';
-                 ps_addExcludeBtn.innerHTML = `<svg viewBox="0 0 20 20"><path d="M10 2.5a.75.75 0 0 1 .75.75v6h6a.75.75 0 0 1 0 1.5h-6v6a.75.75 0 0 1-1.5 0v-6h-6a.75.75 0 0 1 0-1.5h6v-6a.75.75 0 0 1 .75-.75Z" /></svg>`;
-                 ps_addExcludeBtn.onclick = ps_addFilterKeyword;
-                 exclusionInputGroup.appendChild(ps_excludeInput);
-                 exclusionInputGroup.appendChild(ps_addExcludeBtn);
-                 ps_exclusionTagsDiv.appendChild(exclusionInputGroup);
-
-                 const exclusionActionsDiv = document.createElement('div');
-                 exclusionActionsDiv.className = 'psExclusionActions';
-
-                 const exportBtn = document.createElement('button');
-                 exportBtn.id = 'psExportExclusionsBtn';
-                 exportBtn.className = 'platiSearchBtn psExclusionActionBtn';
-                 exportBtn.title = 'Экспорт списка исключений';
-                 exportBtn.innerHTML = '←'
-                 exportBtn.onclick = ps_exportExclusions;
-                 exclusionActionsDiv.appendChild(exportBtn);
-
-                 const importBtn = document.createElement('button');
-                 importBtn.id = 'psImportExclusionsBtn';
-                 importBtn.className = 'platiSearchBtn psExclusionActionBtn';
-                 importBtn.title = 'Импорт списка исключений';
-                 importBtn.innerHTML = '→';
-                 importBtn.onclick = ps_showImportModal;
-                 exclusionActionsDiv.appendChild(importBtn);
-
-                 ps_exclusionTagsDiv.appendChild(exclusionActionsDiv);
-
-                 ps_exclusionTagsListDiv = document.createElement('div');
-                 ps_exclusionTagsListDiv.id = 'platiExclusionTagsList';
-                 ps_exclusionTagsDiv.appendChild(ps_exclusionTagsListDiv);
-                 ps_modal.appendChild(ps_exclusionTagsDiv);
-
-                 ps_closeBtn = document.createElement('button');
-                 ps_closeBtn.id = 'platiSearchCloseBtn';
-                 ps_closeBtn.innerHTML = '&times;';
-                 ps_closeBtn.onclick = hidePlatiModal;
-                 ps_modal.appendChild(ps_closeBtn);
-
-                 document.body.appendChild(ps_modal);
-
-                 // Назначение переменных элементам UI
-                 ps_filterPriceMin = document.getElementById('psFilterPriceMin');
-                 ps_filterPriceMax = document.getElementById('psFilterPriceMax');
-                 ps_filterSalesMin = document.getElementById('psFilterSalesMin');
-                 ps_filterSalesMax = document.getElementById('psFilterSalesMax');
-                 ps_filterRatingMin = document.getElementById('psFilterRatingMin');
-                 ps_filterRatingMax = document.getElementById('psFilterRatingMax');
-                 ps_filterHideBadReviews = document.getElementById('psFilterHideBadReviews');
-                 ps_filterHideReturns = document.getElementById('psFilterHideReturns');
-                 ps_filterOnlyDiscount = document.getElementById('psFilterOnlyDiscount');
-                 ps_filterDateSelect = document.getElementById('psFilterDateSelect');
-                 ps_resetAllFiltersBtn = document.getElementById('psResetAllFiltersBtn');
-
-                 ps_addFilterEventListeners();
-                 applyLoadedFiltersToUI();
-                 ps_updateSortButtonsState();
-
-                 function handleEsc(event) {
-                     if (event.key === 'Escape') {
-                         const importModal = document.getElementById('psImportModal');
-                         if (importModal) {
-                             importModal.remove();
-                         } else {
-                             hidePlatiModal();
-                         }
-                     }
-                 }
-                 document.addEventListener('keydown', handleEsc);
-                 ps_modal._escHandler = handleEsc;
-            }
-
-            function ps_createResetButtonHTML(filterKey) {
-                 return `<button class="filterResetBtn" title="Сбросить фильтр" data-filter-key="${filterKey}"><svg viewBox="0 0 24 24"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"></path></svg></button>`;
-            }
-
-            // --- Управление модальным окном ---
-            function showPlatiModal() {
-                 if (!ps_modal) createPlatiModal();
-                 const gameName = getSteamGameName();
-                 if (gameName && !ps_searchInput.value) { ps_searchInput.value = gameName; }
-
-                 document.body.style.overflow = 'hidden';
-                 ps_modal.style.display = 'block';
-                 ps_modal.scrollTop = 0;
-
-                 ps_renderExclusionTags();
-                 applyLoadedFiltersToUI();
-                 ps_updateFilterPlaceholders();
-                 ps_updateSortButtonsState();
-
-                 requestAnimationFrame(() => {
-                    const header = document.getElementById('platiSearchHeader');
-                    const headerRect = header ? header.getBoundingClientRect() : { bottom: PS_TOP_OFFSET_FOR_SIDE_PANELS };
-                    const newTopOffset = headerRect.bottom + 5;
-                    const availableHeight = `calc(100vh - ${newTopOffset}px - ${PS_BOTTOM_OFFSET_FOR_SIDE_PANELS}px)`;
-                    if (ps_filtersPanel) { ps_filtersPanel.style.top = `${newTopOffset}px`; ps_filtersPanel.style.maxHeight = availableHeight;}
-                    if (ps_exclusionTagsDiv) { ps_exclusionTagsDiv.style.top = `${newTopOffset}px`; ps_exclusionTagsDiv.style.maxHeight = availableHeight; }
-                 });
-
-                 if (ps_searchInput.value.trim()) { ps_triggerSearch(); }
-                 else { ps_updateStatus('Введите запрос для поиска.'); }
-            }
-            function hidePlatiModal() {
-                 if (ps_modal) {
-                     ps_modal.style.display = 'none';
-                     if (ps_suggestionsDiv) ps_suggestionsDiv.style.display = 'none';
-                      if (ps_modal._escHandler) { document.removeEventListener('keydown', ps_modal._escHandler); delete ps_modal._escHandler; }
-                 }
-                 document.body.style.overflow = '';
-            }
-
-            // --- Обновление статуса ---
-            function ps_updateStatus(message, isLoading = false) {
-                if (ps_statusDiv) {
-                    ps_statusDiv.innerHTML = message + (isLoading ? ' <span class="spinner"></span>' : '');
-                    ps_statusDiv.style.display = 'block';
-                    if(ps_currentResults.length === 0 && message && !isLoading) {
-                        ps_resultsDiv.innerHTML = '';
-                    }
-                }
-            }
-
-            // --- Запуск поиска ---
-            function ps_triggerSearch() {
-                const query = ps_searchInput.value.trim();
-                if (ps_suggestionsDiv) ps_suggestionsDiv.style.display = 'none';
-                if (!query) {
-                    ps_updateStatus('Пожалуйста, введите запрос.');
-                    ps_currentResults = []; ps_renderResults(); return;
-                }
-                ps_currentResults = [];
-                ps_resetSort(false);
-                applyLoadedFiltersToUI();
-                ps_renderResults();
-                ps_updateStatus('Получение общего количества товаров...', true);
-                ps_fetchTotalCount(query);
-            }
-
-            // --- Функции подсказок ---
-            function ps_fetchSuggestions(query) {
-                 const trimmedQuery = query.trim();
-                 if (trimmedQuery.length < 2) {
-                     if (ps_suggestionsDiv) { ps_suggestionsDiv.innerHTML = ''; ps_suggestionsDiv.style.display = 'none'; } return;
-                 }
-                 const params = new URLSearchParams({ q: trimmedQuery, v: 2 });
-                 try { if (typeof plang !== 'undefined') params.append('lang', plang); if (typeof clientgeo !== 'undefined') params.append('geo', clientgeo); }
-                 catch (e) { console.warn("PlatiSearch: Could not get plang/clientgeo for suggestions."); }
-
-                 GM_xmlhttpRequest({
-                     method: "GET", url: `${PS_SUGGEST_API_URL}?${params.toString()}`, timeout: 5000,
-                     onload: function(response) {
-                         try { ps_renderSuggestions(JSON.parse(response.responseText)); }
-                         catch (e) { if (ps_suggestionsDiv) { ps_suggestionsDiv.innerHTML = ''; ps_suggestionsDiv.style.display = 'none'; } }
-                     },
-                     onerror: function(error) { if (ps_suggestionsDiv) { ps_suggestionsDiv.innerHTML = ''; ps_suggestionsDiv.style.display = 'none'; } },
-                     ontimeout: function() { if (ps_suggestionsDiv) { ps_suggestionsDiv.innerHTML = ''; ps_suggestionsDiv.style.display = 'none'; } }
-                 });
-            }
-            function ps_renderSuggestions(suggestions) {
-                 if (!ps_suggestionsDiv) return;
-                 if (!suggestions || !Array.isArray(suggestions) || suggestions.length === 0) {
-                     ps_suggestionsDiv.innerHTML = ''; ps_suggestionsDiv.style.display = 'none'; return;
-                 }
-                 ps_suggestionsDiv.innerHTML = '';
-                 let addedSuggestions = 0;
-                 suggestions.forEach(suggestion => {
-                     if (suggestion && suggestion.name && (suggestion.type === "Товары" || suggestion.type === "Search" || suggestion.type === "Игры")) {
-                         const item = document.createElement('div');
-                         item.className = 'suggestionItem';
-                         item.textContent = suggestion.name;
-                         item.onmousedown = (e) => {
-                             e.preventDefault(); ps_searchInput.value = suggestion.name;
-                             ps_suggestionsDiv.style.display = 'none'; ps_triggerSearch();
-                         };
-                         ps_suggestionsDiv.appendChild(item);
-                         addedSuggestions++;
-                     }
-                 });
-                 ps_suggestionsDiv.style.display = addedSuggestions > 0 ? 'block' : 'none';
-            }
-
-            // --- Запросы API ---
-            function ps_fetchTotalCount(query) {
-                 const params = new URLSearchParams({
-                     query: query, searchmode: 10, sortmode: PS_DEFAULT_SORT_MODE,
-                     pagesize: PS_RESULTS_PER_PAGE_CHECK, pagenum: 1, owner: 1,
-                     details: 1, checkhidesales: 1, host: 'plati.market'
-                 });
-                 GM_xmlhttpRequest({
-                     method: "GET", url: `${PS_API_BASE_URL}?${params.toString()}`, timeout: 15000, responseType: 'json',
-                     onload: function(response) {
-                         if (response.status >= 200 && response.status < 400 && response.response) {
-                             const data = response.response;
-                             if (data?.result?.total > 0) {
-                                 const total = data.result.total;
-                                 ps_updateStatus(`Найдено ${total} товаров. Загрузка...`, true);
-                                 ps_fetchAllResults(query, total, PS_DEFAULT_SORT_MODE);
-                             } else {
-                                 ps_updateStatus(`По запросу "${query}" ничего не найдено.`);
-                                 ps_currentResults = []; ps_renderResults(); ps_updateFilterPlaceholders(); ps_applyFilters();
-                             }
-                         } else { ps_updateStatus(`Ошибка получения общего количества товаров (Статус: ${response.status})`); }
-                     },
-                     onerror: function(error) { ps_updateStatus('Ошибка сети при получении общего количества товаров.'); },
-                     ontimeout: function() { ps_updateStatus('Время ожидания ответа от сервера (количество) истекло.'); }
-                 });
-            }
-            function ps_fetchAllResults(query, total, sortMode) {
-                 const MAX_PAGE_SIZE = 1000;
-                 const effectivePageSize = Math.min(total, MAX_PAGE_SIZE);
-                 if (total > MAX_PAGE_SIZE) ps_updateStatus(`Найдено ${total} товаров. Загрузка первых ${MAX_PAGE_SIZE}...`, true);
-
-                 const params = new URLSearchParams({
-                     query: query, searchmode: 10, sortmode: sortMode, pagesize: effectivePageSize,
-                     pagenum: 1, owner: 1, details: 1, checkhidesales: 1, host: 'plati.market'
-                 });
-                 GM_xmlhttpRequest({
-                     method: "GET", url: `${PS_API_BASE_URL}?${params.toString()}`, timeout: 90000, responseType: 'json',
-                     onload: function(response) {
-                          if (!document.body.contains(ps_modal)) return;
-
-                         if (response.status >= 200 && response.status < 400 && response.response) {
-                             const data = response.response;
-                             if (data?.items?.item && Array.isArray(data.items.item)) {
-                                 ps_currentResults = data.items.item.map((item, index) => ({ ...item, originalIndex: index }));
-                                 const loadedCount = ps_currentResults.length;
-                                 ps_updateStatus(`Загружено ${loadedCount}${total > loadedCount ? ` из ${total}` : ''} товаров.`);
-                                 ps_applySort(ps_currentSort.field, ps_currentSort.direction);
-                                 ps_renderResults();
-                                 ps_updateFilterPlaceholders();
-                                 ps_applyFilters();
-                             } else {
-                                 ps_updateStatus(`Ошибка загрузки товаров: неверный формат ответа API.`);
-                                 ps_currentResults = []; ps_renderResults(); ps_updateFilterPlaceholders(); ps_applyFilters();
-                             }
-                         } else { ps_updateStatus(`Ошибка загрузки товаров (Статус: ${response.status})`); }
-                     },
-                     onerror: function(error) { if (document.body.contains(ps_modal)) ps_updateStatus('Ошибка сети при загрузке товаров.'); },
-                     ontimeout: function() { if (document.body.contains(ps_modal)) ps_updateStatus('Время ожидания ответа от сервера (товары) истекло.'); }
-                 });
-            }
-
-            // --- Сортировка ---
-             function ps_handleSort(field) {
-                 let newDirection;
-                 const sortInfo = ps_advancedSorts[field];
-                 if (!sortInfo) return;
-
-                 let currentDir = (ps_currentSort.field === field) ? ps_currentSort.direction : sortInfo.defaultDir;
-
-                 if (ps_firstSortClick[field] || ps_currentSort.field !== field) {
-                     newDirection = sortInfo.defaultDir;
-                 } else {
-                     newDirection = currentDir === 'desc' ? 'asc' : 'desc';
-                 }
-
-                 Object.keys(ps_firstSortClick).forEach(key => {
-                     ps_firstSortClick[key] = (key !== field);
-                 });
-                 ps_firstSortClick[field] = false;
-
-                 ps_currentSort.field = field;
-                 ps_currentSort.direction = newDirection;
-                 GM_setValue(PS_LAST_SORT_STORAGE_KEY, ps_currentSort);
-
-                 ps_applySort(field, newDirection);
-                 ps_renderResults();
-                 ps_updateSortButtonsState();
-             }
-
-             function ps_updateSortButtonsState() {
-                 const activeField = ps_currentSort.field;
-                 const activeDirection = ps_currentSort.direction;
-
-                  $(ps_sortPriceBtn).add(ps_sortSalesBtn).each(function() {
-                     const $btn = $(this);
-                     const btnField = $btn.data('sort');
-                     const baseText = (btnField === 'price') ? 'Цена' : 'Продажи';
-                     if (btnField === activeField) {
-                         const arrow = activeDirection === 'asc' ? ' ▲' : ' ▼';
-                         $btn.addClass('active').text(baseText + arrow).attr('data-dir', activeDirection);
-                     } else {
-                         const defaultDir = ps_advancedSorts[btnField].defaultDir;
-                         const defaultArrow = defaultDir === 'asc' ? ' ▲' : ' ▼';
-                         $btn.removeClass('active').text(baseText + defaultArrow).attr('data-dir', defaultDir);
-                     }
-                 });
-
-                 let advBtnText = 'Доп. сорт.';
-                 const $advButton = $(ps_advSortBtn);
-                 const isAdvSortActive = ps_advancedSorts[activeField] && activeField !== 'price' && activeField !== 'sales' && activeField !== 'relevance';
-
-                 if (isAdvSortActive) {
-                     $advButton.addClass('active');
-                     const arrow = activeDirection === 'asc' ? ' ▲' : ' ▼';
-                     advBtnText = `${ps_advancedSorts[activeField].name}${arrow}`;
-                 } else {
-                     $advButton.removeClass('active');
-                 }
-                 $advButton.text(advBtnText);
-
-                 $('#platiSearchAdvSortMenu .platiSearchSortMenuItem').each(function() {
-                     const $item = $(this);
-                     const itemField = $item.data('sort');
-                     const baseText = ps_advancedSorts[itemField].name;
-                     if (itemField === activeField) {
-                         const arrow = activeDirection === 'asc' ? ' ▲' : ' ▼';
-                         $item.addClass('active').html(`${baseText} <span class="sortArrow">${arrow}</span>`).attr('data-dir', activeDirection);
-                     } else {
-                         const defaultDir = ps_advancedSorts[itemField].defaultDir;
-                         const defaultArrow = defaultDir === 'asc' ? ' ▲' : ' ▼';
-                         $item.removeClass('active').html(`${baseText} <span class="sortArrow">${defaultArrow}</span>`).attr('data-dir', defaultDir);
-                     }
-                 });
-
-                 if (activeField === 'relevance') {
-                     $(ps_resetSortBtn).addClass('active');
-                 } else {
-                      $(ps_resetSortBtn).removeClass('active');
-                 }
-             }
-
-            function ps_resetSort(render = true) {
-                 ps_currentSort = { field: 'relevance', direction: 'asc' };
-                 ps_firstSortClick = {
-                     price: true, sales: true, relevance: false, name: true, date_create: true, discount: true,
-                     seller_rating: true, review_ratio: true, good_reviews: true, bad_reviews: true, returns: true
-                 };
-                 GM_setValue(PS_LAST_SORT_STORAGE_KEY, ps_currentSort);
-                 ps_updateSortButtonsState();
-
-                 if (render) {
-                     ps_applySort(ps_currentSort.field, ps_currentSort.direction);
-                     ps_renderResults();
-                 }
-             }
-
-            function ps_applySort(field, direction) {
-                 const dirMultiplier = direction === 'asc' ? 1 : -1;
-                 const selectedCurrency = ps_currencySelect ? ps_currencySelect.value.toUpperCase() : 'RUR';
-                 ps_currentResults.sort((a, b) => {
-                     let valA, valB;
-                     const nameA = (a.name || '').toLowerCase();
-                     const nameB = (b.name || '').toLowerCase();
-                     const finalPriceA = getPriceInSelectedCurrency(a, selectedCurrency);
-                     const finalPriceB = getPriceInSelectedCurrency(b, selectedCurrency);
-                     let comparisonResult = 0;
-                     switch (field) {
-                         case 'price':         valA = finalPriceA; valB = finalPriceB; break;
-                         case 'sales':         valA = formatSales(a.cnt_sell); valB = formatSales(b.cnt_sell); break;
-                         case 'name':          comparisonResult = nameA.localeCompare(nameB) * dirMultiplier; break;
-                         case 'date_create':   valA = parseDate(a.date_create); valB = parseDate(b.date_create); break;
-                         case 'discount':      valA = parseInt(a.discount || '0', 10); valB = parseInt(b.discount || '0', 10); break;
-                         case 'seller_rating': valA = parseSellerRating(a.seller_rating); valB = parseSellerRating(b.seller_rating); break;
-                         case 'review_ratio':  valA = calculateReviewRatio(a); valB = calculateReviewRatio(b); break;
-                         case 'good_reviews':  valA = parseInt(a.cnt_good_responses || '0', 10); valB = parseInt(b.cnt_good_responses || '0', 10); break;
-                         case 'bad_reviews':   valA = parseInt(a.cnt_bad_responses || '0', 10); valB = parseInt(b.cnt_bad_responses || '0', 10); break;
-                         case 'returns':       valA = parseInt(a.cnt_return || '0', 10); valB = parseInt(b.cnt_return || '0', 10); break;
-                         case 'relevance':     valA = a.originalIndex; valB = b.originalIndex; break;
-                         default: return 0;
-                     }
-                     if (field !== 'name') {
-                         const fallbackAsc = Infinity; const fallbackDesc = -Infinity;
-                         if (valA === null || valA === undefined || isNaN(valA) || valA === Infinity || valA === -Infinity) valA = direction === 'asc' ? fallbackAsc : fallbackDesc;
-                         if (valB === null || valB === undefined || isNaN(valB) || valB === Infinity || valB === -Infinity) valB = direction === 'asc' ? fallbackAsc : fallbackDesc;
-                         if (valA < valB) comparisonResult = -1; else if (valA > valB) comparisonResult = 1; else comparisonResult = 0;
-                         comparisonResult *= dirMultiplier;
-                     }
-                     if (comparisonResult === 0) {
-                         if (field !== 'name') { let nameCompare = nameA.localeCompare(nameB); if (nameCompare !== 0) return nameCompare; }
-                         if (field !== 'price') { if (finalPriceA < finalPriceB) return -1; if (finalPriceA > finalPriceB) return 1; }
-                         if (field !== 'relevance') { return a.originalIndex - b.originalIndex; }
-                     }
-                     return comparisonResult;
-                 });
-            }
-
-            // --- Управление фильтрами ---
-            function ps_getFilterStorageKey(key) {
-                return `${PS_FILTER_STORAGE_PREFIX}${key}`;
-            }
-
-            function ps_loadFilters() {
-                const defaults = {
-                    priceMin: '',
-                    priceMax: '',
-                    salesMin: '',
-                    salesMax: '',
-                    ratingMin: '',
-                    ratingMax: '',
-                    hideBadReviews: false,
-                    hideReturns: false,
-                    onlyDiscount: false,
-                    date: 'all'
-                };
-                let loaded = {};
-                for (const key in defaults) {
-                    loaded[key] = GM_getValue(ps_getFilterStorageKey(key), defaults[key]);
-                }
-                return loaded;
-            }
-
-            function ps_saveFilter(key, value) {
-                ps_currentFilters[key] = value;
-                GM_setValue(ps_getFilterStorageKey(key), value);
-            }
-
-            function applyLoadedFiltersToUI() {
-                if (!ps_filtersPanel) return;
-                ps_filterPriceMin.value = ps_currentFilters.priceMin;
-                ps_filterPriceMax.value = ps_currentFilters.priceMax;
-                ps_filterSalesMin.value = ps_currentFilters.salesMin;
-                ps_filterSalesMax.value = ps_currentFilters.salesMax;
-                ps_filterRatingMin.value = ps_currentFilters.ratingMin;
-                ps_filterRatingMax.value = ps_currentFilters.ratingMax;
-                ps_filterHideBadReviews.checked = ps_currentFilters.hideBadReviews;
-                ps_filterHideReturns.checked = ps_currentFilters.hideReturns;
-                ps_filterOnlyDiscount.checked = ps_currentFilters.onlyDiscount;
-                ps_filterDateSelect.value = ps_currentFilters.date;
-                const priceHeader = ps_filtersPanel.querySelector('.filterGroup h4');
-                if (priceHeader && priceHeader.textContent.includes('Цена')) {
-                    priceHeader.innerHTML = `Цена (${ps_currentCurrency}) ${ps_createResetButtonHTML('price')}`;
-                    const resetButton = priceHeader.querySelector('.filterResetBtn');
-                    if (resetButton) resetButton.onclick = ps_handleFilterReset;
-                }
-            }
-
-            function ps_addFilterEventListeners() {
-                if (!ps_filtersPanel) return;
-                const debouncedApply = debounce(ps_applyFilters, PS_FILTER_DEBOUNCE_MS);
-                ps_filterPriceMin.addEventListener('input', (e) => {
-                    ps_saveFilter('priceMin', e.target.value);
-                    debouncedApply();
-                });
-                ps_filterPriceMax.addEventListener('input', (e) => {
-                    ps_saveFilter('priceMax', e.target.value);
-                    debouncedApply();
-                });
-                ps_filterSalesMin.addEventListener('input', (e) => {
-                    ps_saveFilter('salesMin', e.target.value);
-                    debouncedApply();
-                });
-                ps_filterSalesMax.addEventListener('input', (e) => {
-                    ps_saveFilter('salesMax', e.target.value);
-                    debouncedApply();
-                });
-                ps_filterRatingMin.addEventListener('input', (e) => {
-                    ps_saveFilter('ratingMin', e.target.value);
-                    debouncedApply();
-                });
-                ps_filterRatingMax.addEventListener('input', (e) => {
-                    ps_saveFilter('ratingMax', e.target.value);
-                    debouncedApply();
-                });
-                ps_filterHideBadReviews.addEventListener('change', (e) => {
-                    ps_saveFilter('hideBadReviews', e.target.checked);
-                    ps_applyFilters();
-                });
-                ps_filterHideReturns.addEventListener('change', (e) => {
-                    ps_saveFilter('hideReturns', e.target.checked);
-                    ps_applyFilters();
-                });
-                ps_filterOnlyDiscount.addEventListener('change', (e) => {
-                    ps_saveFilter('onlyDiscount', e.target.checked);
-                    ps_applyFilters();
-                });
-                ps_filterDateSelect.addEventListener('change', (e) => {
-                    ps_saveFilter('date', e.target.value);
-                    ps_applyFilters();
-                });
-                ps_resetAllFiltersBtn.addEventListener('click', () => ps_resetAllFilters(true));
-                ps_filtersPanel.querySelectorAll('.filterResetBtn').forEach(btn => {
-                    btn.onclick = ps_handleFilterReset;
-                });
-            }
-
-            function ps_handleFilterReset(event) {
-                ps_resetFilterByKey(event.currentTarget.dataset.filterKey, true);
-            }
-
-            function ps_resetFilterByKey(key, apply = true) {
-                switch (key) {
-                    case 'price':
-                        ps_saveFilter('priceMin', '');
-                        if (ps_filterPriceMin) ps_filterPriceMin.value = '';
-                        ps_saveFilter('priceMax', '');
-                        if (ps_filterPriceMax) ps_filterPriceMax.value = '';
-                        break;
-                    case 'sales':
-                        ps_saveFilter('salesMin', '');
-                        if (ps_filterSalesMin) ps_filterSalesMin.value = '';
-                        ps_saveFilter('salesMax', '');
-                        if (ps_filterSalesMax) ps_filterSalesMax.value = '';
-                        break;
-                    case 'rating':
-                        ps_saveFilter('ratingMin', '');
-                        if (ps_filterRatingMin) ps_filterRatingMin.value = '';
-                        ps_saveFilter('ratingMax', '');
-                        if (ps_filterRatingMax) ps_filterRatingMax.value = '';
-                        break;
-                    case 'options':
-                        ps_saveFilter('hideBadReviews', false);
-                        if (ps_filterHideBadReviews) ps_filterHideBadReviews.checked = false;
-                        ps_saveFilter('hideReturns', false);
-                        if (ps_filterHideReturns) ps_filterHideReturns.checked = false;
-                        ps_saveFilter('onlyDiscount', false);
-                        if (ps_filterOnlyDiscount) ps_filterOnlyDiscount.checked = false;
-                        break;
-                    case 'date':
-                        ps_saveFilter('date', 'all');
-                        if (ps_filterDateSelect) ps_filterDateSelect.value = 'all';
-                        break;
-                }
-                if (apply) ps_applyFilters();
-            }
-
-            function ps_resetAllFilters(apply = true) {
-                const filterKeys = ['price', 'sales', 'rating', 'options', 'date'];
-                filterKeys.forEach(key => ps_resetFilterByKey(key, false));
-                if (apply) ps_applyFilters();
-            }
-
-            function ps_updateFilterPlaceholders() {
-                if (!ps_filtersPanel || !ps_currentResults || ps_currentResults.length === 0) {
-                    $('#psFilterPriceMin, #psFilterPriceMax, #psFilterSalesMin, #psFilterSalesMax, #psFilterRatingMin, #psFilterRatingMax').attr('placeholder', '-');
-                    return;
-                }
-                let minPrice = Infinity,
-                    maxPrice = -Infinity,
-                    minSales = Infinity,
-                    maxSales = -Infinity,
-                    minRating = Infinity,
-                    maxRating = -Infinity;
-                const selectedCurrency = ps_currencySelect ? ps_currencySelect.value.toUpperCase() : 'RUR';
-                ps_currentResults.forEach(item => {
-                    const price = getPriceInSelectedCurrency(item, selectedCurrency);
-                    const sales = formatSales(item.cnt_sell);
-                    const rating = parseSellerRating(item.seller_rating);
-                    if (price !== Infinity && price < minPrice) minPrice = price;
-                    if (price !== Infinity && price > maxPrice) maxPrice = price;
-                    if (sales < minSales) minSales = sales;
-                    if (sales > maxSales) maxSales = sales;
-                    if (rating > 0 && rating < minRating) minRating = rating;
-                    if (rating > maxRating) maxRating = rating;
-                });
-                if (minRating === Infinity) minRating = 0;
-                if (ps_filterPriceMin) ps_filterPriceMin.placeholder = minPrice === Infinity ? '-' : `от ${Math.floor(minPrice)}`;
-                if (ps_filterPriceMax) ps_filterPriceMax.placeholder = maxPrice === -Infinity ? '-' : `до ${Math.ceil(maxPrice)}`;
-                if (ps_filterSalesMin) ps_filterSalesMin.placeholder = minSales === Infinity ? '-' : `от ${minSales}`;
-                if (ps_filterSalesMax) ps_filterSalesMax.placeholder = maxSales === -Infinity ? '-' : `до ${maxSales}`;
-                if (ps_filterRatingMin) ps_filterRatingMin.placeholder = minRating === Infinity ? '-' : `от ${minRating.toFixed(1)}`;
-                if (ps_filterRatingMax) ps_filterRatingMax.placeholder = maxRating === -Infinity ? '-' : `до ${maxRating.toFixed(1)}`;
-            }
-
-            function ps_getDateThreshold(periodKey) {
-                const now = Date.now();
-                let threshold = 0;
-                const dayMs = 86400000;
-                switch (periodKey) {
-                    case '1d':
-                        threshold = now - 1 * dayMs;
-                        break;
-                    case '2d':
-                        threshold = now - 2 * dayMs;
-                        break;
-                    case '1w':
-                        threshold = now - 7 * dayMs;
-                        break;
-                    case '1m':
-                        threshold = now - 30 * dayMs;
-                        break;
-                    case '6m':
-                        threshold = now - 182 * dayMs;
-                        break;
-                    case '1y':
-                        threshold = now - 365 * dayMs;
-                        break;
-                    case '5y':
-                        threshold = now - 5 * 365 * dayMs;
-                        break;
-                    case '10y':
-                        threshold = now - 10 * 365 * dayMs;
-                        break;
-                    default:
-                        threshold = 0;
-                        break;
-                }
-                return threshold;
-            }
-
-            function ps_applyFilters() {
-                if (!ps_resultsDiv || !ps_currentResults) return;
-                const keywords = ps_exclusionKeywords.map(k => k.toLowerCase());
-                const pMin = parseFloat(ps_currentFilters.priceMin) || 0;
-                const pMax = parseFloat(ps_currentFilters.priceMax) || Infinity;
-                const sMin = parseInt(ps_currentFilters.salesMin, 10) || 0;
-                const sMax = parseInt(ps_currentFilters.salesMax, 10) || Infinity;
-                const rMin = parseFloat(ps_currentFilters.ratingMin) || 0;
-                const rMax = parseFloat(ps_currentFilters.ratingMax) || Infinity;
-                const hideBad = ps_currentFilters.hideBadReviews;
-                const hideRet = ps_currentFilters.hideReturns;
-                const onlyDisc = ps_currentFilters.onlyDiscount;
-                const datePeriod = ps_currentFilters.date;
-                const dateThreshold = ps_getDateThreshold(datePeriod);
-                const selectedCurrency = ps_currencySelect ? ps_currencySelect.value.toUpperCase() : 'RUR';
-                let visibleCount = 0;
-                const items = ps_resultsDiv.querySelectorAll('.platiSearchItem');
-                items.forEach(itemElement => {
-                    const itemId = itemElement.dataset.id;
-                    const itemData = ps_currentResults.find(r => r.id === itemId);
-                    if (!itemData) {
-                        itemElement.classList.add('hidden-by-filter');
-                        return;
-                    }
-                    let shouldHide = false;
-                    if (!shouldHide && keywords.length > 0) {
-                        const title = (itemData.name || '').toLowerCase();
-                        const seller = (itemData.seller_name || '').toLowerCase();
-                        if (keywords.some(keyword => (title + ' ' + seller).includes(keyword))) {
-                            shouldHide = true;
-                        }
-                    }
-                    if (!shouldHide) {
-                        const price = getPriceInSelectedCurrency(itemData, selectedCurrency);
-                        if (price < pMin || price > pMax) {
-                            shouldHide = true;
-                        }
-                    }
-                    if (!shouldHide) {
-                        const sales = formatSales(itemData.cnt_sell);
-                        if (sales < sMin || sales > sMax) {
-                            shouldHide = true;
-                        }
-                    }
-                    if (!shouldHide) {
-                        const rating = parseSellerRating(itemData.seller_rating);
-                        if ((rating === 0 && (rMin > 0 || rMax < Infinity)) || rating < rMin || rating > rMax) {
-                            shouldHide = true;
-                        }
-                    }
-                    if (!shouldHide && hideBad) {
-                        if (parseInt(itemData.cnt_bad_responses || '0', 10) > 0) {
-                            shouldHide = true;
-                        }
-                    }
-                    if (!shouldHide && hideRet) {
-                        if (parseInt(itemData.cnt_return || '0', 10) > 0) {
-                            shouldHide = true;
-                        }
-                    }
-                    if (!shouldHide && onlyDisc) {
-                        if (parseInt(itemData.discount || '0', 10) <= 0) {
-                            shouldHide = true;
-                        }
-                    }
-                    if (!shouldHide && dateThreshold > 0) {
-                        const itemDate = parseDate(itemData.date_create);
-                        if (!itemDate || itemDate < dateThreshold) {
-                            shouldHide = true;
-                        }
-                    }
-                    if (shouldHide) {
-                        itemElement.classList.add('hidden-by-filter');
-                    } else {
-                        itemElement.classList.remove('hidden-by-filter');
-                        visibleCount++;
-                    }
-                });
-                const totalLoadedCount = ps_currentResults.length;
-                const anyFilterActive = pMin > 0 || pMax < Infinity || sMin > 0 || sMax < Infinity || rMin > 0 || rMax < Infinity || hideBad || hideRet || onlyDisc || datePeriod !== 'all' || keywords.length > 0;
-                if (totalLoadedCount > 0) {
-                    if (anyFilterActive) {
-                        ps_updateStatus(`Показано ${visibleCount} из ${totalLoadedCount} товаров (фильтры/исключения применены).`);
-                    } else {
-                        ps_updateStatus(`Загружено ${totalLoadedCount} товаров.`);
-                    }
-                } else if (ps_searchInput && ps_searchInput.value.trim()) {} else {
-                    ps_updateStatus(`Введите запрос для поиска.`);
-                }
-                if (visibleCount === 0 && totalLoadedCount > 0 && anyFilterActive) {
-                    ps_statusDiv.textContent += ' Нет товаров, соответствующих критериям.';
-                    ps_statusDiv.style.display = 'block';
-                } else if (totalLoadedCount === 0 && ps_searchInput && ps_searchInput.value.trim()) {
-                    ps_statusDiv.style.display = 'block';
-                }
-            }
-
-            // --- Фильтрация исключений ---
-            function ps_addFilterKeyword() {
-                const keyword = ps_excludeInput.value.trim().toLowerCase();
-                if (keyword && !ps_exclusionKeywords.includes(keyword)) {
-                    ps_exclusionKeywords.push(keyword);
-                    GM_setValue(PS_EXCLUSION_STORAGE_KEY, ps_exclusionKeywords);
-                    ps_excludeInput.value = '';
-                    ps_renderExclusionTags();
-                    ps_applyFilters();
-                }
-            }
-
-            function ps_removeFilterKeyword(keywordToRemove) {
-                ps_exclusionKeywords = ps_exclusionKeywords.filter(k => k !== keywordToRemove);
-                GM_setValue(PS_EXCLUSION_STORAGE_KEY, ps_exclusionKeywords);
-                ps_renderExclusionTags();
-                ps_applyFilters();
-            }
-
-            function ps_renderExclusionTags() {
-                if (!ps_exclusionTagsListDiv) return;
-                ps_exclusionTagsListDiv.innerHTML = '';
-                ps_exclusionKeywords.forEach(keyword => {
-                    const tag = document.createElement('span');
-                    tag.className = 'exclusionTag';
-                    tag.textContent = keyword;
-                    tag.title = `Удалить "${keyword}"`;
-                    tag.onclick = () => ps_removeFilterKeyword(keyword);
-                    ps_exclusionTagsListDiv.appendChild(tag);
-                });
-            }
-
-            // --- Рендеринг результатов ---
-             function ps_renderResults() {
-                 if (!ps_resultsDiv) return;
-                 ps_resultsDiv.innerHTML = '';
-                 if (ps_currentResults.length === 0) {
-                     ps_applyFilters();
-                     return;
-                 }
-
-                 const fragment = document.createDocumentFragment();
-                 const now = Date.now();
-                 const thresholdTime = now - NEW_ITEM_THRESHOLD_DAYS * 24 * 60 * 60 * 1000;
-                 const selectedCurrency = ps_currencySelect ? ps_currencySelect.value.toUpperCase() : 'RUR';
-
-                 ps_currentResults.forEach(item => {
-                     const itemDiv = document.createElement('div');
-                     itemDiv.className = 'platiSearchItem';
-                     itemDiv.dataset.id = item.id;
-                     const link = document.createElement('a');
-
-                     const baseUrl = item.url || `https://plati.market/itm/${item.id}`;
-                     link.href = baseUrl + '?ai=234029';
-
-                     link.target = '_blank';
-                     link.rel = 'noopener noreferrer nofollow';
-                     const imageWrapper = document.createElement('div');
-                     imageWrapper.className = 'card-image-wrapper';
-                     const img = document.createElement('img');
-                     const imgSrc = `https://${PS_IMAGE_DOMAIN}/imgwebp.ashx?id_d=${item.id}&w=164&h=164&dc=${item.ticks_last_change || Date.now()}`;
-                     img.src = imgSrc;
-                     img.alt = item.name || 'Изображение товара';
-                     img.loading = 'lazy';
-                     img.onerror = function() {
-                         this.onerror = null;
-                         this.src = 'https://plati.market/images/logo-plati.png';
-                         this.style.objectFit = 'contain';
-                     };
-                     imageWrapper.appendChild(img);
-                     const itemDate = parseDate(item.date_create);
-                     if (itemDate && itemDate > thresholdTime) {
-                         const newBadge = document.createElement('span');
-                         newBadge.className = 'newItemBadge';
-                         newBadge.textContent = 'New';
-                         imageWrapper.appendChild(newBadge);
-                     }
-                     link.appendChild(imageWrapper);
-                     const priceDiv = document.createElement('div');
-                     priceDiv.className = 'price';
-                     let displayPrice = getPriceInSelectedCurrency(item, selectedCurrency);
-                     let currencySymbol;
-                     switch (selectedCurrency) {
-                         case 'USD':
-                             currencySymbol = '$';
-                             break;
-                         case 'EUR':
-                             currencySymbol = '€';
-                             break;
-                         case 'UAH':
-                             currencySymbol = '₴';
-                             break;
-                         default:
-                             currencySymbol = '₽';
-                             break;
-                     }
-                     priceDiv.textContent = displayPrice !== Infinity ? `${displayPrice.toLocaleString('ru-RU', {minimumFractionDigits: 0, maximumFractionDigits: 2})} ${currencySymbol}` : 'Нет цены';
-                     priceDiv.title = `Цена в ${selectedCurrency}`;
-                     link.appendChild(priceDiv);
-                     const titleDiv = document.createElement('div');
-                     titleDiv.className = 'title';
-                     titleDiv.textContent = item.name || 'Без названия';
-                     titleDiv.title = item.name || 'Без названия';
-                     link.appendChild(titleDiv);
-                     const infoContainer = document.createElement('div');
-                     infoContainer.className = 'cardInfoContainer';
-                     const infoRow1 = document.createElement('div');
-                     infoRow1.className = 'cardInfoRow1';
-                     const infoRow2 = document.createElement('div');
-                     infoRow2.className = 'cardInfoRow2';
-                     const ratingVal = parseSellerRating(item.seller_rating);
-                     const goodRev = parseInt(item.cnt_good_responses || '0');
-                     const badRev = parseInt(item.cnt_bad_responses || '0');
-                     const returns = parseInt(item.cnt_return || '0');
-                     let salesCount = formatSales(item.cnt_sell);
-                     infoRow1.innerHTML = `<span title="Рейтинг продавца">Рейт: ${ratingVal > 0 ? ratingVal.toLocaleString('ru-RU', {maximumFractionDigits: 0}) : 'N/A'}</span><span title="Отзывы (Хорошие/Плохие)">Отз: <span class="reviewsGood">${goodRev}</span>${badRev > 0 ? '/<span class="reviewsBad">' + badRev + '</span>' : ''}</span><span title="Возвраты">Возв: ${returns}</span>`;
-                     infoRow2.innerHTML = `<span class="sales" title="Продажи">Прод: ${salesCount > 0 ? salesCount.toLocaleString('ru-RU') : '0'}</span><span class="dateAdded" title="Дата добавления">Доб: ${formatDateString(itemDate)}</span>`;
-                     infoContainer.appendChild(infoRow1);
-                     infoContainer.appendChild(infoRow2);
-                     const sellerLink = document.createElement('a');
-                     sellerLink.className = 'sellerLink';
-                     sellerLink.textContent = `Продавец: ${item.seller_name || 'N/A'}`;
-                     sellerLink.title = `Перейти к продавцу: ${item.seller_name || 'N/A'}`;
-                     if (item.seller_id && item.seller_name) {
-                         const safeSellerName = encodeURIComponent(item.seller_name.replace(/[^a-zA-Z0-9_\-.~]/g, '-')).replace(/%2F/g, '/');
-                         sellerLink.href = `https://plati.market/seller/${safeSellerName}/${item.seller_id}/`;
-                         sellerLink.target = '_blank';
-                         sellerLink.rel = 'noopener noreferrer nofollow';
-                         sellerLink.onclick = (e) => {
-                             e.stopPropagation();
-                         };
-                     } else {
-                         sellerLink.style.pointerEvents = 'none';
-                     }
-                     infoContainer.appendChild(sellerLink);
-                     link.appendChild(infoContainer);
-                     const buyButtonDiv = document.createElement('div');
-                     buyButtonDiv.className = 'buyButton';
-                     buyButtonDiv.textContent = 'Перейти';
-                     link.appendChild(buyButtonDiv);
-                     itemDiv.appendChild(link);
-                     fragment.appendChild(itemDiv);
-                 });
-                 ps_resultsDiv.appendChild(fragment);
-                 ps_applyFilters();
-             }
-
-            // --- Обработчики UI ---
-            function ps_handleCurrencyChange() {
-                ps_currentCurrency = ps_currencySelect.value.toUpperCase();
-                GM_setValue(PS_CURRENCY_STORAGE_KEY, ps_currentCurrency);
-                applyLoadedFiltersToUI();
-                ps_updateFilterPlaceholders();
-                if (ps_currentSort.field === 'price') {
-                    ps_applySort(ps_currentSort.field, ps_currentSort.direction);
-                }
-                ps_renderResults();
-            }
-
-            function addPlatiButton() {
-                const actionsContainer = document.querySelector('#queueActionsCtn');
-
-                if (!actionsContainer || actionsContainer.querySelector('.plati_price_button')) {
-                    return;
-                }
-
-                const ignoreButtonContainer = actionsContainer.querySelector('#ignoreBtn');
-
-                const platiContainer = document.createElement('div');
-                platiContainer.className = 'plati_price_button queue_control_button';
-                platiContainer.style.marginLeft = '3px';
-                platiContainer.innerHTML = `<div class="btnv6_blue_hoverfade btn_medium" style="height: 32px; padding: 0 5px;" title="Найти на Plati.Market"><span>Plati</span></div>`;
-                platiContainer.querySelector('div').addEventListener('click', (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showPlatiModal();
-                });
-
-                if (ignoreButtonContainer) {
-                    ignoreButtonContainer.insertAdjacentElement('afterend', platiContainer);
-                } else {
-                    actionsContainer.appendChild(platiContainer);
-                }
-            }
-
-             function addPlatiStyles() {
-                 GM_addStyle(`
-                    /* Стили спиннера */
-                    @keyframes platiSpin {
-                    	0% {
-                    		transform: rotate(0deg);
-                    	}
-
-                    	100% {
-                    		transform: rotate(360deg);
-                    	}
-                    }
-
-                    .spinner {
-                    	border: 3px solid rgba(255, 255, 255, 0.3);
-                    	border-radius: 50%;
-                    	border-top-color: #fff;
-                    	width: 1em;
-                    	height: 1em;
-                    	animation: platiSpin 1s linear infinite;
-                    	display: inline-block;
-                    	vertical-align: middle;
-                    	margin-left: 5px;
-                    }
-
-                    .platiSearchBtn .spinner {
-                    	width: 0.8em;
-                    	height: 0.8em;
-                    	border-width: 2px;
-                    }
-
-                    /* Стили модального окна */
-                    #platiSearchModal {
-                    	position: fixed;
-                    	top: 0;
-                    	left: 0;
-                    	width: 100%;
-                    	height: 100%;
-                    	background-color: rgba(20, 20, 25, 0.98);
-                    	z-index: 9999;
-                    	display: none;
-                    	color: #eee;
-                    	font-family: "Motiva Sans", Sans-serif, Arial;
-                    	overflow-y: auto;
-                    	scrollbar-color: #67c1f5 #17202d;
-                    	scrollbar-width: thin;
-                    }
-
-                    #platiSearchModal::-webkit-scrollbar {
-                    	width: 8px;
-                    }
-
-                    #platiSearchModal::-webkit-scrollbar-track {
-                    	background: #17202d;
-                    	border-radius: 4px;
-                    }
-
-                    #platiSearchModal::-webkit-scrollbar-thumb {
-                    	background-color: #4b6f9c;
-                    	border-radius: 4px;
-                    	border: 2px solid #17202d;
-                    }
-
-                    #platiSearchModal::-webkit-scrollbar-thumb:hover {
-                    	background-color: #67c1f5;
-                    }
-
-                    #platiSearchModal * {
-                    	box-sizing: border-box;
-                    }
-
-                    #platiSearchContainer {
-                    	max-width: 1350px;
-                    	margin: 0 auto;
-                    	padding: 15px ${PS_SIDE_PANEL_HORIZONTAL_PADDING}px;
-                    	position: relative;
-                    	min-height: 100%;
-                    }
-
-                    #platiSearchCloseBtn {
-                    	position: fixed;
-                    	top: 15px;
-                    	right: 20px;
-                    	font-size: 35px;
-                    	color: #aaa;
-                    	background: none;
-                    	border: none;
-                    	cursor: pointer;
-                    	line-height: 1;
-                    	z-index: 10002;
-                    	padding: 5px;
-                    	transition: color 0.2s, transform 0.2s;
-                    }
-
-                    #platiSearchCloseBtn:hover {
-                    	color: #fff;
-                    	transform: scale(1.1);
-                    }
-
-                    /* Шапка */
-                    #platiSearchHeader {
-                    	display: flex;
-                    	align-items: center;
-                    	gap: 10px;
-                    	margin-bottom: 15px;
-                    	flex-wrap: wrap;
-                    	position: relative;
-                    	z-index: 5;
-                    	border-bottom: 1px solid #444;
-                    	padding-bottom: 15px;
-                    	padding-left: ${PS_CONTENT_PADDING_LEFT}px;
-                    	padding-right: ${PS_CONTENT_PADDING_RIGHT}px;
-                    	margin-left: -${PS_CONTENT_PADDING_LEFT}px;
-                    	margin-right: -${PS_CONTENT_PADDING_RIGHT}px;
-                    	flex-shrink: 0;
-                    }
-
-                    .platiSearchInputContainer {
-                    	position: relative;
-                    	flex-grow: 0.7;
-                    	min-width: 200px;
-                    	flex-basis: 350px;
-                    }
-
-                    #platiSearchInput {
-                    	width: 100%;
-                    	padding: 10px 15px;
-                    	font-size: 16px;
-                    	background-color: #333;
-                    	border: 1px solid #555;
-                    	color: #eee;
-                    	border-radius: 4px;
-                    	height: 40px;
-                    	outline: none;
-                    }
-
-                    #platiSearchInput:focus {
-                    	border-color: #67c1f5;
-                    }
-
-                    #platiSearchSuggestions {
-                    	position: absolute;
-                    	top: 100%;
-                    	left: 0;
-                    	right: 0;
-                    	background-color: #3a3a40;
-                    	border: 1px solid #555;
-                    	border-top: none;
-                    	border-radius: 0 0 4px 4px;
-                    	max-height: 300px;
-                    	overflow-y: auto;
-                    	z-index: 10000;
-                    	display: none;
-                    }
-
-                    .suggestionItem {
-                    	padding: 8px 15px;
-                    	cursor: pointer;
-                    	color: #eee;
-                    	font-size: 14px;
-                    	border-bottom: 1px solid #4a4a50;
-                    }
-
-                    .suggestionItem:last-child {
-                    	border-bottom: none;
-                    }
-
-                    .suggestionItem:hover {
-                    	background-color: #4a4a55;
-                    }
-
-                    /* Кнопки в шапке */
-                    .platiSearchBtn {
-                    	padding: 10px 15px;
-                    	font-size: 14px;
-                    	color: white;
-                    	border: none;
-                    	border-radius: 4px;
-                    	cursor: pointer;
-                    	white-space: nowrap;
-                    	height: 40px;
-                    	display: inline-flex;
-                    	align-items: center;
-                    	justify-content: center;
-                    	flex-shrink: 0;
-                    	background-color: #555;
-                    	transition: background-color 0.2s;
-                    }
-
-                    .platiSearchBtn:hover:not(:disabled) {
-                    	background-color: #666;
-                    }
-
-                    .platiSearchBtn:disabled {
-                    	opacity: 0.6;
-                    	cursor: default;
-                    }
-
-                    #platiSearchGoBtn {
-                    	background-color: #4D88FF;
-                    }
-
-                    #platiSearchGoBtn:hover {
-                    	background-color: #3366CC;
-                    }
-
-                    .platiSearchBtn.sortBtn.active {
-                    	background-color: #007bff;
-                    }
-
-                    .platiSearchBtn.sortBtn.active:hover {
-                    	background-color: #0056b3;
-                    }
-
-                    #platiResetSortBtn {
-                    	background-color: #777;
-                    	margin-right: 5px;
-                    	padding: 0 10px;
-                    }
-
-                    #platiResetSortBtn:hover {
-                    	background-color: #888;
-                    }
-
-                    #platiResetSortBtn svg {
-                    	width: 16px;
-                    	height: 16px;
-                    	fill: currentColor;
-                    }
-
-                    #platiResetSortBtn.active {
-                    	background-color: #007bff;
-                    }
-
-                    #platiSearchAdvSortBtnContainer {
-                    	position: relative;
-                    	flex-shrink: 0;
-                    	width: ${PS_ADV_SORT_CONTAINER_WIDTH}px;
-                    	display: flex;
-                    	justify-content: center;
-                    }
-
-                    #platiSearchAdvSortBtn {
-                    	width: 100%;
-                    	justify-content: center;
-                    	overflow: hidden;
-                    	text-overflow: ellipsis;
-                    }
-
-                    #platiSearchCurrencySelect {
-                    	margin-left: 10px;
-                    	background-color: #333;
-                    	color: #eee;
-                    	border: 1px solid #555;
-                    	border-radius: 4px;
-                    	height: 40px;
-                    	padding: 0 8px;
-                    	font-size: 14px;
-                    	cursor: pointer;
-                    	flex-shrink: 0;
-                    	outline: none;
-                    }
-
-                    #platiSearchCurrencySelect:focus {
-                    	border-color: #67c1f5;
-                    }
-
-                    /* Меню доп сортировки */
-                    #platiSearchAdvSortMenu {
-                    	display: none;
-                    	position: absolute;
-                    	top: 100%;
-                    	left: 0;
-                    	background-color: #3a3a40;
-                    	border: 1px solid #555;
-                    	border-radius: 4px;
-                    	min-width: 100%;
-                    	z-index: 10001;
-                    	padding: 5px 0;
-                    	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-                    }
-
-                    #platiSearchAdvSortBtnContainer:hover #platiSearchAdvSortMenu {
-                    	display: block;
-                    }
-
-                    .platiSearchSortMenuItem {
-                    	display: block;
-                    	padding: 8px 15px;
-                    	color: #eee;
-                    	font-size: 14px;
-                    	cursor: pointer;
-                    	white-space: nowrap;
-                    	transition: background-color 0.1s;
-                    }
-
-                    .platiSearchSortMenuItem:hover {
-                    	background-color: #4a4a55;
-                    }
-
-                    .platiSearchSortMenuItem.active {
-                    	background-color: #007bff;
-                    	color: white;
-                    }
-
-                    .platiSearchSortMenuItem .sortArrow {
-                    	display: inline-block;
-                    	margin-left: 5px;
-                    	font-size: 12px;
-                    }
-
-                    /* Боковые панели */
-                    #platiSearchFiltersPanel,
-                    #platiSearchExclusionTags {
-                    	position: fixed;
-                    	top: ${PS_TOP_OFFSET_FOR_SIDE_PANELS}px;
-                    	max-height: calc(100vh - ${PS_TOP_OFFSET_FOR_SIDE_PANELS}px - ${PS_BOTTOM_OFFSET_FOR_SIDE_PANELS}px);
-                    	overflow-y: auto;
-                    	z-index: 1000;
-                    	padding: 10px;
-                    	padding-right: 15px;
-                    	scrollbar-width: thin;
-                    	scrollbar-color: #555 #2a2a30;
-                    	background-color: transparent;
-                    	transition: top 0.2s ease-in-out;
-                    }
-
-                    #platiSearchFiltersPanel::-webkit-scrollbar,
-                    #platiSearchExclusionTags::-webkit-scrollbar {
-                    	width: 5px;
-                    }
-
-                    #platiSearchFiltersPanel::-webkit-scrollbar-track,
-                    #platiSearchExclusionTags::-webkit-scrollbar-track {
-                    	background: rgba(42, 42, 48, 0.5);
-                    	border-radius: 3px;
-                    }
-
-                    #platiSearchFiltersPanel::-webkit-scrollbar-thumb,
-                    #platiSearchExclusionTags::-webkit-scrollbar-thumb {
-                    	background-color: rgba(85, 85, 85, 0.7);
-                    	border-radius: 3px;
-                    }
-
-                    #platiSearchFiltersPanel {
-                    	left: ${PS_SIDE_PANEL_HORIZONTAL_PADDING}px;
-                    	width: ${PS_FILTER_PANEL_WIDTH}px;
-                    }
-
-                    #platiSearchExclusionTags {
-                    	right: ${PS_SIDE_PANEL_HORIZONTAL_PADDING}px;
-                    	width: ${PS_EXCLUSION_PANEL_WIDTH}px;
-                    	display: flex;
-                    	flex-direction: column;
-                    	gap: 10px;
-                    }
-
-                    /* Фильтры */
-                    .filterGroup {
-                    	margin-bottom: 18px;
-                    }
-
-                    .filterGroup h4 {
-                    	font-size: 15px;
-                    	color: #ddd;
-                    	margin-bottom: 8px;
-                    	padding-bottom: 4px;
-                    	display: flex;
-                    	justify-content: space-between;
-                    	align-items: center;
-                    	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-                    	font-weight: 500;
-                    }
-
-                    .filterResetBtn {
-                    	font-size: 12px;
-                    	color: #aaa;
-                    	background: none;
-                    	border: none;
-                    	cursor: pointer;
-                    	padding: 0 3px;
-                    	line-height: 1;
-                    }
-
-                    .filterResetBtn:hover {
-                    	color: #fff;
-                    }
-
-                    .filterResetBtn svg {
-                    	width: 14px;
-                    	height: 14px;
-                    	vertical-align: middle;
-                    	fill: currentColor;
-                    }
-
-                    .filterRangeInputs {
-                    	display: flex;
-                    	gap: 8px;
-                    	align-items: center;
-                    }
-
-                    .filterRangeInputs input[type="number"] {
-                    	width: calc(50% - 4px);
-                    	padding: 6px 8px;
-                    	font-size: 13px;
-                    	background-color: rgba(51, 51, 51, 0.85);
-                    	border: 1px solid #666;
-                    	color: #eee;
-                    	border-radius: 3px;
-                    	height: 30px;
-                    	text-align: center;
-                    	-moz-appearance: textfield;
-                    	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-                    	outline: none;
-                    }
-
-                    .filterRangeInputs input[type="number"]:focus {
-                    	border-color: #67c1f5;
-                    }
-
-                    .filterRangeInputs input[type="number"]::-webkit-outer-spin-button,
-                    .filterRangeInputs input[type="number"]::-webkit-inner-spin-button {
-                    	-webkit-appearance: none;
-                    	margin: 0;
-                    }
-
-                    .filterRangeInputs input[type="number"]::placeholder {
-                    	color: #999;
-                    	font-size: 11px;
-                    	text-align: center;
-                    }
-
-                    .filterCheckbox {
-                    	margin-bottom: 8px;
-                    }
-
-                    .filterCheckbox label {
-                    	display: flex;
-                    	align-items: center;
-                    	font-size: 14px;
-                    	cursor: pointer;
-                    	color: #ccc;
-                    	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.7);
-                    }
-
-                    .filterCheckbox input[type="checkbox"] {
-                    	margin-right: 8px;
-                    	width: 16px;
-                    	height: 16px;
-                    	accent-color: #007bff;
-                    	cursor: pointer;
-                    	flex-shrink: 0;
-                    }
-
-                    .filterSelect select {
-                    	width: 100%;
-                    	padding: 6px 8px;
-                    	font-size: 13px;
-                    	background-color: rgba(51, 51, 51, 0.85);
-                    	border: 1px solid #666;
-                    	color: #eee;
-                    	border-radius: 3px;
-                    	height: 30px;
-                    	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-                    	outline: none;
-                    }
-
-                    .filterSelect select:focus {
-                    	border-color: #67c1f5;
-                    }
-
-                    #psResetAllFiltersBtn {
-                    	width: 100%;
-                    	margin-top: 10px;
-                    	padding: 8px 10px;
-                    	height: auto;
-                    	background-color: rgba(108, 117, 125, 0.8);
-                    	border: 1px solid #888;
-                    	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.4);
-                    }
-
-                    #psResetAllFiltersBtn:hover {
-                    	background-color: rgba(90, 98, 104, 0.9);
-                    }
-
-                    /* Исключения */
-                    .exclusionInputGroup {
-                    	display: flex;
-                    	align-items: stretch;
-                    	border: 1px solid #555;
-                    	border-radius: 4px;
-                    	background-color: rgba(51, 51, 51, 0.85);
-                    	overflow: hidden;
-                    	height: 34px;
-                    	flex-shrink: 0;
-                    	box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
-                    }
-
-                    .exclusionInputGroup #platiSearchExcludeInput {
-                    	padding: 6px 10px;
-                    	font-size: 13px;
-                    	background-color: transparent;
-                    	border: none;
-                    	color: #eee;
-                    	outline: none;
-                    	border-radius: 0;
-                    	flex-grow: 1;
-                    	width: auto;
-                    	height: auto;
-                    }
-
-                    .exclusionInputGroup #platiSearchExcludeInput:focus {
-                    	box-shadow: none;
-                    }
-
-                    .exclusionInputGroup #platiSearchAddExcludeBtn {
-                    	display: flex;
-                    	align-items: center;
-                    	justify-content: center;
-                    	padding: 0 10px;
-                    	background-color: #555;
-                    	border: none;
-                    	border-left: 1px solid #555;
-                    	cursor: pointer;
-                    	border-radius: 0;
-                    	color: #eee;
-                    	height: auto;
-                    }
-
-                    .exclusionInputGroup #platiSearchAddExcludeBtn:hover {
-                    	background-color: #666;
-                    }
-
-                    .exclusionInputGroup #platiSearchAddExcludeBtn svg {
-                    	width: 16px;
-                    	height: 16px;
-                    	fill: currentColor;
-                    }
-
-                    #platiExclusionTagsList {
-                    	display: flex;
-                    	flex-direction: row;
-                    	flex-wrap: wrap;
-                    	align-content: flex-start;
-                    	gap: 8px;
-                    	overflow-y: auto;
-                    	flex-grow: 1;
-                    }
-
-                    .exclusionTag {
-                    	display: inline-block;
-                    	background-color: rgba(70, 70, 80, 0.9);
-                    	color: #ddd;
-                    	padding: 5px 10px;
-                    	border-radius: 15px;
-                    	font-size: 13px;
-                    	cursor: pointer;
-                    	transition: background-color 0.2s;
-                    	border: 1px solid rgba(100, 100, 110, 0.9);
-                    	white-space: nowrap;
-                    	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
-                    }
-
-                    .exclusionTag:hover {
-                    	background-color: rgba(220, 53, 69, 0.9);
-                    	border-color: rgba(200, 40, 50, 0.95);
-                    	color: #fff;
-                    }
-
-                    .exclusionTag::after {
-                    	content: ' ×';
-                    	font-weight: bold;
-                    	margin-left: 4px;
-                    }
-
-                    /* Результаты */
-                    #platiSearchResultsContainer {
-                    	position: relative;
-                    	padding-left: ${PS_CONTENT_PADDING_LEFT}px;
-                    	padding-right: ${PS_CONTENT_PADDING_RIGHT}px;
-                    	margin-left: -${PS_CONTENT_PADDING_LEFT}px;
-                    	margin-right: -${PS_CONTENT_PADDING_RIGHT}px;
-                    }
-
-                    #platiSearchResultsStatus {
-                    	width: 100%;
-                    	text-align: center;
-                    	font-size: 18px;
-                    	color: #aaa;
-                    	padding: 50px 0;
-                    	display: none;
-                    	min-height: 100px;
-                    	display: flex;
-                    	align-items: center;
-                    	justify-content: center;
-                    	flex-direction: column;
-                    }
-
-                    #platiSearchResults {
-                    	display: flex;
-                    	flex-wrap: wrap;
-                    	gap: 15px;
-                    	justify-content: flex-start;
-                    	padding-top: 10px;
-                    }
-
-                    /* Карточка товара */
-                    .platiSearchItem {
-                    	background-color: #2a2a30;
-                    	border-radius: 8px;
-                    	padding: 10px;
-                    	width: calc(20% - 12px);
-                    	min-width: 170px;
-                    	display: flex;
-                    	flex-direction: column;
-                    	transition: transform 0.2s ease, box-shadow 0.2s ease;
-                    	box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-                    	position: relative;
-                    	color: #ccc;
-                    	font-size: 13px;
-                    	min-height: 340px;
-                    	border: 1px solid transparent;
-                    }
-
-                    .platiSearchItem:hover {
-                    	transform: translateY(-3px);
-                    	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-                    	border-color: #4b6f9c;
-                    }
-
-                    .platiSearchItem.hidden-by-filter {
-                    	display: none !important;
-                    }
-
-                    .platiSearchItem a {
-                    	text-decoration: none;
-                    	color: inherit;
-                    	display: flex;
-                    	flex-direction: column;
-                    	height: 100%;
-                    }
-
-                    .platiSearchItem .card-image-wrapper {
-                    	position: relative;
-                    	width: 100%;
-                    	aspect-ratio: 1 / 1;
-                    	margin-bottom: 8px;
-                    	background-color: #444;
-                    	border-radius: 6px;
-                    	overflow: hidden;
-                    }
-
-                    .platiSearchItem img {
-                    	position: absolute;
-                    	top: 0;
-                    	left: 0;
-                    	width: 100%;
-                    	height: 100%;
-                    	object-fit: cover;
-                    	border-radius: 6px;
-                    }
-
-                    .newItemBadge {
-                    	position: absolute;
-                    	top: 4px;
-                    	left: 4px;
-                    	background-color: #f54848;
-                    	color: white;
-                    	padding: 1px 5px;
-                    	font-size: 10px;
-                    	border-radius: 3px;
-                    	font-weight: bold;
-                    	z-index: 1;
-                    	text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-                    }
-
-                    .platiSearchItem .price {
-                    	font-size: 16px;
-                    	font-weight: 700;
-                    	color: #a4d007;
-                    	margin-bottom: 5px;
-                    }
-
-                    .platiSearchItem .title {
-                    	font-size: 13px;
-                    	font-weight: 500;
-                    	line-height: 1.3;
-                    	height: 3.9em;
-                    	overflow: hidden;
-                    	text-overflow: ellipsis;
-                    	margin-bottom: 6px;
-                    	color: #eee;
-                    	display: -webkit-box;
-                    	-webkit-line-clamp: 3;
-                    	-webkit-box-orient: vertical;
-                    }
-
-                    .cardInfoContainer {
-                    	margin-top: auto;
-                    	padding-top: 6px;
-                    }
-
-                    .cardInfoRow1,
-                    .cardInfoRow2 {
-                    	display: flex;
-                    	justify-content: space-between;
-                    	flex-wrap: nowrap;
-                    	gap: 8px;
-                    	font-size: 12px;
-                    	color: #bbb;
-                    	margin-bottom: 4px;
-                    }
-
-                    .cardInfoRow1 span,
-                    .cardInfoRow2 span {
-                    	white-space: nowrap;
-                    	overflow: hidden;
-                    	text-overflow: ellipsis;
-                    	flex-shrink: 1;
-                    }
-
-                    .cardInfoRow1 span:first-child,
-                    .cardInfoRow2 span:first-child {
-                    	flex-shrink: 0;
-                    	margin-right: auto;
-                    }
-
-                    .reviewsGood {
-                    	color: #6cff5c;
-                    	font-weight: bold;
-                    }
-
-                    .reviewsBad {
-                    	color: #f54848;
-                    	margin-left: 2px;
-                    	font-weight: bold;
-                    }
-
-                    .sales {
-                    	font-weight: bold;
-                    	color: #eee;
-                    }
-
-                    .sellerLink {
-                    	display: block;
-                    	font-size: 12px;
-                    	color: #bbb;
-                    	text-decoration: none;
-                    	margin-bottom: 4px;
-                    	white-space: nowrap;
-                    	overflow: hidden;
-                    	text-overflow: ellipsis;
-                    	transition: color 0.2s;
-                    }
-
-                    .sellerLink:hover {
-                    	color: #ddd;
-                    	text-decoration: underline;
-                    }
-
-                    .platiSearchItem .buyButton {
-                    	display: block;
-                    	text-align: center;
-                    	padding: 8px;
-                    	margin-top: 8px;
-                    	background-color: #007bff;
-                    	color: white;
-                    	border-radius: 4px;
-                    	font-size: 13px;
-                    	font-weight: 600;
-                    	transition: background-color 0.2s;
-                    }
-
-                    .platiSearchItem .buyButton:hover {
-                    	background-color: #0056b3;
-                    }
-
-                    /* Адаптивность */
-                    @media (max-width: 1650px) {
-                    	.platiSearchItem {
-                    		width: calc(20% - 12px);
-                    	}
-                    }
-
-                    @media (max-width: 1400px) {
-                    	.platiSearchItem {
-                    		width: calc(25% - 12px);
-                    	}
-                    }
-
-                    @media (max-width: 1100px) {
-                    	.platiSearchItem {
-                    		width: calc(33.33% - 10px);
-                    	}
-                    }
-
-                    @media (max-width: 850px) {
-
-                    	#platiSearchFiltersPanel,
-                    	#platiSearchExclusionTags {
-                    		display: none;
-                    	}
-
-                    	#platiSearchHeader,
-                    	#platiSearchResultsContainer {
-                    		padding-left: 15px;
-                    		padding-right: 15px;
-                    		margin-left: 0;
-                    		margin-right: 0;
-                    	}
-
-                    	.platiSearchItem {
-                    		width: calc(50% - 8px);
-                    	}
-
-                    	#platiSearchHeader {
-                    		justify-content: center;
-                    	}
-                    }
-
-                    @media (max-width: 600px) {
-                    	.platiSearchItem {
-                    		width: 100%;
-                    		min-height: auto;
-                    	}
-
-                    	#platiSearchHeader {
-                    		gap: 5px;
-                    	}
-
-                    	.platiSearchInputContainer {
-                    		flex-basis: 100%;
-                    		order: -1;
-                    	}
-
-                    	.platiSearchBtn,
-                    	#platiSearchCurrencySelect,
-                    	#platiSearchAdvSortBtnContainer {
-                    		width: calc(33.3% - 4px);
-                    		font-size: 13px;
-                    		padding: 8px 5px;
-                    		height: 36px;
-                    	}
-
-                    	#platiSearchAdvSortBtnContainer {
-                    		width: calc(33.3% - 4px);
-                    	}
-
-                    	#platiSearchAdvSortBtn {
-                    		width: 100%;
-                    	}
-
-                    	#platiSearchAdvSortMenu {
-                    		min-width: 200px;
-                    		left: 50%;
-                    		transform: translateX(-50%);
-                    	}
-
-                    	#platiResetSortBtn {
-                    		width: auto;
-                    		padding: 0 8px;
-                    	}
-                    }
-
-                    /* Стили для кнопки Plati на странице Steam */
-                    .plati_price_button .btnv6_blue_hoverfade {
-                    	margin: 0;
-                    	padding: 0 15px;
-                    	font-size: 15px;
-                    	display: flex;
-                    	align-items: center;
-                    	transition: filter 0.2s;
-                    }
-
-                    .plati_price_button .btnv6_blue_hoverfade:hover {
-                    	filter: brightness(1.1);
-                    }
-
-                    .psExclusionActions {
-                        display: flex;
-                        justify-content: flex-end;
-                        gap: 8px;
-                        margin-top: 10px;
-                        padding-bottom: 10px;
-                        border-bottom: 1px solid #444;
-                    }
-
-                    .psExclusionActionBtn {
-                        padding: 0 8px;
-                        height: 30px;
-                        width: 40px;
-                        background-color: #555;
-                        border-color: #666;
-                        font-size: 14px;
-                        font-weight: bold;
-                        line-height: 1;
-                    }
-
-                    #psImportModal {
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background-color: rgba(0, 0, 0, 0.7);
-                        z-index: 10003;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                    }
-
-                    .psImportModalContent {
-                        background-color: #2a2a30;
-                        padding: 25px;
-                        border-radius: 5px;
-                        border: 1px solid #007bff;
-                        width: 90%;
-                        max-width: 500px;
-                        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-                    }
-
-                    .psImportModalContent h4 {
-                        margin-top: 0;
-                        margin-bottom: 15px;
-                        color: #eee;
-                        font-size: 16px;
-                        text-align: center;
-                    }
-                     .psImportModalContent p {
-                        margin-bottom: 10px;
-                        font-size: 14px;
-                        color: #ccc;
-                     }
-
-                    #psImportTextarea {
-                        width: 100%;
-                        padding: 10px;
-                        font-size: 14px;
-                        background-color: #333;
-                        border: 1px solid #555;
-                        color: #eee;
-                        border-radius: 4px;
-                        margin-bottom: 20px;
-                        min-height: 100px;
-                        resize: vertical;
-                        outline: none;
-                    }
-                    #psImportTextarea:focus {
-                        border-color: #67c1f5;
-                    }
-
-                    .psImportModalActions {
-                        display: flex;
-                        justify-content: flex-end;
-                        gap: 10px;
-                    }
-
-                     .psImportModalActions .platiSearchBtn {
-                        padding: 8px 20px;
-                        height: auto;
-                        font-size: 14px;
-                     }
-
-                    #psImportAcceptBtn {
-                         background-color: #4D88FF;
-                    }
-                    #psImportAcceptBtn:hover {
-                        background-color: #3366CC;
-                    }
-                    #psImportCancelBtn {
-                        background-color: #777;
-                    }
-                     #psImportCancelBtn:hover {
-                        background-color: #888;
-                    }
-
-                    #platiExclusionTagsList {
-                        margin-top: 0;
-                    }
-                 `);
-             }
-
-            addPlatiStyles();
-            const steamAppIdCheck = unsafeWindow.location.pathname.match(/\/app\/(\d+)/);
-            if (steamAppIdCheck && steamAppIdCheck[1]) {
-                addPlatiButton();
-            }
-
-        })();
-    }
-
     // Скрипт для исправления недоступных виджетов
     if (scriptsConfig.WidgetFixer) {
         (function() {
@@ -23619,6 +21888,667 @@ if (headerCtn) {
             };
 
             setTimeout(wf_observeAndProcess, 1500);
+
+        })();
+    }
+
+    // Скрипт для ведения личных заметок и оценок игр | https://store.steampowered.com/app/*
+    if (scriptsConfig.gameNotes && unsafeWindow.location.pathname.includes('/app/')) {
+        (function() {
+            'use strict';
+
+            const DB_KEY = 'use_game_notes_db_v2';
+            const UGN_CHUNK_SIZE = 24;
+
+            let ugn_db = {};
+            let pageAppId = null;
+            let pageAppName = 'Неизвестная игра';
+
+            let editAppId = null;
+            let editAppName = '';
+            let tempCriteria = { gfx: 0, story: 0, gameplay: 0, audio: 0, atmos: 0 };
+            let ugn_autosaveTimer = null;
+
+            let ugn_galleryItems = [];
+            let ugn_galleryLimit = 0;
+
+            const CRITERIA_MAP = [
+                { id: 'gfx', name: 'Графика' },
+                { id: 'story', name: 'Сюжет' },
+                { id: 'gameplay', name: 'Геймплей' },
+                { id: 'audio', name: 'Звук и музыка' },
+                { id: 'atmos', name: 'Атмосфера' }
+            ];
+
+            function loadDb() {
+                const data = GM_getValue(DB_KEY, "{}");
+                try { ugn_db = JSON.parse(data); } catch(e) { ugn_db = {}; }
+            }
+
+            function saveDb() {
+                GM_setValue(DB_KEY, JSON.stringify(ugn_db));
+            }
+
+            function ugn_addStyles() {
+                GM_addStyle(`
+                    .ugn-modern-modal { position: fixed; top: 100px; left: 50%; transform: translateX(-50%); background: #1b2838; border: 1px solid #30363d; border-radius: 6px; box-shadow: 0 10px 40px rgba(0,0,0,0.9); z-index: 10005; display: flex; flex-direction: column; font-family: "Motiva Sans", sans-serif; color: #c6d4df; transition: width 0.2s, height 0.2s; }
+
+                    .ugn-btn-has-note svg { fill: #A3CF06 !important; filter: drop-shadow(0 0 4px rgba(163,207,6,0.6)); }
+                    .ugn-btn-danger { background: linear-gradient(to bottom, #7a2828 5%, #5a1c1c 95%); border-color: #ff6961; color: #ff6961; }
+                    .ugn-btn-danger:hover { background: linear-gradient(to bottom, #9a3232 5%, #7a2828 95%); color: #fff; border-color: #ff6961; }
+
+                    .ugn-editor-mode { width: 550px; }
+                    .ugn-gallery-mode { width: 90vw; max-width: 1300px; height: 85vh; }
+
+                    .ugn-minimized { top: auto !important; bottom: 20px !important; left: 20px !important; transform: none !important; width: 280px !important; height: auto !important; border-color: #66c0f4; }
+                    .ugn-minimized .ugn-modal-body { display: none !important; }
+                    .ugn-minimized .ugn-header-title::before { content: 'Развернуть: '; color: #8f98a0; font-size: 13px; font-weight: normal; }
+
+                    .ugn-modal-header { background: #101822; padding: 10px 15px; cursor: grab; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; border-radius: 6px 6px 0 0; user-select: none; }
+                    .ugn-modal-header:active { cursor: grabbing; }
+                    .ugn-header-title { color: #66c0f4; font-weight: bold; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 75%; }
+
+                    .ugn-controls { display: flex; gap: 10px; }
+                    .ugn-ctrl-btn { background: none; border: none; color: #8f98a0; cursor: pointer; font-size: 18px; line-height: 1; font-family: monospace; font-weight: bold; padding: 0 4px; }
+                    .ugn-ctrl-btn:hover { color: #fff; }
+
+                    .ugn-modal-body { padding: 15px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; flex-grow: 1; min-height: 0; }
+
+                    .ugn-textarea { background: #000; border: 1px solid #30363d; color: #a3b0bb; padding: 10px; border-radius: 4px; font-family: inherit; font-size: 13px; resize: vertical; min-height: 100px; outline: none; }
+                    .ugn-textarea:focus { border-color: #66c0f4; }
+
+                    .ugn-criteria-box { background: #101822; padding: 15px; border-radius: 4px; border: 1px solid #2a3a4c; display: flex; flex-direction: column; gap: 8px; }
+                    .ugn-criterion { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+                    .ugn-stars { display: flex; gap: 2px; cursor: pointer; align-items: center; }
+                    .ugn-star { color: #30363d; font-size: 20px; user-select: none; line-height: 1; }
+                    .ugn-star.active { color: #FFD700; text-shadow: 0 0 5px rgba(255, 215, 0, 0.4); }
+                    .ugn-crit-val { display: inline-block; width: 30px; text-align: right; color: #66c0f4; font-weight: bold; margin-left: 10px; font-size: 14px; }
+
+                    .ugn-score-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #30363d; padding-top: 12px; margin-top: 5px; }
+                    .ugn-avg-score { font-size: 14px; color: #8cc540; font-weight: bold; }
+                    .ugn-manual-score { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: bold; }
+                    .ugn-score-input { background: #223143; border: 1px solid #30363d; color: #fff; padding: 4px 8px; border-radius: 3px; outline: none; width: 55px; text-align: center; font-size: 15px; font-weight: bold; }
+                    .ugn-score-input:focus { border-color: #66c0f4; }
+
+                    .ugn-action-btn { background: linear-gradient(to bottom, #2a475e 5%, #1b2838 95%); border: 1px solid #3a4f6a; border-radius: 3px; color: #66c0f4; padding: 8px 15px; font-weight: bold; cursor: pointer; transition: 0.2s; text-align: center; }
+                    .ugn-action-btn:hover { background: linear-gradient(to bottom, #325875 5%, #223348 95%); color: #fff; border-color: #66c0f4; }
+
+                    .ugn-gallery-tools { display: flex; justify-content: space-between; align-items: center; padding: 10px 15px; border-bottom: 1px solid #2a3a4c; background: #101822; flex-shrink: 0; flex-wrap: wrap; gap: 10px; }
+                    .ugn-gallery-select { background: #223143; border: 1px solid #30363d; color: #fff; padding: 6px 10px; border-radius: 3px; outline: none; cursor: pointer; font-size: 13px; }
+                    .ugn-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; padding: 15px; overflow-y: auto; flex-grow: 1; align-content: start; }
+
+                    .ugn-card { background: #101822; border: 1px solid #30363d; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s; cursor: pointer; position: relative; }
+                    .ugn-card:hover { transform: translateY(-3px); border-color: #66c0f4; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+                    .ugn-card img { width: 100%; height: 121px; object-fit: cover; border-bottom: 1px solid #30363d; }
+                    .ugn-card-body { padding: 12px; display: flex; flex-direction: column; gap: 6px; flex-grow: 1; }
+                    .ugn-card-title { color: #fff; font-weight: bold; font-size: 14px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+                    .ugn-card-stats { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: bold; background: #000; padding: 4px 8px; border-radius: 3px; }
+                    .ugn-card-desc { font-size: 11px; color: #8f98a0; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; white-space: pre-wrap; word-break: break-word; line-height: 1.4; margin-top: 5px; }
+                    .ugn-card-delete { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); border: 1px solid #ff6961; color: #ff6961; border-radius: 4px; padding: 4px 6px; font-size: 14px; cursor: pointer; opacity: 0; transition: opacity 0.2s, background 0.2s; line-height: 1; }
+                    .ugn-card:hover .ugn-card-delete { opacity: 1; }
+                    .ugn-card-delete:hover { background: #ff6961; color: #fff; }
+
+                    .ugn-modern-modal *::-webkit-scrollbar { width: 8px; }
+                    .ugn-modern-modal *::-webkit-scrollbar-track { background: #0D1117; border-radius: 4px; }
+                    .ugn-modern-modal *::-webkit-scrollbar-thumb { background-color: #30363D; border-radius: 4px; border: 2px solid #0D1117;}
+                    .ugn-modern-modal *::-webkit-scrollbar-thumb:hover { background-color: #66c0f4; }
+                `);
+            }
+
+            function ugn_toggleMinimize(modal) {
+                if (modal.classList.contains('ugn-minimized')) {
+                    modal.classList.remove('ugn-minimized');
+                    modal.style.top = modal.dataset.oldTop || '';
+                    modal.style.left = modal.dataset.oldLeft || '';
+                    modal.style.transform = modal.dataset.oldTransform || '';
+                } else {
+                    modal.dataset.oldTop = modal.style.top;
+                    modal.dataset.oldLeft = modal.style.left;
+                    modal.dataset.oldTransform = modal.style.transform;
+                    modal.classList.add('ugn-minimized');
+                }
+            }
+
+            function ugn_setupDraggable(modal, header) {
+                let isDragging = false, startX, startY, initialX, initialY;
+
+                header.addEventListener('mousedown', (e) => {
+                    if (['BUTTON', 'INPUT', 'SELECT', 'TEXTAREA'].includes(e.target.tagName)) return;
+                    if (modal.classList.contains('ugn-minimized')) return;
+
+                    isDragging = true;
+                    startX = e.clientX;
+                    startY = e.clientY;
+
+                    const rect = modal.getBoundingClientRect();
+                    modal.style.left = rect.left + 'px';
+                    modal.style.top = rect.top + 'px';
+                    modal.style.transform = 'none';
+                    modal.style.transition = 'none';
+
+                    initialX = rect.left;
+                    initialY = rect.top;
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    modal.style.left = `${initialX + e.clientX - startX}px`;
+                    modal.style.top = `${initialY + e.clientY - startY}px`;
+                });
+
+                document.addEventListener('mouseup', () => {
+                    if (isDragging) {
+                        isDragging = false;
+                        modal.style.transition = 'width 0.2s, height 0.2s';
+                    }
+                });
+            }
+
+            function ugn_injectButton() {
+                const appIdMatch = unsafeWindow.location.pathname.match(/\/app\/(\d+)/);
+                if (!appIdMatch) return;
+                pageAppId = appIdMatch[1];
+
+                const titleEl = document.getElementById('appHubAppName');
+                if (titleEl) pageAppName = titleEl.textContent.trim();
+
+                if (document.querySelector('.ugn_button')) return;
+
+                const btnWrap = document.createElement('div');
+                btnWrap.className = 'ugn_button queue_control_button';
+                btnWrap.style.marginLeft = '3px';
+
+                const btn = document.createElement('div');
+                btn.className = 'btnv6_blue_hoverfade btn_medium';
+                btn.style.cssText = 'height: 32px; padding: 0 10px; display: flex; align-items: center; justify-content: center; cursor: pointer;';
+                btn.title = 'Личные заметки и оценки';
+                btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708l-3-3zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207l6.5-6.5zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.499.499 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11l.178-.178z"></path></svg>`;
+
+                loadDb();
+                if (ugn_db[pageAppId]) {
+                    btn.classList.add('ugn-btn-has-note');
+                }
+
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    ugn_openEditorModal(pageAppId, pageAppName);
+                });
+
+                btnWrap.appendChild(btn);
+
+                const pghButton = document.querySelector('.pgh_button');
+                const smButton = document.querySelector('.salesMaster_button');
+                const shareBtn = document.getElementById('shareBtn');
+                const queueCtn = document.getElementById('queueActionsCtn');
+                const gamePurchaseAction = document.querySelector('.game_area_purchase_section .game_area_purchase_game_wrapper .game_purchase_action');
+                const addToCart = document.querySelector('#add_to_cart');
+
+                if (pghButton) {
+                    pghButton.insertAdjacentElement('afterend', btnWrap);
+                } else if (smButton) {
+                    smButton.insertAdjacentElement('afterend', btnWrap);
+                } else if (shareBtn) {
+                    shareBtn.insertAdjacentElement('afterend', btnWrap);
+                } else if (queueCtn) {
+                    const expandFill = queueCtn.querySelector('.expand_to_fill');
+                    if (expandFill) {
+                        queueCtn.insertBefore(btnWrap, expandFill);
+                    } else {
+                        queueCtn.appendChild(btnWrap);
+                    }
+                } else if (gamePurchaseAction) {
+                    gamePurchaseAction.parentNode.insertBefore(btnWrap, gamePurchaseAction);
+                } else if (addToCart) {
+                    addToCart.parentNode.insertBefore(btnWrap, addToCart);
+                }
+            }
+
+            function ugn_calcAverage() {
+                let sum = 0, count = 0;
+                for (let key in tempCriteria) {
+                    if (tempCriteria[key] > 0) {
+                        sum += tempCriteria[key] * 10;
+                        count++;
+                    }
+                }
+                const avg = count > 0 ? Math.round(sum / count) : 0;
+                document.getElementById('ugn-avg-val').textContent = avg;
+                return avg;
+            }
+
+            function ugn_updateStarsUI(container, count) {
+                const stars = container.querySelectorAll('.ugn-star');
+                stars.forEach((s, idx) => {
+                    if (idx < count) s.classList.add('active');
+                    else s.classList.remove('active');
+                });
+                container.nextElementSibling.textContent = count * 10;
+            }
+
+            function ugn_openEditorModal(appId, appName) {
+                const galModal = document.getElementById('ugn-gallery-modal');
+                if (galModal) galModal.style.display = 'none';
+
+                editAppId = appId;
+                editAppName = appName;
+
+                let modal = document.getElementById('ugn-editor-modal');
+                if (!modal) {
+                    modal = document.createElement('div');
+                    modal.id = 'ugn-editor-modal';
+                    modal.className = 'ugn-modern-modal ugn-editor-mode';
+
+                    const criteriaHTML = CRITERIA_MAP.map(c => `
+                        <div class="ugn-criterion" data-key="${c.id}">
+                            <span>${c.name}</span>
+                            <div style="display:flex; align-items:center;">
+                                <div class="ugn-stars">
+                                    ${'★'.repeat(10).split('').map((s, i) => `<span class="ugn-star" data-val="${i+1}">★</span>`).join('')}
+                                </div>
+                                <span class="ugn-crit-val">0</span>
+                            </div>
+                        </div>
+                    `).join('');
+
+                    modal.innerHTML = `
+                        <div class="ugn-modal-header" id="ugn-editor-header">
+                            <span class="ugn-header-title" id="ugn-editor-title">Заметка</span>
+                            <div class="ugn-controls">
+                                <button id="ugn-editor-min" class="ugn-ctrl-btn" title="Свернуть/Развернуть">_</button>
+                                <button id="ugn-editor-close" class="ugn-ctrl-btn" title="Закрыть и сохранить">✖</button>
+                            </div>
+                        </div>
+                        <div class="ugn-modal-body">
+                            <textarea id="ugn-note-text" class="ugn-textarea" placeholder="Напишите здесь свои впечатления об игре..."></textarea>
+
+                            <div class="ugn-criteria-box">
+                                <div id="ugn-criteria-list" style="display:flex; flex-direction:column; gap:5px;">
+                                    ${criteriaHTML}
+                                </div>
+
+                                <div class="ugn-score-row">
+                                    <div class="ugn-avg-score">Средний балл: <span id="ugn-avg-val" style="font-size:18px;">0</span></div>
+                                    <div class="ugn-manual-score">
+                                        Личная оценка:
+                                        <input type="number" id="ugn-score-val" class="ugn-score-input" min="0" max="100" placeholder="-">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <button id="ugn-open-gallery-btn" class="ugn-action-btn">Все заметки</button>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                    ugn_setupDraggable(modal, document.getElementById('ugn-editor-header'));
+
+                    document.getElementById('ugn-editor-min').onclick = () => ugn_toggleMinimize(modal);
+                    document.getElementById('ugn-editor-close').onclick = () => ugn_closeAndSaveEditor(modal);
+                    document.getElementById('ugn-open-gallery-btn').onclick = () => {
+                        ugn_closeAndSaveEditor(modal);
+                        ugn_openGalleryModal();
+                    };
+
+                    const critList = document.getElementById('ugn-criteria-list');
+                    critList.addEventListener('mouseover', e => {
+                        if (e.target.classList.contains('ugn-star')) {
+                            const container = e.target.parentElement;
+                            ugn_updateStarsUI(container, parseInt(e.target.dataset.val));
+                        }
+                    });
+                    critList.addEventListener('mouseout', e => {
+                        if (e.target.classList.contains('ugn-star')) {
+                            const row = e.target.closest('.ugn-criterion');
+                            const key = row.dataset.key;
+                            ugn_updateStarsUI(row.querySelector('.ugn-stars'), tempCriteria[key]);
+                        }
+                    });
+                    critList.addEventListener('click', e => {
+                        if (e.target.classList.contains('ugn-star')) {
+                            const row = e.target.closest('.ugn-criterion');
+                            const key = row.dataset.key;
+                            tempCriteria[key] = parseInt(e.target.dataset.val);
+                            ugn_updateStarsUI(row.querySelector('.ugn-stars'), tempCriteria[key]);
+                            ugn_calcAverage();
+                            ugn_triggerAutosave();
+                        }
+                    });
+
+                    document.getElementById('ugn-score-val').addEventListener('input', function() {
+                        if (this.value !== '') {
+                            let v = parseInt(this.value);
+                            if (v < 0) this.value = 0;
+                            if (v > 100) this.value = 100;
+                        }
+                        ugn_triggerAutosave();
+                    });
+
+                    document.getElementById('ugn-note-text').addEventListener('input', ugn_triggerAutosave);
+                }
+
+                loadDb();
+                document.getElementById('ugn-editor-title').textContent = editAppName;
+
+                const existing = ugn_db[editAppId] || { text: '', criteria: { gfx:0, story:0, gameplay:0, audio:0, atmos:0 }, manualScore: '' };
+                document.getElementById('ugn-note-text').value = existing.text || '';
+                document.getElementById('ugn-score-val').value = existing.manualScore || '';
+
+                tempCriteria = existing.criteria || { gfx:0, story:0, gameplay:0, audio:0, atmos:0 };
+                document.querySelectorAll('.ugn-criterion').forEach(row => {
+                    const key = row.dataset.key;
+                    ugn_updateStarsUI(row.querySelector('.ugn-stars'), tempCriteria[key] || 0);
+                });
+                ugn_calcAverage();
+
+                modal.classList.remove('ugn-minimized');
+                modal.style.display = 'flex';
+            }
+
+            function ugn_silentSave() {
+                if (!editAppId) return;
+                const text = document.getElementById('ugn-note-text').value.trim();
+                const manualScore = document.getElementById('ugn-score-val').value;
+                const avgScore = ugn_calcAverage();
+
+                if (text === '' && avgScore === 0 && manualScore === '') {
+                    delete ugn_db[editAppId];
+                } else {
+                    ugn_db[editAppId] = {
+                        name: editAppName,
+                        text: text,
+                        criteria: { ...tempCriteria },
+                        avgScore: avgScore,
+                        manualScore: manualScore !== '' ? parseInt(manualScore) : '',
+                        updated: Date.now()
+                    };
+                }
+                saveDb();
+
+                if (editAppId === pageAppId) {
+                    const btn = document.querySelector('.ugn_button .btnv6_blue_hoverfade');
+                    if (btn) {
+                        if (ugn_db[pageAppId]) btn.classList.add('ugn-btn-has-note');
+                        else btn.classList.remove('ugn-btn-has-note');
+                    }
+                }
+            }
+
+            function ugn_triggerAutosave() {
+                clearTimeout(ugn_autosaveTimer);
+                ugn_autosaveTimer = setTimeout(ugn_silentSave, 1500);
+            }
+
+            function ugn_closeAndSaveEditor(modal) {
+                clearTimeout(ugn_autosaveTimer);
+                ugn_silentSave();
+                modal.style.display = 'none';
+            }
+
+            function ugn_openGalleryModal() {
+                let modal = document.getElementById('ugn-gallery-modal');
+                if (!modal) {
+                    modal = document.createElement('div');
+                    modal.id = 'ugn-gallery-modal';
+                    modal.className = 'ugn-modern-modal ugn-gallery-mode';
+                    modal.innerHTML = `
+                        <div class="ugn-modal-header" id="ugn-gallery-header">
+                            <span class="ugn-header-title">Все заметки (<span id="ugn-gallery-count">0</span>)</span>
+                            <div class="ugn-controls">
+                                <button id="ugn-gallery-min" class="ugn-ctrl-btn" title="Свернуть/Развернуть">_</button>
+                                <button id="ugn-gallery-close" class="ugn-ctrl-btn" title="Закрыть">✖</button>
+                            </div>
+                        </div>
+                        <div class="ugn-modal-body" style="padding: 0;">
+                            <div class="ugn-gallery-tools">
+                                <span style="color:#8f98a0; font-size:13px;">Щёлкните по игре, чтобы открыть её редактор</span>
+
+                                <div style="display:flex; gap:10px; align-items:center;">
+                                    <button id="ugn-clear-all-btn" class="ugn-action-btn ugn-btn-danger" style="padding: 6px 12px; font-size:12px;">Очистить</button>
+                                    <button id="ugn-export-btn" class="ugn-action-btn" style="padding: 6px 12px; font-size:12px;">Экспорт</button>
+                                    <button id="ugn-import-open-btn" class="ugn-action-btn" style="padding: 6px 12px; font-size:12px;">Импорт</button>
+
+                                    <select id="ugn-gallery-sort" class="ugn-gallery-select">
+                                        <option value="date_desc">Сначала новые</option>
+                                        <option value="date_asc">Сначала старые</option>
+                                        <option value="name_asc">Название (А-Я)</option>
+                                        <option value="name_desc">Название (Я-А)</option>
+                                        <option value="avg_desc">Средний балл (Лучшие)</option>
+                                        <option value="avg_asc">Средний балл (Худшие)</option>
+                                        <option value="manual_desc">Личная оценка (Лучшие)</option>
+                                        <option value="manual_asc">Личная оценка (Худшие)</option>
+                                        <optgroup label="Оценки критериев">
+                                            <option value="gfx_desc">Лучшая графика</option>
+                                            <option value="gfx_asc">Худшая графика</option>
+                                            <option value="story_desc">Лучший сюжет</option>
+                                            <option value="story_asc">Худший сюжет</option>
+                                            <option value="gameplay_desc">Лучший геймплей</option>
+                                            <option value="gameplay_asc">Худший геймплей</option>
+                                            <option value="audio_desc">Лучший звук</option>
+                                            <option value="audio_asc">Худший звук</option>
+                                            <option value="atmos_desc">Лучшая атмосфера</option>
+                                            <option value="atmos_asc">Худшая атмосфера</option>
+                                        </optgroup>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="ugn-gallery-grid" class="ugn-gallery-grid"></div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+                    ugn_setupDraggable(modal, document.getElementById('ugn-gallery-header'));
+
+                    document.getElementById('ugn-gallery-min').onclick = () => ugn_toggleMinimize(modal);
+                    document.getElementById('ugn-gallery-close').onclick = () => modal.style.display = 'none';
+
+                    document.getElementById('ugn-export-btn').onclick = ugn_exportData;
+                    document.getElementById('ugn-import-open-btn').onclick = ugn_openImportModal;
+
+                    document.getElementById('ugn-clear-all-btn').onclick = () => {
+                        if (confirm('ВНИМАНИЕ! Вы собираетесь безвозвратно удалить ВСЕ ваши заметки и оценки.\n\nПродолжить?')) {
+                            if (confirm('Точно удалить всё? Отменить это действие будет невозможно!')) {
+                                ugn_db = {};
+                                saveDb();
+                                ugn_galleryLimit = UGN_CHUNK_SIZE;
+                                document.getElementById('ugn-gallery-grid').innerHTML = '';
+                                ugn_sortAndRenderGallery();
+
+                                const btn = document.querySelector('.ugn_button .btnv6_blue_hoverfade');
+                                if (btn) btn.classList.remove('ugn-btn-has-note');
+                            }
+                        }
+                    };
+
+                    document.getElementById('ugn-gallery-sort').onchange = () => {
+                        ugn_galleryLimit = UGN_CHUNK_SIZE;
+                        document.getElementById('ugn-gallery-grid').innerHTML = '';
+                        ugn_sortAndRenderGallery();
+                    };
+
+                    const grid = document.getElementById('ugn-gallery-grid');
+                    grid.addEventListener('scroll', function() {
+                        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 200) {
+                            if (ugn_galleryLimit < ugn_galleryItems.length) {
+                                ugn_galleryLimit += UGN_CHUNK_SIZE;
+                                ugn_renderGalleryChunk();
+                            }
+                        }
+                    });
+                }
+
+                loadDb();
+                modal.classList.remove('ugn-minimized');
+                modal.style.display = 'flex';
+
+                ugn_galleryLimit = UGN_CHUNK_SIZE;
+                document.getElementById('ugn-gallery-grid').innerHTML = '';
+                ugn_sortAndRenderGallery();
+            }
+
+            function ugn_sortAndRenderGallery() {
+                const sortMode = document.getElementById('ugn-gallery-sort').value;
+                ugn_galleryItems = Object.entries(ugn_db).map(([id, data]) => ({ id, ...data }));
+                document.getElementById('ugn-gallery-count').textContent = ugn_galleryItems.length;
+
+                if (ugn_galleryItems.length === 0) {
+                    document.getElementById('ugn-gallery-grid').innerHTML = '<div style="color:#8f98a0; grid-column: 1/-1; text-align:center; padding: 40px; font-size: 15px;">Заметок пока нет. Перейдите на страницу любой игры и щёлкните кнопку с карандашом.</div>';
+                    return;
+                }
+
+                ugn_galleryItems.sort((a, b) => {
+                    const getCrit = (item, c) => item.criteria ? (item.criteria[c] || 0) : 0;
+
+                    switch(sortMode) {
+                        case 'name_asc': return a.name.localeCompare(b.name);
+                        case 'name_desc': return b.name.localeCompare(a.name);
+                        case 'date_desc': return (b.updated || 0) - (a.updated || 0);
+                        case 'date_asc': return (a.updated || 0) - (b.updated || 0);
+                        case 'avg_desc': return (b.avgScore || 0) - (a.avgScore || 0);
+                        case 'avg_asc': return (a.avgScore || 0) - (b.avgScore || 0);
+                        case 'manual_desc': return (b.manualScore || 0) - (a.manualScore || 0);
+                        case 'manual_asc': return (a.manualScore || 0) - (b.manualScore || 0);
+                        case 'gfx_desc': return getCrit(b, 'gfx') - getCrit(a, 'gfx');
+                        case 'gfx_asc': return getCrit(a, 'gfx') - getCrit(b, 'gfx');
+                        case 'story_desc': return getCrit(b, 'story') - getCrit(a, 'story');
+                        case 'story_asc': return getCrit(a, 'story') - getCrit(b, 'story');
+                        case 'gameplay_desc': return getCrit(b, 'gameplay') - getCrit(a, 'gameplay');
+                        case 'gameplay_asc': return getCrit(a, 'gameplay') - getCrit(b, 'gameplay');
+                        case 'audio_desc': return getCrit(b, 'audio') - getCrit(a, 'audio');
+                        case 'audio_asc': return getCrit(a, 'audio') - getCrit(b, 'audio');
+                        case 'atmos_desc': return getCrit(b, 'atmos') - getCrit(a, 'atmos');
+                        case 'atmos_asc': return getCrit(a, 'atmos') - getCrit(b, 'atmos');
+                        default: return 0;
+                    }
+                });
+
+                ugn_renderGalleryChunk();
+            }
+
+            function ugn_renderGalleryChunk() {
+                const grid = document.getElementById('ugn-gallery-grid');
+                const startIndex = ugn_galleryLimit - UGN_CHUNK_SIZE;
+                const itemsToRender = ugn_galleryItems.slice(startIndex, ugn_galleryLimit);
+
+                const frag = document.createDocumentFragment();
+                itemsToRender.forEach(item => {
+                    const card = document.createElement('div');
+                    card.className = 'ugn-card';
+
+                    card.onclick = (e) => {
+                        if (e.target.closest('.ugn-card-delete')) return;
+                        ugn_openEditorModal(item.id, item.name);
+                    };
+
+                    const avgStr = item.avgScore > 0 ? `<span style="color:#8cc540;">Ср. балл: ${item.avgScore}</span>` : '<span style="color:#8f98a0;">Нет критериев</span>';
+                    const manualStr = item.manualScore !== '' ? `<span style="color:#66c0f4;">Оценка: ${item.manualScore}/100</span>` : '<span style="color:#8f98a0;">Без оценки</span>';
+
+                    card.innerHTML = `
+                        <button class="ugn-card-delete" title="Удалить заметку">🗑️</button>
+                        <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${item.id}/capsule_231x87.jpg" onerror="this.src='https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${item.id}/header.jpg'" loading="lazy">
+                        <div class="ugn-card-body">
+                            <div class="ugn-card-title" title="${item.name}">${item.name}</div>
+                            <div class="ugn-card-stats">
+                                ${avgStr}
+                                ${manualStr}
+                            </div>
+                            <div class="ugn-card-desc">${item.text || '<i>Нет текстовой заметки</i>'}</div>
+                        </div>
+                    `;
+
+                    card.querySelector('.ugn-card-delete').onclick = (e) => {
+                        e.stopPropagation();
+                        if (confirm(`Удалить заметку для игры "${item.name}"?`)) {
+                            delete ugn_db[item.id];
+                            saveDb();
+                            ugn_galleryLimit = UGN_CHUNK_SIZE;
+                            document.getElementById('ugn-gallery-grid').innerHTML = '';
+                            ugn_sortAndRenderGallery();
+                        }
+                    };
+
+                    frag.appendChild(card);
+                });
+                grid.appendChild(frag);
+            }
+
+            function ugn_exportData() {
+                loadDb();
+                const dataStr = JSON.stringify(ugn_db, null, 2);
+                const blob = new Blob([dataStr], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "USE_GameNotes_Backup.json";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
+
+            function ugn_openImportModal() {
+                let modal = document.getElementById('ugn-import-modal');
+                if (modal) modal.remove();
+
+                modal = document.createElement('div');
+                modal.id = 'ugn-import-modal';
+                modal.className = 'ugn-modern-modal';
+                modal.style.zIndex = '10006';
+                modal.style.width = '450px';
+
+                modal.innerHTML = `
+                    <div class="ugn-modal-header" id="ugn-import-header">
+                        <span class="ugn-header-title">Импорт заметок</span>
+                        <div class="ugn-controls">
+                            <button id="ugn-import-close" class="ugn-ctrl-btn" title="Закрыть">✖</button>
+                        </div>
+                    </div>
+                    <div class="ugn-modal-body">
+                        <p style="font-size:12px; color:#8f98a0; margin:0 0 10px 0;">Вставьте содержимое вашего JSON-файла резервной копии. Данные будут объединены с текущими (при совпадении игр — перезаписаны из файла).</p>
+                        <textarea id="ugn-import-textarea" class="ugn-textarea" style="min-height: 200px;" placeholder="Вставьте JSON сюда..."></textarea>
+                        <button id="ugn-import-submit" class="ugn-action-btn">Импортировать данные</button>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                ugn_setupDraggable(modal, document.getElementById('ugn-import-header'));
+
+                document.getElementById('ugn-import-close').onclick = () => modal.remove();
+                document.getElementById('ugn-import-submit').onclick = () => {
+                    try {
+                        const importedData = JSON.parse(document.getElementById('ugn-import-textarea').value);
+                        if (typeof importedData !== 'object' || importedData === null) throw new Error();
+
+                        Object.assign(ugn_db, importedData);
+                        saveDb();
+                        modal.remove();
+
+                        ugn_galleryLimit = UGN_CHUNK_SIZE;
+                        document.getElementById('ugn-gallery-grid').innerHTML = '';
+                        ugn_sortAndRenderGallery();
+
+                        alert('Данные успешно импортированы!');
+                    } catch(e) {
+                        alert('Ошибка парсинга JSON! Пожалуйста, убедитесь, что вы скопировали правильный формат.');
+                    }
+                };
+
+                modal.style.display = 'flex';
+            }
+
+            function ugn_init() {
+                ugn_addStyles();
+                setTimeout(ugn_injectButton, 800);
+
+                const observer = new MutationObserver(() => {
+                    if (!document.querySelector('.ugn_button')) {
+                        ugn_injectButton();
+                    }
+                });
+
+                const observeTarget = document.querySelector('.game_page_background') || document.body;
+                observer.observe(observeTarget, { childList: true, subtree: true });
+            }
+
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ugn_init);
+            else ugn_init();
 
         })();
     }
