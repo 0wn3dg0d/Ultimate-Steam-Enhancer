@@ -413,29 +413,10 @@
                         </div>
                     </details>
                     <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
-                        <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Поиск цен на Plati.Market</summary>
-                        <div class="p-6 border-t border-dx-border space-y-4 details-content">
-                            <p><strong>Что делает:</strong><br>Добавляет кнопку "Plati" рядом с кнопкой "В желаемое" на странице игры.<br>Нажатие открывает полноэкранное окно для поиска предложений по этой игре на торговой площадке Plati.Market.</p>
-                            <p><strong>Возможности окна поиска:</strong></p>
-                            <ul>
-                                <li>Автозаполнение поиска названием текущей игры.</li>
-                                <li>Ручной ввод и поиск.</li>
-                                <li>Подсказки при вводе (API Plati).</li>
-                                <li>Сортировка по цене, продажам, релевантности, названию, дате, рейтингу продавца и др.</li>
-                                <li>Фильтрация по цене (RUR, USD, EUR, UAH), продажам, рейтингу, наличию плохих отзывов/возвратов, участию в скидках, дате добавления.</li>
-                                <li>Исключение товаров по ключевым словам (панель справа).</li>
-                                <li>Сохранение фильтров, сортировки, валюты и исключений.</li>
-                                <li>Возможность экспортировать и импортировать список исключений.</li>
-                            </ul>
-                            <p>Используются официальные API Plati.Market.</p>
-                            <div class="text-center"><img src="https://i.imgur.com/X5NDh6D.png" alt="[Модальное окно поиска цен на Plati.Market]" class="feature-img inline-block"></div>
-                        </div>
-                    </details>
-                    <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
                         <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Агрегатор цен (%)</summary>
                         <div class="p-6 border-t border-dx-border space-y-4 details-content">
                              <p><strong>Что делает:</strong> Добавляет кнопку "%" в секцию с кнопкой "В желаемое" на странице игры. Нажатие открывает модальное окно с ценами на эту игру из различных цифровых магазинов.</p>
-                             <img src="https://i.imgur.com/PsrocCt.png" alt="Пример Агрегатора 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                             <img src="https://i.imgur.com/xqwaWXZ.png" alt="Пример Агрегатора 1" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                              <br><p><strong>Возможности окна агрегатора:</strong></p>
                              <ul>
                                  <li>Отображение предложений из магазинов: SteamBuy, Playo, SteamPay, Gabestore, GamersBase, Igromagaz, GamesForFarm, Gamazavr, GameRay, KupiKod, KeysForGamers, Zaka-zaka, Buka, GGSEL, Plati.Market, Rushbe, Ростелеком и текущей страницы Steam.</li>
@@ -485,10 +466,58 @@
                                 <li>Увидеть цену друга (сконвертированную в вашу валюту), процент разницы и вердикт (<span class="text-green-400">Можно подарить</span> / <span class="text-red-400">Нельзя подарить</span>), основанный на правилах Steam.</li>
                             </ul>
                             <p><strong>Логика проверки:</strong> Модуль учитывает, что цена в регионе получателя не должна превышать цену в регионе дарителя более чем на 15%. Этот порог учитывает возможные расхождения в курсах конвертации, используемых Steam. Проверка в обратную сторону (когда цена у дарителя значительно выше) была убрана для более точного соответствия текущей политике Steam.</p>
-                            <div class="text-center"><img src="https://i.imgur.com/jDdf4pR.png" alt="[Пример работы помощника подарков на странице игры]" class="feature-img inline-block"></div>
+                            <div class="text-center"><img src="https://i.imgur.com/28SdqlH.png" alt="[Пример работы помощника подарков на странице игры]" class="feature-img inline-block"></div>
                         </div>
                     </details>
 
+					<details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
+                        <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Личные заметки и оценки</summary>
+                        <div class="p-6 border-t border-dx-border space-y-4 details-content">
+                            <p><strong>Что делает:</strong><br>Добавляет кнопку со значком карандаша в панель действий на странице игры, позволяя вести собственную базу мини-обзоров.</p>
+                            
+                            <div class="text-center mt-4">
+                                <img src="https://i.imgur.com/wXhNfnb.png" alt="[Кнопка заметок]" class="feature-img inline-block">
+                            </div>
+
+                            <p class="mt-4"><strong>В окне редактора можно:</strong></p>
+                            <ul>
+                                <li>Написать личный текстовый обзор или заметку об игре.</li>
+                                <li>Оценить игру по пяти критериям (Графика, Сюжет, Геймплей, Звук, Атмосфера) по 10-звёздочной шкале, на основе которых автоматически высчитывается средний балл.</li>
+                                <li>Выставить общую личную оценку от 0 до 100 баллов.</li>
+                            </ul>
+
+                            <div class="text-center mt-4">
+                                <img src="https://i.imgur.com/5ORUzer.png" alt="[Окно редактора заметок]" class="feature-img inline-block">
+                            </div>
+
+                            <p class="mt-4"><strong>Сводная панель «Все заметки»:</strong></p>
+                            <ul>
+                                <li>Просматривать все сохранённые записи в виде информативных карточек.</li>
+                                <li>Сортировать список по дате изменения, названию, среднему баллу, личной оценке, а также по каждому из пяти критериев по отдельности.</li>
+                                <li>Щёлкнуть по любой карточке для мгновенного перехода к редактированию заметки для выбранной игры.</li>
+                            </ul>
+
+                            <div class="text-center mt-4">
+                                <img src="https://i.imgur.com/GvE56Qs.png" alt="[Окно Все заметки]" class="feature-img inline-block">
+                            </div>
+
+                            <p class="mt-4"><strong>Резервное копирование и управление:</strong></p>
+                            <ul>
+                                <li>Кнопка <strong>«Очистить»</strong> удаляет все заметки об играх.</li>
+                                <li>Кнопка <strong>«Экспорт»</strong> формирует и скачивает вашу базу заметок в виде <code>.json</code> файла.</li>
+                                <li>Кнопка <strong>«Импорт»</strong> открывает модальное окно, в которое можно вставить содержимое сохранённого файла для восстановления или объединения баз данных.</li>
+                            </ul>
+
+                            <div class="text-center mt-4">
+                                <img src="https://i.imgur.com/EqrqzLS.png" alt="[Окно импорта]" class="feature-img inline-block">
+                            </div>
+
+                            <div style="margin-top: 1rem; padding: 1rem; background-color: rgba(103, 193, 245, 0.05); border: 1px solid rgba(103, 193, 245, 0.3); border-radius: 0.5rem; line-height: 1.4;">
+                                <p style="margin: 0; color: #c6d4df;"><em>Примечание: Вся информация хранится исключительно локально в памяти вашего браузера (GM Storage) и не отправляется на сторонние серверы.</em></p>
+                            </div>
+                        </div>
+                    </details>
+					
                     <details class="bg-dx-bg-secondary border border-dx-border rounded-lg overflow-hidden">
                         <summary class="p-4 text-xl font-medium text-dx-gold-light flex items-center">Проверка строгих региональных ограничений (PICS)</summary>
                         <div class="p-6 border-t border-dx-border space-y-4 details-content">
@@ -883,7 +912,7 @@
                             <p>Для настройки отдельных модулей скрипта и их параметров используйте меню настроек U.S.E.<br>Оно находится в выпадающем меню вашего профиля Steam (в правом верхнем углу), как показано ниже:</p>
                             <div class="text-center"><img src="https://i.imgur.com/QUdKoCH.png" alt="[Расположение меню настроек U.S.E. в профиле Steam]" class="feature-img inline-block"></div>
                             <p>В открывшемся окне настроек вы сможете включать или отключать модули скрипта:</p>
-                            <div class="text-center"><img src="https://i.imgur.com/E8sOzQ2.png" alt="[Пример панели настроек Ultimate Steam Enhancer]" class="feature-img inline-block"></div>
+                            <div class="text-center"><img src="https://i.imgur.com/MwMKTKG.png" alt="[Пример панели настроек Ultimate Steam Enhancer]" class="feature-img inline-block"></div>
                             <p class="mt-4">Также в меню настроек доступны следующие опции:</p>
                             <div class="space-y-2 pl-4">
                                 <details class="bg-dx-bg border-dx-border border rounded-md">
