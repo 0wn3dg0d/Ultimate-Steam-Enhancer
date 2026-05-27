@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.9.1
+// @version      2.1.9.2
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @license      MIT
@@ -474,6 +474,7 @@
         picsTargetRegion: 'RU',
         accountIgnoredCleaner: true, // Скрипт для умной очистки списка игнорируемых продуктов | https://store.steampowered.com/account/notinterested/
         gameNotes: true, // Скрипт для создания личных заметок и выставления оценок играм | https://store.steampowered.com/app/*
+        incognitoWishlist: true, // Скрипт для создания локального списка желаемого и отображения статуса библиотеки для заблокированных игр | https://store.steampowered.com/app/*
         // Дополнительные настройки
         autoExpandHltb: false, // Автоматически раскрывать спойлер HLTB
         autoLoadReviews: false, // Автоматически загружать дополнительные обзоры
@@ -491,7 +492,7 @@
 	    Kaznachei: true, homeInfo: true, Sledilka: true, wishlistGiftHelper: true, stelicasRoulette: true, RuRegionalPriceAnalyzer: true,
 	    autoExpandHltb: false, autoLoadReviews: false, toggleEnglishLangInfo: false, accountIgnoredCleaner: true, gameNotes: true,
         salesMasterAutoSearch: false, salesMasterAutoInsertTitle: true,
-        incognitoModeEnabled: true, showIncognitoButton: false, incognitoDefaultRegion: 'US', WidgetFixer: true
+        incognitoModeEnabled: true, showIncognitoButton: false, incognitoDefaultRegion: 'US', incognitoWishlist: true, WidgetFixer: true
 	};
 
     const useIncognitoRegions = {
@@ -863,6 +864,14 @@
                     </li>
                     <img src="https://i.imgur.com/Nz5vF0v.png" alt="Пример фильтра раннего доступа" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
                     <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+                    <li><strong>Демо и плейтесты:</strong>
+                        <ul>
+                            <li><em>С демо или плейтестом:</em> Показывает игры, к которым привязана демоверсия или открыто тестирование.</li>
+                            <li><em>Только демо / Только плейтесты:</em> Более узкие категории для поиска конкретных пробных версий.</li>
+                        </ul>
+                    </li>
+                    <img src="https://i.imgur.com/aEjRCRo.png" alt="Пример фильтра демо и плейтестов" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                    <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
                     <li><strong>Умные метки:</strong>
                         <ul>
                             <li>Добавляет кнопку «Настроить метки...», которая открывает модальное окно для тонкой фильтрации по меткам.</li>
@@ -970,7 +979,7 @@
             label: "Наблюдатель (Желаемое/Библиотека)",
             title: "Наблюдатель: Отслеживание изменений в списке желаемого и библиотеке",
             details: `
-                <p><strong>Что делает:</strong> Отслеживает изменения в вашем списке желаемого Steam и в вашей библиотеке игр, отображает календарь релизов.</p>
+                <p><strong>Что делает:</strong> Отслеживает изменения в вашем официальном и локальном (В.Р.И.) списках желаемого Steam, а также в библиотеке игр. Отображает календарь релизов.</p>
                 <p><strong>Основные функции:</strong></p>
                 <ol style="margin-left: 20px; padding-left: 5px; list-style-type: decimal;">
                     <li style="margin-bottom: 0.7em;">В правом верхнем углу страниц Steam появляется кнопка "Наблюдатель".</li>
@@ -988,7 +997,7 @@
                             </li>
                             <li style="margin-bottom: 0.5em;">Список изменений:
                                 <ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: square;">
-                                    <li style="margin-bottom: 0.3em;"><strong>Список желаемого:</strong> Изменение даты выхода, статуса раннего доступа или русского языка.</li>
+                                    <li style="margin-bottom: 0.3em;"><strong>Список желаемого:</strong> Изменение даты выхода, статуса раннего доступа, русского языка, а также появление или завершение демо-версий и плейтестов (работает как для официального, так и для локального списка).</li>
                                     <li style="margin-bottom: 0.3em;"><strong>Библиотека:</strong> Выход игры из раннего доступа, появление/изменение русского языка (и тип локализации).</li>
                                 </ul>
                             </li>
@@ -1002,7 +1011,7 @@
                    <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
                    <li style="margin-bottom: 0.7em;"><strong>Календарь релизов (по щелчку на кнопку "Календарь"):</strong>
                         <ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
-                            <li style="margin-bottom: 0.5em;">Отображает игры из вашего списка желаемого в виде календаря по месяцам.</li>
+                            <li style="margin-bottom: 0.5em;">Отображает игры из вашего (включая локальный) списка желаемого в виде календаря по месяцам.</li>
                             <li style="margin-bottom: 0.5em;">В верхней части календаря находится <strong>панель фильтров</strong> для управления временным диапазоном:
                                 <ul style="margin-top: 0.5em; margin-left: 15px; list-style-type: square;">
                                     <li style="margin-bottom: 0.3em;"><strong>Режим по умолчанию ("Сброс"):</strong> Показывает релизы с текущего месяца и на будущее.</li>
@@ -1018,7 +1027,7 @@
                    <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
                     <li style="margin-bottom: 0.7em;"><strong>Хранилище (по щелчку на кнопку "Хранилище"):</strong>
                         <ul style="margin-top: 0.8em; margin-left: 15px; list-style-type: disc;">
-                            <li style="margin-bottom: 0.5em;">Позволяет очистить кэш дат/статусов для списка желаемого или для игр библиотеки.</li>
+                            <li style="margin-bottom: 0.5em;">Позволяет очистить кэш дат/статусов для списка желаемого (в т.ч. локального) или для игр библиотеки.</li>
                         </ul>
                    </li>
                    <img src="https://i.imgur.com/nI6Uoo0.png" alt="Пример Хранилища" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
@@ -1077,7 +1086,7 @@
                     <li>Загружает игры из отображаемого списка желаемого и выводит их в виде информативных карточек.</li>
                     <li>На карточках отображается подробная информация: цена, скидка, рейтинг, дата выхода, издатель, разработчик, серия, метки, поддержка русского языка и статус раннего доступа.</li>
                     <li><strong>Анализ цен Valve:</strong> скрипт извлекает скрытую матрицу Steam и показывает соответствие текущей стоимости игры трём официальным рекомендациям: <strong>Умная цена (Valve)</strong>, <strong>Паритет покупательной способности (ППС)</strong> и <strong>Прямой курс</strong>. Отображается статус, сумма в валюте пользователя и процент отклонения. Функция работает для любого заданного региона.</li>
-                    <li>Предоставляет гибкую систему фильтрации по цене, скидке, рейтингу, дате выхода, поддержке русского языка, статусу раннего доступа, <strong>умным меткам (по приоритету или на исключение)</strong>, а также <strong>по соответствию главной рекомендованной цене Valve</strong>.</li>
+                    <li>Предоставляет гибкую систему фильтрации по цене, скидке, рейтингу, дате выхода, поддержке русского языка, статусу раннего доступа, <strong>статусу релиза</strong>, наличию <strong>демо и плейтестов</strong>, <strong>умным меткам (по приоритету или на исключение)</strong>, а также <strong>по соответствию главной рекомендованной цене Valve</strong>.</li>
                     <li>Активирует режим <strong>помощника подарков</strong>:
                         <ul>
                             <li>Вы выбираете регион вашего друга.</li>
@@ -1090,7 +1099,7 @@
                 </ul>
                  <p>Это помогает легко находить выгодные предложения, оценивать адекватность ценообразования издателя и подбирать экономически целесообразные подарки для друзей за границей.</p>
                  <p><i><small>*Примечание: Скорость загрузки данных зависит от размера списка желаемого.</small></i></p>
-                 <img src="https://i.imgur.com/X8zPj0M.png" alt="Пример WishlistGiftHelper" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
+                 <img src="https://i.imgur.com/gY6pJHI.png" alt="Пример WishlistGiftHelper" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">`
         },
         // --- Аккаунт ---
         accountIgnoredCleaner: {
@@ -1203,6 +1212,29 @@
                     <li style="margin-bottom: 0.7em;">Если виджет заблокирован, скрипт последовательно пытается перезагрузить его с регионом, указанным в настройках «Инкогнито», а затем с резервными регионами (US, CH, KZ, JP).</li>
                     <li style="margin-bottom: 0.7em;">Как только находится работающий регион, виджет обновляется и начинает отображать контент.</li>
                     <li style="margin-bottom: 0.7em;">Если ни один из регионов не подходит, виджет заменяется на сообщение об ошибке.</li>
+                </ol>
+            `
+        },
+        incognitoWishlist: {
+            category: 'incognitoMode',
+            label: "Локальное желаемое",
+            title: "Локальный список желаемого и статус библиотеки (для В.Р.И.)",
+            details: `
+                <p><strong>Что делает:</strong> Восстанавливает работу кнопок добавления в список желаемого и плашки наличия игры на аккаунте на страницах, загруженных через Виртуальный режим инкогнито.</p>
+                <p><strong>Принцип работы:</strong></p>
+                <ol style="margin-left: 20px; padding-left: 5px; list-style-type: decimal;">
+                    <li style="margin-bottom: 0.5em;">Скрипт проверяет ваш аккаунт. Если недоступная игра уже есть у вас на аккаунте, он заменит кнопку желаемого на неактивную кнопку <strong>«В библиотеке»</strong>.</li>
+                    <img src="https://i.imgur.com/ucKb21n.png" alt="Пример отображения в библиотеке" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                    <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+
+                    <li style="margin-bottom: 0.5em;">Если игры нет на аккаунте, скрипт скрывает надпись <em>«Войдите, чтобы добавить...»</em> и возвращает рабочую кнопку <strong>«В желаемое»</strong>.</li>
+                    <li style="margin-bottom: 0.5em;">Поскольку Steam на уровне серверов запрещает добавлять заблокированные игры в официальный список, скрипт сохраняет их в <strong>Локальное хранилище</strong> (GM Storage).</li>
+                    <li style="margin-bottom: 0.5em;"><strong>Управление:</strong> При наведении на стрелочку рядом с кнопкой <strong>«В желаемом»</strong> выпадает меню, позволяющее быстро удалить игру или открыть галерею <strong>«Недоступное желаемое»</strong> для просмотра отложенных заблокированных игр.</li>
+                    <img src="https://i.imgur.com/CsxkVb1.png" alt="Меню управления желаемым" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                    <img src="https://i.imgur.com/VuSHbBA.png" alt="Галерея Недоступное желаемое" style="max-width: 90%; height: auto; margin-top: 10px; display: block; margin-left: auto; margin-right: auto; border: 1px solid #333;">
+                    <hr style="border: none; border-top: 1px solid #444a52; margin: 1.5em 0;">
+
+                    <li style="margin-bottom: 0.5em;"><strong>Миграция:</strong> Если вы добавили игру в официальный список желаемого до того, как издатель заблокировал её в вашем регионе, наш скрипт при заходе на такую страницу автоматически удалит её из официального списка желаемого Steam и перенесёт в локальную базу.</li>
                 </ol>
             `
         }
@@ -1330,7 +1362,6 @@
         const authorModal = document.createElement('div');
         authorModal.id = 'useAuthorModal';
 
-        // CSS стили специально для окна автора
         const style = document.createElement('style');
         style.textContent = `
             #useAuthorModal {
@@ -4096,24 +4127,16 @@ zogBlock.append(arrow, title, content);
 
 const headerCtn = document.querySelector('#gameHeaderImageCtn');
 if (headerCtn) {
-    // 1. Принудительно поднимаем сам контейнер картинки
     headerCtn.style.position = 'relative';
     headerCtn.style.zIndex = '2005';
 
-    // 2. Ищем и поднимаем основные родительские блоки, которые могут создавать
-    // "низкий" контекст наложения или обрезать содержимое.
-    // Обычно это .page_content (верхний) или .page_top_area
     const topContentParent = headerCtn.closest('.page_content, .page_top_area');
     if (topContentParent) {
-        // Важно: иногда Steam ставит overflow: hidden на верхнюю часть,
-        // из-за чего длинные меню просто обрезаются, а не перекрываются.
-        // На всякий случай ставим visible.
         topContentParent.style.overflow = 'visible';
         topContentParent.style.position = 'relative';
         topContentParent.style.zIndex = '2004';
     }
 
-    // 3. Вставляем блок
     headerCtn.appendChild(zogBlock);
 }
 
@@ -6041,9 +6064,6 @@ if (headerCtn) {
             let SALADIN_hoverTimer = null;
             let TAMERLAN_hideTimer = null;
 
-            let RUSSIAN_TRANSLATION_CHECKBOX = null;
-            let RUSSIAN_VOICE_CHECKBOX = null;
-            let NO_RUSSIAN_CHECKBOX = null;
             const STEAM_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v4';
             const STEAM_SEARCH_URL = "https://store.steampowered.com/search/?l=russian";
             const OWNED_APPS_CACHE_KEY = 'SteamEnhancer_OwnedApps';
@@ -6126,7 +6146,6 @@ if (headerCtn) {
                         }
                     }
                 } catch (e) {
-                    console.error("SteamEnhancer Error: Не удалось загрузить теги напрямую со страницы поиска Steam", e);
                 }
 
                 return cached.data || {};
@@ -6256,7 +6275,9 @@ if (headerCtn) {
                             language_support_russian: item.supported_languages?.find(lang => lang.elanguage === 8),
                             language_support_english: item.supported_languages?.find(lang => lang.elanguage === 0),
                             type: item.type,
-                            parent_appid: item.related_items?.parent_appid
+                            parent_appid: item.related_items?.parent_appid,
+                            has_demo: !!(item.related_items?.demo_appid || item.related_items?.demos || item.related_items?.standalone_demos || item.related_items?.standalone_demo_appid),
+                            has_playtest: !!(item.related_items?.playtests)
                         };
 
                         gameElement.dataset.gameInfo = JSON.stringify(gameData);
@@ -6699,6 +6720,19 @@ if (headerCtn) {
                     </div>
                 `;
 
+                const dpFilterBlock = document.createElement('div');
+                dpFilterBlock.className = 'block search_collapse_block';
+                dpFilterBlock.innerHTML = `
+                    <div data-panel="{&quot;focusable&quot;:true,&quot;clickOnActivate&quot;:true}" class="block_header labs_block_header">
+                        <div>Демо и плейтесты</div>
+                    </div>
+                    <div class="block_content block_content_inner" id="dp_filter_container">
+                        <div class="tab_filter_control_row" data-dp="both"><span class="tab_filter_control tab_filter_control_include"><span><span class="tab_filter_control_checkbox"></span><span class="tab_filter_control_label">С демо или плейтестом</span></span></span></div>
+                        <div class="tab_filter_control_row" data-dp="demo"><span class="tab_filter_control tab_filter_control_include"><span><span class="tab_filter_control_checkbox"></span><span class="tab_filter_control_label">Только демо</span></span></span></div>
+                        <div class="tab_filter_control_row" data-dp="playtest"><span class="tab_filter_control tab_filter_control_include"><span><span class="tab_filter_control_checkbox"></span><span class="tab_filter_control_label">Только плейтесты</span></span></span></div>
+                    </div>
+                `;
+
                 const tagFilterBlock = document.createElement('div');
                 tagFilterBlock.className = 'block search_collapse_block';
                 tagFilterBlock.innerHTML = `
@@ -6732,7 +6766,8 @@ if (headerCtn) {
                 priceBlock.parentNode.insertBefore(filterBlock, priceBlock.nextSibling);
                 priceBlock.parentNode.insertBefore(dlcFilterBlock, filterBlock.nextSibling);
                 priceBlock.parentNode.insertBefore(earlyAccessFilterBlock, dlcFilterBlock.nextSibling);
-                priceBlock.parentNode.insertBefore(tagFilterBlock, earlyAccessFilterBlock.nextSibling);
+                priceBlock.parentNode.insertBefore(dpFilterBlock, earlyAccessFilterBlock.nextSibling);
+                priceBlock.parentNode.insertBefore(tagFilterBlock, dpFilterBlock.nextSibling);
                 priceBlock.parentNode.insertBefore(unhideBlock, tagFilterBlock.nextSibling);
 
                 document.getElementById('open-tag-modal-btn-styled').addEventListener('click', () => {
@@ -6822,6 +6857,27 @@ if (headerCtn) {
                         });
                     });
                 });
+
+                const dpRows = dpFilterBlock.querySelectorAll('.tab_filter_control_row');
+                dpRows.forEach(row => {
+                    row.addEventListener('click', () => {
+                        const isChecked = row.classList.contains('checked');
+
+                        dpRows.forEach(r => {
+                            r.classList.remove('checked');
+                            r.querySelector('.tab_filter_control').classList.remove('checked');
+                        });
+
+                        if (!isChecked) {
+                            row.classList.add('checked');
+                            row.querySelector('.tab_filter_control').classList.add('checked');
+                        }
+
+                        document.querySelectorAll(CAESAR_VISIBLE_ELEMENTS_SELECTOR).forEach(gameElement => {
+                            applyRussianLanguageFilter(gameElement);
+                        });
+                    });
+                });
             }
 
             function applyDlcFilter(gameElement, showOnlyDlc) {
@@ -6875,6 +6931,13 @@ if (headerCtn) {
                     if (eaOnlyChecked && !gameData.is_early_access) isVisible = false;
                     else if (eaWasChecked && (gameData.is_early_access || !gameData.has_original_release_date)) isVisible = false;
                     else if (eaHideChecked && gameData.is_early_access) isVisible = false;
+                }
+
+                if (isVisible) {
+                    const dpChecked = document.querySelector('#dp_filter_container .tab_filter_control_row.checked')?.dataset.dp || 'any';
+                    if (dpChecked === 'both' && !gameData.has_demo && !gameData.has_playtest) isVisible = false;
+                    if (dpChecked === 'demo' && !gameData.has_demo) isVisible = false;
+                    if (dpChecked === 'playtest' && !gameData.has_playtest) isVisible = false;
                 }
 
                 if (isVisible) {
@@ -7005,7 +7068,6 @@ if (headerCtn) {
 
             async function initOrbDataGathering() {
                 orb_State.sessionID = typeof unsafeWindow !== 'undefined' ? unsafeWindow.g_sessionID : window.g_sessionID;
-                orbLog('Запрашиваем данные аккаунта (userdata)...', 'info');
                 try {
                     const resp = await new Promise((resolve, reject) => {
                         GM_xmlhttpRequest({
@@ -7018,10 +7080,8 @@ if (headerCtn) {
                     const data = JSON.parse(resp.responseText);
                     if (data && data.rgIgnoredApps) {
                         orb_State.ignoredApps = new Set(Object.keys(data.rgIgnoredApps).map(Number));
-                        orbLog(`Найдено ${orb_State.ignoredApps.size} игр в игнор-листе.`, 'success');
                     }
                 } catch (e) {
-                    orbLog('Не удалось получить userdata.', 'error');
                 }
             }
 
@@ -7865,7 +7925,6 @@ if (headerCtn) {
                 .orb-log-error, .sth-log-error { color: #ff5252; }
                 .orb-log-info, .sth-log-info { color: #66c0f4; }
 
-                /* --- Стилизация чекбоксов --- */
                 input[type=checkbox].steam-hider-checkbox {
                     -webkit-appearance: none; -moz-appearance: none; appearance: none;
                     border: 6px inset rgba(102, 192, 244, 0.8); border-radius: 50%;
@@ -11712,9 +11771,11 @@ if (headerCtn) {
                 UPDATE_SETTINGS: SLEDILKA_PREFIX + 'updateSettings'
             };
 
+            const UIWL_DB_KEY = 'use_incognito_wishlist_db_v1';
+
             const calendarIcon = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zM5 20V10h14v10H5zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2zm-8 4H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/></svg>`;
             const storageIcon = `<svg width="20" height="20" version="1.1" id="_x32_" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 512 512" xml:space="preserve"><style type="text/css">.st0_sledilka_storage{fill:#C6D4DF;}</style><g><path class="st0_sledilka_storage" d="M0,17.067V153.6h512V17.067H0z M110.933,110.925h-51.2v-51.2h51.2V110.925z"/><path class="st0_sledilka_storage" d="M0,324.267h512V187.733H0V324.267z M59.733,230.391h51.2v51.2h-51.2V230.391z"/><path class="st0_sledilka_storage" d="M0,494.933h512V358.4H0V494.933z M59.733,401.058h51.2v51.2h-51.2V401.058z"/></g></svg>`;
-            const settingsIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23-.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`;
+            const settingsIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49-.12-.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23-.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/></svg>`;
             const envelopeIcons = {
                 unread: `<svg width="20" height="16" viewBox="0 0 32 32" fill="#67c1f5" xmlns="http://www.w3.org/2000/svg"><path d="M16.015 18.861l-4.072-3.343-8.862 10.463h25.876l-8.863-10.567-4.079 3.447zM29.926 6.019h-27.815l13.908 11.698 13.907-11.698zM20.705 14.887l9.291 11.084v-18.952l-9.291 7.868zM2.004 7.019v18.952l9.291-11.084-9.291-7.868z"/></svg>`,
                 read: `<svg width="20" height="16" viewBox="0 0 32 32" fill="#8f98a0" xmlns="http://www.w3.org/2000/svg"><path d="M20.139 18.934l9.787-7.999-13.926-9.833-13.89 9.833 9.824 8.032 8.205-0.033zM12.36 19.936l-9.279 10.962h25.876l-9.363-10.9-7.234-0.062zM20.705 19.803l9.291 11.084v-18.952l-9.291 7.868zM2.004 11.935v18.952l9.291-11.084-9.291-7.868z"/></svg>`
@@ -11805,33 +11866,12 @@ if (headerCtn) {
                     cursor: help;
                 }
 
-                .status-ok {
-                    background: #4a5562;
-                }
-
-                .status-warning {
-                    background: #4a5562;
-                }
-
-                .status-alert1 {
-                    background: #665c3a;
-                    color: #ffd700;
-                }
-
-                .status-alert2 {
-                    background: #804d4d;
-                    color: #ffb3b3;
-                }
-
-                .status-critical {
-                    background: #e60000;
-                    color: #fff;
-                }
-
-                .status-unknown {
-                    background: #1b2838;
-                    color: #8f98a0;
-                }
+                .status-ok { background: #4a5562; }
+                .status-warning { background: #4a5562; }
+                .status-alert1 { background: #665c3a; color: #ffd700; }
+                .status-alert2 { background: #804d4d; color: #ffb3b3; }
+                .status-critical { background: #e60000; color: #fff; }
+                .status-unknown { background: #1b2838; color: #8f98a0; }
 
                 .sledilka-panel {
                     position: fixed;
@@ -11909,13 +11949,8 @@ if (headerCtn) {
                     height: 16px;
                 }
 
-                .sledilka-settings-container {
-                    position: relative;
-                }
-
-                .sledilka-settings-btn {
-                    padding: 6px;
-                }
+                .sledilka-settings-container { position: relative; }
+                .sledilka-settings-btn { padding: 6px; }
 
                 .sledilka-settings-dropdown {
                     display: none;
@@ -11962,18 +11997,9 @@ if (headerCtn) {
                     scrollbar-color: #4b6f9c #1b2838;
                 }
 
-                .sledilka-panel-content::-webkit-scrollbar {
-                    width: 6px;
-                }
-
-                .sledilka-panel-content::-webkit-scrollbar-track {
-                    background: #1b2838;
-                }
-
-                .sledilka-panel-content::-webkit-scrollbar-thumb {
-                    background-color: #4b6f9c;
-                    border-radius: 3px;
-                }
+                .sledilka-panel-content::-webkit-scrollbar { width: 6px; }
+                .sledilka-panel-content::-webkit-scrollbar-track { background: #1b2838; }
+                .sledilka-panel-content::-webkit-scrollbar-thumb { background-color: #4b6f9c; border-radius: 3px; }
 
                 .sledilka-notification-item {
                     padding: 12px 15px;
@@ -12051,9 +12077,7 @@ if (headerCtn) {
                     justify-content: center;
                 }
 
-                .sledilka-notification-control:hover {
-                    opacity: 1;
-                }
+                .sledilka-notification-control:hover { opacity: 1; }
 
                 .sledilka-delete-btn {
                     color: #6C7781;
@@ -12063,14 +12087,8 @@ if (headerCtn) {
                     transition: color 0.2s ease, transform 0.1s ease;
                 }
 
-                .sledilka-delete-btn:hover {
-                    color: #8F98A0;
-                }
-
-                .sledilka-delete-btn:active {
-                    color: #800000;
-                    transform: scale(0.9);
-                }
+                .sledilka-delete-btn:hover { color: #8F98A0; }
+                .sledilka-delete-btn:active { color: #800000; transform: scale(0.9); }
 
                 .sledilka-loading-indicator,
                 .sledilka-error-indicator {
@@ -12080,9 +12098,7 @@ if (headerCtn) {
                     font-size: 13px;
                 }
 
-                .sledilka-error-indicator {
-                    color: #ff4747;
-                }
+                .sledilka-error-indicator { color: #ff4747; }
 
                 .sledilka-progress-bar {
                     height: 4px;
@@ -12098,10 +12114,7 @@ if (headerCtn) {
                     transition: width 0.3s ease;
                 }
 
-                .calendar-wtmodal.active {
-                    display: flex;
-                    flex-direction: column;
-                }
+                .calendar-wtmodal.active { display: flex; flex-direction: column; }
 
                 .calendar-wtmodal {
                     position: fixed;
@@ -12128,10 +12141,7 @@ if (headerCtn) {
                     margin-bottom: 15px;
                 }
 
-                .calendar-title {
-                    color: #67c1f5;
-                    font-size: 25px;
-                }
+                .calendar-title { color: #67c1f5; font-size: 25px; }
 
                 .calendar-close {
                     cursor: pointer;
@@ -12140,9 +12150,7 @@ if (headerCtn) {
                     padding: 5px;
                 }
 
-                .calendar-close:hover {
-                    color: #67c1f5;
-                }
+                .calendar-close:hover { color: #67c1f5; }
 
                 .calendar-content {
                     flex-grow: 1;
@@ -12152,22 +12160,11 @@ if (headerCtn) {
                     scrollbar-color: #4b6f9c #1b2838;
                 }
 
-                .calendar-content::-webkit-scrollbar {
-                    width: 6px;
-                }
+                .calendar-content::-webkit-scrollbar { width: 6px; }
+                .calendar-content::-webkit-scrollbar-track { background: #1b2838; }
+                .calendar-content::-webkit-scrollbar-thumb { background-color: #4b6f9c; border-radius: 3px; }
 
-                .calendar-content::-webkit-scrollbar-track {
-                    background: #1b2838;
-                }
-
-                .calendar-content::-webkit-scrollbar-thumb {
-                    background-color: #4b6f9c;
-                    border-radius: 3px;
-                }
-
-                .calendar-month {
-                    margin-bottom: 30px;
-                }
+                .calendar-month { margin-bottom: 30px; }
 
                 .month-header {
                     color: #67c1f5;
@@ -12241,9 +12238,7 @@ if (headerCtn) {
                     opacity: 0.9;
                 }
 
-                .calendar-game:hover {
-                    background: rgba(67, 103, 133, 0.5);
-                }
+                .calendar-game:hover { background: rgba(67, 103, 133, 0.5); }
 
                 .calendar-game-image {
                     width: 100px;
@@ -12274,14 +12269,9 @@ if (headerCtn) {
                     border-radius: 3px;
                 }
 
-                .load-more-btn:hover {
-                    background: rgba(103, 193, 245, 0.2);
-                }
+                .load-more-btn:hover { background: rgba(103, 193, 245, 0.2); }
 
-                .wt-tooltip {
-                    display: flex !important;
-                    position: relative;
-                }
+                .wt-tooltip { display: flex !important; position: relative; }
 
                 .wt-tooltip .wt-tooltiptext {
                     visibility: hidden;
@@ -12300,10 +12290,7 @@ if (headerCtn) {
                     border: 1px solid #67c1f5;
                 }
 
-                .wt-tooltip:hover .wt-tooltiptext {
-                    visibility: visible;
-                    opacity: 1;
-                }
+                .wt-tooltip:hover .wt-tooltiptext { visibility: visible; opacity: 1; }
 
                 .sledilka-storage-modal {
                     display: none;
@@ -12340,9 +12327,7 @@ if (headerCtn) {
                     cursor: pointer;
                 }
 
-                .sledilka-storage-modal-close:hover {
-                    color: #fff;
-                }
+                .sledilka-storage-modal-close:hover { color: #fff; }
 
                 .sledilka-storage-modal h3 {
                     margin-top: 0;
@@ -12364,65 +12349,63 @@ if (headerCtn) {
                     min-width: 200px;
                 }
 
-                .sledilka-storage-modal button:hover {
-                    background-color: #5a6978;
-                }
-                `);
+                .sledilka-storage-modal button:hover { background-color: #5a6978; }
+            `);
 
-                function retryPositionCheck() {
+            function retryPositionCheck() {
+                if (positionCheckInterval) clearInterval(positionCheckInterval);
+                positionCheckInterval = setInterval(createSledilkaUI.positionButtonSafely, 300);
+                setTimeout(() => {
                     if (positionCheckInterval) clearInterval(positionCheckInterval);
-                    positionCheckInterval = setInterval(createSledilkaUI.positionButtonSafely, 300);
-                    setTimeout(() => {
-                        if (positionCheckInterval) clearInterval(positionCheckInterval);
-                    }, 10000);
-                }
+                }, 10000);
+            }
 
-                function stopPositionTracking() {
-                    if (positionCheckInterval) {
-                        clearInterval(positionCheckInterval);
-                        positionCheckInterval = null;
-                    }
+            function stopPositionTracking() {
+                if (positionCheckInterval) {
+                    clearInterval(positionCheckInterval);
+                    positionCheckInterval = null;
                 }
+            }
 
-                function setupMutationObserver(target) {
-                    if (mutationObserver) mutationObserver.disconnect();
-                    mutationObserver = new MutationObserver((mutations) => {
-                        let needsUpdate = mutations.some(mutation => {
-                            return mutation.type === 'attributes' ||
-                                mutation.addedNodes.length > 0 ||
-                                mutation.removedNodes.length > 0;
-                        });
-                        if (needsUpdate) {
-                            if (typeof createSledilkaUI.positionButtonSafely === 'function') {
-                                createSledilkaUI.positionButtonSafely();
-                            }
+            function setupMutationObserver(target) {
+                if (mutationObserver) mutationObserver.disconnect();
+                mutationObserver = new MutationObserver((mutations) => {
+                    let needsUpdate = mutations.some(mutation => {
+                        return mutation.type === 'attributes' ||
+                            mutation.addedNodes.length > 0 ||
+                            mutation.removedNodes.length > 0;
+                    });
+                    if (needsUpdate) {
+                        if (typeof createSledilkaUI.positionButtonSafely === 'function') {
+                            createSledilkaUI.positionButtonSafely();
                         }
-                    });
-                    if (target) {
-                        mutationObserver.observe(target, {
-                            childList: true,
-                            subtree: true,
-                            attributes: true,
-                            attributeFilter: ['style', 'class']
-                        });
                     }
-                }
-
-                function createSledilkaUI() {
-                    const initialGlobalActionsContainer = document.getElementById('global_actions');
-                    if (!initialGlobalActionsContainer) { return; }
-                    const initialAvatarLink = initialGlobalActionsContainer.querySelector('a.user_avatar');
-                    if (!initialAvatarLink) { return; }
-                    if (document.querySelector('.sledilka-container')) { return; }
-
-                    const updateSettings = GM_getValue(STORAGE_KEYS.UPDATE_SETTINGS, {
-                        wishlist: true,
-                        library: true,
-                        recheckRussian: true,
-                        recheckPartial: false
+                });
+                if (target) {
+                    mutationObserver.observe(target, {
+                        childList: true,
+                        subtree: true,
+                        attributes: true,
+                        attributeFilter: ['style', 'class']
                     });
+                }
+            }
 
-                    const container = $(`
+            function createSledilkaUI() {
+                const initialGlobalActionsContainer = document.getElementById('global_actions');
+                if (!initialGlobalActionsContainer) { return; }
+                const initialAvatarLink = initialGlobalActionsContainer.querySelector('a.user_avatar');
+                if (!initialAvatarLink) { return; }
+                if (document.querySelector('.sledilka-container')) { return; }
+
+                const updateSettings = GM_getValue(STORAGE_KEYS.UPDATE_SETTINGS, {
+                    wishlist: true,
+                    library: true,
+                    recheckRussian: true,
+                    recheckPartial: false
+                });
+
+                const container = $(`
                         <div class="sledilka-container">
                             <div class="sledilka-button">
                                 <span>Наблюдатель</span>
@@ -12457,810 +12440,868 @@ if (headerCtn) {
                                  <div class="sledilka-panel-content"></div>
                             </div>
                         </div>`);
-                    initialGlobalActionsContainer.appendChild(container[0]);
+                initialGlobalActionsContainer.appendChild(container[0]);
 
-                    function positionButtonSafely() {
-                        const currentGlobalActionsContainer = document.getElementById('global_actions');
-                        if (!currentGlobalActionsContainer || !container[0] || !container[0].isConnected) { stopPositionTracking(); return; }
-                        const currentAvatarLink = currentGlobalActionsContainer.querySelector('a.user_avatar');
-                        if (!currentAvatarLink) { retryPositionCheck(); return; }
-                        const isVisible = (element) => {
-                            if (!element) return false;
-                            const rect = element.getBoundingClientRect();
-                            return !(rect.width === 0 && rect.height === 0 && element.offsetWidth === 0 && element.offsetHeight === 0);
-                        };
-                        if (!isVisible(currentAvatarLink)) { retryPositionCheck(); return; }
-                        const avatarRect = currentAvatarLink.getBoundingClientRect();
-                        const globalActionsRect = currentGlobalActionsContainer.getBoundingClientRect();
-                        const sledilkaViewportTop = avatarRect.top;
-                        const sledilkaViewportLeft = avatarRect.right + 45;
-                        const sledilkaContainerTop = sledilkaViewportTop - globalActionsRect.top;
-                        const sledilkaContainerLeft = sledilkaViewportLeft - globalActionsRect.left;
-                        container.css({ top: sledilkaContainerTop + 'px', left: sledilkaContainerLeft + 'px', visibility: 'visible' });
-                        setTimeout(() => {
-                            if (container[0] && container[0].isConnected && currentAvatarLink && currentAvatarLink.isConnected) {
-                                const postRect = container[0].getBoundingClientRect();
-                                const liveAvatarRect = currentAvatarLink.getBoundingClientRect();
-                                if (postRect.left < liveAvatarRect.right) {
-                                    container.css('left', (sledilkaContainerLeft + 50) + 'px');
-                                }
+                function positionButtonSafely() {
+                    const currentGlobalActionsContainer = document.getElementById('global_actions');
+                    if (!currentGlobalActionsContainer || !container[0] || !container[0].isConnected) { stopPositionTracking(); return; }
+                    const currentAvatarLink = currentGlobalActionsContainer.querySelector('a.user_avatar');
+                    if (!currentAvatarLink) { retryPositionCheck(); return; }
+                    const isVisible = (element) => {
+                        if (!element) return false;
+                        const rect = element.getBoundingClientRect();
+                        return !(rect.width === 0 && rect.height === 0 && element.offsetWidth === 0 && element.offsetHeight === 0);
+                    };
+                    if (!isVisible(currentAvatarLink)) { retryPositionCheck(); return; }
+                    const avatarRect = currentAvatarLink.getBoundingClientRect();
+                    const globalActionsRect = currentGlobalActionsContainer.getBoundingClientRect();
+                    const sledilkaViewportTop = avatarRect.top;
+                    const sledilkaViewportLeft = avatarRect.right + 45;
+                    const sledilkaContainerTop = sledilkaViewportTop - globalActionsRect.top;
+                    const sledilkaContainerLeft = sledilkaViewportLeft - globalActionsRect.left;
+                    container.css({ top: sledilkaContainerTop + 'px', left: sledilkaContainerLeft + 'px', visibility: 'visible' });
+                    setTimeout(() => {
+                        if (container[0] && container[0].isConnected && currentAvatarLink && currentAvatarLink.isConnected) {
+                            const postRect = container[0].getBoundingClientRect();
+                            const liveAvatarRect = currentAvatarLink.getBoundingClientRect();
+                            if (postRect.left < liveAvatarRect.right) {
+                                container.css('left', (sledilkaContainerLeft + 50) + 'px');
                             }
-                        }, 100);
-                        stopPositionTracking();
-                        setupMutationObserver(currentGlobalActionsContainer);
-                    }
-                    createSledilkaUI.positionButtonSafely = positionButtonSafely;
-                    setTimeout(positionButtonSafely, 700);
-
-                    const panel = container.find('.sledilka-panel');
-                    container.find('.sledilka-button').on('click', function(e) { e.stopPropagation(); togglePanel(); });
-                    container.find('.sledilka-refresh-btn').on('click', (e) => { e.stopPropagation(); if (!updateInProgress) updateData(); });
-                    container.find('.sledilka-clear-btn').on('click', (e) => {
-                        e.stopPropagation();
-                        if (confirm("Вы уверены, что хотите очистить ВСЕ уведомления?")) {
-                            notifications = [];
-                            GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
-                            updateNotificationPanel();
-                            updateBadge();
-                            showInfoIndicator("Все уведомления очищены.");
                         }
-                    });
-                    container.find('.sledilka-calendar-btn').on('click', (e) => { e.stopPropagation(); showCalendarModal(); });
-                    container.find('.sledilka-storage-btn').on('click', (e) => { e.stopPropagation(); showStorageModal(); });
-
-                    const settingsBtn = container.find('.sledilka-settings-btn');
-                    const settingsDropdown = container.find('.sledilka-settings-dropdown');
-                    const libCheck = $('#sledilkaUpdateLibrary');
-                    const recheckRuCheck = $('#sledilkaRecheckRussian');
-                    const recheckPartialCheck = $('#sledilkaRecheckPartial');
-                    const recheckPartialLabel = $('#sledilkaRecheckPartialLabel');
-                    const libSubSettings = $('#sledilkaLibrarySubSettings');
-
-                    function toggleSubSettings() {
-                        const libIsChecked = libCheck.is(':checked');
-                        libSubSettings.toggle(libIsChecked);
-                        if (!libIsChecked) {
-                            recheckRuCheck.prop('disabled', true);
-                            recheckPartialCheck.prop('disabled', true);
-                            recheckPartialLabel.addClass('disabled');
-                        } else {
-                            recheckRuCheck.prop('disabled', false);
-                            togglePartialRecheckOption();
-                        }
-                    }
-
-                    function togglePartialRecheckOption() {
-                        const recheckRuIsChecked = recheckRuCheck.is(':checked');
-                        if (recheckRuIsChecked || !libCheck.is(':checked')) {
-                            recheckPartialCheck.prop('disabled', true);
-                            recheckPartialCheck.prop('checked', false);
-                            recheckPartialLabel.addClass('disabled');
-                        } else {
-                            recheckPartialCheck.prop('disabled', false);
-                            recheckPartialLabel.removeClass('disabled');
-                        }
-                    }
-
-                    settingsBtn.on('click', function(e) {
-                        e.stopPropagation();
-                        if (settingsDropdown.is(':visible')) {
-                            settingsDropdown.hide();
-                        } else {
-                            const btnRect = this.getBoundingClientRect();
-                            const dropdownWidth = settingsDropdown.outerWidth();
-                            settingsDropdown.css({
-                                top: (btnRect.bottom + 5) + 'px',
-                                left: (btnRect.right - dropdownWidth) + 'px'
-                            }).show();
-                        }
-                    });
-
-                    settingsDropdown.on('click', function(e) {
-                        e.stopPropagation();
-                    });
-
-                    $('#sledilkaUpdateWishlist, #sledilkaUpdateLibrary, #sledilkaRecheckRussian, #sledilkaRecheckPartial').on('change', function() {
-                        toggleSubSettings();
-                        const newSettings = {
-                            wishlist: $('#sledilkaUpdateWishlist').is(':checked'),
-                            library: $('#sledilkaUpdateLibrary').is(':checked'),
-                            recheckRussian: $('#sledilkaRecheckRussian').is(':checked'),
-                            recheckPartial: $('#sledilkaRecheckPartial').is(':checked')
-                        };
-                        GM_setValue(STORAGE_KEYS.UPDATE_SETTINGS, newSettings);
-                    });
-
-                    toggleSubSettings();
-
-                    updateNotificationPanel();
-                    $(document).on('click', (e) => {
-                         const $target = $(e.target);
-                         if (isPanelOpen && panel.is(":visible")) {
-                             if (!$target.closest('.sledilka-container').length) {
-                                 togglePanel(false);
-                             }
-                         }
-                         if(settingsDropdown.is(':visible')) {
-                             if (!$target.closest('.sledilka-settings-container').length) {
-                                 settingsDropdown.hide();
-                             }
-                         }
-                    });
+                    }, 100);
+                    stopPositionTracking();
+                    setupMutationObserver(currentGlobalActionsContainer);
                 }
+                createSledilkaUI.positionButtonSafely = positionButtonSafely;
+                setTimeout(positionButtonSafely, 700);
 
-                function togglePanel() {
-                    updateStatusIndicator();
-                    const panel = $('.sledilka-panel');
-                    panel.toggle();
-                    isPanelOpen = !isPanelOpen;
-                    if (isPanelOpen) {
-                        panel.css('display', 'flex');
-                        updateBadge();
+                const panel = container.find('.sledilka-panel');
+                container.find('.sledilka-button').on('click', function(e) { e.stopPropagation(); togglePanel(); });
+                container.find('.sledilka-refresh-btn').on('click', (e) => { e.stopPropagation(); if (!updateInProgress) updateData(); });
+                container.find('.sledilka-clear-btn').on('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm("Вы уверены, что хотите очистить ВСЕ уведомления?")) {
+                        notifications = [];
+                        GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
                         updateNotificationPanel();
+                        updateBadge();
+                        showInfoIndicator("Все уведомления очищены.");
                     }
-                }
+                });
+                container.find('.sledilka-calendar-btn').on('click', (e) => { e.stopPropagation(); showCalendarModal(); });
+                container.find('.sledilka-storage-btn').on('click', (e) => { e.stopPropagation(); showStorageModal(); });
 
-                function showLoadingIndicator(message = "Обновление данных...") {
-                    const panelContent = $('.sledilka-panel-content');
-                    panelContent.find('.sledilka-loading-indicator, .sledilka-error-indicator').remove();
-                    panelContent.prepend($(`<div class="sledilka-loading-indicator">${message} <span class="spinner"></span></div>`));
-                }
+                const settingsBtn = container.find('.sledilka-settings-btn');
+                const settingsDropdown = container.find('.sledilka-settings-dropdown');
+                const libCheck = $('#sledilkaUpdateLibrary');
+                const recheckRuCheck = $('#sledilkaRecheckRussian');
+                const recheckPartialCheck = $('#sledilkaRecheckPartial');
+                const recheckPartialLabel = $('#sledilkaRecheckPartialLabel');
+                const libSubSettings = $('#sledilkaLibrarySubSettings');
 
-                function removeLoadingIndicator() {
-                    $('.sledilka-panel-content .sledilka-loading-indicator').remove();
-                }
-
-                function showErrorIndicator(message) {
-                    const panelContent = $('.sledilka-panel-content');
-                    panelContent.find('.sledilka-loading-indicator, .sledilka-error-indicator').remove();
-                    const error = $(`<div class="sledilka-error-indicator">${message}</div>`);
-                    panelContent.prepend(error);
-                    setTimeout(() => error.remove(), 8000);
-                }
-
-                function showInfoIndicator(message) {
-                    const panelContent = $('.sledilka-panel-content');
-                    panelContent.find('.sledilka-loading-indicator, .sledilka-error-indicator').remove();
-                    const info = $(`<div class="sledilka-loading-indicator" style="color: #67c1f5;">${message}</div>`);
-                    panelContent.prepend(info);
-                    setTimeout(() => info.remove(), 4000);
-                }
-
-                function updateProgressBar(percentage) {
-                    const progressBar = $('.sledilka-progress-bar');
-                    const progressBarInner = progressBar.find('.sledilka-progress-bar-inner');
-                    if (percentage > 0 && percentage <= 100) {
-                        progressBar.show();
-                        progressBarInner.css('width', `${percentage}%`);
+                function toggleSubSettings() {
+                    const libIsChecked = libCheck.is(':checked');
+                    libSubSettings.toggle(libIsChecked);
+                    if (!libIsChecked) {
+                        recheckRuCheck.prop('disabled', true);
+                        recheckPartialCheck.prop('disabled', true);
+                        recheckPartialLabel.addClass('disabled');
                     } else {
-                        progressBar.hide();
-                        progressBarInner.css('width', '0%');
+                        recheckRuCheck.prop('disabled', false);
+                        togglePartialRecheckOption();
                     }
                 }
 
-                function getNotificationType(notification) {
-                    if (notification.source === 'wishlist') {
-                         if ('oldDate' in notification) return 'wishlist_date';
-                         if (notification.changeType === 'ea_status') return 'wishlist_ea';
-                         if (notification.changeType === 'ru_lang') return 'wishlist_ru';
-                    }
-                    if (notification.source === 'library') {
-                         if (notification.changeType === 'ea_status') return 'owned_ea';
-                         if (notification.changeType === 'ru_lang') return 'owned_ru';
-                    }
-                    if ('oldDate' in notification) return 'wishlist_date';
-                    if (notification.changeType === 'ea_status') return 'owned_ea';
-                    if (notification.changeType === 'ru_lang') return 'owned_ru';
-                    return 'unknown';
-                }
-
-                function getNotificationTitle(type) {
-                     switch (type) {
-                        case 'wishlist_date': return 'Желаемое (Дата выхода)';
-                        case 'wishlist_ea': return 'Желаемое (Ранний доступ)';
-                        case 'wishlist_ru': return 'Желаемое (Русский язык)';
-                        case 'owned_ea': return 'Библиотека (Ранний доступ)';
-                        case 'owned_ru': return 'Библиотека (Русский язык)';
-                        default: return 'Уведомление';
-                    }
-                }
-
-                function getNotificationDetailsHTML(notification, type) {
-                    if (type.endsWith('_ru')) {
-                        const changeDetails = notification.ruChangeDetails;
-                        if (!changeDetails) return 'Изменение в локализации.';
-
-                        const added = [], removed = [];
-                        const langMap = { supported: 'Интерфейс', full_audio: 'Озвучка', subtitles: 'Субтитры' };
-
-                        for (const key in changeDetails.added) { if (changeDetails.added[key]) added.push(langMap[key]); }
-                        for (const key in changeDetails.removed) { if (changeDetails.removed[key]) removed.push(langMap[key]); }
-
-                        const oldHasAny = Object.values(changeDetails.oldState).some(v => v);
-                        const newHasAny = Object.values(changeDetails.newState).some(v => v);
-
-                        let parts = [];
-                        if (added.length > 0 && removed.length > 0) {
-                            parts.push(`Изменения в локализации:<br><b>Добавлено:</b> ${added.join(', ')}<br><b>Убрано:</b> ${removed.join(', ')}`);
-                        } else if (added.length > 0) {
-                            if (oldHasAny) {
-                                 parts.push(`К русскому языку добавлено:<br><b>${added.join(' + ')}</b>`);
-                            } else {
-                                 parts.push(`Появился русский язык:<br><b>${added.join(' + ')}</b>`);
-                            }
-                        } else if (removed.length > 0) {
-                            if (newHasAny) {
-                                 parts.push(`Локализация урезана:<br><b>Убрано: ${removed.join(', ')}</b>`);
-                            } else {
-                                 parts.push(`<b>Русский язык удален из игры.</b>`);
-                            }
-                        }
-                        return parts.join('<br>');
-
+                function togglePartialRecheckOption() {
+                    const recheckRuIsChecked = recheckRuCheck.is(':checked');
+                    if (recheckRuIsChecked || !libCheck.is(':checked')) {
+                        recheckPartialCheck.prop('disabled', true);
+                        recheckPartialCheck.prop('checked', false);
+                        recheckPartialLabel.addClass('disabled');
                     } else {
-                         switch (type) {
-                            case 'wishlist_date':
-                                return `Дата выхода изменилась:<br>
-                                             <span class="old-date">${formatDate(notification.oldDate)}</span> →
-                                             <span class="new-date">${formatDate(notification.newDate)}</span>`;
-                            case 'wishlist_ea':
-                            case 'owned_ea':
-                                return `Игра вышла из раннего доступа!`;
-                            default:
-                                return 'Детали неизвестны';
-                        }
+                        recheckPartialCheck.prop('disabled', false);
+                        recheckPartialLabel.removeClass('disabled');
                     }
                 }
 
-                function updateNotificationPanel() {
-                    const panelContent = $('.sledilka-panel-content');
-                    if (!panelContent.length) return;
-                    panelContent.find('.sledilka-notification-item, .sledilka-loading-indicator, .sledilka-error-indicator').remove();
-                    $('.sledilka-panel-title').text(`Уведомления (${notifications.length})`);
-                    notifications.sort((a, b) => {
-                        if (a.read === b.read) {
-                            return b.timestamp - a.timestamp;
-                        }
-                        return a.read ? 1 : -1;
-                    });
-                    if (notifications.length === 0) {
-                        panelContent.append('<div class="sledilka-loading-indicator" style="color: #8f98a0;">Нет новых уведомлений</div>');
-                        return;
+                settingsBtn.on('click', function(e) {
+                    e.stopPropagation();
+                    if (settingsDropdown.is(':visible')) {
+                        settingsDropdown.hide();
+                    } else {
+                        const btnRect = this.getBoundingClientRect();
+                        const dropdownWidth = settingsDropdown.outerWidth();
+                        settingsDropdown.css({
+                            top: (btnRect.bottom + 5) + 'px',
+                            left: (btnRect.right - dropdownWidth) + 'px'
+                        }).show();
                     }
-                    notifications.slice(0, 5000).forEach((notification, index) => {
-                        const notificationType = getNotificationType(notification);
-                        const imageUrl = notification.header ?
-                            `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${notification.appid}/${notification.header}` :
-                            `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${notification.appid}/header.jpg`;
-                        const item = $(`
-                            <div class="sledilka-notification-item ${notification.read ? '' : 'sledilka-notification-unread'}" data-index="${index}">
-                                <div class="sledilka-notification-controls">
-                                    <div class="sledilka-toggle-read-btn sledilka-notification-control" title="${notification.read ? 'Пометить как непрочитанное' : 'Пометить как прочитанное'}">
-                                        ${notification.read ? envelopeIcons.read : envelopeIcons.unread}
-                                    </div>
-                                    <div class="sledilka-delete-btn sledilka-notification-control" title="Удалить уведомление">X</div>
+                });
+
+                settingsDropdown.on('click', function(e) {
+                    e.stopPropagation();
+                });
+
+                $('#sledilkaUpdateWishlist, #sledilkaUpdateLibrary, #sledilkaRecheckRussian, #sledilkaRecheckPartial').on('change', function() {
+                    toggleSubSettings();
+                    const newSettings = {
+                        wishlist: $('#sledilkaUpdateWishlist').is(':checked'),
+                        library: $('#sledilkaUpdateLibrary').is(':checked'),
+                        recheckRussian: $('#sledilkaRecheckRussian').is(':checked'),
+                        recheckPartial: $('#sledilkaRecheckPartial').is(':checked')
+                    };
+                    GM_setValue(STORAGE_KEYS.UPDATE_SETTINGS, newSettings);
+                });
+
+                toggleSubSettings();
+
+                updateNotificationPanel();
+                $(document).on('click', (e) => {
+                     const $target = $(e.target);
+                     if (isPanelOpen && panel.is(":visible")) {
+                         if (!$target.closest('.sledilka-container').length) {
+                             togglePanel(false);
+                         }
+                     }
+                     if(settingsDropdown.is(':visible')) {
+                         if (!$target.closest('.sledilka-settings-container').length) {
+                             settingsDropdown.hide();
+                         }
+                     }
+                });
+            }
+
+            function togglePanel() {
+                updateStatusIndicator();
+                const panel = $('.sledilka-panel');
+                panel.toggle();
+                isPanelOpen = !isPanelOpen;
+                if (isPanelOpen) {
+                    panel.css('display', 'flex');
+                    updateBadge();
+                    updateNotificationPanel();
+                }
+            }
+
+            function showLoadingIndicator(message = "Обновление данных...") {
+                const panelContent = $('.sledilka-panel-content');
+                panelContent.find('.sledilka-loading-indicator, .sledilka-error-indicator').remove();
+                panelContent.prepend($(`<div class="sledilka-loading-indicator">${message} <span class="spinner"></span></div>`));
+            }
+
+            function removeLoadingIndicator() {
+                $('.sledilka-panel-content .sledilka-loading-indicator').remove();
+            }
+
+            function showErrorIndicator(message) {
+                const panelContent = $('.sledilka-panel-content');
+                panelContent.find('.sledilka-loading-indicator, .sledilka-error-indicator').remove();
+                const error = $(`<div class="sledilka-error-indicator">${message}</div>`);
+                panelContent.prepend(error);
+                setTimeout(() => error.remove(), 8000);
+            }
+
+            function showInfoIndicator(message) {
+                const panelContent = $('.sledilka-panel-content');
+                panelContent.find('.sledilka-loading-indicator, .sledilka-error-indicator').remove();
+                const info = $(`<div class="sledilka-loading-indicator" style="color: #67c1f5;">${message}</div>`);
+                panelContent.prepend(info);
+                setTimeout(() => info.remove(), 4000);
+            }
+
+            function updateProgressBar(percentage) {
+                const progressBar = $('.sledilka-progress-bar');
+                const progressBarInner = progressBar.find('.sledilka-progress-bar-inner');
+                if (percentage > 0 && percentage <= 100) {
+                    progressBar.show();
+                    progressBarInner.css('width', `${percentage}%`);
+                } else {
+                    progressBar.hide();
+                    progressBarInner.css('width', '0%');
+                }
+            }
+
+            function getNotificationType(notification) {
+                if (notification.source === 'wishlist' || notification.source === 'local_wishlist') {
+                     const prefix = notification.source === 'local_wishlist' ? 'local_wishlist' : 'wishlist';
+                     if ('oldDate' in notification) return `${prefix}_date`;
+                     if (notification.changeType === 'ea_status') return `${prefix}_ea`;
+                     if (notification.changeType === 'ru_lang') return `${prefix}_ru`;
+                     if (notification.changeType === 'demo_added') return `${prefix}_demo_added`;
+                     if (notification.changeType === 'demo_removed') return `${prefix}_demo_removed`;
+                     if (notification.changeType === 'playtest_added') return `${prefix}_playtest_added`;
+                     if (notification.changeType === 'playtest_removed') return `${prefix}_playtest_removed`;
+                }
+                if (notification.source === 'library') {
+                     if (notification.changeType === 'ea_status') return 'owned_ea';
+                     if (notification.changeType === 'ru_lang') return 'owned_ru';
+                }
+                if ('oldDate' in notification) return 'wishlist_date';
+                if (notification.changeType === 'ea_status') return 'owned_ea';
+                if (notification.changeType === 'ru_lang') return 'owned_ru';
+                return 'unknown';
+            }
+
+            function getNotificationTitle(type) {
+                 switch (type) {
+                    case 'wishlist_date': return 'Желаемое (Дата выхода)';
+                    case 'local_wishlist_date': return 'Лок. желаемое (Дата выхода)';
+                    case 'wishlist_ea': return 'Желаемое (Ранний доступ)';
+                    case 'local_wishlist_ea': return 'Лок. желаемое (Ранний доступ)';
+                    case 'wishlist_ru': return 'Желаемое (Русский язык)';
+                    case 'local_wishlist_ru': return 'Лок. желаемое (Русский язык)';
+                    case 'wishlist_demo_added': return 'Желаемое (Появилось демо)';
+                    case 'local_wishlist_demo_added': return 'Лок. желаемое (Появилось демо)';
+                    case 'wishlist_demo_removed': return 'Желаемое (Демо скрыто)';
+                    case 'local_wishlist_demo_removed': return 'Лок. желаемое (Демо скрыто)';
+                    case 'wishlist_playtest_added': return 'Желаемое (Появился плейтест)';
+                    case 'local_wishlist_playtest_added': return 'Лок. желаемое (Появился плейтест)';
+                    case 'wishlist_playtest_removed': return 'Желаемое (Плейтест скрыт)';
+                    case 'local_wishlist_playtest_removed': return 'Лок. желаемое (Плейтест скрыт)';
+                    case 'owned_ea': return 'Библиотека (Ранний доступ)';
+                    case 'owned_ru': return 'Библиотека (Русский язык)';
+                    default: return 'Уведомление';
+                }
+            }
+
+            function getNotificationDetailsHTML(notification, type) {
+                if (type.includes('demo_added')) return `У игры стала доступна демоверсия!`;
+                if (type.includes('demo_removed')) return `Демоверсия игры была удалена или скрыта.`;
+                if (type.includes('playtest_added')) return `У игры открылась запись на плейтест!`;
+                if (type.includes('playtest_removed')) return `Плейтест игры завершился или был скрыт.`;
+
+                if (type.endsWith('_ru')) {
+                    const changeDetails = notification.ruChangeDetails;
+                    if (!changeDetails) return 'Изменение в локализации.';
+
+                    const added = [], removed = [];
+                    const langMap = { supported: 'Интерфейс', full_audio: 'Озвучка', subtitles: 'Субтитры' };
+
+                    for (const key in changeDetails.added) { if (changeDetails.added[key]) added.push(langMap[key]); }
+                    for (const key in changeDetails.removed) { if (changeDetails.removed[key]) removed.push(langMap[key]); }
+
+                    const oldHasAny = Object.values(changeDetails.oldState).some(v => v);
+                    const newHasAny = Object.values(changeDetails.newState).some(v => v);
+
+                    let parts = [];
+                    if (added.length > 0 && removed.length > 0) {
+                        parts.push(`Изменения в локализации:<br><b>Добавлено:</b> ${added.join(', ')}<br><b>Убрано:</b> ${removed.join(', ')}`);
+                    } else if (added.length > 0) {
+                        if (oldHasAny) {
+                             parts.push(`К русскому языку добавлено:<br><b>${added.join(' + ')}</b>`);
+                        } else {
+                             parts.push(`Появился русский язык:<br><b>${added.join(' + ')}</b>`);
+                        }
+                    } else if (removed.length > 0) {
+                        if (newHasAny) {
+                             parts.push(`Локализация урезана:<br><b>Убрано: ${removed.join(', ')}</b>`);
+                        } else {
+                             parts.push(`<b>Русский язык удален из игры.</b>`);
+                        }
+                    }
+                    return parts.join('<br>');
+
+                } else {
+                     if (type.includes('_date')) {
+                            return `Дата выхода изменилась:<br>
+                                         <span class="old-date">${formatDate(notification.oldDate)}</span> →
+                                         <span class="new-date">${formatDate(notification.newDate)}</span>`;
+                     }
+                     if (type.includes('_ea')) {
+                            return `Игра вышла из раннего доступа!`;
+                     }
+                     return 'Детали неизвестны';
+                }
+            }
+
+            function updateNotificationPanel() {
+                const panelContent = $('.sledilka-panel-content');
+                if (!panelContent.length) return;
+                panelContent.find('.sledilka-notification-item, .sledilka-loading-indicator, .sledilka-error-indicator').remove();
+                $('.sledilka-panel-title').text(`Уведомления (${notifications.length})`);
+                notifications.sort((a, b) => {
+                    if (a.read === b.read) {
+                        return b.timestamp - a.timestamp;
+                    }
+                    return a.read ? 1 : -1;
+                });
+                if (notifications.length === 0) {
+                    panelContent.append('<div class="sledilka-loading-indicator" style="color: #8f98a0;">Нет новых уведомлений</div>');
+                    return;
+                }
+                notifications.slice(0, 5000).forEach((notification, index) => {
+                    const notificationType = getNotificationType(notification);
+                    const imageUrl = notification.header ?
+                        `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${notification.appid}/${notification.header}` :
+                        `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${notification.appid}/header.jpg`;
+                    const item = $(`
+                        <div class="sledilka-notification-item ${notification.read ? '' : 'sledilka-notification-unread'}" data-index="${index}">
+                            <div class="sledilka-notification-controls">
+                                <div class="sledilka-toggle-read-btn sledilka-notification-control" title="${notification.read ? 'Пометить как непрочитанное' : 'Пометить как прочитанное'}">
+                                    ${notification.read ? envelopeIcons.read : envelopeIcons.unread}
                                 </div>
-                                <div class="sledilka-notification-content">
-                                    <a href="https://store.steampowered.com/app/${notification.appid}" target="_blank">
-                                        <img src="${imageUrl}"
-                                             class="sledilka-notification-image" loading="lazy"
-                                             onerror="this.onerror=null; this.src='https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit='contain';">
+                                <div class="sledilka-delete-btn sledilka-notification-control" title="Удалить уведомление">X</div>
+                            </div>
+                            <div class="sledilka-notification-content">
+                                <a href="https://store.steampowered.com/app/${notification.appid}" target="_blank">
+                                    <img src="${imageUrl}"
+                                         class="sledilka-notification-image" loading="lazy"
+                                         onerror="this.onerror=null; this.src='https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit='contain';">
+                                </a>
+                                <div class="sledilka-notification-text">
+                                    <div class="sledilka-notification-type">${getNotificationTitle(notificationType)}</div>
+                                    <a href="https://store.steampowered.com/app/${notification.appid}"
+                                       class="sledilka-notification-game-title" target="_blank">
+                                        ${notification.name || `Игра #${notification.appid}`}
                                     </a>
-                                    <div class="sledilka-notification-text">
-                                        <div class="sledilka-notification-type">${getNotificationTitle(notificationType)}</div>
-                                        <a href="https://store.steampowered.com/app/${notification.appid}"
-                                           class="sledilka-notification-game-title" target="_blank">
-                                            ${notification.name || `Игра #${notification.appid}`}
-                                        </a>
-                                        <div class="sledilka-notification-details">
-                                            ${getNotificationDetailsHTML(notification, notificationType)}
-                                        </div>
-                                        <div class="sledilka-notification-timestamp">
-                                            Обнаружено: ${new Date(notification.timestamp).toLocaleString()}
-                                        </div>
+                                    <div class="sledilka-notification-details">
+                                        ${getNotificationDetailsHTML(notification, notificationType)}
+                                    </div>
+                                    <div class="sledilka-notification-timestamp">
+                                        Обнаружено: ${new Date(notification.timestamp).toLocaleString()}
                                     </div>
                                 </div>
                             </div>
-                        `);
-                        item.find('.sledilka-delete-btn').on('click', (e) => {
-                            e.stopPropagation();
-                            const itemIndex = parseInt($(e.target).closest('.sledilka-notification-item').data('index'));
-                            if (!isNaN(itemIndex) && itemIndex >= 0 && itemIndex < notifications.length) {
-                                notifications.splice(itemIndex, 1);
-                                GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
-                                item.fadeOut(300, () => {
-                                    updateNotificationPanel();
-                                    updateBadge();
-                                });
-                            } else {
-                                console.error("Ошибка удаления: неверный индекс", itemIndex);
-                            }
-                        });
-                        item.find('.sledilka-toggle-read-btn').on('click', (e) => {
-                            e.stopPropagation();
-                            const itemIndex = parseInt($(e.target).closest('.sledilka-notification-item').data('index'));
-                            if (!isNaN(itemIndex) && itemIndex >= 0 && itemIndex < notifications.length) {
-                                notifications[itemIndex].read = !notifications[itemIndex].read;
-                                GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
-                                item.toggleClass('sledilka-notification-unread', !notifications[itemIndex].read);
-                                $(e.currentTarget).html(notifications[itemIndex].read ? envelopeIcons.read : envelopeIcons.unread);
-                                $(e.currentTarget).attr('title', notifications[itemIndex].read ? 'Пометить как непрочитанное' : 'Пометить как прочитанное');
+                        </div>
+                    `);
+                    item.find('.sledilka-delete-btn').on('click', (e) => {
+                        e.stopPropagation();
+                        const itemIndex = parseInt($(e.target).closest('.sledilka-notification-item').data('index'));
+                        if (!isNaN(itemIndex) && itemIndex >= 0 && itemIndex < notifications.length) {
+                            notifications.splice(itemIndex, 1);
+                            GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
+                            item.fadeOut(300, () => {
+                                updateNotificationPanel();
                                 updateBadge();
-                            } else {
-                                console.error("Ошибка чтения/нечтения: неверный индекс", itemIndex);
-                            }
-                        });
-                        panelContent.append(item);
+                            });
+                        } else {
+                            console.error("Ошибка удаления: неверный индекс", itemIndex);
+                        }
                     });
-                }
+                    item.find('.sledilka-toggle-read-btn').on('click', (e) => {
+                        e.stopPropagation();
+                        const itemIndex = parseInt($(e.target).closest('.sledilka-notification-item').data('index'));
+                        if (!isNaN(itemIndex) && itemIndex >= 0 && itemIndex < notifications.length) {
+                            notifications[itemIndex].read = !notifications[itemIndex].read;
+                            GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
+                            item.toggleClass('sledilka-notification-unread', !notifications[itemIndex].read);
+                            $(e.currentTarget).html(notifications[itemIndex].read ? envelopeIcons.read : envelopeIcons.unread);
+                            $(e.currentTarget).attr('title', notifications[itemIndex].read ? 'Пометить как непрочитанное' : 'Пометить как прочитанное');
+                            updateBadge();
+                        } else {
+                            console.error("Ошибка чтения/нечтения: неверный индекс", itemIndex);
+                        }
+                    });
+                    panelContent.append(item);
+                });
+            }
 
-                function formatDate(dateInfo) {
-                    if (!dateInfo || dateInfo.value === 'Не указана') return 'Не указано';
-                    const value = dateInfo.value;
-                    const displayType = dateInfo.displayType;
-                    if (typeof value === 'string' && isNaN(value)) {
-                        return value;
+            function formatDate(dateInfo) {
+                if (!dateInfo || dateInfo.value === 'Не указана') return 'Не указано';
+                const value = dateInfo.value;
+                const displayType = dateInfo.displayType;
+                if (typeof value === 'string' && isNaN(value)) {
+                    return value;
+                }
+                const ts = formatTimestamp(value);
+                if (typeof ts === 'string') return ts;
+                const date = new Date(ts * 1000);
+                const monthNames = ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"];
+                const quarter = Math.floor(date.getMonth() / 3) + 1;
+                if (displayType) {
+                    switch (displayType) {
+                        case 'date_month':
+                            return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+                        case 'date_quarter':
+                            return `Q${quarter} ${date.getFullYear()}`;
+                        case 'date_year':
+                            return `${date.getFullYear()}`;
+                        case 'date_full':
+                        default:
+                            return date.toLocaleDateString('ru-RU', {
+                                day: 'numeric',
+                                month: 'long',
+                                year: 'numeric'
+                            });
                     }
-                    const ts = formatTimestamp(value);
-                    if (typeof ts === 'string') return ts;
-                    const date = new Date(ts * 1000);
-                    const monthNames = ["январь", "февраль", "март", "апрель", "май", "июнь", "июль", "август", "сентябрь", "октябрь", "ноябрь", "декабрь"];
-                    const quarter = Math.floor(date.getMonth() / 3) + 1;
-                    if (displayType) {
-                        switch (displayType) {
-                            case 'date_month':
-                                return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
-                            case 'date_quarter':
-                                return `Q${quarter} ${date.getFullYear()}`;
-                            case 'date_year':
-                                return `${date.getFullYear()}`;
-                            case 'date_full':
-                            default:
-                                return date.toLocaleDateString('ru-RU', {
-                                    day: 'numeric',
-                                    month: 'long',
-                                    year: 'numeric'
+                }
+                return date.toLocaleDateString('ru-RU', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric'
+                });
+            }
+
+            function formatTimestamp(ts) {
+                if (!ts) return ts;
+                if (typeof ts === 'string') {
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(ts)) {
+                        return Math.floor(new Date(ts).getTime() / 1000);
+                    }
+                    return ts;
+                }
+                return typeof ts === 'number' ? ts : parseInt(ts, 10);
+            }
+
+            function updateStatusIndicator() {
+                 const updateTime = (key, selector, prefix) => {
+                    const lastUpdate = GM_getValue(key, 0);
+                    const indicator = $(selector);
+                    indicator.removeClass('status-ok status-warning status-alert1 status-alert2 status-critical status-unknown');
+                    if (!lastUpdate) {
+                        indicator.text(`${prefix}:??`).addClass('status-unknown').attr('title', 'Данные ни разу не обновлялись');
+                        return;
+                    }
+                    const hoursPassed = (Date.now() - lastUpdate) / MILLISECONDS_IN_HOUR;
+                    const days = Math.floor(hoursPassed / 24);
+                    const hours = Math.floor(hoursPassed % 24);
+                    indicator.attr('title', `Данные не обновлялись: ${days} д. и ${hours} ч.`);
+
+                    if (hoursPassed < 12) indicator.text(`${prefix}:OK`).addClass('status-ok');
+                    else if (hoursPassed < 24) indicator.text(`${prefix}:OK?`).addClass('status-warning');
+                    else if (hoursPassed < 48) indicator.text(`${prefix}:!`).addClass('status-alert1');
+                    else if (hoursPassed < 72) indicator.text(`${prefix}:!!`).addClass('status-alert2');
+                    else indicator.text(`${prefix}:!!!`).addClass('status-critical');
+                };
+
+                updateTime(STORAGE_KEYS.LAST_UPDATE_WISHLIST, '.sledilka-status-wishlist', 'Ж');
+                updateTime(STORAGE_KEYS.LAST_UPDATE_LIBRARY, '.sledilka-status-library', 'Б');
+            }
+
+            function updateBadge() {
+                $('.sledilka-notification-badge').text(getUnreadCount());
+            }
+
+            function getUnreadCount() {
+                return notifications.filter(n => !n.read).length;
+            }
+
+            async function getUserData() {
+                return new Promise(resolve => {
+                    GM_xmlhttpRequest({
+                        method: 'GET',
+                        url: 'https://store.steampowered.com/dynamicstore/userdata/?_t=' + Date.now(),
+                        onload: function(response) {
+                            try {
+                                const data = JSON.parse(response.responseText);
+                                resolve({
+                                    wishlist: data.rgWishlist || [],
+                                    owned: data.rgOwnedApps || []
                                 });
-                        }
-                    }
-                    return date.toLocaleDateString('ru-RU', {
-                        day: 'numeric',
-                        month: 'long',
-                        year: 'numeric'
-                    });
-                }
-
-                function formatTimestamp(ts) {
-                    if (!ts) return ts;
-                    if (typeof ts === 'string') {
-                        if (/^\d{4}-\d{2}-\d{2}$/.test(ts)) {
-                            return Math.floor(new Date(ts).getTime() / 1000);
-                        }
-                        return ts;
-                    }
-                    return typeof ts === 'number' ? ts : parseInt(ts, 10);
-                }
-
-                function updateStatusIndicator() {
-                     const updateTime = (key, selector, prefix) => {
-                        const lastUpdate = GM_getValue(key, 0);
-                        const indicator = $(selector);
-                        indicator.removeClass('status-ok status-warning status-alert1 status-alert2 status-critical status-unknown');
-                        if (!lastUpdate) {
-                            indicator.text(`${prefix}:??`).addClass('status-unknown').attr('title', 'Данные ни разу не обновлялись');
-                            return;
-                        }
-                        const hoursPassed = (Date.now() - lastUpdate) / MILLISECONDS_IN_HOUR;
-                        const days = Math.floor(hoursPassed / 24);
-                        const hours = Math.floor(hoursPassed % 24);
-                        indicator.attr('title', `Данные не обновлялись: ${days} д. и ${hours} ч.`);
-
-                        if (hoursPassed < 12) indicator.text(`${prefix}:OK`).addClass('status-ok');
-                        else if (hoursPassed < 24) indicator.text(`${prefix}:OK?`).addClass('status-warning');
-                        else if (hoursPassed < 48) indicator.text(`${prefix}:!`).addClass('status-alert1');
-                        else if (hoursPassed < 72) indicator.text(`${prefix}:!!`).addClass('status-alert2');
-                        else indicator.text(`${prefix}:!!!`).addClass('status-critical');
-                    };
-
-                    updateTime(STORAGE_KEYS.LAST_UPDATE_WISHLIST, '.sledilka-status-wishlist', 'Ж');
-                    updateTime(STORAGE_KEYS.LAST_UPDATE_LIBRARY, '.sledilka-status-library', 'Б');
-                }
-
-                function updateBadge() {
-                    $('.sledilka-notification-badge').text(getUnreadCount());
-                }
-
-                function getUnreadCount() {
-                    return notifications.filter(n => !n.read).length;
-                }
-
-                async function getUserData() {
-                    return new Promise(resolve => {
-                        GM_xmlhttpRequest({
-                            method: 'GET',
-                            url: 'https://store.steampowered.com/dynamicstore/userdata/?_t=' + Date.now(),
-                            onload: function(response) {
-                                try {
-                                    const data = JSON.parse(response.responseText);
-                                    resolve({
-                                        wishlist: data.rgWishlist || [],
-                                        owned: data.rgOwnedApps || []
-                                    });
-                                } catch (e) {
-                                    console.error("Ошибка парсинга UserData:", e);
-                                    resolve({
-                                        wishlist: [],
-                                        owned: []
-                                    });
-                                }
-                            },
-                            onerror: function(error) {
-                                console.error("Ошибка запроса UserData:", error);
+                            } catch (e) {
+                                console.error("Ошибка парсинга UserData:", e);
                                 resolve({
                                     wishlist: [],
                                     owned: []
                                 });
                             }
+                        },
+                        onerror: function(error) {
+                            console.error("Ошибка запроса UserData:", error);
+                            resolve({
+                                wishlist: [],
+                                owned: []
+                            });
+                        }
+                    });
+                });
+            }
+
+            async function fetchGameDetails(appIds, includeLanguages = false) {
+                if (!appIds || appIds.length === 0) return [];
+                const batches = [];
+                for (let i = 0; i < appIds.length; i += BATCH_SIZE) {
+                    batches.push(appIds.slice(i, i + BATCH_SIZE));
+                }
+                const allDetails = [];
+                for (const batch of batches) {
+                    const details = await fetchBatchDetails(batch, includeLanguages);
+                    allDetails.push(...details);
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
+                return allDetails;
+            }
+
+            async function fetchBatchDetails(appIds, includeLanguages = false, retries = MAX_API_RETRIES) {
+                const requestData = {
+                    ids: appIds.map(appid => ({
+                        appid
+                    })),
+                    context: {
+                        language: 'russian',
+                        country_code: 'US',
+                        steam_realm: 1
+                    },
+                    data_request: {
+                        include_assets: true,
+                        include_release: true,
+                        include_basic_info: true
+                    }
+                };
+                if (includeLanguages) {
+                    requestData.data_request.include_supported_languages = true;
+                }
+                try {
+                    return await new Promise((resolve, reject) => {
+                        GM_xmlhttpRequest({
+                            method: 'GET',
+                            url: `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json=${encodeURIComponent(JSON.stringify(requestData))}`,
+                            timeout: 15000,
+                            onload: function(response) {
+                                try {
+                                    if (response.status >= 200 && response.status < 400) {
+                                        const data = JSON.parse(response.responseText);
+                                        resolve(data.response?.store_items || []);
+                                    } else {
+                                        console.warn(`API Request Failed (Status: ${response.status}) for batch:`, appIds);
+                                        reject(new Error(`API Status ${response.status}`));
+                                    }
+                                } catch (e) {
+                                    console.error('Error parsing response:', e, response.responseText);
+                                    reject(new Error('Parse Error'));
+                                }
+                            },
+                            onerror: (error) => {
+                                console.error('API Request Network Error:', error);
+                                reject(new Error('Network Error'));
+                            },
+                            ontimeout: () => {
+                                console.warn('API Request Timeout for batch:', appIds);
+                                reject(new Error('Timeout'));
+                            }
                         });
                     });
-                }
-
-                async function fetchGameDetails(appIds, includeLanguages = false) {
-                    if (!appIds || appIds.length === 0) return [];
-                    const batches = [];
-                    for (let i = 0; i < appIds.length; i += BATCH_SIZE) {
-                        batches.push(appIds.slice(i, i + BATCH_SIZE));
-                    }
-                    const allDetails = [];
-                    for (const batch of batches) {
-                        const details = await fetchBatchDetails(batch, includeLanguages);
-                        allDetails.push(...details);
-                        await new Promise(resolve => setTimeout(resolve, 500));
-                    }
-                    return allDetails;
-                }
-
-                async function fetchBatchDetails(appIds, includeLanguages = false, retries = MAX_API_RETRIES) {
-                    const requestData = {
-                        ids: appIds.map(appid => ({
-                            appid
-                        })),
-                        context: {
-                            language: 'russian',
-                            country_code: 'US',
-                            steam_realm: 1
-                        },
-                        data_request: {
-                            include_assets: true,
-                            include_release: true,
-                            include_basic_info: true
-                        }
-                    };
-                    if (includeLanguages) {
-                        requestData.data_request.include_supported_languages = true;
-                    }
-                    try {
-                        return await new Promise((resolve, reject) => {
-                            GM_xmlhttpRequest({
-                                method: 'GET',
-                                url: `https://api.steampowered.com/IStoreBrowseService/GetItems/v1?input_json=${encodeURIComponent(JSON.stringify(requestData))}`,
-                                timeout: 15000,
-                                onload: function(response) {
-                                    try {
-                                        if (response.status >= 200 && response.status < 400) {
-                                            const data = JSON.parse(response.responseText);
-                                            resolve(data.response?.store_items || []);
-                                        } else {
-                                            console.warn(`API Request Failed (Status: ${response.status}) for batch:`, appIds);
-                                            reject(new Error(`API Status ${response.status}`));
-                                        }
-                                    } catch (e) {
-                                        console.error('Error parsing response:', e, response.responseText);
-                                        reject(new Error('Parse Error'));
-                                    }
-                                },
-                                onerror: (error) => {
-                                    console.error('API Request Network Error:', error);
-                                    reject(new Error('Network Error'));
-                                },
-                                ontimeout: () => {
-                                    console.warn('API Request Timeout for batch:', appIds);
-                                    reject(new Error('Timeout'));
-                                }
-                            });
-                        });
-                    } catch (error) {
-                        if (retries > 0) {
-                            console.log(`Retrying API request for batch (Retries left: ${retries})...`);
-                            await new Promise(resolve => setTimeout(resolve, API_RETRY_DELAY));
-                            return fetchBatchDetails(appIds, includeLanguages, retries - 1);
-                        } else {
-                            console.error(`API request failed after multiple retries for batch:`, appIds, error);
-                            showErrorIndicator(`Ошибка API Steam после ${MAX_API_RETRIES+1} попыток.`);
-                            return [];
-                        }
+                } catch (error) {
+                    if (retries > 0) {
+                        console.log(`Retrying API request for batch (Retries left: ${retries})...`);
+                        await new Promise(resolve => setTimeout(resolve, API_RETRY_DELAY));
+                        return fetchBatchDetails(appIds, includeLanguages, retries - 1);
+                    } else {
+                        console.error(`API request failed after multiple retries for batch:`, appIds, error);
+                        showErrorIndicator(`Ошибка API Steam после ${MAX_API_RETRIES+1} попыток.`);
+                        return [];
                     }
                 }
+            }
 
-                function getWishlistReleaseInfo(releaseData) {
-                    if (!releaseData) return {
-                        date: 'Не указана',
-                        type: 'unknown',
-                        displayType: null
-                    };
-                    const displayType = releaseData.coming_soon_display || null;
-                    if (releaseData.steam_release_date) return {
-                        date: releaseData.steam_release_date,
-                        type: 'date',
-                        displayType: displayType
-                    };
-                    if (releaseData.custom_release_date_message) return {
-                        date: releaseData.custom_release_date_message,
-                        type: 'custom',
-                        displayType: null
-                    };
-                    return {
-                        date: 'Не указана',
-                        type: 'unknown',
-                        displayType: null
-                    };
-                }
+            function getWishlistReleaseInfo(releaseData) {
+                if (!releaseData) return {
+                    date: 'Не указана',
+                    type: 'unknown',
+                    displayType: null
+                };
+                const displayType = releaseData.coming_soon_display || null;
+                if (releaseData.steam_release_date) return {
+                    date: releaseData.steam_release_date,
+                    type: 'date',
+                    displayType: displayType
+                };
+                if (releaseData.custom_release_date_message) return {
+                    date: releaseData.custom_release_date_message,
+                    type: 'custom',
+                    displayType: null
+                };
+                return {
+                    date: 'Не указана',
+                    type: 'unknown',
+                    displayType: null
+                };
+            }
 
-                function getOwnedGameInfo(gameDetails) {
-                    if (!gameDetails) return {
-                        is_early_access: false,
-                        ru_support: {
-                            supported: false,
-                            full_audio: false,
-                            subtitles: false
-                        }
-                    };
-                    const is_early_access = gameDetails.release?.is_early_access ?? false;
-                    let ru_support = {
+            function getOwnedGameInfo(gameDetails) {
+                if (!gameDetails) return {
+                    is_early_access: false,
+                    ru_support: {
                         supported: false,
                         full_audio: false,
                         subtitles: false
-                    };
-                    const russianLangData = gameDetails.supported_languages?.find(lang => lang.elanguage === 8);
-                    if (russianLangData) {
-                        ru_support = {
-                            supported: russianLangData.supported || false,
-                            full_audio: russianLangData.full_audio || false,
-                            subtitles: russianLangData.subtitles || false
-                        };
                     }
-                    return {
-                        is_early_access,
-                        ru_support
+                };
+                const is_early_access = gameDetails.release?.is_early_access ?? false;
+                let ru_support = {
+                    supported: false,
+                    full_audio: false,
+                    subtitles: false
+                };
+                const russianLangData = gameDetails.supported_languages?.find(lang => lang.elanguage === 8);
+                if (russianLangData) {
+                    ru_support = {
+                        supported: russianLangData.supported || false,
+                        full_audio: russianLangData.full_audio || false,
+                        subtitles: russianLangData.subtitles || false
                     };
                 }
+                return {
+                    is_early_access,
+                    ru_support
+                };
+            }
 
-                function compareOwnedGameInfo(oldInfo, newInfo) {
-                    const changes = [];
-                    if (oldInfo.is_early_access && !newInfo.is_early_access) {
-                        changes.push({ type: 'ea_status', old: oldInfo.is_early_access, new: newInfo.is_early_access });
-                    }
-
-                    const oldSupport = oldInfo.ru_support || { supported: false, full_audio: false, subtitles: false };
-                    const newSupport = newInfo.ru_support;
-
-                    const added = {
-                        supported: !oldSupport.supported && newSupport.supported,
-                        full_audio: !oldSupport.full_audio && newSupport.full_audio,
-                        subtitles: !oldSupport.subtitles && newSupport.subtitles
-                    };
-                    const removed = {
-                        supported: oldSupport.supported && !newSupport.supported,
-                        full_audio: oldSupport.full_audio && !newSupport.full_audio,
-                        subtitles: oldSupport.subtitles && !newSupport.subtitles
-                    };
-
-                    const hasAdded = Object.values(added).some(v => v);
-                    const hasRemoved = Object.values(removed).some(v => v);
-
-                    if (hasAdded || hasRemoved) {
-                        changes.push({
-                            type: 'ru_lang',
-                            details: {
-                                oldState: oldSupport,
-                                newState: newSupport,
-                                added,
-                                removed
-                            }
-                        });
-                    }
-
-                    return changes;
+            function compareOwnedGameInfo(oldInfo, newInfo) {
+                const changes = [];
+                if (oldInfo.is_early_access && !newInfo.is_early_access) {
+                    changes.push({ type: 'ea_status', old: oldInfo.is_early_access, new: newInfo.is_early_access });
                 }
 
-                async function updateData() {
-                    if (updateInProgress) {
-                        showInfoIndicator("Обновление уже выполняется...");
-                        return;
-                    }
-                    updateInProgress = true;
-                    $('.sledilka-refresh-btn').prop('disabled', true);
-                    const refreshBtnText = $('.sledilka-refresh-btn').contents().filter(function() { return this.nodeType === 3; });
-                    if (refreshBtnText.length) refreshBtnText[0].nodeValue = ' Обновить...';
+                const oldSupport = oldInfo.ru_support || { supported: false, full_audio: false, subtitles: false };
+                const newSupport = newInfo.ru_support;
 
-                    const updateSettings = GM_getValue(STORAGE_KEYS.UPDATE_SETTINGS, {
-                        wishlist: true,
-                        library: true,
-                        recheckRussian: true,
-                        recheckPartial: false
+                const added = {
+                    supported: !oldSupport.supported && newSupport.supported,
+                    full_audio: !oldSupport.full_audio && newSupport.full_audio,
+                    subtitles: !oldSupport.subtitles && newSupport.subtitles
+                };
+                const removed = {
+                    supported: oldSupport.supported && !newSupport.supported,
+                    full_audio: oldSupport.full_audio && !newSupport.full_audio,
+                    subtitles: oldSupport.subtitles && !newSupport.subtitles
+                };
+
+                const hasAdded = Object.values(added).some(v => v);
+                const hasRemoved = Object.values(removed).some(v => v);
+
+                if (hasAdded || hasRemoved) {
+                    changes.push({
+                        type: 'ru_lang',
+                        details: {
+                            oldState: oldSupport,
+                            newState: newSupport,
+                            added,
+                            removed
+                        }
                     });
-                    if (!updateSettings.wishlist && !updateSettings.library) {
-                        showInfoIndicator("Не выбрано, что обновлять. Проверьте настройки (⚙️).");
-                        updateInProgress = false;
-                        $('.sledilka-refresh-btn').prop('disabled', false);
-                        if(refreshBtnText.length) refreshBtnText[0].nodeValue = ' Обновить';
-                        return;
+                }
+
+                return changes;
+            }
+
+            async function updateData() {
+                if (updateInProgress) {
+                    showInfoIndicator("Обновление уже выполняется...");
+                    return;
+                }
+                updateInProgress = true;
+                $('.sledilka-refresh-btn').prop('disabled', true);
+                const refreshBtnText = $('.sledilka-refresh-btn').contents().filter(function() { return this.nodeType === 3; });
+                if (refreshBtnText.length) refreshBtnText[0].nodeValue = ' Обновить...';
+
+                const updateSettings = GM_getValue(STORAGE_KEYS.UPDATE_SETTINGS, {
+                    wishlist: true,
+                    library: true,
+                    recheckRussian: true,
+                    recheckPartial: false
+                });
+                if (!updateSettings.wishlist && !updateSettings.library) {
+                    showInfoIndicator("Не выбрано, что обновлять. Проверьте настройки (⚙️).");
+                    updateInProgress = false;
+                    $('.sledilka-refresh-btn').prop('disabled', false);
+                    if(refreshBtnText.length) refreshBtnText[0].nodeValue = ' Обновить';
+                    return;
+                }
+
+                showLoadingIndicator("Получение списков игр...");
+                updateProgressBar(1);
+                try {
+                    const {
+                        wishlist: officialWishlistAppIds,
+                        owned: currentOwnedAppIds
+                    } = await getUserData();
+
+                    let localWishlistDb = {};
+                    try { localWishlistDb = JSON.parse(GM_getValue(UIWL_DB_KEY, "{}")); } catch(e) {}
+                    const localWishlistAppIds = Object.keys(localWishlistDb).map(Number);
+
+                    const currentWishlistAppIds = [...new Set([...officialWishlistAppIds, ...localWishlistAppIds])];
+
+                    let allNewNotifications = [];
+
+                    if(updateSettings.wishlist) {
+                        const wishlistPreviousData = GM_getValue(STORAGE_KEYS.WISHLIST_GAME_DATA, {});
+                        const currentWishlistDataToSave = { ...wishlistPreviousData };
+                        const currentWishlistAppIdSet = new Set(currentWishlistAppIds);
+
+                        const previouslyTrackedAppIds = Object.keys(wishlistPreviousData).map(id => parseInt(id, 10));
+                        const removedAppIds = previouslyTrackedAppIds.filter(appid => !currentWishlistAppIdSet.has(appid));
+                        removedAppIds.forEach(appid => {
+                            delete currentWishlistDataToSave[String(appid)];
+                        });
+
+                        showLoadingIndicator(`Загрузка данных для ${currentWishlistAppIds.length} игр из желаемого...`);
+                        updateProgressBar(5);
+
+                        if (currentWishlistAppIds.length > 0) {
+                            const wishlistDetails = await fetchGameDetails(currentWishlistAppIds, true);
+                            updateProgressBar(25);
+
+                            wishlistDetails.forEach(game => {
+                                if (!game || !game.appid) return;
+                                const appid = game.appid;
+                                const prevGame = wishlistPreviousData[appid];
+                                const currentRelease = getWishlistReleaseInfo(game.release);
+                                const currentGameInfo = getOwnedGameInfo(game);
+
+                                const has_demo = !!(game.related_items?.demo_appid || game.related_items?.demos || game.related_items?.standalone_demos || game.related_items?.standalone_demo_appid);
+                                const has_playtest = !!(game.related_items?.playtests);
+
+                                const isLocal = !!localWishlistDb[appid] && !officialWishlistAppIds.includes(appid);
+                                const notifSource = isLocal ? 'local_wishlist' : 'wishlist';
+
+                                currentWishlistDataToSave[appid] = {
+                                    name: game.name,
+                                    rawRelease: game.release,
+                                    releaseInfo: currentRelease,
+                                    header: game.assets?.header || null,
+                                    is_early_access: currentGameInfo.is_early_access,
+                                    ru_support: currentGameInfo.ru_support,
+                                    has_demo: has_demo,
+                                    has_playtest: has_playtest
+                                };
+
+                                if (prevGame) {
+                                    if (currentRelease.date !== prevGame.releaseInfo?.date || currentRelease.type !== prevGame.releaseInfo?.type || currentRelease.displayType !== prevGame.releaseInfo?.displayType) {
+                                        allNewNotifications.push({ source: notifSource, appid: appid, name: game.name, header: game.assets?.header, oldDate: prevGame.releaseInfo ? { value: prevGame.releaseInfo.date, displayType: prevGame.releaseInfo.displayType } : { value: 'Не указана', displayType: null }, newDate: { value: currentRelease.date, displayType: currentRelease.displayType }, timestamp: Date.now(), read: false });
+                                    }
+
+                                    const hadOldStatusData = prevGame.hasOwnProperty('is_early_access') && prevGame.hasOwnProperty('ru_support');
+                                    if (hadOldStatusData) {
+                                        const oldGameInfo = { is_early_access: prevGame.is_early_access, ru_support: prevGame.ru_support };
+                                        const statusChanges = compareOwnedGameInfo(oldGameInfo, currentGameInfo);
+                                        statusChanges.forEach(change => {
+                                            allNewNotifications.push({ source: notifSource, changeType: change.type, appid: appid, name: game.name, header: game.assets?.header, ruChangeDetails: change.type === 'ru_lang' ? change.details : undefined, timestamp: Date.now(), read: false });
+                                        });
+                                    }
+
+                                    if (prevGame.hasOwnProperty('has_demo') && prevGame.has_demo !== has_demo) {
+                                        allNewNotifications.push({
+                                            source: notifSource,
+                                            changeType: has_demo ? 'demo_added' : 'demo_removed',
+                                            appid: appid,
+                                            name: game.name,
+                                            header: game.assets?.header,
+                                            timestamp: Date.now(),
+                                            read: false
+                                        });
+                                    }
+
+                                    if (prevGame.hasOwnProperty('has_playtest') && prevGame.has_playtest !== has_playtest) {
+                                        allNewNotifications.push({
+                                            source: notifSource,
+                                            changeType: has_playtest ? 'playtest_added' : 'playtest_removed',
+                                            appid: appid,
+                                            name: game.name,
+                                            header: game.assets?.header,
+                                            timestamp: Date.now(),
+                                            read: false
+                                        });
+                                    }
+                                }
+                            });
+                        }
+                        GM_setValue(STORAGE_KEYS.WISHLIST_GAME_DATA, currentWishlistDataToSave);
+                        GM_setValue(STORAGE_KEYS.LAST_UPDATE_WISHLIST, Date.now());
                     }
 
-                    showLoadingIndicator("Получение списков игр...");
-                    updateProgressBar(1);
-                    try {
-                        const {
-                            wishlist: currentWishlistAppIds,
-                            owned: currentOwnedAppIds
-                        } = await getUserData();
-                        let allNewNotifications = [];
+                    if(updateSettings.library) {
+                        const ownedPreviousData = GM_getValue(STORAGE_KEYS.OWNED_APPS_DATA, {});
+                        const ownedCheckedSet = new Set(GM_getValue(STORAGE_KEYS.OWNED_CHECKED_V2, []));
+                        const currentOwnedDataToSave = { ...ownedPreviousData };
 
-                        if(updateSettings.wishlist) {
-                            const wishlistPreviousData = GM_getValue(STORAGE_KEYS.WISHLIST_GAME_DATA, {});
-                            const currentWishlistDataToSave = { ...wishlistPreviousData };
-                            const currentWishlistAppIdSet = new Set(currentWishlistAppIds);
+                        let appsToCheckInLibrary = currentOwnedAppIds.filter(appid => !ownedCheckedSet.has(appid));
 
-                            const previouslyTrackedAppIds = Object.keys(wishlistPreviousData).map(id => parseInt(id, 10));
-                            const removedAppIds = previouslyTrackedAppIds.filter(appid => !currentWishlistAppIdSet.has(appid));
-                            removedAppIds.forEach(appid => {
-                                delete currentWishlistDataToSave[String(appid)];
+                        if (!updateSettings.recheckRussian) {
+                            appsToCheckInLibrary = appsToCheckInLibrary.filter(appid => {
+                                const prevData = ownedPreviousData[appid];
+                                if (!prevData || !prevData.ru_support) {
+                                    return true;
+                                }
+
+                                const hasFullSupport = prevData.ru_support.supported && prevData.ru_support.full_audio && prevData.ru_support.subtitles;
+                                const hasAnySupport = prevData.ru_support.supported || prevData.ru_support.full_audio || prevData.ru_support.subtitles;
+
+                                if (updateSettings.recheckPartial) {
+                                    return !hasFullSupport;
+                                } else {
+                                    return !hasAnySupport;
+                                }
                             });
+                        }
 
-                            showLoadingIndicator(`Загрузка данных для ${currentWishlistAppIds.length} игр из желаемого...`);
-                            updateProgressBar(5);
+                        const totalOwnedToCheck = appsToCheckInLibrary.length;
+                        showLoadingIndicator(`Проверка ${totalOwnedToCheck} игр из библиотеки...`);
 
-                            if (currentWishlistAppIds.length > 0) {
-                                const wishlistDetails = await fetchGameDetails(currentWishlistAppIds, true);
-                                updateProgressBar(25);
-
-                                wishlistDetails.forEach(game => {
+                        if (totalOwnedToCheck > 0) {
+                            for (let i = 0; i < totalOwnedToCheck; i += BATCH_SIZE) {
+                                const batch = appsToCheckInLibrary.slice(i, i + BATCH_SIZE);
+                                const progress = 50 + Math.round(((i) / (totalOwnedToCheck || 1)) * 50);
+                                updateProgressBar(progress);
+                                showLoadingIndicator(`Проверка библиотеки... (${i}/${totalOwnedToCheck})`);
+                                const details = await fetchGameDetails(batch, true);
+                                details.forEach(game => {
                                     if (!game || !game.appid) return;
                                     const appid = game.appid;
-                                    const prevGame = wishlistPreviousData[appid];
-                                    const currentRelease = getWishlistReleaseInfo(game.release);
+                                    if (game.type !== 0 || game.visible === false) { ownedCheckedSet.add(appid); delete currentOwnedDataToSave[appid]; return; }
+                                    const name = game.name || ownedPreviousData[appid]?.name || `Игра #${appid}`;
+                                    if (!name || name.trim() === '' || name === `Игра #${appid}`) { ownedCheckedSet.add(appid); delete currentOwnedDataToSave[appid]; return; }
+
+                                    const prevGameData = ownedPreviousData[appid];
                                     const currentGameInfo = getOwnedGameInfo(game);
+                                    currentOwnedDataToSave[appid] = { name: name, ...currentGameInfo };
 
-                                    currentWishlistDataToSave[appid] = {
-                                        name: game.name,
-                                        rawRelease: game.release,
-                                        releaseInfo: currentRelease,
-                                        header: game.assets?.header || null,
-                                        is_early_access: currentGameInfo.is_early_access,
-                                        ru_support: currentGameInfo.ru_support
-                                    };
-
-                                    if (prevGame) {
-                                        if (currentRelease.date !== prevGame.releaseInfo?.date || currentRelease.type !== prevGame.releaseInfo?.type || currentRelease.displayType !== prevGame.releaseInfo?.displayType) {
-                                            allNewNotifications.push({ source: 'wishlist', appid: appid, name: game.name, header: game.assets?.header, oldDate: prevGame.releaseInfo ? { value: prevGame.releaseInfo.date, displayType: prevGame.releaseInfo.displayType } : { value: 'Не указана', displayType: null }, newDate: { value: currentRelease.date, displayType: currentRelease.displayType }, timestamp: Date.now(), read: false });
-                                        }
-
-                                        const hadOldStatusData = prevGame.hasOwnProperty('is_early_access') && prevGame.hasOwnProperty('ru_support');
-                                        if (hadOldStatusData) {
-                                            const oldGameInfo = { is_early_access: prevGame.is_early_access, ru_support: prevGame.ru_support };
-                                            const statusChanges = compareOwnedGameInfo(oldGameInfo, currentGameInfo);
-                                            statusChanges.forEach(change => {
-                                                allNewNotifications.push({ source: 'wishlist', changeType: change.type, appid: appid, name: game.name, header: game.assets?.header, ruChangeDetails: change.type === 'ru_lang' ? change.details : undefined, timestamp: Date.now(), read: false });
-                                            });
+                                    if (prevGameData) {
+                                        const hadOldStatusData = prevGameData.hasOwnProperty('is_early_access') && prevGameData.hasOwnProperty('ru_support');
+                                        if(hadOldStatusData) {
+                                            const detectedChanges = compareOwnedGameInfo(prevGameData, currentGameInfo);
+                                            detectedChanges.forEach(change => allNewNotifications.push({ source: 'library', changeType: change.type, appid: appid, name: name, header: game.assets?.header, ruChangeDetails: change.type === 'ru_lang' ? change.details : undefined, timestamp: Date.now(), read: false }));
                                         }
                                     }
                                 });
                             }
-                            GM_setValue(STORAGE_KEYS.WISHLIST_GAME_DATA, currentWishlistDataToSave);
-                            GM_setValue(STORAGE_KEYS.LAST_UPDATE_WISHLIST, Date.now());
                         }
+                        const currentOwnedAppIdSet = new Set(currentOwnedAppIds);
+                        const previouslyTrackedAppIds = Object.keys(ownedPreviousData).map(id => parseInt(id, 10));
+                        const removedAppIds = previouslyTrackedAppIds.filter(appid => !currentOwnedAppIdSet.has(appid));
+                        removedAppIds.forEach(appid => { delete currentOwnedDataToSave[appid]; ownedCheckedSet.delete(appid); });
 
-                        if(updateSettings.library) {
-                            const ownedPreviousData = GM_getValue(STORAGE_KEYS.OWNED_APPS_DATA, {});
-                            const ownedCheckedSet = new Set(GM_getValue(STORAGE_KEYS.OWNED_CHECKED_V2, []));
-                            const currentOwnedDataToSave = { ...ownedPreviousData };
-
-                            let appsToCheckInLibrary = currentOwnedAppIds.filter(appid => !ownedCheckedSet.has(appid));
-
-                            if (!updateSettings.recheckRussian) {
-                                appsToCheckInLibrary = appsToCheckInLibrary.filter(appid => {
-                                    const prevData = ownedPreviousData[appid];
-                                    if (!prevData || !prevData.ru_support) {
-                                        return true;
-                                    }
-
-                                    const hasFullSupport = prevData.ru_support.supported && prevData.ru_support.full_audio && prevData.ru_support.subtitles;
-                                    const hasAnySupport = prevData.ru_support.supported || prevData.ru_support.full_audio || prevData.ru_support.subtitles;
-
-                                    if (updateSettings.recheckPartial) {
-                                        return !hasFullSupport;
-                                    } else {
-                                        return !hasAnySupport;
-                                    }
-                                });
-                            }
-
-                            const totalOwnedToCheck = appsToCheckInLibrary.length;
-                            showLoadingIndicator(`Проверка ${totalOwnedToCheck} игр из библиотеки...`);
-
-                            if (totalOwnedToCheck > 0) {
-                                for (let i = 0; i < totalOwnedToCheck; i += BATCH_SIZE) {
-                                    const batch = appsToCheckInLibrary.slice(i, i + BATCH_SIZE);
-                                    const progress = 50 + Math.round(((i) / (totalOwnedToCheck || 1)) * 50);
-                                    updateProgressBar(progress);
-                                    showLoadingIndicator(`Проверка библиотеки... (${i}/${totalOwnedToCheck})`);
-                                    const details = await fetchGameDetails(batch, true);
-                                    details.forEach(game => {
-                                        if (!game || !game.appid) return;
-                                        const appid = game.appid;
-                                        if (game.type !== 0 || game.visible === false) { ownedCheckedSet.add(appid); delete currentOwnedDataToSave[appid]; return; }
-                                        const name = game.name || ownedPreviousData[appid]?.name || `Игра #${appid}`;
-                                        if (!name || name.trim() === '' || name === `Игра #${appid}`) { ownedCheckedSet.add(appid); delete currentOwnedDataToSave[appid]; return; }
-
-                                        const prevGameData = ownedPreviousData[appid];
-                                        const currentGameInfo = getOwnedGameInfo(game);
-                                        currentOwnedDataToSave[appid] = { name: name, ...currentGameInfo };
-
-                                        if (prevGameData) {
-                                            const hadOldStatusData = prevGameData.hasOwnProperty('is_early_access') && prevGameData.hasOwnProperty('ru_support');
-                                            if(hadOldStatusData) {
-                                                const detectedChanges = compareOwnedGameInfo(prevGameData, currentGameInfo);
-                                                detectedChanges.forEach(change => allNewNotifications.push({ source: 'library', changeType: change.type, appid: appid, name: name, header: game.assets?.header, ruChangeDetails: change.type === 'ru_lang' ? change.details : undefined, timestamp: Date.now(), read: false }));
-                                            }
-                                        }
-                                    });
-                                }
-                            }
-                            const currentOwnedAppIdSet = new Set(currentOwnedAppIds);
-                            const previouslyTrackedAppIds = Object.keys(ownedPreviousData).map(id => parseInt(id, 10));
-                            const removedAppIds = previouslyTrackedAppIds.filter(appid => !currentOwnedAppIdSet.has(appid));
-                            removedAppIds.forEach(appid => { delete currentOwnedDataToSave[appid]; ownedCheckedSet.delete(appid); });
-
-                            GM_setValue(STORAGE_KEYS.OWNED_APPS_DATA, currentOwnedDataToSave);
-                            GM_setValue(STORAGE_KEYS.OWNED_CHECKED_V2, Array.from(ownedCheckedSet));
-                            GM_setValue(STORAGE_KEYS.LAST_UPDATE_LIBRARY, Date.now());
-                        }
-
-                        if (allNewNotifications.length > 0) {
-                            notifications = [...allNewNotifications, ...notifications];
-                            notifications.sort((a, b) => b.timestamp - a.timestamp);
-                            notifications = notifications.slice(0, 500);
-                            GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
-                        }
-
-                        removeLoadingIndicator();
-                        updateNotificationPanel();
-                        updateBadge();
-                        updateStatusIndicator();
-                        updateProgressBar(100);
-                        showInfoIndicator(`Обновление завершено. Новых уведомлений: ${allNewNotifications.length}.`);
-                    } catch (e) {
-                        console.error('Ошибка при обновлении данных:', e);
-                        showErrorIndicator(`Ошибка обновления: ${e.message || 'Неизвестная ошибка'}`);
-                        updateStatusIndicator();
-                    } finally {
-                        updateInProgress = false;
-                         $('.sledilka-refresh-btn').prop('disabled', false);
-                        if(refreshBtnText.length) refreshBtnText[0].nodeValue = ' Обновить';
-                        setTimeout(() => updateProgressBar(0), 500);
+                        GM_setValue(STORAGE_KEYS.OWNED_APPS_DATA, currentOwnedDataToSave);
+                        GM_setValue(STORAGE_KEYS.OWNED_CHECKED_V2, Array.from(ownedCheckedSet));
+                        GM_setValue(STORAGE_KEYS.LAST_UPDATE_LIBRARY, Date.now());
                     }
+
+                    if (allNewNotifications.length > 0) {
+                        notifications = [...allNewNotifications, ...notifications];
+                        notifications.sort((a, b) => b.timestamp - a.timestamp);
+                        notifications = notifications.slice(0, 500);
+                        GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
+                    }
+
+                    removeLoadingIndicator();
+                    updateNotificationPanel();
+                    updateBadge();
+                    updateStatusIndicator();
+                    updateProgressBar(100);
+                    showInfoIndicator(`Обновление завершено. Новых уведомлений: ${allNewNotifications.length}.`);
+                } catch (e) {
+                    console.error('Ошибка при обновлении данных:', e);
+                    showErrorIndicator(`Ошибка обновления: ${e.message || 'Неизвестная ошибка'}`);
+                    updateStatusIndicator();
+                } finally {
+                    updateInProgress = false;
+                     $('.sledilka-refresh-btn').prop('disabled', false);
+                    if(refreshBtnText.length) refreshBtnText[0].nodeValue = ' Обновить';
+                    setTimeout(() => updateProgressBar(0), 500);
                 }
+            }
 
-                function showCalendarModal() {
-                    const gameData = GM_getValue(STORAGE_KEYS.WISHLIST_GAME_DATA, {});
-                    const allGamesWithDates = Object.values(gameData).filter(g => g.releaseInfo?.date && typeof g.releaseInfo.date === 'number');
-                    const availableYears = [...new Set(allGamesWithDates.map(g => new Date(g.releaseInfo.date * 1000).getFullYear()))].sort((a, b) => a - b);
+            function showCalendarModal() {
+                const gameData = GM_getValue(STORAGE_KEYS.WISHLIST_GAME_DATA, {});
+                const allGamesWithDates = Object.values(gameData).filter(g => g.releaseInfo?.date && typeof g.releaseInfo.date === 'number');
+                const availableYears = [...new Set(allGamesWithDates.map(g => new Date(g.releaseInfo.date * 1000).getFullYear()))].sort((a, b) => a - b);
 
-                    const yearOptions = availableYears.map(y => `<option value="${y}">${y}</option>`).join('');
-                    const monthOptions = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
-                        .map((m, i) => `<option value="${i}">${m}</option>`).join('');
+                const yearOptions = availableYears.map(y => `<option value="${y}">${y}</option>`).join('');
+                const monthOptions = ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"]
+                    .map((m, i) => `<option value="${i}">${m}</option>`).join('');
 
-                    const wtmodal = $(`
+                const wtmodal = $(`
                         <div class="calendar-wtmodal">
                             <style>
                                 .calendar-filters { display: flex; align-items: center; gap: 10px; flex-grow: 1; justify-content: flex-end; }
@@ -13310,230 +13351,232 @@ if (headerCtn) {
                             <div class="calendar-content"></div>
                         </div>`);
 
-                    const clickHandler = (e) => {
-                        if (!$(e.target).closest('.calendar-wtmodal').length) {
-                            wtmodal.remove();
-                            $(document).off('click', clickHandler);
-                        }
-                    };
-
-                    wtmodal.find('.calendar-close').click((e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
+                const clickHandler = (e) => {
+                    if (!$(e.target).closest('.calendar-wtmodal').length) {
                         wtmodal.remove();
                         $(document).off('click', clickHandler);
-                    });
+                    }
+                };
 
-                    wtmodal.click(e => e.stopPropagation());
-                    $(document).on('click', clickHandler);
-                    $('body').append(wtmodal);
-                    wtmodal.addClass('active');
+                wtmodal.find('.calendar-close').click((e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    wtmodal.remove();
+                    $(document).off('click', clickHandler);
+                });
 
-                    let visibleMonthsCount = 3;
+                wtmodal.click(e => e.stopPropagation());
+                $(document).on('click', clickHandler);
+                $('body').append(wtmodal);
+                wtmodal.addClass('active');
 
-                    const renderCalendar = (options = {}) => {
-                        const { startYear = null, startMonth = null, showAll = false } = options;
-                        const monthsData = getGamesByMonths(gameData, { startYear, startMonth, showAll });
-                        const content = wtmodal.find('.calendar-content').empty();
-                        visibleMonthsCount = 3;
+                let visibleMonthsCount = 3;
 
-                        if (monthsData.length === 0) {
-                            content.append('<div style="text-align:center; padding: 30px; color: #8f98a0;">Игры по заданным фильтрам не найдены.</div>');
-                            return;
-                        }
-
-                        const displayMonths = () => {
-                            content.find('.calendar-month, .load-more-months').remove();
-                            const visibleData = monthsData.slice(0, visibleMonthsCount);
-
-                            visibleData.forEach(({ month, year, games }) => {
-                                const monthDate = new Date(year, month);
-                                const monthName = monthDate.toLocaleString('ru-RU', { month: 'long' });
-                                const daysInMonth = new Date(year, month + 1, 0).getDate();
-                                const firstDay = new Date(year, month, 1).getDay();
-                                const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
-                                const monthBlock = $(`<div class="calendar-month"> <div class="month-header">${monthName} ${year}</div> <div class="calendar-grid"></div> </div>`);
-                                const grid = monthBlock.find('.calendar-grid');
-                                grid.append('<div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>');
-
-                                for (let i = 0; i < adjustedFirstDay; i++) {
-                                    grid.append('<div class="calendar-day"></div>');
-                                }
-
-                                for (let day = 1; day <= daysInMonth; day++) {
-                                    const dayGames = games.filter(g => {
-                                        const releaseDate = new Date(g.releaseInfo.date * 1000);
-                                        return releaseDate.getDate() === day && releaseDate.getMonth() === month && releaseDate.getFullYear() === year;
-                                    });
-                                    const dayElement = $(`<div class="calendar-day"> <div class="day-number">${day}</div> </div>`);
-                                    dayGames.sort((a, b) => a.name.localeCompare(b.name)).forEach(game => {
-                                        const isApproximate = ['date_month', 'date_quarter', 'date_year'].includes(game.releaseInfo.displayType);
-                                        const imageUrl = game.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/${game.header}` : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
-                                        const gameElement = $(`<a href="https://store.steampowered.com/app/${game.appid}" target="_blank" class="calendar-game ${isApproximate ? 'calendar-game-approximate wt-tooltip' : ''}"> <img src="${imageUrl}" class="calendar-game-image" loading="lazy" onerror="this.onerror=null; this.src='https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit='contain';"> <div class="calendar-game-title">${game.name}</div> ${isApproximate ? `<div class="wt-tooltiptext">Приблизительная дата: ${getApproximateDateText(game.releaseInfo)}</div>` : ''} </a>`);
-                                        dayElement.append(gameElement);
-                                    });
-                                    grid.append(dayElement);
-                                }
-                                content.append(monthBlock);
-                            });
-
-                            if (visibleMonthsCount < monthsData.length) {
-                                content.append(`<div class="load-more-months"> <button class="load-more-btn">Показать ещё 3 месяца</button> </div>`);
-                                content.find('.load-more-btn').click(() => {
-                                    visibleMonthsCount += 3;
-                                    displayMonths();
-                                });
-                            }
-                        };
-                        displayMonths();
-                    };
-
-                    wtmodal.find('#calendarApplyBtn').on('click', () => {
-                        const yearVal = wtmodal.find('#calendarYearFilter').val();
-                        const monthVal = wtmodal.find('#calendarMonthFilter').val();
-                        if (!yearVal) {
-                            alert("Пожалуйста, выберите год для применения фильтра.");
-                            return;
-                        }
-                        const startYear = parseInt(yearVal, 10);
-                        const startMonth = monthVal ? parseInt(monthVal, 10) : 0;
-                        renderCalendar({ startYear, startMonth });
-                    });
-
-                    wtmodal.find('#calendarShowAllBtn').on('click', () => {
-                        wtmodal.find('select').val('');
-                        renderCalendar({ showAll: true });
-                    });
-
-                    wtmodal.find('#calendarResetBtn').on('click', () => {
-                        wtmodal.find('select').val('');
-                        renderCalendar();
-                    });
-
-                    renderCalendar();
-                }
-
-                function getGamesByMonths(gameData, options = {}) {
+                const renderCalendar = (options = {}) => {
                     const { startYear = null, startMonth = null, showAll = false } = options;
+                    const monthsData = getGamesByMonths(gameData, { startYear, startMonth, showAll });
+                    const content = wtmodal.find('.calendar-content').empty();
+                    visibleMonthsCount = 3;
 
-                    let games = Object.entries(gameData).map(([appid, game]) => ({
-                            appid: parseInt(appid),
-                            ...game,
-                            releaseDate: game.releaseInfo?.date && typeof game.releaseInfo.date === 'number' ? new Date(game.releaseInfo.date * 1000) : null
-                        }))
-                        .filter(g => g.releaseDate);
+                    if (monthsData.length === 0) {
+                        content.append('<div style="text-align:center; padding: 30px; color: #8f98a0;">Игры по заданным фильтрам не найдены.</div>');
+                        return;
+                    }
 
-                    if (!showAll) {
-                        let year, month;
+                    const displayMonths = () => {
+                        content.find('.calendar-month, .load-more-months').remove();
+                        const visibleData = monthsData.slice(0, visibleMonthsCount);
 
-                        if (startYear !== null) {
-                            year = startYear;
-                            month = startMonth !== null ? startMonth : 0;
-                        } else {
-                            const now = new Date();
-                            year = now.getFullYear();
-                            month = now.getMonth();
-                        }
+                        visibleData.forEach(({ month, year, games }) => {
+                            const monthDate = new Date(year, month);
+                            const monthName = monthDate.toLocaleString('ru-RU', { month: 'long' });
+                            const daysInMonth = new Date(year, month + 1, 0).getDate();
+                            const firstDay = new Date(year, month, 1).getDay();
+                            const adjustedFirstDay = firstDay === 0 ? 6 : firstDay - 1;
+                            const monthBlock = $(`<div class="calendar-month"> <div class="month-header">${monthName} ${year}</div> <div class="calendar-grid"></div> </div>`);
+                            const grid = monthBlock.find('.calendar-grid');
+                            grid.append('<div>Пн</div><div>Вт</div><div>Ср</div><div>Чт</div><div>Пт</div><div>Сб</div><div>Вс</div>');
 
-                        games = games.filter(g => {
-                            const releaseYear = g.releaseDate.getFullYear();
-                            const releaseMonth = g.releaseDate.getMonth();
-                            return (releaseYear > year) || (releaseYear === year && releaseMonth >= month);
+                            for (let i = 0; i < adjustedFirstDay; i++) {
+                                grid.append('<div class="calendar-day"></div>');
+                            }
+
+                            for (let day = 1; day <= daysInMonth; day++) {
+                                const dayGames = games.filter(g => {
+                                    const releaseDate = new Date(g.releaseInfo.date * 1000);
+                                    return releaseDate.getDate() === day && releaseDate.getMonth() === month && releaseDate.getFullYear() === year;
+                                });
+                                const dayElement = $(`<div class="calendar-day"> <div class="day-number">${day}</div> </div>`);
+                                dayGames.sort((a, b) => a.name.localeCompare(b.name)).forEach(game => {
+                                    const isApproximate = ['date_month', 'date_quarter', 'date_year'].includes(game.releaseInfo.displayType);
+                                    const imageUrl = game.header ? `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/${game.header}` : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${game.appid}/header.jpg`;
+                                    const gameElement = $(`<a href="https://store.steampowered.com/app/${game.appid}" target="_blank" class="calendar-game ${isApproximate ? 'calendar-game-approximate wt-tooltip' : ''}"> <img src="${imageUrl}" class="calendar-game-image" loading="lazy" onerror="this.onerror=null; this.src='https://i.imgur.com/yF0hawg.jpeg'; this.style.objectFit='contain';"> <div class="calendar-game-title">${game.name}</div> ${isApproximate ? `<div class="wt-tooltiptext">Приблизительная дата: ${getApproximateDateText(game.releaseInfo)}</div>` : ''} </a>`);
+                                    dayElement.append(gameElement);
+                                });
+                                grid.append(dayElement);
+                            }
+                            content.append(monthBlock);
                         });
-                    }
 
-                    const monthMap = games.reduce((acc, game) => {
-                        const year = game.releaseDate.getFullYear();
-                        const month = game.releaseDate.getMonth();
-                        const key = `${year}-${String(month).padStart(2, '0')}`;
-                        if (!acc[key]) {
-                            acc[key] = { year, month, games: [] };
-                        }
-                        acc[key].games.push(game);
-                        return acc;
-                    }, {});
-
-                    return Object.values(monthMap).sort((a, b) => a.year === b.year ? a.month - b.month : a.year - b.year);
-                }
-
-                function getApproximateDateText(releaseInfo) {
-                    const date = new Date(releaseInfo.date * 1000);
-                    const quarter = Math.floor(date.getMonth() / 3) + 1;
-                    switch (releaseInfo.displayType) {
-                        case 'date_month':
-                            return date.toLocaleString('ru-RU', {
-                                month: 'long',
-                                year: 'numeric'
+                        if (visibleMonthsCount < monthsData.length) {
+                            content.append(`<div class="load-more-months"> <button class="load-more-btn">Показать ещё 3 месяца</button> </div>`);
+                            content.find('.load-more-btn').click(() => {
+                                const currentScroll = content.scrollTop();
+                                visibleMonthsCount += 3;
+                                displayMonths();
+                                content.scrollTop(currentScroll);
                             });
-                        case 'date_quarter':
-                            return `Q${quarter} ${date.getFullYear()}`;
-                        case 'date_year':
-                            return date.getFullYear().toString();
-                        default:
-                            return date.toLocaleDateString('ru-RU');
+                        }
+                    };
+                    displayMonths();
+                };
+
+                wtmodal.find('#calendarApplyBtn').on('click', () => {
+                    const yearVal = wtmodal.find('#calendarYearFilter').val();
+                    const monthVal = wtmodal.find('#calendarMonthFilter').val();
+                    if (!yearVal) {
+                        alert("Пожалуйста, выберите год для применения фильтра.");
+                        return;
                     }
+                    const startYear = parseInt(yearVal, 10);
+                    const startMonth = monthVal ? parseInt(monthVal, 10) : 0;
+                    renderCalendar({ startYear, startMonth });
+                });
+
+                wtmodal.find('#calendarShowAllBtn').on('click', () => {
+                    wtmodal.find('select').val('');
+                    renderCalendar({ showAll: true });
+                });
+
+                wtmodal.find('#calendarResetBtn').on('click', () => {
+                    wtmodal.find('select').val('');
+                    renderCalendar();
+                });
+
+                renderCalendar();
+            }
+
+            function getGamesByMonths(gameData, options = {}) {
+                const { startYear = null, startMonth = null, showAll = false } = options;
+
+                let games = Object.entries(gameData).map(([appid, game]) => ({
+                        appid: parseInt(appid),
+                        ...game,
+                        releaseDate: game.releaseInfo?.date && typeof game.releaseInfo.date === 'number' ? new Date(game.releaseInfo.date * 1000) : null
+                    }))
+                    .filter(g => g.releaseDate);
+
+                if (!showAll) {
+                    let year, month;
+
+                    if (startYear !== null) {
+                        year = startYear;
+                        month = startMonth !== null ? startMonth : 0;
+                    } else {
+                        const now = new Date();
+                        year = now.getFullYear();
+                        month = now.getMonth();
+                    }
+
+                    games = games.filter(g => {
+                        const releaseYear = g.releaseDate.getFullYear();
+                        const releaseMonth = g.releaseDate.getMonth();
+                        return (releaseYear > year) || (releaseYear === year && releaseMonth >= month);
+                    });
                 }
 
-                function showStorageModal() {
-                    const modalHtml = `
-                                  <div id="sledilkaStorageModal" class="sledilka-storage-modal">
-                                      <div class="sledilka-storage-modal-content">
-                                          <span id="sledilkaStorageCloseBtn" class="sledilka-storage-modal-close" title="Закрыть">&times;</span>
-                                          <h3>Управление хранилищем</h3>
-                                          <button id="clearWishlistDataBtn">Очистить данные из списка желаемого</button>
-                                          <br>
-                                          <button id="clearOwnedDataBtn">Очистить данные из библиотеки</button>
-                                      </div>
-                                  </div>`;
-                    if ($('#sledilkaStorageModal').length === 0) {
-                        $('body').append(modalHtml);
+                const monthMap = games.reduce((acc, game) => {
+                    const year = game.releaseDate.getFullYear();
+                    const month = game.releaseDate.getMonth();
+                    const key = `${year}-${String(month).padStart(2, '0')}`;
+                    if (!acc[key]) {
+                        acc[key] = { year, month, games: [] };
                     }
-                    const modal = $('#sledilkaStorageModal');
-                    modal.show();
-                    $('#sledilkaStorageCloseBtn').off('click').on('click', () => modal.hide());
-                    modal.off('click').on('click', (event) => {
-                        if ($(event.target).is(modal)) {
-                            modal.hide();
-                        }
-                    });
-                    $('#clearWishlistDataBtn').off('click').on('click', () => {
-                        if (confirm("Вы уверены, что хотите удалить сохраненные данные для Списка желаемого?\nЭто приведет к повторному сканированию при следующем обновлении.")) {
-                            GM_deleteValue(STORAGE_KEYS.WISHLIST_GAME_DATA);
-                            notifications = notifications.filter(n => !n.source || n.source !== 'wishlist');
-                            GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
-                            alert("Данные списка желаемого очищены.");
-                            modal.hide();
-                            updateNotificationPanel();
-                            updateBadge();
-                        }
-                    });
-                    $('#clearOwnedDataBtn').off('click').on('click', () => {
-                        if (confirm("Вы уверены, что хотите удалить сохраненные данные для Библиотеки?\nЭто приведет к ПОЛНОМУ ПОВТОРНОМУ сканированию вашей библиотеки при следующем обновлении, что может занять время.")) {
-                            GM_deleteValue(STORAGE_KEYS.OWNED_APPS_DATA);
-                            GM_deleteValue(STORAGE_KEYS.OWNED_CHECKED_V2);
-                            alert("Данные Библиотеки очищены. Потребуется повторное сканирование.");
-                            modal.hide();
-                        }
-                    });
-                }
+                    acc[key].games.push(game);
+                    return acc;
+                }, {});
 
-                function initialize() {
-                    createSledilkaUI();
-                    updateStatusIndicator();
-                    setupMutationObserver(document.getElementById('global_actions'));
+                return Object.values(monthMap).sort((a, b) => a.year === b.year ? a.month - b.month : a.year - b.year);
+            }
+
+            function getApproximateDateText(releaseInfo) {
+                const date = new Date(releaseInfo.date * 1000);
+                const quarter = Math.floor(date.getMonth() / 3) + 1;
+                switch (releaseInfo.displayType) {
+                    case 'date_month':
+                        return date.toLocaleString('ru-RU', {
+                            month: 'long',
+                            year: 'numeric'
+                        });
+                    case 'date_quarter':
+                        return `Q${quarter} ${date.getFullYear()}`;
+                    case 'date_year':
+                        return date.getFullYear().toString();
+                    default:
+                        return date.toLocaleDateString('ru-RU');
                 }
-                if (typeof $ !== 'undefined') {
-                    $(document).ready(initialize);
-                } else {
-                    const checkJQuery = setInterval(() => {
-                        if (typeof $ !== 'undefined') {
-                            clearInterval(checkJQuery);
-                            $(document).ready(initialize);
-                        }
-                    }, 100);
+            }
+
+            function showStorageModal() {
+                const modalHtml = `
+                              <div id="sledilkaStorageModal" class="sledilka-storage-modal">
+                                  <div class="sledilka-storage-modal-content">
+                                      <span id="sledilkaStorageCloseBtn" class="sledilka-storage-modal-close" title="Закрыть">&times;</span>
+                                      <h3>Управление хранилищем</h3>
+                                      <button id="clearWishlistDataBtn">Очистить данные из списка желаемого</button>
+                                      <br>
+                                      <button id="clearOwnedDataBtn">Очистить данные из библиотеки</button>
+                                  </div>
+                              </div>`;
+                if ($('#sledilkaStorageModal').length === 0) {
+                    $('body').append(modalHtml);
                 }
-            })();
-        }
+                const modal = $('#sledilkaStorageModal');
+                modal.show();
+                $('#sledilkaStorageCloseBtn').off('click').on('click', () => modal.hide());
+                modal.off('click').on('click', (event) => {
+                    if ($(event.target).is(modal)) {
+                        modal.hide();
+                    }
+                });
+                $('#clearWishlistDataBtn').off('click').on('click', () => {
+                    if (confirm("Вы уверены, что хотите удалить сохраненные данные для Списка желаемого?\nЭто приведет к повторному сканированию при следующем обновлении.")) {
+                        GM_deleteValue(STORAGE_KEYS.WISHLIST_GAME_DATA);
+                        notifications = notifications.filter(n => !n.source || n.source !== 'wishlist');
+                        GM_setValue(STORAGE_KEYS.NOTIFICATIONS, notifications);
+                        alert("Данные списка желаемого очищены.");
+                        modal.hide();
+                        updateNotificationPanel();
+                        updateBadge();
+                    }
+                });
+                $('#clearOwnedDataBtn').off('click').on('click', () => {
+                    if (confirm("Вы уверены, что хотите удалить сохраненные данные для Библиотеки?\nЭто приведет к ПОЛНОМУ ПОВТОРНОМУ сканированию вашей библиотеки при следующем обновлении, что может занять время.")) {
+                        GM_deleteValue(STORAGE_KEYS.OWNED_APPS_DATA);
+                        GM_deleteValue(STORAGE_KEYS.OWNED_CHECKED_V2);
+                        alert("Данные Библиотеки очищены. Потребуется повторное сканирование.");
+                        modal.hide();
+                    }
+                });
+            }
+
+            function initialize() {
+                createSledilkaUI();
+                updateStatusIndicator();
+                setupMutationObserver(document.getElementById('global_actions'));
+            }
+            if (typeof $ !== 'undefined') {
+                $(document).ready(initialize);
+            } else {
+                const checkJQuery = setInterval(() => {
+                    if (typeof $ !== 'undefined') {
+                        clearInterval(checkJQuery);
+                        $(document).ready(initialize);
+                    }
+                }, 100);
+            }
+        })();
+    }
 
     // Скрипт для проверки возможности отправки подарка из списка желаемого друзьям в других странах | https://steamcommunity.com/my/wishlist/*
     if (scriptsConfig.wishlistGiftHelper && unsafeWindow.location.pathname.includes('/wishlist/')) {
@@ -13549,32 +13592,33 @@ if (headerCtn) {
             const WGH_IMAGE_BASE_URL = 'https://shared.fastly.steamstatic.com/store_item_assets/steam/apps/';
 
             const WGH_COUNTRY_CURRENCY_MAP = {
+                'US': { name: 'Доллар США', code: 1, iso: 'usd' },
+                'DE': { name: 'Евро', code: 3, iso: 'eur' },
+                'AR': { name: 'Лат. Ам. - Доллар США', code: 1, iso: 'usd' },
                 'AU': { name: 'Австралийский доллар', code: 21, iso: 'aud' },
                 'BR': { name: 'Бразильский реал', code: 7, iso: 'brl' },
                 'GB': { name: 'Британский фунт', code: 2, iso: 'gbp' },
-                'VN': { name: 'Вьетнамский донг', code: 15, iso: 'vnd' },
-                'HK': { name: 'Гонконгский доллар', code: 29, iso: 'hkd' },
-                'AE': { name: 'Дирхам ОАЭ', code: 32, iso: 'aed' },
-                'US': { name: 'Доллар США', code: 1, iso: 'usd' },
-                'DE': { name: 'Евро', code: 3, iso: 'eur' },
-                'IL': { name: 'Израильский новый шекель', code: 35, iso: 'ils' },
-                'IN': { name: 'Индийская рупия', code: 24, iso: 'inr' },
-                'ID': { name: 'Индонезийская рупия', code: 10, iso: 'idr' },
-                'KZ': { name: 'Казахстанский тенге', code: 37, iso: 'kzt' },
                 'CA': { name: 'Канадский доллар', code: 20, iso: 'cad' },
-                'QA': { name: 'Катарский риал', code: 39, iso: 'qar' },
+                'CL': { name: 'Чилийское песо', code: 25, iso: 'clp' },
                 'CN': { name: 'Китайский юань', code: 23, iso: 'cny' },
+                'AZ': { name: 'СНГ - Доллар США', code: 1, iso: 'usd' },
                 'CO': { name: 'Колумбийское песо', code: 27, iso: 'cop' },
                 'CR': { name: 'Коста-риканский колон', code: 40, iso: 'crc' },
+                'HK': { name: 'Гонконгский доллар', code: 29, iso: 'hkd' },
+                'IN': { name: 'Индийская рупия', code: 24, iso: 'inr' },
+                'ID': { name: 'Индонезийская рупия', code: 10, iso: 'idr' },
+                'IL': { name: 'Израильский новый шекель', code: 35, iso: 'ils' },
+                'JP': { name: 'Японская иена', code: 8, iso: 'jpy' },
+                'KZ': { name: 'Казахстанский тенге', code: 37, iso: 'kzt' },
                 'KW': { name: 'Кувейтский динар', code: 38, iso: 'kwd' },
-                'AR': { name: 'Лат. Ам. - Доллар США', code: 1, iso: 'usd' },
                 'MY': { name: 'Малазийский ринггит', code: 11, iso: 'myr' },
-                'TR': { name: 'MENA - Доллар США', code: 1, iso: 'usd' },
                 'MX': { name: 'Мексиканское песо', code: 19, iso: 'mxn' },
                 'NZ': { name: 'Новозеландский доллар', code: 22, iso: 'nzd' },
                 'NO': { name: 'Норвежская крона', code: 9, iso: 'nok' },
                 'PE': { name: 'Перуанский соль', code: 26, iso: 'pen' },
+                'PH': { name: 'Филиппинское песо', code: 12, iso: 'php' },
                 'PL': { name: 'Польский злотый', code: 6, iso: 'pln' },
+                'QA': { name: 'Катарский риал', code: 39, iso: 'qar' },
                 'RU': { name: 'Российский рубль', code: 5, iso: 'rub' },
                 'SA': { name: 'Саудовский риал', code: 31, iso: 'sar' },
                 'SG': { name: 'Сингапурский доллар', code: 13, iso: 'sgd' },
@@ -13584,11 +13628,11 @@ if (headerCtn) {
                 'CH': { name: 'Швейцарский франк', code: 4, iso: 'chf' },
                 'TW': { name: 'Тайваньский доллар', code: 30, iso: 'twd' },
                 'TH': { name: 'Тайский бат', code: 14, iso: 'thb' },
+                'TR': { name: 'MENA - Доллар США', code: 1, iso: 'usd' },
+                'AE': { name: 'Дирхам ОАЭ', code: 32, iso: 'aed' },
                 'UA': { name: 'Украинская гривна', code: 18, iso: 'uah' },
                 'UY': { name: 'Уругвайское песо', code: 41, iso: 'uyu' },
-                'PH': { name: 'Филиппинское песо', code: 12, iso: 'php' },
-                'CL': { name: 'Чилийское песо', code: 25, iso: 'clp' },
-                'JP': { name: 'Японская иена', code: 8, iso: 'jpy' }
+                'VN': { name: 'Вьетнамский донг', code: 15, iso: 'vnd' }
             };
 
             const SteamCurrencyRules = {
@@ -13653,7 +13697,7 @@ if (headerCtn) {
             const WGH_DEFAULT_SORT = { field: 'price', direction: 'asc' };
             const WGH_TAGS_CACHE_KEY = 'SteamEnhancer_TagsCache_v4_wgh';
             const WGH_SEARCH_URL = "https://store.steampowered.com/search/?l=russian";
-            const WGH_FILTER_STORAGE_KEY = 'wgh_filters_v1';
+            const WGH_FILTER_STORAGE_KEY = 'wgh_filters_v2';
             const WGH_FILTER_DEBOUNCE_MS = 400;
 
             let wgh_allTags = {};
@@ -13679,7 +13723,6 @@ if (headerCtn) {
             let wgh_filterToggleBtn, wgh_filterAccordionContainer;
             let wgh_currentFilters = GM_getValue(WGH_FILTER_STORAGE_KEY, {});
 
-            // ================== МАТРИЦА STEAM ==================
             async function wgh_fetchSteamPricingMatrix() {
                 if (wgh_steamPricingMatrices) return wgh_steamPricingMatrices;
                 return new Promise((resolve, reject) => {
@@ -13769,7 +13812,6 @@ if (headerCtn) {
                 return null;
             }
 
-            // ================== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ==================
             function debounce(func, wait) {
                 let timeout;
                 return function executedFunction(...args) {
@@ -13814,7 +13856,6 @@ if (headerCtn) {
                         }
                     }
                 } catch (e) {
-                    console.error('[WGH] Ошибка загрузки меток:', e);
                 }
 
                 return cached.data || {};
@@ -13914,6 +13955,23 @@ if (headerCtn) {
                                 <label><input type="radio" name="wghEaFilter" value="any" checked>Все</label>
                                 <label><input type="radio" name="wghEaFilter" value="early_access">Только</label>
                                 <label><input type="radio" name="wghEaFilter" value="released">Без</label>
+                            </div>
+                        </div>
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Статус релиза</label>
+                            <div class="wghRadioGroup">
+                                <label><input type="radio" name="wghReleaseFilter" value="any" checked>Все</label>
+                                <label><input type="radio" name="wghReleaseFilter" value="released">Вышедшие</label>
+                                <label><input type="radio" name="wghReleaseFilter" value="unreleased">Не вышедшие</label>
+                            </div>
+                        </div>
+                        <div class="wghFilterGroup">
+                            <label class="wghFilterLabel">Демо / Плейтесты</label>
+                            <div class="wghRadioGroup">
+                                <label><input type="radio" name="wghDemoFilter" value="any" checked>Все</label>
+                                <label><input type="radio" name="wghDemoFilter" value="both">Демо и плейтесты</label>
+                                <label><input type="radio" name="wghDemoFilter" value="demo">Только демо</label>
+                                <label><input type="radio" name="wghDemoFilter" value="playtest">Только плейтесты</label>
                             </div>
                         </div>
                         ${rrcFilterHtml}
@@ -14196,6 +14254,8 @@ if (headerCtn) {
                 checkboxes.forEach(id => document.getElementById(id)?.addEventListener('change', debouncedFilterApplication));
                 document.querySelectorAll('input[name="wghLangFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
                 document.querySelectorAll('input[name="wghEaFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
+                document.querySelectorAll('input[name="wghReleaseFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
+                document.querySelectorAll('input[name="wghDemoFilter"]').forEach(radio => radio.addEventListener('change', debouncedFilterApplication));
                 document.getElementById('wghResetFilters')?.addEventListener('click', () => {
                     document.querySelectorAll('#wghFilterAccordionContainer input').forEach(input => {
                         if (input.type === 'checkbox') input.checked = false;
@@ -14223,7 +14283,8 @@ if (headerCtn) {
                     discountMin: getNum('wghFilterDiscountMin'), discountMax: getNum('wghFilterDiscountMax'),
                     dateMin: getVal('wghFilterDateMin') ? new Date(getVal('wghFilterDateMin')).getTime() : null,
                     dateMax: getVal('wghFilterDateMax') ? new Date(getVal('wghFilterDateMax')).getTime() : null,
-                    lang: getRadio('wghLangFilter'), ea: getRadio('wghEaFilter'), rrc: getRadio('wghRrcFilter')
+                    lang: getRadio('wghLangFilter'), ea: getRadio('wghEaFilter'), rrc: getRadio('wghRrcFilter'),
+                    release: getRadio('wghReleaseFilter'), demo: getRadio('wghDemoFilter')
                 };
 
                 GM_setValue(WGH_FILTER_STORAGE_KEY, filters);
@@ -14271,6 +14332,17 @@ if (headerCtn) {
                     if (isVisible && filters.ea !== 'any') {
                         if (filters.ea === 'early_access' && !gameData.is_early_access) isVisible = false;
                         if (filters.ea === 'released' && gameData.is_early_access) isVisible = false;
+                    }
+
+                    if (isVisible && filters.release !== 'any') {
+                        if (filters.release === 'released' && gameData.is_coming_soon) isVisible = false;
+                        if (filters.release === 'unreleased' && !gameData.is_coming_soon) isVisible = false;
+                    }
+
+                    if (isVisible && filters.demo !== 'any') {
+                        if (filters.demo === 'both' && !gameData.has_demo && !gameData.has_playtest) isVisible = false;
+                        if (filters.demo === 'demo' && !gameData.has_demo) isVisible = false;
+                        if (filters.demo === 'playtest' && !gameData.has_playtest) isVisible = false;
                     }
 
                     if (isVisible && filters.rrc !== 'any') {
@@ -14418,7 +14490,6 @@ if (headerCtn) {
 
                 } catch (error) {
                     wgh_updateStatus(`Ошибка при сборе данных: ${error.message}`);
-                    console.error('[WGH] Ошибка сбора данных:', error);
                     wgh_hideProgressBar(wgh_progressBar);
                 }
             }
@@ -14475,7 +14546,7 @@ if (headerCtn) {
                                 appIds = wishlistQuery.state.data.items.map(item => item.appid);
                             }
                         }
-                    } catch (e) { console.error("[WGH] Ошибка при разборе данных SSR:", e); }
+                    } catch (e) {}
                 }
                 if (appIds.length === 0 && typeof unsafeWindow.g_rgWishlistData !== 'undefined' && Array.isArray(unsafeWindow.g_rgWishlistData)) {
                     appIds = unsafeWindow.g_rgWishlistData.map(item => item.appid).filter(id => id);
@@ -14585,7 +14656,10 @@ if (headerCtn) {
                         priceData: null, publishers: item.basic_info?.publishers?.map(p => p.name).join(", "),
                         developers: item.basic_info?.developers?.map(d => d.name).join(", "), franchises: item.basic_info?.franchises?.map(f => f.name).join(", "),
                         is_early_access: item.release?.is_early_access, tagids: item.tagids || [], short_description: item.basic_info?.short_description,
-                        language_support_russian: item.supported_languages?.find(lang => lang.elanguage === 8)
+                        language_support_russian: item.supported_languages?.find(lang => lang.elanguage === 8),
+                        has_demo: !!(item.related_items?.demo_appid || item.related_items?.demos || item.related_items?.standalone_demos || item.related_items?.standalone_demo_appid),
+                        has_playtest: !!(item.related_items?.playtests),
+                        is_coming_soon: !!(item.is_coming_soon || item.release?.is_coming_soon)
                     };
                     const purchaseOption = item.best_purchase_option;
                     if (purchaseOption) {
@@ -14672,7 +14746,6 @@ if (headerCtn) {
                             }
                             priceDiffStr = `Разница: ${diff > 0 ? '+' : ''}${diff.toLocaleString('ru-RU', { style: 'currency', currency: wgh_currentUserISOCurrencyCode, minimumFractionDigits: 0, maximumFractionDigits: 2 })} (${diffPercent === Infinity || diffPercent === -Infinity ? '∞' : (diffPercent * 100).toFixed(0)}%)`;
 
-                            // Рекомендации для друга (только Valve)
                             if (friendData.rrcInfo && friendData.rrcInfo.valve) {
                                 const fv = friendData.rrcInfo.valve;
                                 const fCurrencyCode = WGH_COUNTRY_CURRENCY_MAP[wgh_currentFriendCountryCode].code;
@@ -14895,7 +14968,7 @@ if (headerCtn) {
                         try { wgh_exchangeRates = await wgh_fetchExchangeRates(friendCurrencyInfo.iso); }
                         catch (rateError) {
                             wgh_updateStatus(`Ошибка получения курса валют: ${rateError.message}. Сравнение будет неточным.`);
-                            console.error("[WGH] Ошибка курса:", rateError); await new Promise(res => setTimeout(res, 2000)); wgh_exchangeRates = {};
+                            await new Promise(res => setTimeout(res, 2000)); wgh_exchangeRates = {};
                         }
                     } else wgh_exchangeRates = {};
 
@@ -14917,7 +14990,7 @@ if (headerCtn) {
                     wgh_updateStatus(`Цены для региона ${wgh_currentFriendCountryCode} получены.`);
                     wgh_renderResults(); wgh_hideProgressBar(wgh_giftProgressBar);
                 } catch (error) {
-                    wgh_updateStatus(`Ошибка при получении цен друга: ${error.message}`); console.error('[WGH] Ошибка:', error);
+                    wgh_updateStatus(`Ошибка при получении цен друга: ${error.message}`);
                     wgh_hideProgressBar(wgh_giftProgressBar); wgh_renderResults();
                 }
             }
@@ -15015,7 +15088,7 @@ if (headerCtn) {
                         .wghAccordionContainer { display: none; padding: 10px 0; border-bottom: 1px solid #3a4f6a; margin-bottom: 10px; flex-shrink: 0; }
                         .wghAccordionContent, .wghFilterGrid { padding: 10px; border: 1px solid #3a4f6a; border-radius: 4px; background-color: rgba(42, 71, 94, 0.2); }
                         .wghAccordionContent { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-                        .wghFilterGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 10px; }
+                        .wghFilterGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin-bottom: 10px; }
                         .wghFilterGroup { display: flex; flex-direction: column; gap: 5px; }
                         .wghFilterLabel { font-size: 13px; color: #c6d4df; margin-bottom: 3px; }
                         .wghRangeInput { display: block; } .wghRangeInput input { width: 100%; margin-bottom: 5px; } .wghRangeInput input:last-child { margin-bottom: 0; }
@@ -21903,9 +21976,11 @@ if (headerCtn) {
             let ugn_db = {};
             let pageAppId = null;
             let pageAppName = 'Неизвестная игра';
+            let pageAppHeader = '';
 
             let editAppId = null;
             let editAppName = '';
+            let editAppHeader = '';
             let tempCriteria = { gfx: 0, story: 0, gameplay: 0, audio: 0, atmos: 0 };
             let ugn_autosaveTimer = null;
 
@@ -22052,6 +22127,9 @@ if (headerCtn) {
                 const titleEl = document.getElementById('appHubAppName');
                 if (titleEl) pageAppName = titleEl.textContent.trim();
 
+                const imgEl = document.querySelector('.game_header_image_full');
+                pageAppHeader = imgEl ? imgEl.src : `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${pageAppId}/header.jpg`;
+
                 if (document.querySelector('.ugn_button')) return;
 
                 const btnWrap = document.createElement('div');
@@ -22072,7 +22150,7 @@ if (headerCtn) {
                 btn.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    ugn_openEditorModal(pageAppId, pageAppName);
+                    ugn_openEditorModal(pageAppId, pageAppName, pageAppHeader);
                 });
 
                 btnWrap.appendChild(btn);
@@ -22126,12 +22204,13 @@ if (headerCtn) {
                 container.nextElementSibling.textContent = count * 10;
             }
 
-            function ugn_openEditorModal(appId, appName) {
+            function ugn_openEditorModal(appId, appName, appHeader) {
                 const galModal = document.getElementById('ugn-gallery-modal');
                 if (galModal) galModal.style.display = 'none';
 
                 editAppId = appId;
                 editAppName = appName;
+                editAppHeader = appHeader || `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg`;
 
                 let modal = document.getElementById('ugn-editor-modal');
                 if (!modal) {
@@ -22255,6 +22334,7 @@ if (headerCtn) {
                 } else {
                     ugn_db[editAppId] = {
                         name: editAppName,
+                        headerUrl: editAppHeader,
                         text: text,
                         criteria: { ...tempCriteria },
                         avgScore: avgScore,
@@ -22433,9 +22513,12 @@ if (headerCtn) {
                     const card = document.createElement('div');
                     card.className = 'ugn-card';
 
+                    const imgSrc = item.headerUrl || `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${item.id}/capsule_231x87.jpg`;
+                    const fallbackSrc = `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${item.id}/header.jpg`;
+
                     card.onclick = (e) => {
                         if (e.target.closest('.ugn-card-delete')) return;
-                        ugn_openEditorModal(item.id, item.name);
+                        ugn_openEditorModal(item.id, item.name, imgSrc);
                     };
 
                     const avgStr = item.avgScore > 0 ? `<span style="color:#8cc540;">Ср. балл: ${item.avgScore}</span>` : '<span style="color:#8f98a0;">Нет критериев</span>';
@@ -22443,7 +22526,7 @@ if (headerCtn) {
 
                     card.innerHTML = `
                         <button class="ugn-card-delete" title="Удалить заметку">🗑️</button>
-                        <img src="https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${item.id}/capsule_231x87.jpg" onerror="this.src='https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${item.id}/header.jpg'" loading="lazy">
+                        <img src="${imgSrc}" onerror="this.src='${fallbackSrc}'" loading="lazy">
                         <div class="ugn-card-body">
                             <div class="ugn-card-title" title="${item.name}">${item.name}</div>
                             <div class="ugn-card-stats">
@@ -22549,6 +22632,354 @@ if (headerCtn) {
 
             if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', ugn_init);
             else ugn_init();
+
+        })();
+    }
+
+    // Скрипт: Локальное желаемое и проверка библиотеки для режима Инкогнито | https://store.steampowered.com/app/*
+    if (scriptsConfig.incognitoWishlist && window.location.pathname.includes('/app/')) {
+        (async function() {
+            'use strict';
+
+            const queueActionsCtn = document.getElementById('queueActionsCtn');
+            if (!queueActionsCtn) return;
+
+            const loginPromptP = queueActionsCtn.querySelector('p');
+            const loginPromptA = loginPromptP ? loginPromptP.querySelector('a[href*="/login/"]') : null;
+
+            if (!window.IS_USE_INCOGNITO && !loginPromptA) {
+                return;
+            }
+
+            const UIWL_DB_KEY = 'use_incognito_wishlist_db_v1';
+            const appIdMatch = window.location.pathname.match(/\/app\/(\d+)/);
+            if (!appIdMatch) return;
+            const appId = parseInt(appIdMatch[1], 10);
+
+            const UIWL_CHUNK_SIZE = 24;
+            let uiwl_galleryItems = [];
+            let uiwl_galleryLimit = 0;
+            let uiwl_db = {};
+
+            function getUiwlDb() {
+                try { return JSON.parse(GM_getValue(UIWL_DB_KEY, "{}")); }
+                catch(e) { return {}; }
+            }
+
+            function saveToUiwlDb(id, data) {
+                const db = getUiwlDb();
+                db[id] = data;
+                GM_setValue(UIWL_DB_KEY, JSON.stringify(db));
+                return db;
+            }
+
+            function deleteFromUiwlDb(id) {
+                const db = getUiwlDb();
+                if (db[id]) {
+                    delete db[id];
+                    GM_setValue(UIWL_DB_KEY, JSON.stringify(db));
+                }
+                return db;
+            }
+
+            uiwl_db = getUiwlDb();
+
+            GM_addStyle(`
+                #queueActionsCtn.uiwl-fixed-layout { justify-content: flex-start !important; }
+
+                .uiwl-modal-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.85); z-index: 100000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(4px); font-family: "Motiva Sans", sans-serif;}
+
+                .uiwl-modal-content { background: #1b2838; border: 1px solid #30363d; border-radius: 6px; width: 90vw; max-width: 1200px; height: 80vh; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.9); overflow: hidden; }
+
+                .uiwl-modal-header { background: #101822; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #30363d; border-radius: 6px 6px 0 0; flex-shrink: 0; }
+                .uiwl-header-title { color: #66c0f4; font-weight: bold; font-size: 18px; }
+                .uiwl-close-btn { background: none; border: none; color: #8f98a0; font-size: 24px; cursor: pointer; line-height: 1; }
+                .uiwl-close-btn:hover { color: #fff; }
+
+                .uiwl-gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); grid-auto-rows: max-content; gap: 15px; padding: 20px; overflow-y: auto; flex-grow: 1; align-content: start; min-height: 0; }
+
+                .uiwl-card { background: #101822; border: 1px solid #30363d; border-radius: 4px; overflow: hidden; display: flex; flex-direction: column; transition: transform 0.2s, border-color 0.2s; position: relative; min-height: 215px;}
+                .uiwl-card:hover { transform: translateY(-3px); border-color: #66c0f4; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+
+                .uiwl-card img { width: 100%; height: 120px; flex-shrink: 0; object-fit: cover; border-bottom: 1px solid #30363d; display: block; }
+
+                .uiwl-card-body { padding: 12px; display: flex; flex-direction: column; flex-grow: 1; min-height: 90px;}
+
+                .uiwl-card-title { color: #fff; font-weight: bold; font-size: 14px; text-decoration: none; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; text-overflow: ellipsis; line-height: 1.3; margin-bottom: auto;}
+                .uiwl-card-title:hover { color: #66c0f4; }
+
+                .uiwl-card-date { font-size: 11px; color: #8f98a0; margin-top: 8px; }
+
+                .uiwl-card-remove { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); border: 1px solid #ff6961; color: #ff6961; border-radius: 4px; padding: 4px 8px; font-size: 12px; cursor: pointer; opacity: 0; transition: opacity 0.2s, background 0.2s; font-weight: bold;}
+                .uiwl-card:hover .uiwl-card-remove { opacity: 1; }
+                .uiwl-card-remove:hover { background: #ff6961; color: #fff; }
+
+                .uiwl-gallery-grid::-webkit-scrollbar { width: 8px; }
+                .uiwl-gallery-grid::-webkit-scrollbar-track { background: #101822; border-radius: 4px; }
+                .uiwl-gallery-grid::-webkit-scrollbar-thumb { background-color: #30363D; border-radius: 4px; border: 2px solid #101822;}
+                .uiwl-gallery-grid::-webkit-scrollbar-thumb:hover { background-color: #66c0f4; }
+
+                .uiwl-btn-wrap { display: flex; align-items: center; margin-right: 3px; position: relative;}
+                .uiwl-dropdown { position: absolute; background: #3d4450; border: 1px solid #000; box-shadow: 0 0 12px #000; z-index: 1000; display: none; top: 32px; left: 0; padding: 5px 0; min-width: 250px;}
+                .uiwl-dropdown a { display: block; padding: 8px 15px; color: #c6d4df; text-decoration: none; font-size: 13px; text-align: left;}
+                .uiwl-dropdown a:hover { background: #67c1f5; color: #fff; }
+            `);
+
+            async function getRealUserData() {
+                return new Promise(resolve => {
+                    GM_xmlhttpRequest({
+                        method: 'GET',
+                        url: `https://store.steampowered.com/dynamicstore/userdata/?_t=${Date.now()}`,
+                        onload: (res) => {
+                            try { resolve(JSON.parse(res.responseText)); }
+                            catch(e) { resolve(null); }
+                        },
+                        onerror: () => resolve(null)
+                    });
+                });
+            }
+
+            async function removeFromOfficialWishlist(appId) {
+                const sessionidMatch = document.cookie.match(/sessionid=([^;]+)/);
+                if (!sessionidMatch) return false;
+
+                return new Promise(resolve => {
+                    GM_xmlhttpRequest({
+                        method: 'POST',
+                        url: 'https://store.steampowered.com/api/removefromwishlist',
+                        data: `sessionid=${sessionidMatch[1]}&appid=${appId}`,
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        onload: (res) => resolve(res.status === 200),
+                        onerror: () => resolve(false)
+                    });
+                });
+            }
+
+            function openLocalWishlistGallery() {
+                uiwl_db = getUiwlDb();
+
+                let modal = document.getElementById('uiwl-modal');
+                if (!modal) {
+                    modal = document.createElement('div');
+                    modal.id = 'uiwl-modal';
+                    modal.className = 'uiwl-modal-overlay';
+                    modal.innerHTML = `
+                        <div class="uiwl-modal-content">
+                            <div class="uiwl-modal-header">
+                                <span class="uiwl-header-title">Недоступное желаемое (Локальный список)</span>
+                                <button class="uiwl-close-btn">&times;</button>
+                            </div>
+                            <div class="uiwl-gallery-grid" id="uiwl-gallery-grid"></div>
+                        </div>
+                    `;
+                    document.body.appendChild(modal);
+
+                    modal.querySelector('.uiwl-close-btn').onclick = () => modal.style.display = 'none';
+                    modal.onclick = (e) => { if(e.target === modal) modal.style.display = 'none'; };
+
+                    const grid = modal.querySelector('#uiwl-gallery-grid');
+                    grid.addEventListener('scroll', function() {
+                        if (this.scrollTop + this.clientHeight >= this.scrollHeight - 200) {
+                            if (uiwl_galleryLimit < uiwl_galleryItems.length) {
+                                uiwl_galleryLimit += UIWL_CHUNK_SIZE;
+                                uiwl_renderGalleryChunk();
+                            }
+                        }
+                    });
+                }
+
+                uiwl_galleryLimit = UIWL_CHUNK_SIZE;
+                document.getElementById('uiwl-gallery-grid').innerHTML = '';
+                uiwl_sortAndRenderGallery();
+
+                modal.style.display = 'flex';
+            }
+
+            function uiwl_sortAndRenderGallery() {
+                uiwl_galleryItems = Object.entries(uiwl_db).map(([id, data]) => ({ id, ...data }));
+                uiwl_galleryItems.sort((a, b) => b.addedAt - a.addedAt);
+
+                if (uiwl_galleryItems.length === 0) {
+                    document.getElementById('uiwl-gallery-grid').innerHTML = '<div style="color:#8f98a0; grid-column: 1/-1; text-align:center; padding: 40px; font-size: 15px;">Ваш локальный список желаемого пуст.</div>';
+                    return;
+                }
+
+                uiwl_renderGalleryChunk();
+            }
+
+            function uiwl_renderGalleryChunk() {
+                const grid = document.getElementById('uiwl-gallery-grid');
+                const startIndex = uiwl_galleryLimit - UIWL_CHUNK_SIZE;
+                const itemsToRender = uiwl_galleryItems.slice(Math.max(0, startIndex), uiwl_galleryLimit);
+
+                const frag = document.createDocumentFragment();
+
+                itemsToRender.forEach(data => {
+                    const id = data.id;
+                    const dateAdded = new Date(data.addedAt).toLocaleDateString('ru-RU');
+                    const card = document.createElement('div');
+                    card.className = 'uiwl-card';
+                    card.innerHTML = `
+                        <button class="uiwl-card-remove" title="Удалить из списка">X</button>
+                        <a href="https://store.steampowered.com/app/${id}" target="_blank">
+                            <img src="${data.headerUrl}" onerror="this.src='https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${id}/header.jpg'" loading="lazy">
+                        </a>
+                        <div class="uiwl-card-body">
+                            <a href="https://store.steampowered.com/app/${id}" target="_blank" class="uiwl-card-title" title="${data.name}">${data.name}</a>
+                            <div class="uiwl-card-date">Добавлено: ${dateAdded}</div>
+                        </div>
+                    `;
+
+                    card.querySelector('.uiwl-card-remove').onclick = (e) => {
+                        e.preventDefault();
+                        if (confirm(`Удалить "${data.name}" из локального списка желаемого?`)) {
+                            uiwl_db = deleteFromUiwlDb(id);
+                            card.remove();
+
+                            if (id == appId) {
+                                renderActionState('not_in_wishlist');
+                            }
+                            if (Object.keys(uiwl_db).length === 0) {
+                                grid.innerHTML = '<div style="color:#8f98a0; grid-column: 1/-1; text-align:center; padding: 40px; font-size: 15px;">Ваш локальный список желаемого пуст.</div>';
+                            }
+                        }
+                    };
+                    frag.appendChild(card);
+                });
+
+                grid.appendChild(frag);
+
+                setTimeout(() => {
+                    if (grid.scrollHeight <= grid.clientHeight && uiwl_galleryLimit < uiwl_galleryItems.length) {
+                        uiwl_galleryLimit += UIWL_CHUNK_SIZE;
+                        uiwl_renderGalleryChunk();
+                    }
+                }, 50);
+            }
+
+            function renderActionState(state) {
+                queueActionsCtn.classList.add('uiwl-fixed-layout');
+
+                if (loginPromptP) loginPromptP.style.display = 'none';
+
+                let wrapper = document.getElementById('uiwl-btn-wrapper');
+                if (!wrapper) {
+                    wrapper = document.createElement('div');
+                    wrapper.id = 'uiwl-btn-wrapper';
+                    wrapper.className = 'uiwl-btn-wrap queue_control_button';
+                    queueActionsCtn.prepend(wrapper);
+                }
+
+                wrapper.innerHTML = '';
+
+                if (state === 'in_library') {
+                    wrapper.innerHTML = `
+                        <div class="btnv6_blue_hoverfade btn_medium queue_btn_active" style="cursor: default; opacity: 0.9;">
+                            <span><img src="https://store.fastly.steamstatic.com/public/images/v6/ico/ico_selected.png" border="0"> В библиотеке</span>
+                        </div>
+                    `;
+                }
+                else if (state === 'loading') {
+                    wrapper.innerHTML = `
+                        <div class="btnv6_blue_hoverfade btn_medium" style="opacity: 0.7; cursor: wait;">
+                            <span>Перенос из Steam... <span class="spinner" style="width: 1em; height: 1em; display: inline-block; vertical-align: middle; border: 2px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; animation: salesMasterSpin 1s linear infinite;"></span></span>
+                        </div>
+                    `;
+                }
+                else if (state === 'in_wishlist') {
+                    wrapper.innerHTML = `
+                        <a href="#" class="btnv6_blue_hoverfade btn_medium queue_btn_active add_to_wishlist" id="uiwl-remove-btn" title="Удалить из локального списка желаемого" style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                            <span><img src="https://store.fastly.steamstatic.com/public/images/v6/ico/ico_selected.png" border="0"> В желаемом</span>
+                        </a>
+                        <div class="queue_control_button queue_btn_menu" id="uiwl-dropdown-trigger" style="margin: 0; border-top-left-radius: 0; border-bottom-left-radius: 0;">
+                            <div class="queue_menu_arrow queue_btn_active btn_medium" style="height: 32px; display: flex; align-items: center;">
+                                <span><img src="https://store.fastly.steamstatic.com/public/images/v6/btn_arrow_down_padded.png"></span>
+                            </div>
+                            <div class="uiwl-dropdown" id="uiwl-dropdown-menu">
+                                <a href="#" id="uiwl-view-gallery">Управление недоступным желаемым</a>
+                                <a href="#" id="uiwl-remove-btn-dropdown">Удалить из списка</a>
+                            </div>
+                        </div>
+                    `;
+
+                    const handleRemove = (e) => {
+                        e.preventDefault();
+                        uiwl_db = deleteFromUiwlDb(appId);
+                        renderActionState('not_in_wishlist');
+                    };
+
+                    wrapper.querySelector('#uiwl-remove-btn').onclick = handleRemove;
+                    wrapper.querySelector('#uiwl-remove-btn-dropdown').onclick = handleRemove;
+
+                    wrapper.querySelector('#uiwl-view-gallery').onclick = (e) => {
+                        e.preventDefault();
+                        openLocalWishlistGallery();
+                        document.getElementById('uiwl-dropdown-menu').style.display = 'none';
+                    };
+
+                    const trigger = wrapper.querySelector('#uiwl-dropdown-trigger');
+                    const menu = wrapper.querySelector('#uiwl-dropdown-menu');
+                    trigger.onmouseenter = () => menu.style.display = 'block';
+                    trigger.onmouseleave = () => menu.style.display = 'none';
+                }
+                else if (state === 'not_in_wishlist') {
+                    wrapper.innerHTML = `
+                        <a href="#" class="btnv6_blue_hoverfade btn_medium add_to_wishlist" id="uiwl-add-btn">
+                            <span>В желаемое</span>
+                        </a>
+                    `;
+
+                    wrapper.querySelector('#uiwl-add-btn').onclick = (e) => {
+                        e.preventDefault();
+                        const appName = document.querySelector('#appHubAppName')?.textContent.trim() || `App ${appId}`;
+                        const headerUrl = document.querySelector('.game_header_image_full')?.src || `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg`;
+
+                        uiwl_db = saveToUiwlDb(appId, {
+                            name: appName,
+                            headerUrl: headerUrl,
+                            addedAt: Date.now()
+                        });
+
+                        renderActionState('in_wishlist');
+                    };
+                }
+            }
+
+            const userData = await getRealUserData();
+
+            if (!userData || !userData.rgOwnedApps) return;
+
+            if (loginPromptP) loginPromptP.style.display = 'none';
+
+            if (userData.rgOwnedApps.includes(appId)) {
+                renderActionState('in_library');
+
+                uiwl_db = deleteFromUiwlDb(appId);
+
+                if (userData.rgWishlist && userData.rgWishlist.includes(appId)) {
+                    await removeFromOfficialWishlist(appId);
+                }
+                return;
+            }
+
+            if (userData.rgWishlist && userData.rgWishlist.includes(appId)) {
+                renderActionState('loading');
+                const success = await removeFromOfficialWishlist(appId);
+
+                if (success) {
+                    const appName = document.querySelector('#appHubAppName')?.textContent.trim() || `App ${appId}`;
+                    const headerUrl = document.querySelector('.game_header_image_full')?.src || `https://shared.cloudflare.steamstatic.com/store_item_assets/steam/apps/${appId}/header.jpg`;
+
+                    uiwl_db = saveToUiwlDb(appId, {
+                        name: appName,
+                        headerUrl: headerUrl,
+                        addedAt: Date.now()
+                    });
+                }
+                renderActionState('in_wishlist');
+            } else {
+                renderActionState(uiwl_db[appId] ? 'in_wishlist' : 'not_in_wishlist');
+            }
 
         })();
     }
