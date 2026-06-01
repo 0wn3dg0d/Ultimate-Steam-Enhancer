@@ -204,9 +204,10 @@
     async function getAnonymousSession(retryCount = 0) {
         const MAX_RETRIES = 2;
         console.log(`[U.S.E. Unblocker] Попытка #${retryCount + 1} получения анонимной сессии...`);
-
-        const sessionUrl = 'https://store.steampowered.com/join/?l=russian';
-
+    
+        // Добавляем cc=us для надёжности
+        const sessionUrl = 'https://store.steampowered.com/join/?cc=us&l=russian';
+    
         try {
             const response = await makeGMRequest({
                 method: "GET",
@@ -216,36 +217,51 @@
                 },
                 anonymous: true
             });
-
+    
+            let sessionid = null;
+            let browserid = null;
+    
+            // 1. Пытаемся извлечь из заголовков ответа
             const headers = response.responseHeaders;
-
-            const sessionidMatch = headers.match(/sessionid=([^;]+)/);
-            const browseridMatch = headers.match(/browserid=([^;]+)/);
-
-            const sessionid = sessionidMatch ? sessionidMatch[1] : null;
-            const browserid = browseridMatch ? browseridMatch[1] : null;
-
-            if (sessionid && browserid) {
-                console.log(`[U.S.E. Unblocker] Успешно получены sessionid=${sessionid}, browserid=${browserid}`);
-                return { sessionid, browserid };
+            if (headers) {
+                const sessionidMatch = headers.match(/sessionid=([^;]+)/);
+                const browseridMatch = headers.match(/browserid=([^;]+)/);
+                sessionid = sessionidMatch ? sessionidMatch[1] : null;
+                browserid = browseridMatch ? browseridMatch[1] : null;
             }
-
-            console.warn('[U.S.E. Unblocker] Не удалось получить cookies с текущей попытки. Заголовки ответа:', { headers });
-
-            if (retryCount < MAX_RETRIES) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                return getAnonymousSession(retryCount + 1);
-            } else {
-                throw new Error('Не удалось получить анонимный sessionid/browserid после нескольких попыток.');
+    
+            // 2. Если не нашли – ищем g_sessionID в HTML
+            if (!sessionid || !browserid) {
+                const html = response.responseText;
+                const sessionMatch = html.match(/g_sessionID\s*=\s*"([^"]+)"/);
+                if (sessionMatch) sessionid = sessionMatch[1];
             }
-
+    
+            // 3. Если всё равно нет – генерируем случайные значения
+            if (!sessionid) {
+                sessionid = Math.random().toString(36).substring(2, 26);
+                console.warn('[U.S.E. Unblocker] sessionid не найден, сгенерирован случайный');
+            }
+            if (!browserid) {
+                // 40 hex-символов
+                browserid = Array.from(crypto.getRandomValues(new Uint8Array(20)), byte => byte.toString(16).padStart(2, '0')).join('');
+                console.warn('[U.S.E. Unblocker] browserid не найден, сгенерирован случайный');
+            }
+    
+            console.log(`[U.S.E. Unblocker] Используются sessionid=${sessionid}, browserid=${browserid}`);
+            return { sessionid, browserid };
+    
         } catch (error) {
             console.error(`[U.S.E. Unblocker] Ошибка при запросе сессии (попытка ${retryCount + 1}):`, error);
             if (retryCount < MAX_RETRIES) {
                 await new Promise(resolve => setTimeout(resolve, 500));
                 return getAnonymousSession(retryCount + 1);
             }
-            throw error instanceof Error ? error : new Error('Не удалось выполнить запрос для получения анонимной сессии.');
+            // При полном провале – генерируем идентификаторы, чтобы продолжить
+            console.warn('[U.S.E. Unblocker] Генерация случайных идентификаторов после ошибки');
+            const fallbackSessionId = Math.random().toString(36).substring(2, 26);
+            const fallbackBrowserId = Array.from(crypto.getRandomValues(new Uint8Array(20)), byte => byte.toString(16).padStart(2, '0')).join('');
+            return { sessionid: fallbackSessionId, browserid: fallbackBrowserId };
         }
     }
 
