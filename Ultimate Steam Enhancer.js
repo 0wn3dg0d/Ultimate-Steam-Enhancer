@@ -4,6 +4,7 @@
 // @version      2.1.9.2
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
+// @contributor  cmrd-a
 // @license      MIT
 // @require      https://code.jquery.com/jquery-3.6.0.min.js
 // @require      https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.7.1/nouislider.min.js
@@ -205,7 +206,9 @@
         const MAX_RETRIES = 2;
         console.log(`[U.S.E. Unblocker] Попытка #${retryCount + 1} получения анонимной сессии...`);
 
-        const sessionUrl = 'https://store.steampowered.com/join/?l=russian';
+        const sessionUrl = 'https://store.steampowered.com/join/?cc=us&l=russian';
+
+        const generateFakeHexId = (bytes) => Array.from(crypto.getRandomValues(new Uint8Array(bytes)), byte => byte.toString(16).padStart(2, '0')).join('');
 
         try {
             const response = await makeGMRequest({
@@ -217,27 +220,34 @@
                 anonymous: true
             });
 
+            let sessionid = null;
+            let browserid = null;
+
             const headers = response.responseHeaders;
-
-            const sessionidMatch = headers.match(/sessionid=([^;]+)/);
-            const browseridMatch = headers.match(/browserid=([^;]+)/);
-
-            const sessionid = sessionidMatch ? sessionidMatch[1] : null;
-            const browserid = browseridMatch ? browseridMatch[1] : null;
-
-            if (sessionid && browserid) {
-                console.log(`[U.S.E. Unblocker] Успешно получены sessionid=${sessionid}, browserid=${browserid}`);
-                return { sessionid, browserid };
+            if (headers) {
+                const sessionidMatch = headers.match(/sessionid=([^;]+)/);
+                const browseridMatch = headers.match(/browserid=([^;]+)/);
+                sessionid = sessionidMatch ? sessionidMatch[1] : null;
+                browserid = browseridMatch ? browseridMatch[1] : null;
             }
 
-            console.warn('[U.S.E. Unblocker] Не удалось получить cookies с текущей попытки. Заголовки ответа:', { headers });
-
-            if (retryCount < MAX_RETRIES) {
-                await new Promise(resolve => setTimeout(resolve, 500));
-                return getAnonymousSession(retryCount + 1);
-            } else {
-                throw new Error('Не удалось получить анонимный sessionid/browserid после нескольких попыток.');
+            if (!sessionid || !browserid) {
+                const html = response.responseText;
+                const sessionMatch = html.match(/g_sessionID\s*=\s*"([^"]+)"/);
+                if (sessionMatch) sessionid = sessionMatch[1];
             }
+
+            if (!sessionid) {
+                sessionid = generateFakeHexId(12);
+                console.warn('[U.S.E. Unblocker] sessionid не найден, сгенерирован локально');
+            }
+            if (!browserid) {
+                browserid = generateFakeHexId(20);
+                console.warn('[U.S.E. Unblocker] browserid не найден, сгенерирован локально');
+            }
+
+            console.log(`[U.S.E. Unblocker] Успех. Используются sessionid=${sessionid}, browserid=${browserid}`);
+            return { sessionid, browserid };
 
         } catch (error) {
             console.error(`[U.S.E. Unblocker] Ошибка при запросе сессии (попытка ${retryCount + 1}):`, error);
@@ -245,7 +255,11 @@
                 await new Promise(resolve => setTimeout(resolve, 500));
                 return getAnonymousSession(retryCount + 1);
             }
-            throw error instanceof Error ? error : new Error('Не удалось выполнить запрос для получения анонимной сессии.');
+            console.warn('[U.S.E. Unblocker] Критическая ошибка сети. Используем локально сгенерированные идентификаторы.');
+            return {
+                sessionid: generateFakeHexId(12),
+                browserid: generateFakeHexId(20)
+            };
         }
     }
 
