@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.9.2
+// @version      2.1.9.3
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @contributor  cmrd-a
@@ -21119,63 +21119,113 @@ if (headerCtn) {
                     parseHtml: function(htmlString, storeModule) {
                         const results = [];
                         try {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(htmlString, 'text/html');
+
                             const regex = /"data":(\[\{"id_goods".*?\}\]),"total":\d+/;
                             const match = htmlString.match(regex);
 
-                            if (!match || !match[1]) {
-                                return results;
+                            if (match && match[1]) {
+                                const jsonItems = JSON.parse(match[1]);
+
+                                jsonItems.forEach(item => {
+                                    if (item.forbidden_type !== 0 || item.hidden_from_search || item.hidden_from_parents) return;
+                                    if (![1, 2, 31, 48].includes(item.content_type_id)) return;
+
+                                    const productName = item.name?.trim();
+                                    const productUrlRaw = item.url ? `/catalog/product/${item.url}` : null;
+                                    const productUrl = productUrlRaw ? `${storeModule.baseUrl}${productUrlRaw}?ai=234029` : null;
+
+                                    const currentPrice = item.price_wmr ? sm_parsePrice(item.price_wmr) : null;
+                                    let originalPrice = null;
+                                    if (item.category_discount && sm_parsePrice(item.category_discount) > currentPrice) {
+                                        originalPrice = sm_parsePrice(item.category_discount);
+                                    }
+
+                                    if (!productName || currentPrice === null || !productUrl) return;
+
+                                    let imageUrl = null;
+                                    if (item.id_goods) {
+                                        const domLink = doc.querySelector(`a[href$="${item.id_goods}"]`);
+                                        if (domLink) {
+                                            const domCard = domLink.closest('[data-testid="card"]');
+                                            if (domCard) {
+                                                const imgEl = domCard.querySelector('[data-testid="card-image"]');
+                                                if (imgEl && imgEl.getAttribute('src')) {
+                                                    imageUrl = imgEl.getAttribute('src');
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    if (!imageUrl) {
+                                        if (item.image_url) imageUrl = item.image_url;
+                                        else if (item.images) imageUrl = `https://img.ggsel.net/${item.id_goods}/original/250x250/${item.images}`;
+                                        else if (item.icon) imageUrl = item.icon;
+                                        else imageUrl = 'https://i.imgur.com/yF0hawg.jpeg';
+                                    }
+
+                                    let data = {
+                                        storeId: storeModule.id,
+                                        storeName: storeModule.name,
+                                        storeUrl: storeModule.baseUrl,
+                                        productName: productName,
+                                        productUrl: productUrl,
+                                        imageUrl: imageUrl,
+                                        currentPrice: currentPrice,
+                                        originalPrice: originalPrice,
+                                        discountPercent: null,
+                                        discountAmount: null,
+                                        currency: 'RUB',
+                                        isAvailable: item.is_active === true,
+                                        sellerId: item.id_seller,
+                                        sellerName: item.seller_name
+                                    };
+
+                                    results.push(sm_calculateMissingValues(data));
+                                });
                             }
 
-                            const items = JSON.parse(match[1]);
+                            if (results.length === 0) {
+                                const domItems = doc.querySelectorAll('[data-testid="card"]');
+                                domItems.forEach(item => {
+                                    const linkEl = item.querySelector('[data-testid="card-link"]');
+                                    const imgEl = item.querySelector('[data-testid="card-image"]');
+                                    const priceEl = item.querySelector('[data-test="price"]');
+                                    const oldPriceEl = item.querySelector('[class*="oldPrice"]');
+                                    const nameEl = item.querySelector('[class*="description"] span');
 
-                            items.forEach(item => {
-                                if (item.forbidden_type !== 0 || item.hidden_from_search || item.hidden_from_parents) {
-                                    return;
-                                }
+                                    const productName = nameEl ? nameEl.textContent.trim() : (imgEl ? imgEl.getAttribute('alt') : null);
+                                    const productUrlRaw = linkEl ? linkEl.getAttribute('href') : null;
+                                    const imageUrl = imgEl ? imgEl.getAttribute('src') : null;
 
-                                if (![1, 2, 31, 48].includes(item.content_type_id)) {
-                                    return;
-                                }
+                                    const currentPrice = priceEl ? sm_parsePrice(priceEl.textContent) : null;
+                                    const originalPrice = oldPriceEl ? sm_parsePrice(oldPriceEl.textContent) : null;
 
-                                const productName = item.name?.trim();
-                                const productUrlRaw = item.url ? `/catalog/product/${item.url}` : null;
-                                const productUrl = productUrlRaw ? `${storeModule.baseUrl}${productUrlRaw}?ai=234029` : null;
+                                    if (!productName || currentPrice === null || !productUrlRaw) return;
 
-                                const imageUrl = item.images ? `https://img.ggsel.net/${item.id_goods}/original/250x250/${item.images}` : null;
-
-                                const currentPrice = item.price_wmr ? sm_parsePrice(item.price_wmr) : null;
-                                let originalPrice = null;
-
-                                if (item.category_discount && sm_parsePrice(item.category_discount) > currentPrice) {
-                                    originalPrice = sm_parsePrice(item.category_discount);
-                                }
-
-                                if (!productName || currentPrice === null || !imageUrl || !productUrl) {
-                                    return;
-                                }
-
-                                let data = {
-                                    storeId: storeModule.id,
-                                    storeName: storeModule.name,
-                                    storeUrl: storeModule.baseUrl,
-                                    productName: productName,
-                                    productUrl: productUrl,
-                                    imageUrl: imageUrl,
-                                    currentPrice: currentPrice,
-                                    originalPrice: originalPrice,
-                                    discountPercent: null,
-                                    discountAmount: null,
-                                    currency: 'RUB',
-                                    isAvailable: item.is_active === true,
-                                    sellerId: item.id_seller,
-                                    sellerName: item.seller_name
-                                };
-
-                                results.push(sm_calculateMissingValues(data));
-                            });
+                                    let data = {
+                                        storeId: storeModule.id,
+                                        storeName: storeModule.name,
+                                        storeUrl: storeModule.baseUrl,
+                                        productName: productName,
+                                        productUrl: `${storeModule.baseUrl}${productUrlRaw}?ai=234029`,
+                                        imageUrl: imageUrl || 'https://i.imgur.com/yF0hawg.jpeg',
+                                        currentPrice: currentPrice,
+                                        originalPrice: (originalPrice && originalPrice > currentPrice) ? originalPrice : null,
+                                        discountPercent: null,
+                                        discountAmount: null,
+                                        currency: 'RUB',
+                                        isAvailable: true,
+                                        sellerId: null,
+                                        sellerName: null
+                                    };
+                                    results.push(sm_calculateMissingValues(data));
+                                });
+                            }
 
                         } catch (e) {
-                            sm_logError(storeModule.name, 'Ошибка извлечения JSON из HTML', e);
+                            sm_logError(storeModule.name, 'Ошибка при парсинге GGSEL', e);
                         }
                         return results;
                     }
