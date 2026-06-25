@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.9.3
+// @version      2.1.9.4
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @contributor  cmrd-a
@@ -31,10 +31,7 @@
 // @connect      shared.akamai.steamstatic.com
 // @connect      shared.cloudflare.steamstatic.com
 // @connect      shared.fastly.steamstatic.com
-// @connect      umadb.ro
-// @connect      api.github.com
 // @connect      howlongtobeat.com
-// @connect      vgtimes.ru
 // @connect      api.digiseller.com
 // @connect      plati.market
 // @connect      digiseller.mycdn.ink
@@ -68,6 +65,7 @@
 // @connect      rushbe.ru
 // @connect      igm.gg
 // @connect      sous-buy.ru
+// @connect      sous-buy.shop
 // @connect      storage.yandexcloud.net
 // @connect      graph.digiseller.ru
 // @connect      steamcdn-a.akamaihd.net
@@ -21456,8 +21454,8 @@ if (headerCtn) {
                 { // --- Модуль Sous-Buy ---
                     id: 'sousbuy',
                     name: 'Sous-Buy',
-                    baseUrl: 'https://sous-buy.ru',
-                    searchUrlTemplate: 'https://sous-buy.ru/catalog?GameSearch[game]={query}&GameSearch[instock]=1&GameSearch[key]=1&GameSearch[platform]=1',
+                    baseUrl: 'https://sous-buy.shop',
+                    searchUrlTemplate: 'https://sous-buy.shop/catalog?GameSearch[game]={query}&GameSearch[instock]=1&GameSearch[key]=1&GameSearch[platform]=1',
                     isEnabled: true,
                     fetch: async function(query) {
                         const searchUrl = this.searchUrlTemplate.replace('{query}', encodeURIComponent(query));
