@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Ultimate Steam Enhancer
 // @namespace    https://store.steampowered.com/
-// @version      2.1.9.4
+// @version      2.1.9.5
 // @description  Добавляет множество функций для улучшения взаимодействия с магазином и сообществом (Полный список на странице скрипта)
 // @author       0wn3df1x
 // @contributor  cmrd-a
@@ -80,6 +80,7 @@
 // @connect      partner.steamgames.com
 // @connect      localhost
 // @connect      external-content.duckduckgo.com
+// @connect      search-v2.kupikod.com
 // ==/UserScript==
 
 
@@ -2269,7 +2270,13 @@
             let appidGlobal = null;
 
             function fetchReviews(appid, language, callback) {
-                let url = `https://store.steampowered.com/appreviews/${appid}?json=1&language=${language}&purchase_type=all`;
+                const inputJson = encodeURIComponent(JSON.stringify({
+                    appid: parseInt(appid),
+                    languages: [language],
+                    purchase_type: 1
+                }));
+                let url = `https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/?input_json=${inputJson}`;
+
                 GM_xmlhttpRequest({
                     method: "GET",
                     url: url,
@@ -2278,8 +2285,8 @@
                         if (response.status >= 200 && response.status < 400) {
                             try {
                                 let data = JSON.parse(response.responseText);
-                                if (data.success === 1) {
-                                    callback(data.query_summary);
+                                if (data && data.response && data.response.query_summary) {
+                                    callback(data.response.query_summary);
                                 } else {
                                     console.error(`Steam API error for ${language}:`, data);
                                     callback(null);
@@ -2304,41 +2311,7 @@
                 });
             }
 
-            function fetchRussianReviewsHTML(appid, filter, callback) {
-                let url = `https://store.steampowered.com/appreviews/${appid}?language=russian&purchase_type=all&filter=${filter}&day_range=365`;
-                GM_xmlhttpRequest({
-                    method: "GET",
-                    url: url,
-                    timeout: 15000,
-                    onload: function(response) {
-                        if (response.status >= 200 && response.status < 400) {
-                            try {
-                                let data = JSON.parse(response.responseText);
-                                if (data.success === 1) {
-                                    callback(data.html);
-                                } else {
-                                    console.error('Error fetching Russian reviews HTML (success != 1):', data);
-                                    callback('<p style="color: #ff6961;">Ошибка загрузки обзоров.</p>');
-                                }
-                            } catch (e) {
-                                console.error('Error parsing Russian reviews HTML:', e);
-                                callback('<p style="color: #ff6961;">Ошибка обработки ответа.</p>');
-                            }
-                        } else {
-                            console.error(`Failed to fetch Russian reviews HTML. Status: ${response.status}`);
-                            callback('<p style="color: #ff6961;">Ошибка сети при загрузке обзоров.</p>');
-                        }
-                    },
-                    onerror: function(error) {
-                        console.error('Network error fetching Russian reviews HTML:', error);
-                        callback('<p style="color: #ff6961;">Ошибка сети.</p>');
-                    },
-                    ontimeout: function() {
-                        console.error('Timeout fetching Russian reviews HTML');
-                        callback('<p style="color: #ff6961;">Таймаут загрузки обзоров.</p>');
-                    }
-                });
-            }
+
 
             function addStyles() {
                 GM_addStyle(`
@@ -3015,6 +2988,76 @@
                 }
             }
 
+            let currentReviewCursor = '*';
+            let currentReviewFilter = 'all';
+
+            function fetchRussianReviewsAPI(appid, filterStr, cursor, callback) {
+                const filterEnum = (filterStr === 'recent') ? 1 : 0;
+
+                const inputJson = encodeURIComponent(JSON.stringify({
+                    appid: parseInt(appid),
+                    languages: ["russian"],
+                    purchase_type: 1,
+                    filter: filterEnum,
+                    cursor: cursor,
+                    day_range: 365,
+                    num_per_page: 20
+                }));
+
+                let url = `https://api.steampowered.com/IUserReviewsService/GetAppReviews/v1/?input_json=${inputJson}`;
+
+                GM_xmlhttpRequest({
+                    method: "GET",
+                    url: url,
+                    timeout: 15000,
+                    onload: function(response) {
+                        if (response.status >= 200 && response.status < 400) {
+                            try {
+                                let data = JSON.parse(response.responseText);
+                                if (data && data.response && data.response.reviews) {
+                                    callback(data.response.reviews, data.response.cursor, null);
+                                } else {
+                                    callback(null, null, 'Ошибка структуры данных');
+                                }
+                            } catch (e) {
+                                callback(null, null, 'Ошибка обработки ответа');
+                            }
+                        } else {
+                            callback(null, null, `Ошибка API. Статус: ${response.status}`);
+                        }
+                    },
+                    onerror: function(error) {
+                        callback(null, null, 'Ошибка сети');
+                    },
+                    ontimeout: function() {
+                        callback(null, null, 'Таймаут загрузки');
+                    }
+                });
+            }
+
+            function renderReviewsHTML(reviews) {
+                if (!reviews || reviews.length === 0) return '';
+                let html = '';
+                reviews.forEach(r => {
+                    const isPositive = r.voted_up ? "👍 Рекомендую" : "👎 Не рекомендую";
+                    const color = r.voted_up ? "#66c0f4" : "#a34c25";
+                    const hours = (r.author.playtime_at_review / 60).toFixed(1);
+                    const date = new Date(r.timestamp_created * 1000).toLocaleDateString('ru-RU');
+                    const reviewText = r.review.replace(/\n/g, '<br>');
+
+                    html += `
+                        <div class="review_box" style="padding: 12px; margin-bottom: 12px;">
+                            <div class="title" style="color: ${color}; font-size: 16px; font-weight: normal; margin-bottom: 8px;">${isPositive}</div>
+                            <div class="hours" style="margin-bottom: 8px;">В игре: ${hours} ч.</div>
+                            <div class="content" style="font-size: 13px; line-height: 17px; margin-bottom: 8px; word-wrap: break-word;">${reviewText}</div>
+                            <div class="posted" style="margin-bottom: 4px;">Опубликовано: ${date}</div>
+                            <div class="found_helpful">Полезно: ${r.votes_up} | Смешно: ${r.votes_funny}</div>
+                        </div>
+                    `;
+                });
+                return html;
+            }
+
             function openRussianReviewsModal() {
                 let modal = document.getElementById('russianReviewsModal');
                 if (!modal) {
@@ -3024,15 +3067,44 @@
                     modal.innerHTML = `
                             <div class="ofxmodal-content">
                                 <span class="ofxclose" title="Закрыть">&times;</span>
-                                <button class="refresh-button" id="refresh-reviews">Загрузить актуальные</button>
+                                <div style="position: absolute; top: 20px; left: 25px; display: flex; gap: 10px; z-index: 1001;">
+                                    <button class="refresh-button" id="filter-all" style="position: static; padding: 6px 12px; font-size: 12px;">Самые полезные</button>
+                                    <button class="refresh-button" id="filter-recent" style="position: static; padding: 6px 12px; font-size: 12px; background: #2a3f5a; color: #67c1f5;">Недавние</button>
+                                </div>
                                 <h3 style="text-align: center; color: #67c1f5; margin-top: 5px; margin-bottom: 25px;">Русскоязычные обзоры</h3>
                                 <div id="reviews-container" style="padding-top: 10px;">Загрузка...</div>
+                                <div style="text-align: center; margin-top: 20px;">
+                                    <button id="load-more-btn" class="refresh-button" style="position: static; display: none;">Загрузить ещё</button>
+                                </div>
                             </div>
                         `;
                     document.body.appendChild(modal);
 
                     modal.querySelector('.ofxclose').addEventListener('click', () => modal.style.display = 'none');
-                    modal.querySelector('#refresh-reviews').addEventListener('click', () => refreshRussianReviews(modal));
+
+                    const btnAll = modal.querySelector('#filter-all');
+                    const btnRecent = modal.querySelector('#filter-recent');
+
+                    btnAll.addEventListener('click', () => {
+                        btnAll.style.background = '#66c0f4';
+                        btnAll.style.color = '#1b2838';
+                        btnRecent.style.background = '#2a3f5a';
+                        btnRecent.style.color = '#67c1f5';
+                        modal.querySelector('#reviews-container').innerHTML = 'Загрузка...';
+                        loadRussianReviews(modal, 'all');
+                    });
+
+                    btnRecent.addEventListener('click', () => {
+                        btnRecent.style.background = '#66c0f4';
+                        btnRecent.style.color = '#1b2838';
+                        btnAll.style.background = '#2a3f5a';
+                        btnAll.style.color = '#67c1f5';
+                        modal.querySelector('#reviews-container').innerHTML = 'Загрузка...';
+                        loadRussianReviews(modal, 'recent');
+                    });
+
+                    modal.querySelector('#load-more-btn').addEventListener('click', () => loadRussianReviews(modal, currentReviewFilter, true));
+
                     modal.addEventListener('click', (event) => {
                         if (event.target === modal) {
                             modal.style.display = 'none';
@@ -3041,22 +3113,67 @@
                 }
 
                 modal.style.display = 'block';
+
+                const btnAll = modal.querySelector('#filter-all');
+                const btnRecent = modal.querySelector('#filter-recent');
+                btnAll.style.background = '#66c0f4';
+                btnAll.style.color = '#1b2838';
+                btnRecent.style.background = '#2a3f5a';
+                btnRecent.style.color = '#67c1f5';
+
                 loadRussianReviews(modal, 'all');
             }
 
-            function refreshRussianReviews(modal) {
-                modal.querySelector('#reviews-container').innerHTML = 'Загрузка актуальных...';
-                loadRussianReviews(modal, 'recent');
-            }
-
-            function loadRussianReviews(modal, filter) {
+            function loadRussianReviews(modal, filter, isLoadMore = false) {
                 if (!appidGlobal) return;
-                fetchRussianReviewsHTML(appidGlobal, filter, function(html) {
-                    const container = modal.querySelector('#reviews-container');
-                    container.innerHTML = html;
-                    container.querySelector('#LoadMoreReviewsall')?.remove();
-                    container.querySelector('#LoadMoreReviewsrecent')?.remove();
-                    container.querySelectorAll('a').forEach(a => a.target = '_blank');
+
+                const container = modal.querySelector('#reviews-container');
+                const loadMoreBtn = modal.querySelector('#load-more-btn');
+
+                if (!isLoadMore) {
+                    currentReviewFilter = filter;
+                    currentReviewCursor = '*';
+                    loadMoreBtn.style.display = 'none';
+                } else {
+                    loadMoreBtn.textContent = 'Загрузка...';
+                    loadMoreBtn.disabled = true;
+                }
+
+                fetchRussianReviewsAPI(appidGlobal, filter, currentReviewCursor, function(reviews, nextCursor, error) {
+                    if (error) {
+                        if (!isLoadMore) container.innerHTML = `<p style="color: #ff6961; text-align: center;">${error}</p>`;
+                        if (loadMoreBtn) {
+                            loadMoreBtn.textContent = 'Ошибка загрузки';
+                            setTimeout(() => { loadMoreBtn.textContent = 'Загрузить ещё'; loadMoreBtn.disabled = false; }, 2000);
+                        }
+                        return;
+                    }
+
+                    if (reviews.length === 0 && !isLoadMore) {
+                        container.innerHTML = '<p style="color: #8f98a0; text-align: center; padding: 20px;">Нет обзоров.</p>';
+                        if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                        return;
+                    }
+
+                    const html = renderReviewsHTML(reviews);
+
+                    if (isLoadMore) {
+                        container.insertAdjacentHTML('beforeend', html);
+                    } else {
+                        container.innerHTML = html;
+                    }
+
+                    currentReviewCursor = nextCursor;
+
+                    if (reviews.length < 20 || !nextCursor) {
+                        if (loadMoreBtn) loadMoreBtn.style.display = 'none';
+                    } else {
+                        if (loadMoreBtn) {
+                            loadMoreBtn.style.display = 'inline-block';
+                            loadMoreBtn.textContent = 'Загрузить ещё';
+                            loadMoreBtn.disabled = false;
+                        }
+                    }
                 });
             }
 
@@ -3629,8 +3746,8 @@
             let hltb_russianIndicatorsNode = null;
             let hltb_russianIndicatorsObserverInstance = null;
 
-            const HLTB_ENDPOINT_KEY = 'use_hltb_api_endpoint';
-            let currentEndpoint = GM_getValue(HLTB_ENDPOINT_KEY, "/api/find");
+            const HLTB_ENDPOINT_KEY = 'use_hltb_api_endpoint_v3';
+            let currentEndpoint = GM_getValue(HLTB_ENDPOINT_KEY, "/api/site");
 
             const fadeInElement = (element) => {
                 element.style.opacity = '0';
@@ -3696,43 +3813,6 @@
             updateHltbPosition();
             hltb_setupPageChangeObservers();
 
-            const fetchFallbackEndpoint = async () => {
-                try {
-                    const htmlResponse = await new Promise((resolve, reject) => {
-                        GM_xmlhttpRequest({ method: "GET", url: "https://howlongtobeat.com/", onload: resolve, onerror: reject });
-                    });
-
-                    const scripts = [...htmlResponse.responseText.matchAll(/src="(\/_next\/static\/chunks\/[^"]+\.js)"/g)].map(m => m[1]);
-                    const fetchPromises = scripts.map(script =>
-                        new Promise(resolve => GM_xmlhttpRequest({
-                            method: "GET",
-                            url: "https://howlongtobeat.com" + script,
-                            onload: resolve,
-                            onerror: () => resolve({ responseText: '' })
-                        }))
-                    );
-
-                    const responses = await Promise.all(fetchPromises);
-                    for (let i = 0; i < responses.length; i++) {
-                        const js = responses[i].responseText;
-                        if (!js) continue;
-
-                        const matchConcat = js.match(/"\/api\/"\s*\.?\s*concat\("([a-zA-Z0-9_]+)"\)/);
-                        if (matchConcat && matchConcat[1]) return `/api/${matchConcat[1]}`;
-
-                        const matches = [...js.matchAll(/"\/api\/([a-zA-Z0-9_]+)(?:\/init)?"/g)];
-                        for (const m of matches) {
-                            if (m[1] && !['auth', 'login', 'user', 'build'].includes(m[1])) {
-                                return `/api/${m[1]}`;
-                            }
-                        }
-                    }
-                    throw new Error("Endpoint not found in chunks");
-                } catch (e) {
-                    throw e;
-                }
-            };
-
             const getHltbToken = async (endpoint) => {
                 return new Promise((resolve, reject) => {
                     const initUrl = `https://howlongtobeat.com${endpoint}/init?t=${Date.now()}`;
@@ -3746,7 +3826,7 @@
                         },
                         onload: (response) => {
                             if (response.status === 200) {
-                                resolve(JSON.parse(response.responseText));
+                                try { resolve(JSON.parse(response.responseText)); } catch(e) { reject(e); }
                             } else {
                                 reject(response.status);
                             }
@@ -3754,6 +3834,61 @@
                         onerror: () => reject(0)
                     });
                 });
+            };
+
+            const discoverHltbEndpoint = async () => {
+                try {
+                    const htmlResponse = await new Promise((resolve, reject) => {
+                        GM_xmlhttpRequest({ method: "GET", url: "https://howlongtobeat.com/", onload: resolve, onerror: reject });
+                    });
+                    const html = htmlResponse.responseText;
+
+                    let scriptsToFetch = [];
+                    const manifestMatch = html.match(/["'](\/_next\/static\/[^"']+\/_buildManifest\.js)["']/);
+
+                    if (manifestMatch) {
+                        scriptsToFetch.push(manifestMatch[1]);
+                    } else {
+                        const chunkMatches = [...html.matchAll(/["'](\/_next\/static\/chunks\/[^"']+\.js)["']/g)];
+                        scriptsToFetch = chunkMatches.map(m => m[1]);
+                    }
+
+                    let apiPaths = new Set();
+                    const fetchPromises = scriptsToFetch.map(src =>
+                        new Promise(resolve => GM_xmlhttpRequest({
+                            method: "GET",
+                            url: "https://howlongtobeat.com" + (src.startsWith('/') ? src : '/' + src),
+                            onload: resolve,
+                            onerror: () => resolve({ responseText: '' })
+                        }))
+                    );
+
+                    const responses = await Promise.all(fetchPromises);
+                    for (let resp of responses) {
+                        const js = resp.responseText;
+                        if (!js) continue;
+                        const pathMatches = [...js.matchAll(/["'`](\/api\/[a-zA-Z0-9_\/%\-]+)["'`]/g)];
+                        for (let m of pathMatches) {
+                            apiPaths.add(m[1]);
+                        }
+                    }
+
+                    let candidates = [];
+                    for (let path of apiPaths) {
+                        if (!path.endsWith("/init") && apiPaths.has(path + "/init")) {
+                            candidates.push(path);
+                        }
+                    }
+
+                    candidates.sort();
+
+                    if (candidates.length > 0) {
+                        return candidates[0];
+                    }
+                    throw new Error("No endpoints found");
+                } catch (e) {
+                    throw e;
+                }
             };
 
             const handleClick = async function() {
@@ -3772,7 +3907,7 @@
                     triangle.style.borderBottom = '5px solid #67c1f5';
 
                     let gameName = getGameName();
-                    let searchName = gameName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’]/g, "'").replace(/[^a-zA-Zа-яёА-ЯЁ _0-9`~!@#$%^&*()_\-=+|\\\]}[{;:',<.>/?]/g, '').toLowerCase().split(/\s+/);
+                    let searchName = gameName.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/['’]/g, "'").replace(/[^a-zA-Zа-яёА-ЯЁ _0-9`~!@#$%^&*()_\-=+|\\\]}[{;:',<.>\/?]/g, '').toLowerCase().split(/\s+/);
 
                     let hltbAuth = {};
                     try {
@@ -3781,13 +3916,14 @@
                             hltbAuth = { token: data.token, hpKey: data.hpKey, hpVal: data.hpVal };
                         } catch (status) {
                             content.textContent = 'Обновление API HLTB...';
-                            currentEndpoint = await fetchFallbackEndpoint();
+                            currentEndpoint = await discoverHltbEndpoint();
+                            GM_setValue(HLTB_ENDPOINT_KEY, currentEndpoint);
                             const data = await getHltbToken(currentEndpoint);
                             hltbAuth = { token: data.token, hpKey: data.hpKey, hpVal: data.hpVal };
-                            GM_setValue(HLTB_ENDPOINT_KEY, currentEndpoint);
                         }
                     } catch (e) {
                         content.textContent = 'Ошибка токена HLTB';
+                        hltbBlock.style.height = `${content.scrollHeight + 30}px`;
                         return;
                     }
 
@@ -3801,7 +3937,7 @@
                         "searchOptions": {
                             "games": {
                                 "userId": 0, "platform": "", "sortCategory": "popular", "rangeCategory": "main",
-                                "rangeTime": { "min": null, "max": null }, "gameplay": { "perspective": "", "flow": "", "genre": "", "difficulty": "" },
+                                "rangeTime": { "min": 0, "max": 0 }, "gameplay": { "perspective": "", "flow": "", "genre": "", "difficulty": "" },
                                 "rangeYear": { "min": "", "max": "" }, "modifier": ""
                             },
                             "users": { "sortCategory": "postcount" },
@@ -3841,17 +3977,32 @@
                     };
 
                     try {
-                        const response = await performSearch(searchPayload);
+                        let response = await performSearch(searchPayload);
+
+                        if (response.status === 403) {
+                            currentEndpoint = await discoverHltbEndpoint();
+                            GM_setValue(HLTB_ENDPOINT_KEY, currentEndpoint);
+                            const data = await getHltbToken(currentEndpoint);
+                            hltbAuth = { token: data.token, hpKey: data.hpKey, hpVal: data.hpVal };
+                            searchHeaders["x-auth-token"] = hltbAuth.token;
+                            if (hltbAuth.hpKey) searchHeaders["x-hp-key"] = hltbAuth.hpKey;
+                            if (hltbAuth.hpVal) searchHeaders["x-hp-val"] = hltbAuth.hpVal;
+
+                            searchPayload[hltbAuth.hpKey] = hltbAuth.hpVal;
+                            response = await performSearch(searchPayload);
+                        }
 
                         let baboonData = { count: 0, data: [] };
                         if (response.responseText.includes("<!DOCTYPE html>")) {
                             content.textContent = 'Ошибка: Cloudflare блок.';
+                            hltbBlock.style.height = `${content.scrollHeight + 30}px`;
                             return;
                         }
                         try {
                             baboonData = JSON.parse(response.responseText);
                         } catch (e) {
                             content.textContent = 'Ошибка парсинга данных.';
+                            hltbBlock.style.height = `${content.scrollHeight + 30}px`;
                             return;
                         }
 
@@ -3894,6 +4045,7 @@
 
                     } catch (e) {
                         content.textContent = 'Ошибка сети HLTB.';
+                        hltbBlock.style.height = `${content.scrollHeight + 30}px`;
                     }
                 } else {
                     content.style.display = 'none';
@@ -15170,217 +15322,49 @@ if (headerCtn) {
             const PGH_API_URL = "https://api.steampowered.com/IStoreBrowseService/GetItems/v1";
             const PGH_CURRENCY_API_URL = 'https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/';
             const PGH_REQUEST_TIMEOUT_MS = 15000;
-            const PGH_GIFT_PRICE_DIFF_THRESHOLD = 0.15;
             const PGH_COUNTRY_CURRENCY_MAP = {
-                'US': {
-                    name: 'Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'DE': {
-                    name: 'Евро',
-                    code: 3,
-                    iso: 'eur'
-                },
-                'AR': {
-                    name: 'Лат. Ам. - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'AU': {
-                    name: 'Австралийский доллар',
-                    code: 21,
-                    iso: 'aud'
-                },
-                'BR': {
-                    name: 'Бразильский реал',
-                    code: 7,
-                    iso: 'brl'
-                },
-                'GB': {
-                    name: 'Британский фунт',
-                    code: 2,
-                    iso: 'gbp'
-                },
-                'CA': {
-                    name: 'Канадский доллар',
-                    code: 20,
-                    iso: 'cad'
-                },
-                'CL': {
-                    name: 'Чилийское песо',
-                    code: 25,
-                    iso: 'clp'
-                },
-                'CN': {
-                    name: 'Китайский юань',
-                    code: 23,
-                    iso: 'cny'
-                },
-                'AZ': {
-                    name: 'СНГ - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'CO': {
-                    name: 'Колумбийское песо',
-                    code: 27,
-                    iso: 'cop'
-                },
-                'CR': {
-                    name: 'Коста-риканский колон',
-                    code: 40,
-                    iso: 'crc'
-                },
-                'HK': {
-                    name: 'Гонконгский доллар',
-                    code: 29,
-                    iso: 'hkd'
-                },
-                'IN': {
-                    name: 'Индийская рупия',
-                    code: 24,
-                    iso: 'inr'
-                },
-                'ID': {
-                    name: 'Индонезийская рупия',
-                    code: 10,
-                    iso: 'idr'
-                },
-                'IL': {
-                    name: 'Израильский новый шекель',
-                    code: 35,
-                    iso: 'ils'
-                },
-                'JP': {
-                    name: 'Японская иена',
-                    code: 8,
-                    iso: 'jpy'
-                },
-                'KZ': {
-                    name: 'Казахстанский тенге',
-                    code: 37,
-                    iso: 'kzt'
-                },
-                'KW': {
-                    name: 'Кувейтский динар',
-                    code: 38,
-                    iso: 'kwd'
-                },
-                'MY': {
-                    name: 'Малазийский ринггит',
-                    code: 11,
-                    iso: 'myr'
-                },
-                'MX': {
-                    name: 'Мексиканское песо',
-                    code: 19,
-                    iso: 'mxn'
-                },
-                'NZ': {
-                    name: 'Новозеландский доллар',
-                    code: 22,
-                    iso: 'nzd'
-                },
-                'NO': {
-                    name: 'Норвежская крона',
-                    code: 9,
-                    iso: 'nok'
-                },
-                'PE': {
-                    name: 'Перуанский соль',
-                    code: 26,
-                    iso: 'pen'
-                },
-                'PH': {
-                    name: 'Филиппинское песо',
-                    code: 12,
-                    iso: 'php'
-                },
-                'PL': {
-                    name: 'Польский злотый',
-                    code: 6,
-                    iso: 'pln'
-                },
-                'QA': {
-                    name: 'Катарский риал',
-                    code: 39,
-                    iso: 'qar'
-                },
-                'RU': {
-                    name: 'Российский рубль',
-                    code: 5,
-                    iso: 'rub'
-                },
-                'SA': {
-                    name: 'Саудовский риал',
-                    code: 31,
-                    iso: 'sar'
-                },
-                'SG': {
-                    name: 'Сингапурский доллар',
-                    code: 13,
-                    iso: 'sgd'
-                },
-                'ZA': {
-                    name: 'Южноафриканский рэнд',
-                    code: 28,
-                    iso: 'zar'
-                },
-                'PK': {
-                    name: 'Юж. Азия - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'KR': {
-                    name: 'Южнокорейская вона',
-                    code: 16,
-                    iso: 'krw'
-                },
-                'CH': {
-                    name: 'Швейцарский франк',
-                    code: 4,
-                    iso: 'chf'
-                },
-                'TW': {
-                    name: 'Тайваньский доллар',
-                    code: 30,
-                    iso: 'twd'
-                },
-                'TH': {
-                    name: 'Тайский бат',
-                    code: 14,
-                    iso: 'thb'
-                },
-                'TR': {
-                    name: 'MENA - Доллар США',
-                    code: 1,
-                    iso: 'usd'
-                },
-                'AE': {
-                    name: 'Дирхам ОАЭ',
-                    code: 32,
-                    iso: 'aed'
-                },
-                'UA': {
-                    name: 'Украинская гривна',
-                    code: 18,
-                    iso: 'uah'
-                },
-                'UY': {
-                    name: 'Уругвайское песо',
-                    code: 41,
-                    iso: 'uyu'
-                },
-                'VN': {
-                    name: 'Вьетнамский донг',
-                    code: 15,
-                    iso: 'vnd'
-                }
+                'US': { name: 'Доллар США', code: 1, iso: 'usd' },
+                'DE': { name: 'Евро', code: 3, iso: 'eur' },
+                'AR': { name: 'Лат. Ам. - Доллар США', code: 1, iso: 'usd' },
+                'AU': { name: 'Австралийский доллар', code: 21, iso: 'aud' },
+                'BR': { name: 'Бразильский реал', code: 7, iso: 'brl' },
+                'GB': { name: 'Британский фунт', code: 2, iso: 'gbp' },
+                'CA': { name: 'Канадский доллар', code: 20, iso: 'cad' },
+                'CL': { name: 'Чилийское песо', code: 25, iso: 'clp' },
+                'CN': { name: 'Китайский юань', code: 23, iso: 'cny' },
+                'AZ': { name: 'СНГ - Доллар США', code: 1, iso: 'usd' },
+                'CO': { name: 'Колумбийское песо', code: 27, iso: 'cop' },
+                'CR': { name: 'Коста-риканский колон', code: 40, iso: 'crc' },
+                'HK': { name: 'Гонконгский доллар', code: 29, iso: 'hkd' },
+                'IN': { name: 'Индийская рупия', code: 24, iso: 'inr' },
+                'ID': { name: 'Индонезийская рупия', code: 10, iso: 'idr' },
+                'IL': { name: 'Израильский новый шекель', code: 35, iso: 'ils' },
+                'JP': { name: 'Японская иена', code: 8, iso: 'jpy' },
+                'KZ': { name: 'Казахстанский тенге', code: 37, iso: 'kzt' },
+                'KW': { name: 'Кувейтский динар', code: 38, iso: 'kwd' },
+                'MY': { name: 'Малазийский ринггит', code: 11, iso: 'myr' },
+                'MX': { name: 'Мексиканское песо', code: 19, iso: 'mxn' },
+                'NZ': { name: 'Новозеландский доллар', code: 22, iso: 'nzd' },
+                'NO': { name: 'Норвежская крона', code: 9, iso: 'nok' },
+                'PE': { name: 'Перуанский соль', code: 26, iso: 'pen' },
+                'PH': { name: 'Филиппинское песо', code: 12, iso: 'php' },
+                'PL': { name: 'Польский злотый', code: 6, iso: 'pln' },
+                'QA': { name: 'Катарский риал', code: 39, iso: 'qar' },
+                'RU': { name: 'Российский рубль', code: 5, iso: 'rub' },
+                'SA': { name: 'Саудовский риал', code: 31, iso: 'sar' },
+                'SG': { name: 'Сингапурский доллар', code: 13, iso: 'sgd' },
+                'ZA': { name: 'Южноафриканский рэнд', code: 28, iso: 'zar' },
+                'PK': { name: 'Юж. Азия - Доллар США', code: 1, iso: 'usd' },
+                'KR': { name: 'Южнокорейская вона', code: 16, iso: 'krw' },
+                'CH': { name: 'Швейцарский франк', code: 4, iso: 'chf' },
+                'TW': { name: 'Тайваньский доллар', code: 30, iso: 'twd' },
+                'TH': { name: 'Тайский бат', code: 14, iso: 'thb' },
+                'TR': { name: 'MENA - Доллар США', code: 1, iso: 'usd' },
+                'AE': { name: 'Дирхам ОАЭ', code: 32, iso: 'aed' },
+                'UA': { name: 'Украинская гривна', code: 18, iso: 'uah' },
+                'UY': { name: 'Уругвайское песо', code: 41, iso: 'uyu' },
+                'VN': { name: 'Вьетнамский донг', code: 15, iso: 'vnd' }
             };
-
-            const PGH_ISO_TO_COUNTRY = Object.fromEntries(Object.entries(PGH_COUNTRY_CURRENCY_MAP).map(([country, data]) => [data.iso, country]));
-            const PGH_ISO_TO_CODE = Object.fromEntries(Object.entries(PGH_COUNTRY_CURRENCY_MAP).map(([_, data]) => [data.iso, data.code]));
 
             let pgh_modal = null;
             let pgh_resultDiv = null;
@@ -15409,16 +15393,44 @@ if (headerCtn) {
                         box-shadow: 0 5px 25px rgba(0, 0, 0, 0.7);
                         z-index: 10001;
                         display: none;
-                        width: 400px;
+                        width: 420px;
                         font-family: "Motiva Sans", Sans-serif, Arial;
                     }
-                    #pghModal h3 {
-                        margin-top: 0;
+                    #pghModalHeader {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
                         margin-bottom: 15px;
+                    }
+                    #pghModal h3 {
+                        margin: 0;
                         color: #67c1f5;
-                        text-align: center;
                         font-weight: 500;
                         font-size: 16px;
+                    }
+                    #pghHelpBtn {
+                        background: none;
+                        border: none;
+                        color: #67c1f5;
+                        font-size: 18px;
+                        cursor: pointer;
+                        padding: 0 8px;
+                        line-height: 1;
+                        margin-right: 25px;
+                    }
+                    #pghHelpBtn:hover {
+                        color: #fff;
+                    }
+                    #pghHelpContent {
+                        display: none;
+                        background-color: #101822;
+                        border: 1px solid #2a3f5a;
+                        padding: 10px;
+                        border-radius: 3px;
+                        font-size: 12px;
+                        line-height: 1.5;
+                        margin-bottom: 15px;
+                        color: #8f98a0;
                     }
                     #pghModal label {
                         display: block;
@@ -15487,17 +15499,29 @@ if (headerCtn) {
                          margin-top: 10px;
                          text-align: center;
                          font-weight: bold;
-                         font-size: 15px;
+                         font-size: 14px;
                      }
-                     .pgh_result_giftable {
-                         background-color: rgba(119, 221, 119, 0.2);
+                     .pgh_result_good {
+                         background-color: rgba(119, 221, 119, 0.1);
                          border: 1px solid #77dd77;
                          color: #dff0d8;
                      }
-                     .pgh_result_not_giftable {
-                         background-color: rgba(255, 105, 97, 0.2);
+                     .pgh_result_warn {
+                         background-color: rgba(255, 179, 0, 0.1);
+                         border: 1px solid #ffb300;
+                         color: #ffe599;
+                     }
+                     .pgh_result_bad {
+                         background-color: rgba(255, 105, 97, 0.15);
                          border: 1px solid #ff6961;
                          color: #f2dede;
+                     }
+                     .pgh_pics_status {
+                         margin-top: 10px;
+                         font-size: 12px;
+                         padding: 8px;
+                         border-radius: 3px;
+                         text-align: center;
                      }
                     #pghCloseBtn {
                         position: absolute;
@@ -15509,7 +15533,7 @@ if (headerCtn) {
                         border: none;
                         cursor: pointer;
                         line-height: 1;
-                         padding: 0 5px;
+                        padding: 0 5px;
                     }
                      #pghCloseBtn:hover {
                         color: #ffffff;
@@ -15546,17 +15570,15 @@ if (headerCtn) {
                     }
                 }
 
-                 if (!pgh_currentUserCurrencyISO) {
-                    console.warn("[PGH] Не удалось определить валюту пользователя со страницы. Используем RUB по умолчанию.");
+                if (!pgh_currentUserCurrencyISO) {
                     pgh_currentUserCurrencyISO = 'rub';
-                 }
+                }
 
                 return pgh_currentAppId && pgh_currentUserPrice !== null && pgh_currentUserCurrencyISO;
             }
 
             function pgh_showModal() {
                 if (!pgh_getCurrentGameInfo()) {
-                    alert("Не удалось получить информацию об игре и цене на этой странице.");
                     return;
                 }
 
@@ -15564,8 +15586,15 @@ if (headerCtn) {
                     pgh_modal = document.createElement('div');
                     pgh_modal.id = 'pghModal';
                     pgh_modal.innerHTML = `
-                        <button id="pghCloseBtn" title="Закрыть">&times;</button>
-                        <h3>Проверить возможность подарка</h3>
+                        <button id="pghCloseBtn">&times;</button>
+                        <div id="pghModalHeader">
+                            <h3>Доступность подарка</h3>
+                            <button id="pghHelpBtn">?</button>
+                        </div>
+                        <div id="pghHelpContent">
+                            При отправке подарка в другой регион действует правило: если игра у друга стоит дороже, Steam спишет с вас цену друга. Если дешевле - вы заплатите свою обычную цену.<br><br>
+                            Инструмент помогает заранее рассчитать итоговую стоимость, а также проверяет скрытые ограничения издателей (через PICS), из-за которых игру нельзя отправить совсем.
+                        </div>
                         <label for="pghRegionSelect">Регион друга:</label>
                         <select id="pghRegionSelect">
                             <option value="">-- Выберите регион друга --</option>
@@ -15584,50 +15613,46 @@ if (headerCtn) {
                     pgh_regionSelect = document.getElementById('pghRegionSelect');
 
                     document.getElementById('pghCloseBtn').addEventListener('click', pgh_hideModal);
+                    document.getElementById('pghHelpBtn').addEventListener('click', () => {
+                        const helpContent = document.getElementById('pghHelpContent');
+                        helpContent.style.display = helpContent.style.display === 'block' ? 'none' : 'block';
+                    });
+
                     pgh_fetchBtn.addEventListener('click', pgh_fetchAndComparePrices);
                     pgh_regionSelect.addEventListener('change', () => {
                         pgh_fetchBtn.disabled = !pgh_regionSelect.value;
                     });
 
-                     pgh_modal._outsideClickListener = (event) => {
-                         if (!pgh_modal.contains(event.target) && pgh_modal.style.display === 'block') {
-                             pgh_hideModal();
-                         }
-                     };
-                     document.addEventListener('click', pgh_modal._outsideClickListener, true);
+                    pgh_modal._outsideClickListener = (event) => {
+                        if (!pgh_modal.contains(event.target) && pgh_modal.style.display === 'block') {
+                            pgh_hideModal();
+                        }
+                    };
+                    document.addEventListener('click', pgh_modal._outsideClickListener, true);
 
-                     pgh_modal._escListener = (event) => {
-                         if (event.key === 'Escape' && pgh_modal.style.display === 'block') {
-                             pgh_hideModal();
-                         }
-                     };
-                     document.addEventListener('keydown', pgh_modal._escListener);
-
+                    pgh_modal._escListener = (event) => {
+                        if (event.key === 'Escape' && pgh_modal.style.display === 'block') {
+                            pgh_hideModal();
+                        }
+                    };
+                    document.addEventListener('keydown', pgh_modal._escListener);
                 }
 
                 pgh_regionSelect.value = "";
                 pgh_fetchBtn.disabled = true;
                 pgh_resultDiv.innerHTML = "";
+                document.getElementById('pghHelpContent').style.display = 'none';
                 pgh_modal.style.display = 'block';
             }
 
             function pgh_hideModal() {
                 if (pgh_modal) {
                     pgh_modal.style.display = 'none';
-                     if (pgh_modal._outsideClickListener) {
-                         document.removeEventListener('click', pgh_modal._outsideClickListener, true);
-                     }
-                      if (pgh_modal._escListener) {
-                          document.removeEventListener('keydown', pgh_modal._escListener);
-                      }
                 }
             }
 
             async function pgh_fetchFriendPrice(appId, friendCountryCode) {
                 const friendCurrencyInfo = PGH_COUNTRY_CURRENCY_MAP[friendCountryCode];
-                if (!friendCurrencyInfo) {
-                    throw new Error("Неизвестный код страны друга.");
-                }
 
                 const inputJson = {
                     ids: [{ appid: parseInt(appId) }],
@@ -15654,35 +15679,26 @@ if (headerCtn) {
                                 if (itemData?.success === 1 && itemData?.best_purchase_option) {
                                     const priceData = itemData.best_purchase_option;
                                     const friendPriceCents = priceData.final_price_in_cents ? parseInt(priceData.final_price_in_cents, 10) : null;
-                                    const canGift = priceData.user_can_purchase_as_gift || false;
-
-                                    if (friendPriceCents !== null) {
-                                        resolve({
-                                            price: friendPriceCents / 100,
-                                            currencyISO: friendCurrencyInfo.iso,
-                                            formatted: priceData.formatted_final_price || 'N/A',
-                                            canGift: canGift
-                                        });
-                                    } else {
-                                        resolve({
-                                            price: 0,
-                                            currencyISO: friendCurrencyInfo.iso,
-                                            formatted: priceData.formatted_final_price || 'Бесплатно',
-                                            canGift: canGift
-                                         });
-                                    }
-                                } else if (itemData?.success === 1 && !itemData?.best_purchase_option){
-                                    reject(new Error(`Игра недоступна для покупки в регионе ${friendCountryCode}.`));
-                                }
-                                else {
-                                    reject(new Error("Не удалось получить данные о цене в регионе друга. Возможно, игра не найдена или недоступна."));
+                                    resolve({
+                                        price: friendPriceCents !== null ? friendPriceCents / 100 : null,
+                                        currencyISO: friendCurrencyInfo.iso,
+                                        formatted: priceData.formatted_final_price || 'N/A',
+                                        packageId: priceData.packageid || null
+                                    });
+                                } else {
+                                    resolve({
+                                        price: null,
+                                        currencyISO: friendCurrencyInfo.iso,
+                                        formatted: 'Скрыта',
+                                        packageId: null
+                                    });
                                 }
                             } else {
-                                reject(new Error(`Ошибка API Steam: Статус ${response.status}`));
+                                reject(new Error(response.status));
                             }
                         },
-                        onerror: (error) => reject(new Error('Сетевая ошибка при запросе цены друга')),
-                        ontimeout: () => reject(new Error('Таймаут при запросе цены друга'))
+                        onerror: () => reject(new Error('error')),
+                        ontimeout: () => reject(new Error('timeout'))
                     });
                 });
             }
@@ -15691,7 +15707,6 @@ if (headerCtn) {
                 if (pgh_exchangeRates && pgh_exchangeRates[baseCurrencyIso]) {
                     return pgh_exchangeRates[baseCurrencyIso];
                 }
-
                 const apiUrl = `${PGH_CURRENCY_API_URL}${baseCurrencyIso.toLowerCase()}.json`;
                 return new Promise((resolve, reject) => {
                     GM_xmlhttpRequest({
@@ -15707,23 +15722,57 @@ if (headerCtn) {
                                     pgh_exchangeRates[baseCurrencyIso] = rates;
                                     resolve(rates);
                                 } else {
-                                    reject(new Error(`Курсы для ${baseCurrencyIso} не найдены в ответе API`));
+                                    reject(new Error());
                                 }
                             } else {
-                                reject(new Error(`Ошибка API валют: статус ${response.status}`));
+                                reject(new Error());
                             }
                         },
-                        onerror: (error) => reject(new Error('Сетевая ошибка API валют')),
-                        ontimeout: () => reject(new Error('Таймаут запроса API валют'))
+                        onerror: () => reject(new Error()),
+                        ontimeout: () => reject(new Error())
                     });
                 });
+            }
+
+            async function pgh_checkPics(packageId, friendCountryCode) {
+                if (!packageId) return { status: 'unknown', message: 'Проверка PICS: Не найден ID пакета.' };
+                try {
+                    const res = await new Promise((resolve, reject) => {
+                        GM_xmlhttpRequest({
+                            method: 'GET',
+                            url: `http://localhost:8080/pics?subids=${packageId}`,
+                            timeout: 2500,
+                            onload: resolve,
+                            onerror: reject,
+                            ontimeout: reject
+                        });
+                    });
+                    if (res.status === 200) {
+                        const data = JSON.parse(res.responseText);
+                        const picsData = data[packageId];
+                        if (picsData && picsData.extended) {
+                            const restrictedKey = Object.keys(picsData.extended).find(k => k.toLowerCase() === 'purchaserestrictedcountries');
+                            if (restrictedKey) {
+                                const restrictedList = picsData.extended[restrictedKey].split(' ').map(c => c.trim().toUpperCase());
+                                if (restrictedList.includes(friendCountryCode.toUpperCase())) {
+                                    return { status: 'blocked', message: '🚫 ПОДАРОК НЕВОЗМОЖЕН: Жесткая блокировка пакета издателем (PICS) для этого региона.' };
+                                }
+                            }
+                            return { status: 'ok', message: '✅ PICS: Жестких ограничений нет.' };
+                        }
+                        return { status: 'ok', message: '✅ PICS: Жестких ограничений нет.' };
+                    }
+                    return { status: 'unknown', message: 'Проверка PICS: Локальный сервер вернул ошибку.' };
+                } catch (e) {
+                    return { status: 'offline', message: 'Проверка PICS: Локальный сервер выключен.' };
+                }
             }
 
             async function pgh_fetchAndComparePrices() {
                 const selectedRegion = pgh_regionSelect.value;
                 if (!selectedRegion) return;
 
-                pgh_resultDiv.innerHTML = '<div class="pgh_status_loading">Загрузка данных...</div>';
+                pgh_resultDiv.innerHTML = '<div class="pgh_status_loading">Анализ цен и проверок...</div>';
                 pgh_fetchBtn.disabled = true;
                 pgh_regionSelect.disabled = true;
 
@@ -15731,68 +15780,72 @@ if (headerCtn) {
                     const friendPriceData = await pgh_fetchFriendPrice(pgh_currentAppId, selectedRegion);
                     const friendPrice = friendPriceData.price;
                     const friendCurrencyISO = friendPriceData.currencyISO;
-                    const canFriendReceiveGift = friendPriceData.canGift;
 
                     let friendPriceInUserCurrency = friendPrice;
                     let exchangeRateUsed = null;
 
-                    if (pgh_currentUserCurrencyISO !== friendCurrencyISO) {
+                    if (friendPrice !== null && pgh_currentUserCurrencyISO !== friendCurrencyISO) {
                         try {
                             const rates = await pgh_fetchExchangeRates(friendCurrencyISO);
                             const rate = rates[pgh_currentUserCurrencyISO];
-                            if (rate === undefined || rate === null) {
-                                throw new Error(`Нет курса для ${pgh_currentUserCurrencyISO.toUpperCase()}`);
+                            if (rate !== undefined && rate !== null) {
+                                friendPriceInUserCurrency = parseFloat((friendPrice * rate).toFixed(2));
+                                exchangeRateUsed = rate;
                             }
-                            friendPriceInUserCurrency = parseFloat((friendPrice * rate).toFixed(2));
-                            exchangeRateUsed = rate;
                         } catch (rateError) {
-                            console.error("[PGH] Ошибка получения/использования курса:", rateError);
-                            pgh_resultDiv.innerHTML = `<div class="pgh_status_error">Ошибка конвертации валют: ${rateError.message}. Сравнение невозможно.</div>`;
-                            return;
+                            friendPriceInUserCurrency = null;
                         }
                     }
 
                     const userPrice = pgh_currentUserPrice;
-                    const priceDifference = friendPriceInUserCurrency - userPrice;
-                    const priceDifferencePercent = userPrice > 0 ? (priceDifference / userPrice) : (priceDifference > 0 ? Infinity : -Infinity);
+                    let localPackageId = friendPriceData.packageId;
+                    if (!localPackageId) {
+                        const subInput = document.querySelector('input[name="subid"]');
+                        if (subInput) localPackageId = parseInt(subInput.value, 10);
+                    }
 
-                    const isWithinThreshold = priceDifferencePercent <= PGH_GIFT_PRICE_DIFF_THRESHOLD;
-                    const canGift = isWithinThreshold && canFriendReceiveGift;
+                    const picsResult = await pgh_checkPics(localPackageId, selectedRegion);
 
                     let resultHTML = `
-                        Ваша цена: ${userPrice.toLocaleString('ru-RU', { style: 'currency', currency: pgh_currentUserCurrencyISO.toUpperCase(), minimumFractionDigits: 0, maximumFractionDigits: 2 })}<br>
-                        Цена друга: ${friendPrice.toLocaleString('ru-RU', { style: 'currency', currency: friendCurrencyISO.toUpperCase(), minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                        Ваша цена: <b>${userPrice.toLocaleString('ru-RU', { style: 'currency', currency: pgh_currentUserCurrencyISO.toUpperCase(), minimumFractionDigits: 0, maximumFractionDigits: 2 })}</b><br>
                     `;
 
-                    if (pgh_currentUserCurrencyISO !== friendCurrencyISO && exchangeRateUsed !== null) {
-                         resultHTML += ` ≈ ${friendPriceInUserCurrency.toLocaleString('ru-RU', { style: 'currency', currency: pgh_currentUserCurrencyISO.toUpperCase(), minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
-                         resultHTML += ` <small>(курс ≈ ${exchangeRateUsed.toFixed(4)})</small>`;
+                    if (friendPrice !== null) {
+                        resultHTML += `Цена друга: <b>${friendPrice.toLocaleString('ru-RU', { style: 'currency', currency: friendCurrencyISO.toUpperCase(), minimumFractionDigits: 0, maximumFractionDigits: 2 })}</b>`;
+                        if (pgh_currentUserCurrencyISO !== friendCurrencyISO && exchangeRateUsed !== null) {
+                             resultHTML += ` ≈ ${friendPriceInUserCurrency.toLocaleString('ru-RU', { style: 'currency', currency: pgh_currentUserCurrencyISO.toUpperCase(), minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
+                        }
+                    } else {
+                        resultHTML += `Цена друга: <b>Скрыта/Недоступна</b>`;
                     }
-                     resultHTML += `<br>`;
+                    resultHTML += `<br>`;
 
-                    if (userPrice > 0) {
-                         resultHTML += `Разница: ${priceDifference > 0 ? '+' : ''}${priceDifference.toLocaleString('ru-RU', { style: 'currency', currency: pgh_currentUserCurrencyISO.toUpperCase(), minimumFractionDigits: 0, maximumFractionDigits: 2 })}`;
-                         resultHTML += ` (${priceDifferencePercent === Infinity || priceDifferencePercent === -Infinity ? 'N/A' : (priceDifferencePercent * 100).toFixed(0)}%)`;
-                     } else {
-                        resultHTML += `Разница: N/A (ваша цена 0)`;
-                     }
+                    if (picsResult.status === 'blocked') {
+                        resultHTML += `<div class="pgh_result_block pgh_result_bad">${picsResult.message}<br><small style="font-weight:normal;">Игру нельзя отправить совсем.</small></div>`;
+                    } else {
+                        if (friendPriceInUserCurrency === null || friendPrice === null) {
+                            resultHTML += `<div class="pgh_result_block pgh_result_warn">Цена друга неизвестна.<br><small style="font-weight:normal;">Steam рассчитает итоговую стоимость прямо на странице оформления покупки.</small></div>`;
+                        } else {
+                            if (friendPriceInUserCurrency > userPrice) {
+                                resultHTML += `<div class="pgh_result_block pgh_result_bad">У друга дороже!<br><small style="font-weight:normal;">Вы заплатите цену региона друга: ${friendPriceInUserCurrency.toLocaleString('ru-RU', { style: 'currency', currency: pgh_currentUserCurrencyISO.toUpperCase(), minimumFractionDigits: 0, maximumFractionDigits: 2 })}.</small></div>`;
+                            } else if (friendPriceInUserCurrency < userPrice) {
+                                resultHTML += `<div class="pgh_result_block pgh_result_warn">У друга дешевле.<br><small style="font-weight:normal;">Вы заплатите свою обычную цену. Другу выгоднее купить игру самому.</small></div>`;
+                            } else {
+                                resultHTML += `<div class="pgh_result_block pgh_result_good">Цены равны.<br><small style="font-weight:normal;">Вы заплатите свою цену.</small></div>`;
+                            }
+                        }
 
-                     const resultClass = canGift ? 'pgh_result_giftable' : 'pgh_result_not_giftable';
-                     const resultText = canGift ? '~Можно подарить~' : '~Нельзя подарить~';
-
-                     resultHTML += `<div class="pgh_result_block ${resultClass}">${resultText}</div>`;
-
-                     if (!canFriendReceiveGift && isWithinThreshold) {
-                        resultHTML += `<small>Примечание: Steam не разрешает покупку этой игры в подарок для данного региона, несмотря на подходящую разницу цен.</small>`;
-                     } else if (!isWithinThreshold) {
-                         resultHTML += `<small>Примечание: Разница цен (${(priceDifferencePercent * 100).toFixed(0)}%) превышает допустимый порог Steam (${(PGH_GIFT_PRICE_DIFF_THRESHOLD * 100)}%).</small>`;
-                     }
+                        if (picsResult.status === 'ok') {
+                            resultHTML += `<div class="pgh_pics_status" style="color: #77dd77; border: 1px solid rgba(119, 221, 119, 0.3); background: rgba(119, 221, 119, 0.05);">${picsResult.message}</div>`;
+                        } else {
+                            resultHTML += `<div class="pgh_pics_status" style="color: #8f98a0; border: 1px solid rgba(143, 152, 160, 0.3); background: rgba(143, 152, 160, 0.05);">${picsResult.message}</div>`;
+                        }
+                    }
 
                     pgh_resultDiv.innerHTML = resultHTML;
 
                 } catch (error) {
-                    console.error("[PGH] Ошибка при получении/сравнении цен:", error);
-                    pgh_resultDiv.innerHTML = `<div class="pgh_status_error">Ошибка: ${error.message}</div>`;
+                    pgh_resultDiv.innerHTML = `<div class="pgh_status_error">Ошибка обработки запроса.</div>`;
                 } finally {
                      pgh_fetchBtn.disabled = !pgh_regionSelect.value;
                      pgh_regionSelect.disabled = false;
@@ -15804,11 +15857,7 @@ if (headerCtn) {
                 const primaryContainer = targetArea?.closest('.game_purchase_action') || document.getElementById('add_to_cart');
                 const smButton = document.querySelector('.salesMaster_button');
 
-                if (!primaryContainer && !smButton) {
-                    console.warn('[PGH] Не найден ни основной контейнер для кнопки подарка, ни SalesMaster.');
-                    return;
-                }
-
+                if (!primaryContainer && !smButton) return;
                 if (primaryContainer && primaryContainer.parentElement.querySelector('.pgh_button')) return;
                 if (smButton && smButton.parentElement.querySelector('.pgh_button')) return;
 
@@ -20463,26 +20512,21 @@ if (headerCtn) {
                     id: 'kupikod',
                     name: 'KupiKod',
                     baseUrl: 'https://kupikod.com',
-                    apiGamesUrlTemplate: 'https://explorer.kupikod.com/backend/api/games?name={query}',
-                    apiShopUrlTemplate: 'https://explorer.kupikod.com/backend/api/shop/products-list?name={query}',
+                    apiUrlTemplate: 'https://search-v2.kupikod.com/search?q={query}',
                     isEnabled: true,
-                    // Список суффиксов регионов для исключения (в нижнем регистре)
                     excludedRegionSuffixes: [
                         '-eu', '-us', '-arg', '-tr', '-no-ru-no-rb', '-no-ru-no-cis',
                         '-no-ru', '-euus', '-cis', '-uk', '-in', '-eg'
                     ],
-                    // Список ключевых слов платформ для исключения (в нижнем регистре)
                     excludedPlatformKeywords: [
                         '-xbox-', '-origin-', '-uplay-', '-gog-', '-rockstar-',
                         '-battlestate-', '-nintendo-'
                     ],
                     fetch: async function(query) {
                         const storeModule = this;
-                        const encodedQuery = encodeURIComponent(query);
-                        const gamesUrl = storeModule.apiGamesUrlTemplate.replace('{query}', encodedQuery);
-                        const shopUrl = storeModule.apiShopUrlTemplate.replace('{query}', encodedQuery);
+                        const url = storeModule.apiUrlTemplate.replace('{query}', encodeURIComponent(query));
 
-                        const fetchPromise = (url) => new Promise((resolve, reject) => {
+                        return new Promise((resolve) => {
                             GM_xmlhttpRequest({
                                 method: "GET",
                                 url: url,
@@ -20490,143 +20534,50 @@ if (headerCtn) {
                                 timeout: SM_REQUEST_TIMEOUT_MS,
                                 onload: (response) => {
                                     if (response.status >= 200 && response.status < 400 && response.response) {
-                                        resolve(response.response);
+                                        resolve(storeModule.parseApi(response.response, storeModule));
                                     } else {
-                                        sm_logError(storeModule.name, `HTTP статус ${response.status} для ${url}`);
-                                        resolve(null);
+                                        resolve([]);
                                     }
                                 },
-                                onerror: (error) => {
-                                     sm_logError(storeModule.name, `Сетевая ошибка для ${url}`, error);
-                                     resolve(null);
-                                },
-                                ontimeout: () => {
-                                     sm_logError(storeModule.name, `Таймаут запроса для ${url}`);
-                                     resolve(null);
-                                }
+                                onerror: () => resolve([]),
+                                ontimeout: () => resolve([])
                             });
                         });
-
-                        const [gamesResult, shopResult] = await Promise.allSettled([
-                            fetchPromise(gamesUrl),
-                            fetchPromise(shopUrl)
-                        ]);
-
-                        let finalResults = [];
-
-                        if (gamesResult.status === 'fulfilled' && gamesResult.value?.data) {
-                            try {
-                                finalResults = finalResults.concat(storeModule.parseGamesApi(gamesResult.value.data, storeModule));
-                            } catch(e) {
-                                 sm_logError(storeModule.name, 'Ошибка парсинга ответа Games API', e);
-                            }
-                        }
-
-                        if (shopResult.status === 'fulfilled' && shopResult.value?.data) {
-                             try {
-                                finalResults = finalResults.concat(storeModule.parseShopApi(shopResult.value.data, storeModule));
-                             } catch(e) {
-                                 sm_logError(storeModule.name, 'Ошибка парсинга ответа Shop API', e);
-                             }
-                        }
-
-                        return finalResults;
                     },
-
-                    // Парсер для ответа от /api/games (Steam-гифты)
-                    parseGamesApi: function(items, storeModule) {
+                    parseApi: function(data, storeModule) {
                         const results = [];
-                        if (!Array.isArray(items)) {
-                             sm_logError(storeModule.name, 'Games API response data is not an array', items);
-                             return results;
-                        }
-
-                        // const referralBase = "https://yknhc.com/g/lfofiog4lqc1442ace4b294cb5928a/";
-                        // const referralParams = "?erid=2bL9aMPo2e49hMef4phUQVF5W8&ulp=";
-
-                        items.forEach(item => {
-                            try {
-                                const productName = item.name?.trim();
-                                const slug = item.slug;
-                                const currentPrice = sm_parsePrice(item.min_price?.rub ?? null);
-                                const originalPriceRaw = sm_parsePrice(item.min_old_price?.rub ?? null);
-                                const originalPrice = (originalPriceRaw !== null && currentPrice !== null && originalPriceRaw > currentPrice) ? originalPriceRaw : null;
-                                const imageUrl = item.external_data?.header_image;
-
-                                if (!productName || !slug || currentPrice === null || !imageUrl) {
-                                    return;
-                                }
-
-                                const originalProductUrl = `https://steam.kupikod.com/ru-ru/games/${slug}`;
-
-                                const productUrl = originalProductUrl;
-                                // const productUrl = referralBase + referralParams + encodeURIComponent(originalProductUrl);
-
-                                let data = {
-                                    storeId: storeModule.id,
-                                    storeName: storeModule.name + " (Гифты)",
-                                    storeUrl: "https://steam.kupikod.com/",
-                                    productName: productName,
-                                    productUrl: productUrl,
-                                    imageUrl: imageUrl,
-                                    currentPrice: currentPrice,
-                                    originalPrice: originalPrice,
-                                    discountPercent: null,
-                                    discountAmount: null,
-                                    currency: 'RUB',
-                                    isAvailable: true
-                                };
-                                results.push(sm_calculateMissingValues(data));
-                            } catch (e) {
-                                sm_logError(storeModule.name, 'Ошибка парсинга элемента Games API', e);
-                            }
-                        });
-                        return results;
-                    },
-
-                    // Парсер для ответа от /api/shop/products-list (Ключи)
-                    parseShopApi: function(items, storeModule) {
-                        const results = [];
-                        if (!Array.isArray(items)) {
-                            sm_logError(storeModule.name, 'Shop API response data is not an array', items);
+                        if (!data || !Array.isArray(data.items)) {
                             return results;
                         }
 
-                        // const referralBase = "https://yknhc.com/g/lfofiog4lqc1442ace4b294cb5928a/";
-                        // const referralParams = "?erid=2bL9aMPo2e49hMef4phUQVF5W8&ulp=";
-
-                        items.forEach(item => {
+                        data.items.forEach(item => {
                             try {
-                                const productName = item.h1_title?.trim();
-                                const slug = item.slug?.toLowerCase();
-                                const currentPrice = sm_parsePrice(item.price ?? null);
-                                const originalPriceRaw = sm_parsePrice(item.old_price ?? null);
-                                const originalPrice = (originalPriceRaw !== null && originalPriceRaw > 0 && currentPrice !== null && originalPriceRaw > currentPrice) ? originalPriceRaw : null;
-                                const imageUrl = item.picture_url;
+                                if (!item.active) return;
 
-                                if (!imageUrl || typeof imageUrl !== 'string' || imageUrl.includes('/apps//')) {
-                                     return;
-                                }
+                                const productName = item.name?.trim();
+                                const productUrl = item.link;
+                                const currentPrice = sm_parsePrice(item.min_price ?? null);
+                                const originalPriceRaw = sm_parsePrice(item.min_old_price ?? null);
+                                const originalPrice = (originalPriceRaw !== null && currentPrice !== null && originalPriceRaw > currentPrice) ? originalPriceRaw : null;
+                                const imageUrl = item.header_image;
 
-                                if (!productName || !slug || currentPrice === null) {
+                                if (!productName || !productUrl || currentPrice === null || !imageUrl) {
                                     return;
                                 }
 
-                                if (storeModule.excludedRegionSuffixes.some(suffix => slug.endsWith(suffix))) {
-                                     return;
+                                const urlForCheck = productUrl.toLowerCase();
+                                if (storeModule.excludedRegionSuffixes.some(suffix => urlForCheck.endsWith(suffix))) {
+                                    return;
                                 }
-                                 if (storeModule.excludedPlatformKeywords.some(keyword => slug.includes(keyword))) {
-                                     return;
+                                if (storeModule.excludedPlatformKeywords.some(keyword => urlForCheck.includes(keyword))) {
+                                    return;
                                 }
 
-                                const originalProductUrl = `${storeModule.baseUrl}/shop/${item.slug}`;
+                                const isGift = item.product === "Gifts";
 
-                                const productUrl = originalProductUrl;
-                                // const productUrl = referralBase + referralParams + encodeURIComponent(originalProductUrl);
-
-                                let data = {
+                                let resultData = {
                                     storeId: storeModule.id,
-                                    storeName: storeModule.name + " (Ключи)",
+                                    storeName: storeModule.name + (isGift ? " (Гифты)" : " (Ключи)"),
                                     storeUrl: storeModule.baseUrl,
                                     productName: productName,
                                     productUrl: productUrl,
@@ -20638,10 +20589,8 @@ if (headerCtn) {
                                     currency: 'RUB',
                                     isAvailable: true
                                 };
-                                results.push(sm_calculateMissingValues(data));
-                            } catch (e) {
-                                sm_logError(storeModule.name, 'Ошибка парсинга элемента Shop API', e);
-                            }
+                                results.push(sm_calculateMissingValues(resultData));
+                            } catch (e) {}
                         });
                         return results;
                     }
@@ -20863,24 +20812,25 @@ if (headerCtn) {
                     id: 'zakazaka',
                     name: 'Zaka-zaka',
                     baseUrl: 'https://zaka-zaka.com',
-                    searchUrlTemplate: 'https://zaka-zaka.com/search/ask/{query}/sort/price.asc',
+                    searchUrlTemplate: 'https://zaka-zaka.com/search/ask/{query}',
                     isEnabled: true,
                     fetch: async function(query) {
                         const searchUrl = this.searchUrlTemplate.replace('{query}', encodeURIComponent(query));
-                        return new Promise((resolve, reject) => {
+
+                        return new Promise((resolve) => {
                             GM_xmlhttpRequest({
                                 method: "GET",
                                 url: searchUrl,
                                 timeout: SM_REQUEST_TIMEOUT_MS,
                                 onload: (response) => {
-                                    if (response.status >= 200 && response.status < 400) {
+                                    if (response.status >= 200 && response.status < 400 && response.responseText) {
                                         resolve(this.parseHtml(response.responseText, this));
                                     } else {
-                                        reject(new Error(`HTTP статус ${response.status}`));
+                                        resolve([]);
                                     }
                                 },
-                                onerror: (error) => reject(new Error('Сетевая ошибка')),
-                                ontimeout: () => reject(new Error('Таймаут запроса'))
+                                onerror: () => resolve([]),
+                                ontimeout: () => resolve([])
                             });
                         });
                     },
@@ -20888,38 +20838,33 @@ if (headerCtn) {
                         const results = [];
                         const parser = new DOMParser();
                         const doc = parser.parseFromString(htmlString, 'text/html');
-                        const items = doc.querySelectorAll('.search-results .game-block');
+                        const items = doc.querySelectorAll('.search-results .game-block.tile');
 
                         items.forEach(item => {
                             try {
-                                const linkElement = item;
-                                const imageDiv = item.querySelector('.game-block-image');
-                                const nameElement = item.querySelector('.game-block-name');
-                                const priceElement = item.querySelector('.game-block-price');
-                                const discountElement = item.querySelector('.game-block-discount');
-                                const discountAmountElement = item.querySelector('.game-block-discount-sum');
+                                const productName = item.querySelector('.tile__title')?.textContent?.trim();
+                                const productUrlRaw = item.getAttribute('href');
+                                const priceElement = item.querySelector('.tile__price-now');
+                                const oldPriceElement = item.querySelector('.tile__price-old');
+                                const discountElement = item.querySelector('.tile__discount');
+                                const imgElement = item.querySelector('.tile__cover img');
 
-                                const productName = nameElement?.textContent?.trim();
-                                const productUrlRaw = linkElement?.getAttribute('href');
-                                const currentPrice = priceElement ? sm_parsePrice(priceElement.textContent) : null;
-                                const discountPercent = discountElement ? sm_parsePercent(discountElement.textContent) : 0;
-                                const discountAmount = discountAmountElement ? Math.abs(sm_parsePrice(discountAmountElement.textContent) ?? 0) : null;
-
-                                let imageUrl = null;
-                                if (imageDiv?.style?.backgroundImage) {
-                                    const match = imageDiv.style.backgroundImage.match(/url\("?(.+?)"?\)/);
-                                    if (match && match[1]) {
-                                        imageUrl = match[1].startsWith('/') ? storeModule.baseUrl + match[1] : match[1];
-                                    }
-                                }
-
-                                if (!productName || !productUrlRaw || currentPrice === null) {
+                                if (!productName || !productUrlRaw || !priceElement) {
                                     return;
                                 }
 
-                                const fullOriginalUrl = productUrlRaw.startsWith('/') ? storeModule.baseUrl + productUrlRaw : productUrlRaw;
-                                const referralPrefix = 'https://heqgr.com/g/6znf8911enc1442ace4b7b456b25e2/?erid=2bL9aMPo2e49hMef4rqy6bZVTY&ulp=';
-                                const productUrl = referralPrefix + encodeURIComponent(fullOriginalUrl);
+                                const currentPrice = sm_parsePrice(priceElement.textContent);
+                                if (currentPrice === null) return;
+
+                                const originalPrice = oldPriceElement ? sm_parsePrice(oldPriceElement.textContent) : null;
+                                const discountPercent = discountElement ? sm_parsePercent(discountElement.textContent) : 0;
+
+                                let imageUrl = imgElement ? imgElement.getAttribute('src') : null;
+                                if (imageUrl && imageUrl.startsWith('/')) {
+                                    imageUrl = storeModule.baseUrl + imageUrl;
+                                }
+
+                                const productUrl = productUrlRaw.startsWith('/') ? storeModule.baseUrl + productUrlRaw : productUrlRaw;
 
                                 let data = {
                                     storeId: storeModule.id,
@@ -20929,16 +20874,14 @@ if (headerCtn) {
                                     productUrl: productUrl,
                                     imageUrl: imageUrl,
                                     currentPrice: currentPrice,
-                                    originalPrice: null,
+                                    originalPrice: originalPrice,
                                     discountPercent: discountPercent,
-                                    discountAmount: discountAmount,
+                                    discountAmount: null,
                                     currency: 'RUB',
                                     isAvailable: true
                                 };
                                 results.push(sm_calculateMissingValues(data));
-                            } catch (e) {
-                                sm_logError(storeModule.name, 'Ошибка парсинга элемента', e);
-                            }
+                            } catch (e) {}
                         });
                         return results;
                     }
